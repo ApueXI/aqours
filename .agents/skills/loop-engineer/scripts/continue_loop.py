@@ -39,12 +39,20 @@ def prompt(project):
     return f"""Use $loop-engineer at {SKILL / 'SKILL.md'} to resume the existing goal in {project}.
 Read applicable AGENTS.md, README, docs, .loop/GOAL.md, STATE.md, and LOG.md;
 reconcile actual code and evidence before acting. The parent runner owns
-.loop/runner.lock; this child session is the lead. Work only on this target project.
-Delegate suitable independent work through available managed sub-agent tools within
-that same scope and lock; keep small or tightly coupled work with the lead. Record
-ownership, dependencies, worker status, and integration status in .loop/STATE.md.
-Only the lead updates shared .loop/ files. Give workers bounded assignments and
-verification requirements; prevent overlapping edits, including lead/worker edits.
+.loop/runner.lock; this child session is the lead/orchestrator. Work only on this target project.
+Delegate substantial implementation by default through available managed sub-agent
+tools within that same scope and lock. Use one worker for a bounded task, or multiple
+workers for independent ready tasks within current concurrency; respect dependencies.
+Keep small tasks, shared interfaces, and tightly coupled integration fixes with the lead;
+record why substantial work stays local. Select supported worker model/effort pairs using
+the skill's adaptive policy and user overrides. Use self-contained assignments and fresh
+context where model overrides require it. Record requested settings, rationale, observable
+effective settings or uncertainty/fallback, ownership, dependencies, worker status, and
+integration status in .loop/STATE.md. If overrides are unavailable, record inherited
+settings and limitations; do not silently substitute explicit user settings.
+Only the lead creates/assigns overall tasks and updates shared .loop/ files. Give workers
+bounded assignments and verification requirements; require lead approval for expanded
+ownership or further delegation. Prevent overlapping edits, including lead/worker edits.
 Reconcile actual edits and prior worker availability before reassigning work.
 If sub-agent tools are unavailable, record that limitation and continue as lead.
 Continue all useful authorized implementation, diagnosis, fixes, documentation,

@@ -1,11 +1,11 @@
 ---
 name: loop-engineer
-description: "Build a software system from a supplied goal or specification through coordinated implementation, testing, documentation, and verified completion. Primarily invoke explicitly with $loop-engineer; also supports resuming a saved goal."
+description: "Lead software delivery from a supplied goal or specification through managed worker delegation, integration, testing, documentation, and verified completion. Primarily invoke explicitly with $loop-engineer; also supports resuming a saved goal."
 ---
 
 # Loop Engineer
 
-Continue implementing, testing, diagnosing, fixing, documenting, and verifying until the agreed acceptance criteria are satisfied. Do not voluntarily end the task after planning, scaffolding, completing one feature, or finding a fixable error. Continue directly to the next necessary action.
+Act primarily as the lead and orchestrator, delegating substantial implementation while owning the goal through verified acceptance. Continue coordinating implementation, diagnosis, fixes, documentation, and verification until the agreed acceptance criteria are satisfied. Do not voluntarily end the task after planning, scaffolding, completing one feature, or finding a fixable error. Continue directly to the next necessary action.
 
 Prioritize completing the requested system over minimizing token usage. Use as much available allowance as necessary for useful work; never pad output, repeat meaningless iterations, or invent extra features. This instruction operates within current user scope, cancellation, repository rules, and platform permission controls.
 
@@ -22,15 +22,25 @@ On invocation, create `.loop/GOAL.md`, `.loop/STATE.md`, and `.loop/LOG.md` in e
 
 On resume or context compaction, reload these files, current instructions, relevant docs, actual code, and verification evidence. Reconcile stale entries before acting; saved completion claims do not replace checks affected by intervening changes. Preserve unrelated prior goals; archive their state within `.loop/` before starting a different goal.
 
-The lead alone updates shared `.loop/` files; workers return evidence for the lead to record. Track task ownership, dependencies, worker availability/status, and integration status. On resume, reconcile actual changes and whether prior workers are still active before reassigning unfinished work; never assume a saved worker ID remains available. Confirm an earlier owner has finished or stopped before transferring ownership.
+The lead alone updates shared `.loop/` files; workers return evidence for the lead to record. Track task ownership, dependencies, worker availability/status, and integration status. For each worker, record requested model and reasoning effort, selection rationale, and observable effective settings; distinguish unknown or inherited settings and fallbacks from confirmed settings. On resume, reconcile actual changes and whether prior workers are still active before reassigning unfinished work; never assume a saved worker ID remains available. Confirm an earlier owner has finished or stopped before transferring ownership.
 
 Keep execution state in `.loop/` and durable documentation in `docs/` using the project's existing organization (including README/setup material elsewhere). Link rather than duplicate extensive documentation. Never store secrets, credentials, private environment dumps, or unredacted sensitive output in state or runner artifacts. Checkpoint after meaningful implementation, diagnosis, verification, and documentation work, and before a risky/long step or expected interruption. Record the **exact next action**, including command/path and any prerequisite.
 
 ## Coordinate lead and workers
 
-Act as the lead: decompose the goal into bounded tasks, identify dependencies and allowed edit paths, and retain responsibility for coordination, integration, final verification, and acceptance. Delegate suitable independent tasks when managed sub-agent tools are available. Keep small tasks, shared contracts, and tightly coupled changes with the lead; establish interfaces before dispatching dependent work. If delegation is unavailable, record the limitation and continue directly.
+The main Codex is the lead. Own the goal, acceptance criteria, overall task creation and assignment, coordination, integration, verification, and acceptance. Delegate substantial implementation by default when managed worker tools are available. Handle small tasks, shared interfaces, and tightly coupled integration or fixes directly when appropriate; record the reason for direct substantive work in state. If delegation is unavailable, record that limitation and continue as lead directly.
 
-Before dispatch, record ownership in state and give each worker its objective and acceptance IDs, relevant context and constraints (including repository and authorization rules), allowed files, dependencies and readiness, expected deliverable, and required verification. Workers stay within that assignment and return changed files, results, verification commands and outcomes/evidence, and unresolved issues. They request ownership changes from the lead before editing beyond their assignment.
+Create bounded tasks with dependencies and allowed edit paths. Use one worker for a substantial bounded task, and multiple workers for independent, disjoint tasks that are ready. Sequence dependent work, establishing shared interfaces first. Choose concurrency from current tool capacity and task readiness rather than a fixed worker count. Workers may propose subtasks, but the lead must approve task expansions and ownership changes. Further worker delegation requires explicit lead authorization.
+
+This skill explicitly authorizes the lead to select both a supported model and reasoning effort for each managed worker, within explicit user overrides and platform restrictions. Inspect available tool capabilities; use these task-based guidelines rather than a fixed model catalog:
+
+- Prefer a smaller, faster model with supported moderate effort for narrow exploration or routine documentation.
+- Prefer a general coding model with medium effort for normal implementation.
+- Prefer a strong coding model with high effort for complex debugging, authorization, transactions, or consequential review.
+
+Adjust to actual complexity and available choices. Do not change global configuration or claim unexposed capabilities. When overrides are unavailable, use inherited settings and record the limitation; if an explicit user model or effort override cannot be honored, surface it without silently substituting, and continue independent work where possible. Request supported settings at worker creation and record what was requested separately from what is observable; a request alone does not prove the effective settings.
+
+Use fresh-context workers when the tool requires them for model or effort overrides. Before dispatch, record ownership and provide a self-contained brief: objective and acceptance IDs, relevant facts, paths and interfaces, constraints including repository and authorization policy, allowed edits, prerequisites and readiness, deliverables, and required checks. Do not rely on inherited conversation context. Workers stay within their assignment and return changed files, results, verification commands and outcomes/evidence, and unresolved issues.
 
 Prevent concurrent overlapping edits, including lead edits to worker-owned files. Resolve ownership conflicts before continuing affected work: stop or finish the current owner, inspect partial edits, and explicitly transfer ownership. Workers report new dependencies rather than modifying shared contracts unilaterally. Use managed sub-agents within the same authorized scope; do not introduce additional runners or detached background workers.
 
@@ -40,7 +50,7 @@ Review each worker's changes and evidence, integrate results, and resolve failed
 
 Repeat while actionable requirements remain:
 
-**Read relevant code and docs → choose the next necessary task → implement → run relevant checks → diagnose and fix failures → update affected docs → verify consistency → checkpoint → continue.**
+**Read relevant code and docs → create and assign ready tasks → coordinate implementation → review and integrate results → run relevant checks → diagnose and fix failures → update affected docs → verify consistency → checkpoint → continue.**
 
 - Build connected, usable workflows across frontend, backend, persistence, configuration, and integrations as required. Required behavior must work end to end. Do not replace it with placeholders, fake success, or disconnected screens. Use mocks only when the specification permits them or in appropriate isolated tests.
 - Treat ordinary build/type/test failures and integration defects as work to resolve. Inspect actual errors before editing. If the same failure recurs, change the hypothesis or strategy; do not rerun identical commands without new evidence. Every iteration must advance implementation, verification evidence, or useful understanding.
