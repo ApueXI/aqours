@@ -6,11 +6,11 @@ Aqours is a water supply reporting and customer assistance system connecting a w
 
 Use TypeScript for application code in all three projects:
 
-| Directory | Responsibility | Stack |
-| --- | --- | --- |
-| `aqours-api/` | Backend and authorization | Express |
-| `aqours-app/` | Customer mobile application | React Native with the existing Expo setup |
-| `aqours-web/` | Water supplier web application | React |
+| Directory     | Responsibility                 | Stack                                     |
+| ------------- | ------------------------------ | ----------------------------------------- |
+| `aqours-api/` | Backend and authorization      | Express                                   |
+| `aqours-app/` | Customer mobile application    | React Native with the existing Expo setup |
+| `aqours-web/` | Water supplier web application | React                                     |
 
 The intended database is containerized PostgreSQL. This stack describes the intended system, not a claim that every component is already implemented.
 
@@ -19,14 +19,15 @@ The intended database is containerized PostgreSQL. This stack describes the inte
 1. Read root `PROGRESS.md` first to learn what is already built. If it is missing, inspect the repository and initialize it with verified facts before implementation.
 2. Read the reference documents relevant to the task:
 
-   | Document | What to look for |
-   | --- | --- |
-   | `docs/architecture.md` | System design, component boundaries, and data flow |
-   | `docs/requirements.md` | Required behavior, user roles, and access permissions |
-   | `docs/schema.md` | Database entities, relationships, and constraints |
-   | `docs/workspace.md` | Local setup, workspace conventions, and development commands |
+   | Document               | What to look for                                             |
+   | ---------------------- | ------------------------------------------------------------ |
+   | `docs/architecture.md` | System design, component boundaries, and data flow           |
+   | `docs/requirements.md` | Required behavior, user roles, and access permissions        |
+   | `docs/schema.md`       | Database entities, relationships, and constraints            |
+   | `docs/workspace.md`    | Local setup, workspace conventions, and development commands |
 
    These four documents are planned and were absent when this guidance was created. Check whether they now exist; do not invent their contents or treat missing documentation as evidence that functionality exists. Resolve missing requirements that materially affect the task before implementing them.
+
 3. Read applicable directory-specific `AGENTS.md` files before working in those directories. Preserve the existing mobile guidance in `aqours-app/AGENTS.md`. Its technical installation instructions do not grant permission to add dependencies.
 
 ## Scope, dependencies, and permissions
@@ -43,11 +44,11 @@ Each file must have one focused responsibility. Split features into cohesive mod
 
 Hard limits for handwritten TypeScript and TSX files:
 
-| Project | Maximum lines per file |
-| --- | ---: |
-| React Native (`aqours-app/`) | 300 |
-| React web (`aqours-web/`) | 250 |
-| Express (`aqours-api/`) | 200 |
+| Project                      | Maximum lines per file |
+| ---------------------------- | ---------------------: |
+| React Native (`aqours-app/`) |                    300 |
+| React web (`aqours-web/`)    |                    250 |
+| Express (`aqours-api/`)      |                    200 |
 
 Count every physical line, including imports, comments, and blank lines. These limits include tests but exclude generated files, dependencies, and lockfiles. Split by responsibility before exceeding a limit. Do not compress formatting or remove useful documentation to evade it. Bring existing oversized files within the limit when materially changing them; avoid unrelated cleanup.
 
@@ -56,6 +57,7 @@ Count every physical line, including imports, comments, and blank lines. These l
 - Inspect the branch and working tree before making changes. Preserve existing staged and unstaged changes; do not reset, discard, or include unrelated work in a commit.
 - Before implementing a new feature, create a descriptive `feature/<name>` branch, such as `feature/admin-dashboard`. Continue on that feature branch for subsequent work on the same feature.
 - When committing, use a concise subject and a detailed body explaining what changed, why it changed, and how it was verified. Mention material limitations or checks that could not run.
+- After implementing and verifying a feature, create at least one commit containing all changes for that feature on its feature/<name> branch. Do not include unrelated changes or mark the feature complete until the commit succeeds.
 
 ## Verification and progress log
 
