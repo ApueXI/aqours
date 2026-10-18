@@ -29,6 +29,7 @@ The intended database is containerized PostgreSQL. This stack describes the inte
    These four documents are planned and were absent when this guidance was created. Check whether they now exist; do not invent their contents or treat missing documentation as evidence that functionality exists. Resolve missing requirements that materially affect the task before implementing them.
 
 3. Read applicable directory-specific `AGENTS.md` files before working in those directories. Preserve the existing mobile guidance in `aqours-app/AGENTS.md`. Its technical installation instructions do not grant permission to add dependencies.
+4. After implementing each feature, identify and update all relevant documentation to reflect the implemented behavior, structure, setup, and limitations. Verify that the documentation matches the final changes before marking the feature complete.
 
 ## Scope, dependencies, and permissions
 
