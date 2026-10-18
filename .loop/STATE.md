@@ -1,7 +1,7 @@
 # Execution state
 
-Status: IN_PROGRESS
-Updated: 2026-10-18; branch `feature/project-docs`, baseline `887b285`; documentation verified, commit pending.
+Status: COMPLETE
+Updated: 2026-10-18; branch `feature/project-docs`; documentation committed as `9372967` from baseline `887b285`.
 Goal: [GOAL.md](GOAL.md)
 
 ## Completed and remaining work
@@ -15,7 +15,8 @@ Goal: [GOAL.md](GOAL.md)
 - Completed workspace workflows/setup, three role summaries and documentation index. All four references now link to the index; no database/runtime behavior is claimed.
 - All sixteen specs are complete and both authors have finished/released ownership. Lead has reviewed their content; initial integrated structural/link/REQ/acceptance coverage validation passes.
 - Independent review now covers all references, index, three domains and all sixteen specs without substantive findings. The minor report-matrix wording and collection replay distinction are corrected; proposed session-cancellation outcomes are consistent.
-- Updated `PROGRESS.md`. Remaining: final diff/scope checks and the required scoped commit, then record commit evidence and completion.
+- Updated `PROGRESS.md`. Final integrated validation and staged diff/scope checks passed. Commit `9372967` succeeded with all 28 documentation/state/progress files; the post-commit working tree was clean.
+- All acceptance criteria are verified. No application implementation, external publication, dependency installation or outstanding worker task remains in this documentation goal.
 
 ## Task ownership and integration
 
@@ -27,7 +28,7 @@ Lead `/root` owns shared `.loop/` state. The invoked skill explicitly authorizes
 | Schema / AC-003 | Completed worker `/root/schema_docs`; integration now lead | `docs/schema.md` | Discovery complete | Worker finished; ownership released | Lead/independent content review passed; 17 core records plus support; collection replay/session-outcome proposals aligned |
 | Customer feature specs / AC-008 | Completed worker `/root/requirements_docs`; integration now lead | `docs/features/customer/**/spec.md` | Seven specs complete | Worker finished; ownership released | Author/lead/independent review and integrated structural/link/REQ checks passed; 48 feature acceptance IDs |
 | Supplier feature specs / AC-008 | Completed worker `/root/schema_docs`; integration now lead | `docs/features/admin/**/spec.md` | Nine specs complete | Worker finished; ownership released | Author/lead/independent review and integrated structural/link/REQ checks passed; 78 feature acceptance IDs |
-| References, domain summaries/index, integration / AC-001, AC-004–008 | Lead `/root` | Four reference docs, `docs/domains/*.md`, `docs/README.md`, `.loop/`, `PROGRESS.md` | Documentation complete | Running final Git verification | Content/links/coverage passed; commit pending |
+| References, domain summaries/index, integration / AC-001, AC-004–008 | Lead `/root` | Four reference docs, `docs/domains/*.md`, `docs/README.md`, `.loop/`, `PROGRESS.md` | Documentation complete | Finished | Content/links/coverage/scope/staged-diff checks passed; commit `9372967` succeeded |
 | Independent content review / AC-001–005, AC-007–008 | Completed worker `/root/docs_review` | Read-only `docs/`, baseline code/config and guidance; no edits | All references/domains/specs reviewed | Worker finished; ownership released | No substantive findings; all requested review work complete |
 
 ## Verification
@@ -38,12 +39,12 @@ Lead `/root` owns shared `.loop/` state. The invoked skill explicitly authorizes
 | AC-002 | PASS | Lead/independent full-brief coverage review; Python checks 84 unique REQ definitions and all ten DEMO scenarios. |
 | AC-003 | PASS | Inventory confirms no DB implementation; all 17 named proposed records, supporting history/integrity and deferred scope reviewed. |
 | AC-004 | PASS | Workflow traces reviewed against requirements/schema; starter commands/versions checked in package/config/source and Expo SDK 57 docs; future setup/backup clearly pending. |
-| AC-005 | PASS | Initial integrated inline Python validation: 28 Markdown files, 288 local links, no missing targets/anchors/formatting errors; no application changes. Final staged diff/scope check remains part of the commit gate. |
-| AC-006 | NOT_RUN | Progress updated, all workers finished; required commit and clean final Git status pending. |
+| AC-005 | PASS | Final integrated inline Python validation: 28 Markdown files, 288 local links, no missing targets/anchors/formatting errors; staged diff/name/scope review and `git diff --cached --check` passed. Application/guidance/skill diff from baseline is empty. |
+| AC-006 | PASS | Progress updated (17 lines); all workers confirmed completed; scoped commit `9372967` succeeded on `feature/project-docs`; post-commit `git status --short --branch` clean. |
 | AC-007 | PASS | Three role summaries and index link all seven customer/nine supplier features with proposed staff/admin split; independent coverage review passed. |
 | AC-008 | PASS | Sixteen WHAT/MUST/HOW specs, 59–136 physical lines, 126 unique future acceptance IDs, valid REQ references; author/lead/independent content review passed. |
 
-Commands/inspection evidence: repository-root `rg --files`, targeted `cat`/`sed` reads, standard-library inline `python3 -B -` inventory/link/structure/ID checks, `git diff --check`, and managed-worker completion/review results. Final staged verification will cover the updated progress/state too. Application build/lint/type/integration tests: NOT_RUN (not applicable to this root documentation-only change); future feature criteria are not claimed as passing software behavior.
+Commands/inspection evidence: repository-root `rg --files`, targeted `cat`/`sed` reads, standard-library inline `python3 -B -` inventory/link/structure/ID/scope checks, `git diff --check`, `git diff --cached --check`, staged `--stat`/`--name-status` review, successful `git commit`, clean post-commit status, and managed-worker completion/review results. Application build/lint/type/integration tests: NOT_RUN (not applicable to this root documentation-only change); future feature criteria are not claimed as passing software behavior.
 
 ## Blockers and decisions
 
@@ -59,4 +60,4 @@ All four reference documents, three domain summaries, documentation index and si
 
 ## Exact next action
 
-From repository root, run final link/format/scope checks, then `git add -- docs PROGRESS.md .loop` and review `git diff --cached --check`/`--stat`/`--name-status` before committing only this documentation. Git metadata is read-only in the default sandbox; use the targeted approval mechanism for project-local Git writes as already authorized by repository guidance. After commit succeeds, record its hash, set completion and checkpoint that evidence.
+None — all acceptance criteria verified. Any later application implementation requires a separately requested goal.
