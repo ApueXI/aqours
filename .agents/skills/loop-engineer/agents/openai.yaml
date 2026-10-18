@@ -1,4 +1,4 @@
 interface:
   display_name: "Loop Engineer"
-  short_description: "Build systems through verified acceptance criteria"
-  default_prompt: "Use $loop-engineer to implement the supplied goal and continue until every acceptance criterion is verified."
+  short_description: "Coordinate implementation through verified acceptance"
+  default_prompt: "Use $loop-engineer to lead implementation of the supplied goal, delegate suitable independent work, and integrate and verify every acceptance criterion."

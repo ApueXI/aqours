@@ -8,6 +8,16 @@ Goal: [GOAL.md](GOAL.md)
 
 Record completed behavior and an ordered list of remaining tasks/criteria.
 
+## Task ownership and integration
+
+The lead alone updates shared `.loop/` files. Record delegation unavailability or why work stays with the lead when applicable.
+
+| Task / acceptance IDs | Owner / worker ID | Allowed edit paths | Dependencies / readiness | Worker status / availability | Integration status / evidence / unresolved issues |
+| --- | --- | --- | --- | --- | --- |
+| Record bounded task and criteria | Lead or managed worker ID | Explicit files or disjoint directories | Task IDs and prerequisites | Planned / running / finished / stopped / unknown | Pending / reviewed / integrated / needs fixes; link results and checks |
+
+Before reassignment, reconcile actual edits and confirm the former owner has finished or stopped. Record ownership transfers and partial work. Before handoff or final verification, record that all workers have finished or stopped; uncertain shutdown requires reconciliation on resume. Outstanding required work prevents COMPLETE.
+
 ## Verification
 
 | ID | Result (PASS / FAIL / BLOCKED / NOT_RUN) | Evidence |

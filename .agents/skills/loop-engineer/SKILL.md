@@ -1,6 +1,6 @@
 ---
 name: loop-engineer
-description: "Build a software system from a supplied goal or specification through implementation, testing, documentation, and verified completion. Primarily invoke explicitly with $loop-engineer; also supports resuming a saved goal."
+description: "Build a software system from a supplied goal or specification through coordinated implementation, testing, documentation, and verified completion. Primarily invoke explicitly with $loop-engineer; also supports resuming a saved goal."
 ---
 
 # Loop Engineer
@@ -22,7 +22,19 @@ On invocation, create `.loop/GOAL.md`, `.loop/STATE.md`, and `.loop/LOG.md` in e
 
 On resume or context compaction, reload these files, current instructions, relevant docs, actual code, and verification evidence. Reconcile stale entries before acting; saved completion claims do not replace checks affected by intervening changes. Preserve unrelated prior goals; archive their state within `.loop/` before starting a different goal.
 
+The lead alone updates shared `.loop/` files; workers return evidence for the lead to record. Track task ownership, dependencies, worker availability/status, and integration status. On resume, reconcile actual changes and whether prior workers are still active before reassigning unfinished work; never assume a saved worker ID remains available. Confirm an earlier owner has finished or stopped before transferring ownership.
+
 Keep execution state in `.loop/` and durable documentation in `docs/` using the project's existing organization (including README/setup material elsewhere). Link rather than duplicate extensive documentation. Never store secrets, credentials, private environment dumps, or unredacted sensitive output in state or runner artifacts. Checkpoint after meaningful implementation, diagnosis, verification, and documentation work, and before a risky/long step or expected interruption. Record the **exact next action**, including command/path and any prerequisite.
+
+## Coordinate lead and workers
+
+Act as the lead: decompose the goal into bounded tasks, identify dependencies and allowed edit paths, and retain responsibility for coordination, integration, final verification, and acceptance. Delegate suitable independent tasks when managed sub-agent tools are available. Keep small tasks, shared contracts, and tightly coupled changes with the lead; establish interfaces before dispatching dependent work. If delegation is unavailable, record the limitation and continue directly.
+
+Before dispatch, record ownership in state and give each worker its objective and acceptance IDs, relevant context and constraints (including repository and authorization rules), allowed files, dependencies and readiness, expected deliverable, and required verification. Workers stay within that assignment and return changed files, results, verification commands and outcomes/evidence, and unresolved issues. They request ownership changes from the lead before editing beyond their assignment.
+
+Prevent concurrent overlapping edits, including lead edits to worker-owned files. Resolve ownership conflicts before continuing affected work: stop or finish the current owner, inspect partial edits, and explicitly transfer ownership. Workers report new dependencies rather than modifying shared contracts unilaterally. Use managed sub-agents within the same authorized scope; do not introduce additional runners or detached background workers.
+
+Review each worker's changes and evidence, integrate results, and resolve failed checks and integration defects. A worker's completion report is not acceptance. Ensure all workers have finished or stopped before final verification or session handoff; reconcile partial work, outstanding tasks, and exact next actions in state. On cancellation, stop workers and checkpoint as far as the environment permits. If interruption prevents confirming shutdown, record uncertain ownership and reconcile it before any reassignment on resume. Never report COMPLETE with outstanding required worker work or workers still editing.
 
 ## Execute until acceptance
 
@@ -37,7 +49,7 @@ Repeat while actionable requirements remain:
 
 ## Verify and stop truthfully
 
-Before COMPLETE, compare the result with the **original** requirements and every acceptance criterion. Require reproducible evidence for each: applicable build, type, lint, meaningful behavioral checks, and actual integration/persistence checks where required. Inspect the running interface when appropriate tools are available. Run checks affected by the latest edits, review the final diff for missing functionality/docs, confirm docs describe the resulting structure and behavior, and verify important setup commands, paths, configuration names, API examples, and links where practical. Use placeholder secrets in examples.
+Before COMPLETE, compare the result with the **original** requirements and every acceptance criterion. Require reproducible evidence for each: applicable build, type, lint, meaningful behavioral checks, and actual integration/persistence checks where required. Inspect the running interface when appropriate tools are available. After workers have finished or stopped, run final checks against the integrated state, including checks affected by the latest edits, review the final diff for missing functionality/docs, confirm docs describe the resulting structure and behavior, and verify important setup commands, paths, configuration names, API examples, and links where practical. Use placeholder secrets in examples.
 
 Never count skipped/unavailable checks as passed or delete/weaken valid tests to pass. A pending required check prevents COMPLETE. Do not repeat unaffected passing checks without a reason.
 
@@ -51,6 +63,6 @@ Resume explicitly with `$loop-engineer Resume the goal in .loop/GOAL.md; reconci
 
 An external process is needed to start another session after one ends. Only when the user chooses it, read [runner usage and limits](references/runner.md) and use `scripts/continue_loop.py` with an already initialized goal. Never launch it merely because this skill is invoked or being installed. It uses documented installed Codex CLI capabilities, bounded conditional continuation, a project lock, and an explicit stop file. It does not grant permissions or repair quota/credential failures.
 
-While a runner owns `.loop/runner.lock`, do not start another independent editing session for that project; runner child sessions are its authorized worker. For multi-project goals use interactive continuation unless all projects' locks and allowed write roots are coordinated; the optional runner deliberately supports one target project.
+While a runner owns `.loop/runner.lock`, do not start another independent editing session for that project; the runner child session acts as the authorized lead and may use managed sub-agents under its coordination and the same project lock. These sub-agents do not start separate runners or acquire competing project locks. For multi-project goals use interactive continuation unless all projects' locks and allowed write roots are coordinated; the optional runner deliberately supports one target project.
 
 When authoring or changing this skill, use the [validation scenarios](references/validation.md) and isolated fixture tests. Skill instructions guide agent decisions; script validation does not prove that every future generated system is correct.

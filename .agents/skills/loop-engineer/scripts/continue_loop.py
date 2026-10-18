@@ -39,7 +39,14 @@ def prompt(project):
     return f"""Use $loop-engineer at {SKILL / 'SKILL.md'} to resume the existing goal in {project}.
 Read applicable AGENTS.md, README, docs, .loop/GOAL.md, STATE.md, and LOG.md;
 reconcile actual code and evidence before acting. The parent runner owns
-.loop/runner.lock; this session is its worker. Work only on this target project.
+.loop/runner.lock; this child session is the lead. Work only on this target project.
+Delegate suitable independent work through available managed sub-agent tools within
+that same scope and lock; keep small or tightly coupled work with the lead. Record
+ownership, dependencies, worker status, and integration status in .loop/STATE.md.
+Only the lead updates shared .loop/ files. Give workers bounded assignments and
+verification requirements; prevent overlapping edits, including lead/worker edits.
+Reconcile actual edits and prior worker availability before reassigning work.
+If sub-agent tools are unavailable, record that limitation and continue as lead.
 Continue all useful authorized implementation, diagnosis, fixes, documentation,
 and verification until acceptance is satisfied. Do not return just because one
 task finishes or a fixable check fails. Checkpoint meaningful steps regularly.
@@ -48,7 +55,12 @@ requires returning NEEDS_PERMISSION with the proposed change for user review.
 No elevated permissions can be granted here. If an action needs permission,
 checkpoint and return NEEDS_PERMISSION; do not work around a denied action.
 If one item is blocked, finish independent work before returning BLOCKED.
-Honor .loop/STOP and cancellation. Do not spawn another runner or background worker.
+Honor .loop/STOP and cancellation. Do not spawn another runner or detached background worker.
+Review worker results and evidence, resolve failures, and integrate their changes.
+Ensure all workers finish or stop before final verification or session handoff;
+checkpoint partial work and uncertain ownership if forced interruption prevents this.
+Run final checks against the integrated state. Outstanding required worker work or
+workers still editing prevents COMPLETE.
 If an external session limit forces a return while useful work remains, save
 state and return CONTINUE with evidence of progress and the exact next action.
 Return QUOTA_EXHAUSTED only on actual quota/allowance evidence; never infer a balance.
