@@ -1,0 +1,4 @@
+interface:
+  display_name: "Loop Engineer"
+  short_description: "Build systems through verified acceptance criteria"
+  default_prompt: "Use $loop-engineer to implement the supplied goal and continue until every acceptance criterion is verified."

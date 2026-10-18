@@ -1,0 +1,15 @@
+# Documentation checks during implementation
+
+Identify the affected documents for each meaningful change. Use the existing `docs/` index/overview and README links; preserve organization and writing style. Add new documentation only when existing documents cannot cover the change coherently, and link it from the relevant index.
+
+| Change | Documentation to reconcile and verify |
+| --- | --- |
+| Directory/module structure | Directory descriptions, module responsibilities, architecture diagrams, imports and paths in examples |
+| Architecture/integration | Component boundaries, data flow, integration configuration, significant decisions and their reasons |
+| API | Endpoints, methods, schemas/contracts, request examples, authorization, error responses |
+| Persistence | Entities, relationships, constraints, migrations, seed instructions, data lifecycle |
+| Feature/workflow | Actual user workflow, feature limits, roles and backend permissions |
+| Configuration/setup | Environment names, placeholder values, prerequisites, local/deployment commands |
+| Checks/tooling | Testing commands, meaningful coverage, troubleshooting and observed failure remedies |
+
+Verify documented commands and important examples when practical, and inspect local links and named paths/configuration keys. Record unavailable verification truthfully in state. Describe what is implemented; label future plans, known limitations, and external blockers distinctly. Do not rewrite requirements or policies to justify unfinished implementation, and avoid unrelated documentation rewrites.

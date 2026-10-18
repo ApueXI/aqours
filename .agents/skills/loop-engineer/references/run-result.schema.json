@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "summary", "acceptance", "docs_updated", "blockers", "next_action"],
+  "properties": {
+    "status": {"type": "string", "enum": ["CONTINUE", "COMPLETE", "BLOCKED", "NEEDS_PERMISSION", "QUOTA_EXHAUSTED", "CANCELLED"]},
+    "summary": {"type": "string"},
+    "acceptance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "result", "evidence"],
+        "properties": {
+          "id": {"type": "string"},
+          "result": {"type": "string", "enum": ["PASS", "FAIL", "BLOCKED", "NOT_RUN"]},
+          "evidence": {"type": "string"}
+        }
+      }
+    },
+    "docs_updated": {"type": "array", "items": {"type": "string"}},
+    "blockers": {"type": "array", "items": {"type": "string"}},
+    "next_action": {"type": "string"}
+  }
+}
