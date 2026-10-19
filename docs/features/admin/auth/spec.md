@@ -1,7 +1,6 @@
 # Supplier authentication
 
-- Status: **unimplemented target**, documented 2026-10-18 from brief v0.4.
-- Baseline: `aqours-web/` and `aqours-api/` are empty; no login screen, session, or authorization exists.
+- Status: **implemented first-release behavior; acceptance evidence remains qualified**, updated 2026-10-19.
 - References: [requirements](../../../requirements.md), [architecture](../../../architecture.md), [schema](../../../schema.md), [workflows/workspace](../../../workspace.md), [supplier domain](../../../domains/admin.md).
 - Requirement coverage: REQ-ACCESS-02–05, REQ-OPS-01 and REQ-OPS-08.
 
@@ -12,7 +11,7 @@
 - Let supplier staff and admins sign in, resume an authorized session, and sign out of the React supplier application.
 - Make the API the authority for identity, role, session expiry/revocation, and every protected operation.
 - This supplier feature directory is shared by operational staff/admin; it does not grant admin permissions to staff.
-- The detailed staff/admin split remains proposed in the requirements; privileged controls must follow the confirmed API policy.
+- The detailed staff/admin split is adopted in requirements; privileged controls follow the API policy.
 - Account provisioning belongs to [settings](../settings/spec.md); public supplier registration and account-approval queues are outside scope.
 - Password recovery, federated login, and additional roles are not required first-release capabilities.
 
@@ -35,7 +34,7 @@
 ### Browser and failure behavior
 
 - Protect browser credentials and state-changing requests; the concrete session mechanism remains an implementation decision.
-- Proposed default: HttpOnly secure cookies with suitable SameSite and CSRF defenses, as described in architecture.
+- Adopted default: HttpOnly secure cookies with suitable SameSite and CSRF defenses, as described in architecture.
 - Keep private credentials out of browser storage, URLs, client bundles, rendered errors, and logs.
 - Preserve a safe return destination after login; do not accept an arbitrary external redirect.
 - Explain loading, invalid credentials, throttling, unavailable service, and expired/revoked session states.
@@ -59,23 +58,16 @@
 
 ## HOW
 
-### Proposed components and interfaces
+### Implemented behavior and modules
 
-- Proposed React responsibilities: login form, current-session request hook, protected navigation, and a reusable session-expired state in `aqours-web/`.
-- Proposed Express responsibilities: credential validation, password verification, session lifecycle, and reusable authentication/authorization middleware in `aqours-api/`.
-- Proposed persistence: `users` and revocable authentication-session records from schema; no authentication tooling is installed.
-- Proposed `POST /api/v1/auth/login`: validated credentials in; established session and safe current-user projection out.
-- Proposed `GET /api/v1/me`: authenticated identity/profile; never a substitute for endpoint-specific permissions.
-- Proposed `POST /api/v1/auth/logout`: revoke the current session and return a repeat-safe result.
-- Use the eventual shared error contract to distinguish invalid input, unauthenticated/forbidden access, throttling, and unavailable service.
-- Protect all other supplier feature groups with the same API identity and permission checks.
+`aqours-web/src/pages/Login.tsx`, `hooks/useSession.ts`, `api/client.ts` and `App.tsx` implement supplier login, cookie-session restoration, role-aware navigation and logout.
 
-### Verification and operation
+`aqours-api/src/auth.ts`, `routes/auth.ts` and `http.ts` enforce active accounts, revocable hashed sessions and backend role/ownership checks. Browser cookies are HttpOnly, SameSite=Lax and Secure in production; mutations require the configured Origin plus in-memory CSRF token. Customers cannot become supplier users by changing a route or local role. Deactivation/security changes revoke sessions.
 
-- Test valid/invalid credentials, customer rejection, role checks, expired/revoked sessions, and safe repeated logout at the API boundary.
-- Test the selected cookie/CSRF mechanism and cross-origin policy rather than only the login form.
-- Exercise browser reload, protected deep links, service failure, and browser history after logout.
-- Log security-relevant success/failure/revocation events with actor/time/correlation identifiers; redact secrets and unnecessary personal data.
-- Dependencies: [settings](../settings/spec.md) for provisioning; all supplier specs depend on this access boundary.
-- Open choices: session/token design, expiry policy, concurrent-session behavior, and exact credential limits.
-- Implementation is separately requested work; these are future checks, not tests run during documentation.
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
+
+### Verification and limits
+
+Review security API tests and the browser verification script for login, reload and logout. Production HTTPS/cookie deployment and administrative recovery policy require deployment validation.
+
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

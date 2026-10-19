@@ -1,6 +1,6 @@
 # Customer Reporting and Follow-up
 
-Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
+Status: **implemented first-release behavior; acceptance evidence remains qualified**. Updated: **2026-10-19**.
 
 ---
 
@@ -10,7 +10,6 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 - Include report entry, owned list/detail, messages, optional photos, published incident context, “mark affected,” and “still affected.”
 - Keep one customer's report separate from the supplier-managed incident to which staff may link it.
 - Use the saved service address, a confirmed typed address, or optional foreground GPS; provide a native MapLibre location preview.
-- Current evidence: [starter routes](../../../../aqours-app/src/app/) and the [manifest](../../../../aqours-app/package.json) contain no reporting, GPS, upload, geocoding, or native MapLibre implementation.
 - Exclude automatic incident creation, household-fault diagnosis, other customers' locations, continuous background tracking, and supplier-only editing.
 
 ---
@@ -35,7 +34,7 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 
 ### Photos and reliable submission
 
-- Validate file type/content and size on the server; the exact allowlist and maximum size must be confirmed before implementation.
+- Validate file type/content and size on the server; the exact allowlist and maximum size is documented below.
 - Store photo bytes in controlled storage and metadata through the owning report; a storage key or copied URL must not bypass authorization.
 - Distinguish successfully uploaded photos from failed/incomplete uploads; offer explicit retry rather than showing a false attachment success.
 - Preserve entered report details during a recoverable submission failure; persistent offline drafts/synchronization are not required.
@@ -49,7 +48,7 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 - Show owned reports with category, reference, current status, and latest relevant update; paginate list results.
 - Show detail messages, timeline, published incident link/updates, and a working follow-up action.
 - Support statuses `received`, `under_review`, `in_progress`, and `resolved` without allowing customers to perform supplier transitions.
-- Show a reviewed duplicate/invalid closure and reason distinctly from service restoration; the separate closure-outcome representation is proposed.
+- Show a reviewed duplicate/invalid closure and reason distinctly from service restoration; the separate closure-outcome representation is implemented.
 - Expose only deliberately published incident fields and areas, never internal notes or another customer's report/contact/household coordinates.
 - Permit customer clarification messages; safely render text and keep staff-only notes outside the customer message channel.
 - Display server UTC events in `Asia/Manila` initially and keep the noticed/submitted/published timestamps distinguishable.
@@ -80,42 +79,20 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 
 ## HOW
 
-### Proposed components and interfaces
+### Implemented behavior and modules
 
-- Keep route screens under `aqours-app/src/app/` and report forms, location adapters, upload state, API hooks, and timeline components outside that route directory.
-- Add Express report, message, attachment, geocoding, and follow-up services in `aqours-api/`; no corresponding routes exist today.
-- Illustrative API groups: `/api/v1/reports`, report messages/attachments, `/api/v1/locations/geocode`, and owned affected/follow-up actions.
-- Finalize request/response DTOs, verbs, pagination, error codes, upload protocol, and idempotency headers before implementation.
-- A create DTO carries the owned connection, category/details/time, issue-address snapshot, optional confirmed coordinate pair, source/review state, and upload references.
-- The API derives ownership, validates connection ownership and candidate/location data, and creates the report/history/idempotent result together.
-- Return an explicit location-review state and error categories for validation, authorization, conflict, file rejection, and geocoder unavailability.
-- Customer serializers return owned location details and published incident context; supplier DTOs remain separate.
+`aqours-app/src/features/reports/` implements forms, photos, list/detail and follow-up; `src/features/location/` separates address/GPS selection and native MapLibre preview.
 
-### Data flow and persistence
+Photo multipart bodies use `src/lib/photo-upload.ts` and Expo FileSystem `File` bytes; Expo57's global fetch does not accept the earlier plain React Native URI descriptor. The friendly picker name remains visible locally, while the uploaded metadata uses the cache file's basename. Same-account/path resource refresh retains the authorized subtree and labels cached information; this preserves picker selection and upload retry state when the app returns to the foreground. Changing account/path hides prior data immediately, and authorization/not-found responses clear it. Native regression verification is recorded separately from helper tests.
 
-1. Load [profile](../profile/spec.md) connection context after [authentication](../auth/spec.md).
-2. Collect report inputs and optional address candidates/GPS; confirm the selected candidate or retain an unresolved location for review.
-3. Submit through the validated, idempotent API; attach only confirmed successful uploads through an authorized relationship.
-4. Return reference/status/time, then load the owned detail/timeline and published incident data.
-5. Link to [guidance](../guidance/spec.md) for a contextual recommendation and [assistance](../assistance/spec.md) for a deliberate service request.
-6. Refetch current owned data after a [notification](../notifications/spec.md), clarification, or still-affected action.
+`aqours-api/src/routes/reports.ts`, `report-review.ts`, `attachments.ts` and `services/reports.ts` implement owned creation/messages, protected uploads, review and still-affected history. `services/geocode.ts` returns expiring signed candidates. Reports retain location snapshots and unknown-zone review. Report creation precedes optional photo upload; a failed photo retains the report reference and a separate retry. Allowed still JPEG/PNG/WebP images are decoded/reencoded, limited to 5 MiB and 25 million input pixels.
 
-- Use proposed `reports`, attachments, messages, connection/location snapshots, report status/link history, and participation assertions from [schema](../../../schema.md).
-- Attachment failure handling must define cleanup/retry behavior before storage implementation; incomplete files cannot masquerade as published photos.
-- Record customer/staff actor/time for follow-up and messages; staff linking/priority/status changes retain their own audit history.
-- Do not use mutable `updated_at` as a substitute for the metric start/end events in requirements.
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 
-### Research constraints
+### Verification and limits
 
-- [Geoapify's forward-geocoding API](https://apidocs.geoapify.com/docs/geocoding/forward-geocoding/) supplies candidates, coordinates, confidence, and bias/filter controls; customer confirmation and zone review are Aqours requirements.
-- [Native MapLibre Expo setup](https://maplibre.org/maplibre-react-native/docs/setup/expo/) requires a rebuilt native/development app; Expo Go cannot host this map integration.
-- Treat geocoding, foreground GPS, map rendering, and tile/style provision as separate responsibilities; private geocoding keys stay server-side.
+GPS snapshots retain measured accuracy in meters; alternate confirmation leaves supply-zone review independent. Legacy/unknown accuracy stays null. RN Android protected-image headers use the array-source branch; Expo57 uploads use File bytes and retain their frozen multipart retry intention.
 
-### Sequencing, future verification, and open choices
+Actual Android N6–7/N14/N16/N18–19/N31/N33 and NM1–17 cover receipt/history/messages, foreign denial, independent follow-up/deduplication, reviewed closure, denied-GPS/provider503 fallback, controlled GPS accuracy/confirmation and supplier-point equality, real native map404 fallback, picker/retained foreground state/protected decoding and committed-response report/photo retry uniqueness. Live signed Geoapify equality remains required in the [native ledger](../../../native-verification.md).
 
-- Establish seeded identity/connections, revocable auth, migrations/storage, public contracts, and an Android MapLibre development build before full feature integration.
-- Test API validation/ownership, duplicate operations, upload rejection/retry, candidate failures, null/range checks, and coordinate ordering.
-- Test Android saved/GPS/typed-address paths, denied permission, unavailable map/provider, interrupted submit/upload, messages, affected assertions, and follow-up.
-- Integrate with the supplier inbox/map to verify unlocated reports remain visible and linked publications reach the correct personal timeline.
-- Resolve upload limits/storage protocol, candidate-confirmation contract, message retry identifiers, native compatible versions, and exact endpoints during implementation.
-- This task adds no dependencies or application code; use [architecture](../../../architecture.md), [workflows/setup](../../../workspace.md), and [customer role](../../../domains/customers.md) as shared boundaries.
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

@@ -1,0 +1,83 @@
+# Aqours supplier web
+
+React and TypeScript supplier workspace built with Vite. MapLibre GL JS renders operational report points, zoom-dependent clusters, service zones, and published incident/advisory polygons. The browser uses the live Express API; no production screen substitutes mock data or a simulated successful save.
+
+## Local setup
+
+Use Node.js 22.13 or later. Run from the repository root after setting up the API and its PostgreSQL database:
+
+```sh
+npm --prefix aqours-contracts ci --cache .cache/npm
+npm --prefix aqours-contracts run build
+npm --prefix aqours-web ci --cache .cache/npm
+npm --prefix aqours-web run dev
+```
+
+The development server listens on port 5173 with a strict port check. The API default is `http://localhost:4000/api/v1`. Its configured web origin must exactly match the origin used by the browser; the documented local browser address is `http://localhost:5173`. Use the fictional supplier accounts from the repository demo runbook, after an explicit development seed. Starting the web application does not seed or reset records.
+
+Public build configuration is documented in [.env.example](.env.example). Supply these variables through the development/build process as needed:
+
+| Variable | Default / meaning |
+| --- | --- |
+| `VITE_API_URL` | `http://localhost:4000/api/v1`; must include the versioned API base |
+| `VITE_MAP_STYLE_URL` | `https://demotiles.maplibre.org/style.json`; public demonstration basemap, no API key required |
+| `VITE_MAP_ATTRIBUTION` | Optional additional attribution required by another style/tile provider |
+
+Map style/tile availability is independent of the API. A basemap failure displays an error while the report list remains available. The selected provider’s attribution is displayed in the map. Geoapify and database credentials belong to the API; never provide them through Vite variables.
+
+MapLibre GL JS 6 uses a separate ESM worker. `MapCanvas.tsx` imports it through Vite's `?worker&url` and calls `setWorkerUrl` before creating a map, following the [official Vite setup](https://maplibre.org/maplibre-gl-js/docs/#esm). The built worker is a same-origin asset; retain it when serving `dist/`. Allow the worker in any later Content Security Policy. No provider secret is embedded in this asset.
+
+## Implemented supplier workflows
+
+| Route | Connected behavior |
+| --- | --- |
+| `/#/overview` | Report cohort/category/status/date filters, incident and report counts, unique connections, mean first response/resolution with completed samples, pending counts, exclusions, metric definitions, Manila period/as-of labels, and drill-down links |
+| `/#/reports` | Paginated category/status/period/zone/owner/priority inbox, location review flags, and map navigation |
+| `/#/reports/:id` | Customer and connection context, independent issue-address snapshot, protected photo retrieval, acknowledgment/clarification, owner/priority/reason/status/reviewed closure, explicit issue-zone confirmation, suggested incident links and corrections, separate internal notes, and history |
+| `/#/map` | Viewport queries, category/status/date/zone filters, priority markers, expandable clusters, zone/published area layers, explicit result-cap and unlocated counts, and a paginated list with an unlocated-only view |
+| `/#/incidents` and `/:id` | Create/edit, owner/status, affected zones and area, unknown or explicit restoration estimate, affected-customer estimate and basis separate from report/connection totals, links/history/notes, and explicit customer publication preview |
+| `/#/advisories` and `/:id` | Read drafts/publications/revisions; admins create drafts, select approved guidance, preview and publish/revise, or explicitly lift with a reason. Three quality restriction kinds remain distinct; lifting is independent of incident resolution and end dates |
+| `/#/assistance` and `/:id` | Filtered paginated callback/inspection/water queue; type-specific details, owner acceptance, appointments and reasoned rescheduling, immediate-support reasons, progress, outcomes/next steps, notes/history, session/allocation details, and dedicated collection confirmation |
+| `/#/distribution` | All-page exact pickup/request-reference lookup, paginated sites and sessions, create/edit, total/reserved/collected/remaining liter breakdown, cancellation preview with pending-request effects, and navigation to the authorized assistance collection action |
+| `/#/settings` | Admin account role/activation/password, service connection associations, zone boundaries, immutable approved-guidance/rule versions, and audit. Staff sees read-only guidance/rules and operational audit |
+
+The API enforces each role, ownership, transition, publication, and inventory constraint. Available controls do not replace backend permission checks. Draft/internal data never enters a web-authored customer publication automatically.
+
+## Session and save behavior
+
+The web client restores `/auth/session` before protected pages. Authentication uses an HttpOnly server cookie with `credentials: include` and the in-memory CSRF token returned by the API. No password, cookie, bearer token, or CSRF value is written to browser storage. Logout clears protected React state only after the API confirms it. A 401 immediately removes protected content; focused/visible sessions are rechecked every minute and on window focus/page restoration.
+
+Domain saves use a random `Idempotency-Key` and a frozen request body. Ambiguous transport, unreadable, and server failures retain the intention and expose **Retry original action**. An in-memory unresolved-intention registry also preserves the same key if the same payload is resubmitted after navigating away and back. Successful or definitive client-error responses end that intention. Versioned edits send the DTO’s `expectedVersion`; a conflict requests a refresh and human review. The application never silently overwrites or assumes an ambiguous save failed.
+
+Reloading or closing the browser clears in-memory intentions, including password-bearing account edits. After an ambiguous save followed by a full reload, inspect current record/history before deciding on a new action. Operation payloads are intentionally not persisted to browser storage.
+
+Resource failures display actionable retry feedback. Failed refreshes retain a stale-results label and the last received as-of time when available. A changed filter/record clears superseded results. Empty records, zero values, loading, unavailability, full/cancelled pickup sessions, and fictional demonstration records have separate presentations. All event instants display in `Asia/Manila`; appointment fields are interpreted in Manila regardless of browser timezone.
+
+## Verification
+
+Run from the repository root:
+
+```sh
+npm --prefix aqours-web run typecheck
+npm --prefix aqours-web run lint
+npm --prefix aqours-web test
+npm --prefix aqours-web run build
+npm --prefix aqours-web run preview
+```
+
+Preview defaults to port4173, so its origin must match API `WEB_ORIGIN`. To verify the production build with the existing development origin, stop the dev server and run `npm --prefix aqours-web run preview -- --port 5173 --host localhost`. Root `npm run test:browser` checks connected writes; `npm run test:operations` checks exact inbox/report/photo/incident forms; `npm run test:recovery` checks auth failures/throttling, stale/empty dashboards, map recovery/filters and immutable settings; `npm run test:maintenance` checks inspections, settings conflicts/retries, site/session maintenance and link corrections. `npm run test:map` verifies the real public demo style, rendered report selection, cluster expansion, viewport zoom and unchanged persisted reports. Allow at least a minute between login-heavy suites. Map checks require public demo resources to be reachable and never treat their failure as success.
+
+The Node test runner loads TypeScript through `tsx` without its CLI IPC server or disk cache. The `--experimental-test-isolation=none` setting is available in Node22.13 and retains individual visible results under the verified Node26 environment. Root browser scripts explicitly enable TypeScript stripping for Node22 compatibility. Tests cover cookie/CSRF transport, frozen idempotent retries, definitive conflicts, session revocation, unreadable responses, filter encoding, exact decimal strings, null coordinates, Manila conversion, request transition boundaries, published map geometry, full pagination, and rejection of partial successful lookup results.
+
+The production build typechecks first. MapLibre is a lazy JavaScript chunk and currently exceeds Vite’s advisory 500 KB chunk warning; map loading does not block other sections. No native mobile map or Android verification is implied by this web build.
+
+## Source layout and limits
+
+- `src/api/`: cookie/CSRF HTTP transport, shared errors, filter encoding, and mutation intentions.
+- `src/hooks/`: session lifecycle, hash routes, cancellable resource-state sequencing, and complete paginated reference reads.
+- `src/components/`: form fields and save/retry behavior, focused workflow controls, protected attachments, histories, and pagination.
+- `src/pages/`: distinct operational screens and settings sections.
+- `src/map/`: MapLibre GL JS lifecycle, clusters/layers, and published geometry projections.
+- `tests/`: client behavior tests using Node’s built-in runner.
+
+Handwritten TypeScript/TSX files remain below the 250-line limit. Large inventories are paginated for display; complete reference selectors, map fallback lists, and pickup-reference lookup currently aggregate pages in memory. This is suited to the demonstration data size; large production deployments should add server-side lookup and reference-search endpoints. Optional polygon entry is validated GeoJSON text rather than a drawing editor. Map clusters are visual aids and never establish an incident association, service-zone confirmation, or water-safety conclusion.

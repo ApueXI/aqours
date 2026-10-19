@@ -1,10 +1,10 @@
 # Supplier admin domain
 
-Status: **target capabilities, unimplemented** as of 18 October 2026. The supplier web and API directories are empty. Product source: brief v0.4 and [requirements](../requirements.md).
+Status: **implemented first-release capabilities**, updated 19 October 2026; acceptance evidence and remaining gaps are in [verification](../verification.md) and [traceability](../traceability.md). Product source: brief v0.4 and [requirements](../requirements.md).
 
-Admin represents supplier administration in the proposed three-role model: `customer`, `staff`, `admin`. The brief requires backend role boundaries but leaves fine-grained staff/admin grants open. The administrative grants below are **proposed defaults to confirm before implementation**. A feature directory named `admin` also contains shared supplier workflows; it does not make staff an admin.
+Admin represents supplier administration in the adopted three-role model: `customer`, `staff`, `admin`. The project owner adopted the administrative grants below; Express enforces role and record access. A feature directory named `admin` also contains shared supplier workflows; it does not make staff an admin.
 
-| Feature | Admin capability under the proposed permission split | Detailed specification |
+| Feature | Admin capability under the adopted permission split | Detailed specification |
 | --- | --- | --- |
 | Authentication | Sign in/out with a revocable supplier session and enforce current administrative permissions on the API | [Authentication](../features/admin/auth/spec.md) |
 | Overview | View active incidents, unresolved reports, category counts and defined response/resolution metrics | [Dashboard](../features/admin/dashboard/spec.md) |
@@ -20,7 +20,7 @@ Admin also has the operational capabilities summarized for [supplier staff](staf
 
 ## Administrative workflow summary
 
-1. Prepare or maintain fictional demo accounts, connections and reviewed service zones; the development seed/login list is a future deliverable.
+1. Prepare or maintain fictional demo accounts, connections and reviewed service zones; the explicit development seed and [demo instructions](../demo.md) supply the fictional dataset.
 2. Maintain approved guidance sources and rule versions. Log edits with actor/time and preserve the versions referenced by recommendations.
 3. Authorize and publish official notices to explicit zones/connections. Keep boil-water, do-not-drink and do-not-use content distinct and clearly label demo notices.
 4. Publish a revision or lift a quality advisory only through an explicit authorized action. Incident resolution and scheduled end times cannot lift a quality restriction.
@@ -31,8 +31,8 @@ Admin also has the operational capabilities summarized for [supplier staff](staf
 
 - Enforce role and record access in Express. Do not trust a browser role flag, hidden button, account ID or directory name as authorization.
 - Do not create additional inspector, dispatcher, public-health or superadmin roles from this document. Approved public-health guidance may be recorded as a source without a new application role.
-- Staff may publish operational incident updates under the proposal; official advisory publication/lifting and administrative settings are admin capabilities pending confirmation.
+- Staff may publish operational incident updates under the adopted policy; official advisory publication/lifting and administrative settings are enforced admin capabilities.
 - Maintain independent report, incident, assistance and advisory lifecycles; never infer drinkability from photos, map clustering or outage recovery.
 - No commerce order/payment administration, home delivery, multiple suppliers or fleet management is included. Public registration and its approval process are not specified.
 
-See [workspace workflows](../workspace.md), [architecture](../architecture.md), [schema](../schema.md) and the [documentation index](../README.md). Primary requirement groups: `REQ-ACCESS-*`, `REQ-UI-S*`, `REQ-NOTICE-*`, `REQ-METRIC-*`, `REQ-OPS-*`, `REQ-DEMO-*` and rule maintenance in proposed `REQ-DECISION-*`.
+See [workspace workflows](../workspace.md), [architecture](../architecture.md), [schema](../schema.md) and the [documentation index](../README.md). Primary requirement groups: `REQ-ACCESS-*`, `REQ-UI-S*`, `REQ-NOTICE-*`, `REQ-METRIC-*`, `REQ-OPS-*`, `REQ-DEMO-*` and rule maintenance in adopted `REQ-DECISION-*`.

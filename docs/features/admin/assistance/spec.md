@@ -1,7 +1,6 @@
 # Supplier assistance queue
 
-- Status: **unimplemented target**, documented 2026-10-18 from brief v0.4.
-- Baseline: no assistance records, staff queue, scheduling, notifications, or fulfillment services exist.
+- Status: **implemented first-release behavior; acceptance evidence remains qualified**, updated 2026-10-19.
 - References: [requirements](../../../requirements.md), [architecture](../../../architecture.md), [schema](../../../schema.md), [workflows/workspace](../../../workspace.md), [supplier domain](../../../domains/admin.md).
 - Requirement coverage: REQ-UI-S06, REQ-ASSIST-01–06, REQ-CALLBACK-01, REQ-INSPECTION-01, REQ-WATER-01–07, REQ-ACCESS-03–04 and REQ-OPS-04–05.
 
@@ -12,7 +11,7 @@
 - Let authorized staff/admin fulfill customer requests for callback/support, site inspection, and water pickup/distribution assistance.
 - Use one request workflow and shared queue while retaining type-specific details and outcomes.
 - Give each customer an accurate owned timeline, agreed appointment/pickup information, and permitted follow-up/cancellation actions.
-- Staff/admin operational access is proposed; exact permissions must be confirmed before backend implementation.
+- Staff/admin operational access follows the adopted role matrix enforced by the backend.
 - [Distribution](../distribution/spec.md) owns pickup sites/session inventory and stock protocol; acceptance here invokes that same transactional service.
 - Separate inspector apps, home delivery, fleet tracking, commerce orders, and automatic approval are outside scope.
 
@@ -29,7 +28,7 @@
 - Verify that the linked report belongs to the request's customer, including when staff accesses related records.
 - Assign an authorized staff owner at acceptance and retain ownership history as it changes.
 - Prevent duplicate active requests of the same type for the same customer/report.
-- Proposed active states: `requested`, `accepted`, `scheduled`, `in_progress`; terminal history remains retained.
+- Active states: `requested`, `accepted`, `scheduled`, `in_progress`; terminal history remains retained.
 - Keep customer-visible updates separate from supplier-only notes/contact discussion.
 - Restrict question/contact/access instructions to the owning customer and authorized supplier operations.
 
@@ -37,7 +36,7 @@
 
 - Follow `requested -> accepted -> scheduled -> in_progress -> completed`.
 - Support `unavailable` and `cancelled` alternate outcomes with a recorded reason and customer notification.
-- Finalize the detailed transition/permission matrix before implementation; do not allow arbitrary client-selected transitions.
+- Enforce the implemented transition/permission matrix; do not allow arbitrary client-selected transitions.
 - A submitted request is neither an accepted service nor a guaranteed appointment/water allocation.
 - Immediate support may move from accepted to in progress without scheduling only with a recorded reason.
 - Preserve requested windows separately from the agreed appointment; a preference is not a confirmed booking.
@@ -104,29 +103,18 @@
 
 ## HOW
 
-### Proposed components and interfaces
+### Implemented behavior and modules
 
-- Proposed React responsibilities: filtered queue, request detail, type-specific information, owner/appointment controls, separate internal notes, and customer-update preview in `aqours-web/`.
-- Proposed Express responsibilities: assistance workflow service, type-specific validation, appointment history, and shared notification/stock services in `aqours-api/`.
-- Proposed data: assistance requests/updates, one-to-one type details, transition/appointment history, reports/customer ownership, internal notes, and audit events.
-- Proposed water dependencies: distribution sessions and unique request-linked allocations; no separate order model.
-- Proposed `GET /api/v1/staff/assistance-requests` and `GET /api/v1/staff/assistance-requests/:id`: paginated authorized queue/detail.
-- Proposed acceptance interface: request ID, eligible owner/session context, expected version, and operation key; invokes stock allocation for water support.
-- Proposed scheduling/rescheduling interface: agreed times, reason where required, expected version, and operation key.
-- Proposed progress/completion/unavailability interfaces: validated transition, outcome/reason, customer-visible update, and operation key.
-- Proposed customer cancellation interface shares the workflow service and enforces ownership plus start-boundary checks.
-- These interfaces and module responsibilities are proposals; no route files or completed contracts exist.
+`aqours-web/src/pages/Assistance.tsx`, `AssistanceDetail.tsx` and `components/AssistanceActions.tsx` implement filtered queue/detail, ownership, scheduling, progress, reasons, outcomes and notes for all three services.
 
-### Implementation and verification
+`aqours-api/src/routes/assistance.ts`, `assistance-workflow.ts`, `collection.ts` and `services/stock.ts` enforce the transition matrix, staff owners and immutable event/appointment history. Scheduling needs an agreed instant; rescheduling/immediate support/unavailability require reasons. Callback/inspection completion requires outcome and next steps; water completes only via collection. Cancellation is disallowed after work begins; session cancellation releases uncollected stock and supplies follow-up.
 
-- Guard row ownership/type/active-request invariants with foreign-key/integrity design and a partial unique active-request index as proposed in schema.
-- Use expected-version checks/locking for appointment and state conflicts; serialize water operations through the distribution lock protocol.
-- Validate contact/time/site fields without logging their private contents; render text safely and expose only deliberate customer updates.
-- Test every service lifecycle, missed callback, reschedule, unavailable outcome, immediate-support reason, and cancellation boundary.
-- Test direct unauthorized reads/mutations, duplicate active requests, retried actions, concurrent staff edits, and notification rollback/deduplication.
-- Run real transaction tests for water acceptance/cancellation/collection races; client-only tests cannot verify inventory correctness.
-- Exercise customer timelines on Android and staff queue on web when implementation is requested.
-- Observe failed/conflicting transitions and notification failures; audit actor/time/target/reason without private contact content.
-- Dependencies: [authentication](../auth/spec.md), [reports](../report/spec.md), [distribution](../distribution/spec.md), and contextual recommendation interfaces.
-- Open choices: detailed exception transitions, start-boundary event representation, time-window defaults, and notification transaction/outbox implementation.
-- No fulfillment, outbound contact, or acceptance test is executed by creating this specification.
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
+
+### Verification and limits
+
+Public timeline events expose only validated old/new appointment instants as appointmentChange; both clients show agreed Manila times and the reason. Private arbitrary audit metadata remains excluded.
+
+Assistance/admin/stock HTTP tests and actual supplier browser actions cover fulfillment, exact old/new appointments, ownership and races. N11–13/N15/N21/N30/N32/N35 independently verify native submissions, supplier fulfillment/outcomes, old/new appointments/reasons, pickup collection/cancellation and unavailable alternatives. See the [native ledger](../../../native-verification.md) for bounded evidence; no exhaustive failure-permutation claim is made.
+
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

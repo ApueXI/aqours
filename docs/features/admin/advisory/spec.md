@@ -1,7 +1,6 @@
 # Supplier advisories and official guidance
 
-- Status: **unimplemented target**, documented 2026-10-18 from brief v0.4.
-- Baseline: no advisory storage, publication UI, targeting, or recommendation reevaluation exists.
+- Status: **implemented first-release behavior; acceptance evidence remains qualified**, updated 2026-10-19.
 - References: [requirements](../../../requirements.md), [architecture](../../../architecture.md), [schema](../../../schema.md), [workflows/workspace](../../../workspace.md), [supplier domain](../../../domains/admin.md).
 - Requirement coverage: REQ-UI-S05, REQ-NOTICE-01–04, REQ-INCIDENT-07 and 09, REQ-DECISION-02 and 09, REQ-ACCESS-03–04 and REQ-OPS-04–05.
 
@@ -12,7 +11,7 @@
 - Maintain scheduled interruptions and approved supplier guidance for explicitly targeted service connections/zones.
 - Publish, revise, and explicitly lift official advisories with traceable content, authority/source, and times.
 - Keep safety restrictions independent of outage progress and assistance fulfillment.
-- Proposed permission default: admins maintain/publish/lift official advisories; staff can read/use approved content and separately publish incident progress.
+- Adopted permission default: admins maintain/publish/lift official advisories; staff can read/use approved content and separately publish incident progress.
 - Confirm that split before authorization implementation; this supplier directory does not grant staff admin capabilities.
 - Generating water-safety diagnoses or new public-health instructions from report photos/text is outside scope.
 - No extra public-health account role, external approval application, or mandatory multi-person approval queue is introduced.
@@ -36,7 +35,7 @@
 ### Authorization, targeting, and publication
 
 - Enforce the confirmed publishing/lifting permission at the API, including direct requests.
-- Under the proposed split, reject staff/customer publication and lifting attempts without modifying data or notifying anyone.
+- Under the adopted split, reject staff/customer publication and lifting attempts without modifying data or notifying anyone.
 - Target notices through explicit reviewed service-zone/connection associations rather than marker clusters or inferred hydraulic boundaries.
 - Notify applicable service connections independently of whether their customers filed a report.
 - Deduplicate per recipient/source event when customers own multiple matched connections or audience rules overlap.
@@ -77,34 +76,16 @@
 
 ## HOW
 
-### Proposed components and interfaces
+### Implemented behavior and modules
 
-- Proposed React responsibilities: notice list/detail, type/target editor, approved-guidance selector, customer preview, publication/lifting controls, and revision history in `aqours-web/`.
-- Proposed Express responsibilities: administrative permission checks, notice validation/lifecycle, explicit audience matching, notification transactions, and recommendation invalidation in `aqours-api/`.
-- Proposed data: advisories, approved-guidance references, advisory revisions/targets/lifecycle events, service connections/zones, notifications/outbox, recommendation history, and audit events.
-- Proposed `GET /api/v1/staff/advisories`: authorized list/detail including operational publication state.
-- Proposed advisory create/edit interface: validated draft fields, target IDs, approved source reference, and expected revision.
-- Proposed `POST /api/v1/staff/advisories/:id/publish`: explicit authorized publication using an operation key.
-- Proposed `POST /api/v1/staff/advisories/:id/lift`: explicit authorized lifting with reason/expected revision/operation key.
-- Proposed customer published-advisory interface: current applicable projection plus authorized history links, never a raw staff record.
-- Endpoints/module boundaries are proposals; exact contracts and filenames are not implemented.
+`aqours-web/src/pages/Advisories.tsx` and `components/AdvisoryEditor.tsx` implement draft/target/source editing, explicit publish/lift controls and revision history; administrative controls depend on role.
 
-### Consistency and data flow
+`aqours-api/src/routes/advisories.ts` and `services/advisories.ts` enforce admin publication/lifting, approved content and explicit zone/connection audiences. Revisions and recipient-deduplicated notifications commit atomically. Quality restrictions stay published until explicit authorized lifting, independently of outage resolution and end times. Guidance freshness uses source signatures; approved-content settings alone do not publish or lift a notice.
 
-- Validate enum values, required source/text, reviewed target existence, sensible interruption intervals, and full GeoJSON before committing.
-- Match connection audiences from explicit confirmed associations; retain enough event/audience identity for reliable deduplicated fan-out.
-- Detect stale edits/lifts against the expected revision and return a conflict instead of overwriting another authorized action.
-- Persist publication/lifting, revision history, audit, and notification work in the same reliable commit boundary.
-- Revalidate current applicability/source versions when serving contextual assistance; do not trust a cached historical card.
-- Follow [schema](../../../schema.md) for immutable references and [settings](../settings/spec.md) for approved guidance/rule administration.
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 
-### Verification and operation
+### Verification and limits
 
-- Test all three restriction types, scheduled notices, explicit targeting, no-report recipients, overlap dedupe, and private-field exclusion.
-- Test outage/assistance/end-time independence, revision conflicts, failed transactions, and repeat-safe publication/lifting.
-- Exercise current/home/assistance views after publication and lifting on Android and supplier web when implemented.
-- Audit publishing/lifting and observe failed fan-out/reevaluation work without logging private customer data or rendering draft content as public.
-- Dependencies: [authentication](../auth/spec.md), [settings](../settings/spec.md), [incidents](../incident/spec.md), and customer contextual guidance.
-- Open choices: exact authorized publisher policy, locally approved instruction content/sources, revision representation, and targeting-change notification policy.
-- External terminology reference: [CDC advisory overview](https://www.cdc.gov/water-emergency/about/drinking-water-advisories-an-overview.html); it does not replace locally approved content.
-- No official notice or recommendation is published by creating this specification.
+Advisory/guidance HTTP tests establish independent restrictions, exact audiences, revision/lift deduplication and rollback. Actual browser publish/revise/lift and native N17/N27/N36–40 establish past-end persistence, current removal after explicit lifting, historical detail, scheduled windows/owned context and report-free reception. Supplier approval of real public-health content remains an operational prerequisite; all test notices are fictional.
+
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

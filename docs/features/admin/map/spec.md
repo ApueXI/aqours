@@ -1,7 +1,6 @@
 # Supplier report map
 
-- Status: **unimplemented target**, documented 2026-10-18 from brief v0.4.
-- Baseline: no supplier UI, map integration, coordinate persistence, or map query endpoints exist.
+- Status: **implemented first-release behavior; acceptance evidence remains qualified**, updated 2026-10-19.
 - References: [requirements](../../../requirements.md), [architecture](../../../architecture.md), [schema](../../../schema.md), [workflows/workspace](../../../workspace.md), [supplier domain](../../../domains/admin.md).
 - Requirement coverage: REQ-UI-S03, REQ-REPORT-04–05, REQ-INCIDENT-02–04, REQ-ACCESS-03–04 and REQ-OPS-02, 06–07.
 
@@ -13,7 +12,7 @@
 - Combine filtered report markers/display clusters, explicit service zones, and published affected-area polygons.
 - Link selected records to the [report inbox](../report/spec.md) and [incident detail](../incident/spec.md).
 - Support triage and navigation without claiming that visual proximity proves a shared outage or service boundary.
-- Staff/admin map access is an operational permission under the proposed split; customers receive no other households' raw locations.
+- Staff/admin map access is an operational permission under the adopted split; customers receive no other households' raw locations.
 - Hydraulic modeling, automatic incident detection, navigation/routing, and a public household-report map are outside scope.
 
 ---
@@ -36,7 +35,7 @@
 
 ### Queries and resilience
 
-- Filter authorized data by numeric viewport bounds plus category/status/time; explicit zone filtering is a proposed addition.
+- Filter authorized data by numeric viewport bounds plus category/status/time; explicit zone filtering is implemented.
 - Validate finite longitude/latitude bounds, ranges, time filters, enum values, and result/page limits server-side.
 - Query ordinary numeric PostgreSQL columns; PostGIS is not required.
 - Make truncation/pagination visible; do not present a capped result as every report in the area.
@@ -64,25 +63,16 @@
 
 ## HOW
 
-### Proposed components and interfaces
+### Implemented behavior and modules
 
-- Proposed React responsibilities: MapLibre view, query/filter hook, legend, report selection, unlocated list, and basemap-error fallback in `aqours-web/`.
-- Proposed Express responsibilities: staff/admin permission guard, validated viewport query, numeric repository filters, and safe map DTOs in `aqours-api/`.
-- Proposed data: report coordinate pairs/provenance, confirmed zone links, optional GeoJSON zone boundaries, and published incident/advisory areas.
-- Proposed `GET /api/v1/staff/map/reports`: numeric bounds and filters in; point features, stable report IDs, pagination/cap information, and as-of time out.
-- Proposed authorized zone/published-area read interfaces reuse the same records as [settings](../settings/spec.md), [incidents](../incident/spec.md), and [advisories](../advisory/spec.md).
-- Do not fetch geocoding for every map refresh; render persisted coordinates confirmed during location capture/review.
-- Convert latitude/longitude columns to point arrays in one API mapping function and verify the ordering at both clients.
-- Debounce/coalesce viewport reads as a proposed client behavior; discard responses for superseded filter/view queries.
-- Return structured validation/authorization/service errors and retain an explicit as-of label for any stale displayed data.
+`aqours-web/src/pages/MapPage.tsx`, `map/MapCanvas.tsx` and `map/layers.ts` implement MapLibre points/clusters, filters, zone/published shapes and an accessible report list/failure fallback.
 
-### Verification and operation
+`aqours-api/src/routes/analytics.ts` implements staff-only numeric viewport queries using generated numeric coordinate columns and parameterized filters. Bounds must be ordered and cannot cross the antimeridian. The response has a result cap/truncation count and unlocated count; unlocated records remain reviewable in the inbox. GeoJSON points use longitude then latitude. Layers and clusters never establish network topology or water safety.
 
-- Test numeric boundary inclusion, coordinate range/order, null pairs, filters, authorization, and result limits at the API.
-- Exercise map/list behavior with geocoder failures, tile failures, unknown zones, clusters at several zoom levels, and a severe isolated report.
-- Verify customer DTOs exclude household markers/contact details and unpublished content.
-- Observe query latency/error/cap events and basemap failures without logging raw household coordinates unnecessarily.
-- Dependencies: [authentication](../auth/spec.md), [reports](../report/spec.md), [incidents](../incident/spec.md), and explicit zone data from [settings](../settings/spec.md).
-- Open choices: tile/style provider, default demo geography/viewport, result limits, and handling of any future antimeridian-spanning viewport.
-- Technical reference: [MapLibre cluster example](https://maplibre.org/maplibre-gl-js/docs/examples/create-and-style-clusters/); clustering is a rendering capability, not outage evidence.
-- No map implementation or device/browser verification is claimed by this specification.
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
+
+### Verification and limits
+
+Five actual production MapLibre checks cover live demonstration style, cluster expansion/zoom without writes and authorized point selection; recovery checks cover combined filters/unlocated/API failures. Native NM14 confirms the same persisted GPS point/5m accuracy on preview and supplier canvas; NM16 verifies actual native map404 fallback. Live signed geocoded-point equality remains blocked on private Geoapify configuration.
+
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

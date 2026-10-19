@@ -1,56 +1,36 @@
-# Goal
+# Aqours first-release implementation goal
 
-## Original request and sources
+Original request: implement the complete documented first release (2026-10-18), not scaffolding or mock screens. Read PROGRESS first, all instructions, docs index, four references, three role summaries, sixteen feature specs; this discovery is complete. Original sources remain [requirements](../docs/requirements.md), [feature index](../docs/README.md), [architecture](../docs/architecture.md), [schema](../docs/schema.md), [workspace](../docs/workspace.md). Prior completed documentation state is preserved in [archive](archive/docs-goal-2026-10-18/GOAL.md).
 
-On 2026-10-18, the user invoked `$loop-engineer` to fill the four root reference documents using the supplied **Water Supply Reporting and Customer Assistance — Project Brief v0.4 (18 October 2026)**. The user explicitly limited this task to documentation first.
+## Scope and constraints
 
-Required documents: [architecture](../docs/architecture.md), [requirements](../docs/requirements.md), [schema](../docs/schema.md), and [workspace](../docs/workspace.md). The brief in the conversation is the product source; repository files are the source for implemented behavior. Official technical references are recorded beside the claims they support in the resulting documents.
+Express TypeScript/PostgreSQL + Expo 57 Android + React/MapLibre supplier app; every required documented first-release workflow. User adopts proposed one-supplier/accounts/roles/transitions/metrics/rules defaults and explicitly authorizes necessary local dependencies. No AI, public registration, paid provisioning, deployment, global installs, external edits or secret collection. Academic acceptance is externally unverified. Missing provider credentials must not block unrelated work. Preserve existing Expo setup and unrelated work; branch feature/aqours-first-release; commit verified features. TS physical line limits API 200/web 250/mobile 300. All generated files/caches stay project-local; .env files/secret-bearing values must not be read or altered.
 
-On 2026-10-18 the user expanded the documentation scope: fill role summaries in `docs/domains/` and detailed `docs/features/<role>/<feature>/spec.md` documents using [feature-spec](https://github.com/ZieksQ/feature-spec). The already installed skill at `/home/cred/.agents/skills/feature-spec/SKILL.md` is used during execution; it is not installed or modified in this repository. The referenced remote repository was unavailable to the web fetcher; the available local skill supplies the research-first WHAT/MUST/HOW format. No application implementation was requested.
-
-## Scope and deliverables
-
-- Target project: the repository's root documentation set. Inspect `aqours-api/`, `aqours-web/`, and `aqours-app/` for evidence; none is an implementation or editing target in this task. Shared execution state lives here in root `.loop/`.
-- Explain structure, technology, component boundaries, data flows, roles, permissions, shared rules, deferred scope, database status, proposed entities and constraints, and step-by-step customer/supplier workflows.
-- `workspace.md` must cover registration/provisioning, authentication, approvals, assistance and pickup fulfillment, plus actual local setup conventions required by root guidance.
-- Retain the existing `aqours-*` directories. Distinguish confirmed product choices, proposed implementation defaults, implemented facts, and unresolved academic/planning decisions.
-- Fill the existing `docs/domains/admin.md` and `docs/domains/customers.md`, add a staff summary, and provide a documentation index with links to the four references, role summaries and feature specs.
-- Use `docs/features/admin/` for supplier-workspace features, recording actual staff/admin permissions per feature; use `docs/features/customer/` for customer features. Administrative directory naming does not introduce a role or grant staff admin capabilities.
-- Feature specs cover customer auth, dashboard, reports, contextual guidance, assistance, notifications and profile; supplier auth, dashboard, report inbox, map, incidents, advisories, assistance, distribution and settings. Use the feature-spec skill's WHAT/MUST/HOW structure and testable acceptance criteria, with source/dependency links.
-- Update `PROGRESS.md`, verify documentation, and make a scoped commit on `feature/project-docs`.
-- Excluded: application code, dependency installation, configuration/Compose/migration/seed creation, infrastructure, real credentials/accounts, home delivery, publication, external messages and optional continuation runner.
-
-## Constraints and assumptions
-
-- Follow root [AGENTS.md](../AGENTS.md) and preserve [mobile guidance](../aqours-app/AGENTS.md). No root/ancestor README or additional API/web guidance exists at discovery.
-- Use root documentation-only verification: content/diff review and checks of paths, local links, code/configuration evidence, references, and workflow consistency. Application checks are not required because mobile/application files remain untouched.
-- Baseline `887b285` on `feature/loop-engineer` had a clean working tree; the four requested documents and two domain documents were empty.
-- The mobile starter declares Expo `~57.0.30`, React Native `0.86.3`, React `19.2.3`, and TypeScript `~6.0.3`; API/web directories are empty. There is no implemented database, auth, domain API, Compose configuration, migration, seed, or native MapLibre integration.
-- Interpret order/delivery terminology through the brief's assistance-request and pickup/distribution lifecycle. There is no commerce order or home-delivery feature.
-- Role capabilities beyond the brief and precise persistence designs are proposed defaults, not newly approved requirements or implemented controls. Academic acceptance of rules-based assistance and exact deadline remain open.
-- Only root `.loop/`, documentation under `docs/`, and `PROGRESS.md` may be edited. No dependency or environment changes.
+Shared contracts: [API](../docs/api.md), [DTOs](../aqours-contracts/src/index.ts). Independent package/lockfile per project plus local file dependency for public contracts; avoids changing existing Expo workspace resolution. Direct transactional notification insertion, UUIDs, SQL migrations and pg data access, cookie+CSRF web and opaque bearer mobile sessions, image-only uploads, exact 0.01 liter precision, on-demand source-signature freshness. No mock success in production paths.
 
 ## Acceptance criteria
 
 | ID | Observable requirement | Verification method |
 | --- | --- | --- |
-| AC-001 | Architecture describes the verified repository, confirmed target stack, proposed boundaries/data flows, security, location, persistence and notification constraints, without claiming they are built. | Compare `docs/architecture.md` to inspected code/configuration and the supplied brief; review technical claims against official references. |
-| AC-002 | Requirements cover each role, required screens/workflows, common rules, decision support, operational constraints, demo acceptance scenarios, deferred capabilities and open decisions. | Manual coverage review against every WHAT/MUST/HOW topic in brief v0.4; verify proposed permission defaults are labeled. |
-| AC-003 | Schema states that no database is implemented and separately documents proposed first-release entities, relationships, integrity/concurrency requirements and genuinely deferred structures. | Inspect API/web/root inventory for migrations/configuration; cross-check proposed schema against requirements and workflows without inventing existing tables or commands. |
-| AC-004 | Workspace explains step-by-step role workflows, provisioning/login/logout, staff acceptance/scheduling, all three assistance services, pickup stock/cancellation/collection, recovery, and current versus future setup. | Trace each lifecycle against brief and other docs; compare actual commands, versions and paths to mobile package/configuration and missing infrastructure. |
-| AC-005 | Documents are navigable and consistent; changes remain documentation-only and preserve unrelated work. | Check relative links/anchors, Markdown formatting, file scope and `git diff --check`; inspect final integrated diff and working tree. |
-| AC-006 | Progress and loop state accurately record verification and limitations, workers have stopped, and a feature-branch commit succeeds. | Review `PROGRESS.md` and `.loop/`, count progress lines, inspect worker status and successful scoped `git commit` plus final clean `git status`. |
-| AC-007 | Domain summaries explain customer, staff and admin capabilities and link each to its detailed feature specs without broadening permissions. | Trace every required screen/capability to a role summary and feature spec; compare the proposed permission split with requirements. |
-| AC-008 | Detailed feature specs exist at the requested role/feature/spec.md paths, follow feature-spec WHAT/MUST/HOW, and include specific acceptance, failure, authorization, data-flow and verification requirements. | Inspect every spec against the installed feature-spec skill, brief and reference docs; check structure, size, links, requirement references and role/feature coverage. |
+| AC-001 | Repository/contracts: Shared DTOs, adopted defaults, configuration and isolated dependencies | Build contracts; compare clients and API; configuration inventory |
+| AC-002 | Persistence: PostgreSQL migrations, FK/check/unique constraints, seed and volume/backup restore | Apply twice; exercise constraints; restart/recreate volume; restore backup |
+| AC-003 | Identity/security: Hashed passwords, revocable sessions, browser CSRF/origin and secure Android storage | API authentication/role/expiry/revocation tests; Android restoration/logout |
+| AC-004 | Ownership: Customer record/file/message/notification/guidance/assistance access is owner-scoped | Cross-account HTTP ID tampering and response projection checks |
+| AC-005 | Reports/locations: All categories, clarification, images, address/GPS/geocoding with honest fallbacks | API behavior + web/Android paths, provider mock tests, live check pending credentials |
+| AC-006 | Incidents: Confirmed links, histories, published-only snapshots, mark/still affected | Link/version/retry/independence integration tests and UI walkthrough |
+| AC-007 | Advisories: Independent quality notices, explicit admin revision/lift, zone targets | Publish/rollback/deduplication/lift/staff-denial tests; client visibility |
+| AC-008 | Guidance: API questionnaire/rules, explanations, alternatives, fresh source versions | Rule table + changed-source/history tests; no fulfillment side effects |
+| AC-009 | Assistance: All three services, scheduling/rescheduling/assignment/outcomes/follow-up | Lifecycle/version/ownership tests; connected client walkthrough |
+| AC-010 | Stock: Exact liters, transactional reservation/collection/release/cancellation | Real PostgreSQL concurrent approve/cancel/collect/stock edit + rollback tests |
+| AC-011 | Notifications/profile: Persisted notifications, recipient dedupe, foreground refresh and profiles | Read/link/targeting/privacy API tests; account switch and polling UI |
+| AC-012 | Supplier UI: Connected dashboard/inbox/map/incidents/advisories/queue/stock/settings | Type/lint/build/browser behavioral and rendered review |
+| AC-013 | Android UI/native: Connected Expo Android screens, SecureStore, GPS/photos and native MapLibre APK | Type/lint/export; native Gradle build + emulator/device workflows when available |
+| AC-014 | Administration: Accounts/connections/zones/guidance/rules with audit/version/session controls | API admin denial/conflict/change tests; connected forms |
+| AC-015 | Resilience: Idempotency, conflicts, transaction rollback, errors and no false integration success | Concurrent same-key/payload mismatch/network/provider/rollback tests |
+| AC-016 | Configuration/docs: Every consumed env documented, examples only, runnable setup/API/demo/native docs | Environment/source inventory; reproduce commands and links; secret scan |
+| AC-017 | Requirement coverage: All 84 REQ IDs, 126 feature criteria and DEMO-001..010 traced to evidence | Traceability matrix, original requirements audit, explicit blocked required checks |
+| AC-018 | Release discipline: Feature commits, accurate progress, stopped workers and integrated final review | Git commits/diff/status, line caps, final tests after integration |
 
-## Documentation and discrepancies
+## Coordinated projects and evidence
 
-1. Root guidance describes the intended stack, while code contains only an Expo starter. Resolution: label current state and future target separately in all docs; proposed schema is not implemented schema.
-2. The brief proposes `apps/*` and `packages/contracts`; the repository uses `aqours-*`. Resolution: keep existing paths and label shared contracts/workspace tooling as proposed without restructuring.
-3. Root guidance calls `workspace.md` a setup document; the latest request calls it a role workflow document. Resolution: cover workflows first and append verified local setup and future operational prerequisites.
-4. The latest request mentions orders/delivery; the detailed brief explicitly excludes home delivery and commerce. Resolution: describe assistance requests and supplier-managed pickup; state no order/payment/delivery tables exist or are in first-release scope.
-5. Starter README suggests root `app/` and cross-platform support; actual routes are `aqours-app/src/app/`, and the confirmed product target is Android. Resolution: document actual route paths and distinguish starter capabilities from product scope.
-
-## Authorized scope changes
-
-- 2026-10-18: user added role summaries and detailed feature specs using feature-spec, with the role/feature/spec.md hierarchy. This extends AC-005–006 and adds AC-007–008. It removes the earlier exclusion of domain documents; application implementation remains excluded.
+Root lead owns shared contracts, infrastructure, cross-project tests/docs, integration and all .loop writes. Project states: [API](../aqours-api/.loop/STATE.md), [mobile](../aqours-app/.loop/STATE.md), [web](../aqours-web/.loop/STATE.md). Full source criteria and demo mappings will be maintained in [traceability](../docs/traceability.md). A blocked required native/provider/persistence check prevents COMPLETE; skipped is never PASS.

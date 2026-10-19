@@ -1,7 +1,6 @@
 # Supplier overview and metrics
 
-- Status: **unimplemented target**, documented 2026-10-18 from brief v0.4.
-- Baseline: the supplier application, domain API, database, and reporting metrics do not exist.
+- Status: **implemented first-release behavior; acceptance evidence remains qualified**, updated 2026-10-19.
 - References: [requirements](../../../requirements.md), [architecture](../../../architecture.md), [schema](../../../schema.md), [workflows/workspace](../../../workspace.md), [supplier domain](../../../domains/admin.md).
 - Requirement coverage: REQ-UI-S01, REQ-METRIC-01–04, REQ-INCIDENT-04, REQ-OPS-04 and REQ-ACCESS-03–04.
 
@@ -12,7 +11,7 @@
 - Give authorized staff/admin a shared overview of active incidents and reports requiring attention.
 - Show category counts, first-response times, and resolution times with definitions that a reviewer can reproduce.
 - Link summaries to [reports](../report/spec.md), [incidents](../incident/spec.md), and [map](../map/spec.md) using the same relevant filters.
-- Exact metric definitions below are proposed defaults from requirements, pending confirmation before implementation.
+- Exact metric definitions below are adopted from requirements and implemented for this release.
 - Predictive outage detection, supplier rankings, billing metrics, and inferred safety assessments are outside scope.
 
 ---
@@ -60,25 +59,16 @@
 
 ## HOW
 
-### Proposed implementation and interfaces
+### Implemented behavior and modules
 
-- Proposed React responsibilities: summary views, period/status filters, definition text, and drill-down links in `aqours-web/`.
-- Proposed Express responsibilities: authorized aggregate reads and duration calculation from immutable event history in `aqours-api/`.
-- Proposed data: reports, acknowledgment/messages, report status/closure history, incident status, and explicit service connections from schema.
-- Proposed `GET /api/v1/staff/metrics`: validated reporting interval/filters; aggregates, definitions, sample/exclusion counts, and as-of time.
-- Proposed metric period default: select the report cohort by submission time; expose the cohort rule explicitly with the result.
-- Proposed interval boundary: inclusive UTC start and exclusive UTC end derived from the displayed local period.
-- Validate dates, enum filters, and interval bounds server-side; use parameterized aggregate queries.
-- Choose and document the summary statistic before implementation; do not label an unspecified aggregate simply “average.”
-- Keep business definitions in one API service shared by the dashboard and its drill-down counts.
-- Do not infer event times from mutable `updated_at` values or use map viewport/cluster calculations as source data.
+`aqours-web/src/pages/Overview.tsx` implements period/status filtering, counts, definitions and drill-down navigation.
 
-### Verification and operation
+`aqours-api/src/routes/analytics.ts` and `services/metrics.ts` calculate report cohorts with inclusive UTC from/exclusive to boundaries and arithmetic mean elapsed seconds. First response is the first staff-authored public message; first substantive resolution excludes duplicate/invalid closures. Follow-up retains first-resolution history while unresolved counts use current status. Responses include timezone/as-of, sample/pending/excluded context; missing durations are null. Active incidents are a current total, not a count of the selected report cohort.
 
-- Test exact event fixtures spanning midnight in `Asia/Manila`, unanswered reports, duplicate/invalid closures, and follow-up review.
-- Compare dashboard aggregates to paginated filtered records under the documented cohort rule.
-- Exercise authorized/unauthorized reads and unavailable/empty/stale UI states.
-- Observe aggregate-query errors and duration without logging household contacts or private report text.
-- Dependencies: [authentication](../auth/spec.md), [report](../report/spec.md) event capture, and [incident](../incident/spec.md) status history.
-- Open choices: reporting-period defaults, summary statistic, refresh cadence, and confirmed metric policy.
-- No analytics code or tests are implemented by this documentation task.
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
+
+### Verification and limits
+
+Review metrics unit/API tests and browser overview rendering. Broader production-load behavior is unmeasured; first-resolution history remains distinct from current reopened state.
+
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

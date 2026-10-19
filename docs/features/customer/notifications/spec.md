@@ -1,6 +1,6 @@
 # Customer Notifications
 
-Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
+Status: **implemented first-release behavior; acceptance evidence remains qualified**. Updated: **2026-10-19**.
 
 ---
 
@@ -8,7 +8,6 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 
 - Let a customer read persisted in-app updates about their reports, linked incident publications, applicable area advisories, and assistance requests.
 - First-release delivery uses foreground polling/refetch; SMS, email, push, and WebSockets are optional later work.
-- Current evidence: the [starter routes](../../../../aqours-app/src/app/) provide no notification list, persistence, or polling behavior.
 - Notification visibility does not grant access to an otherwise unauthorized linked record.
 
 ---
@@ -29,7 +28,7 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 ### List, read, and failure behavior
 
 - Present ordered, paginated results with clear empty, loading, and retry states.
-- Refresh while foregrounded and on deliberate refresh; the polling interval and pagination contract remain proposed.
+- Refresh while foregrounded and on deliberate refresh; the polling interval and pagination contract are documented below.
 - Marking a notification read must be safe to repeat and must not publish, acknowledge, resolve, or cancel its underlying record.
 - Opening a link must recheck destination ownership/publication permissions; handle an inaccessible or no-longer-current destination explicitly.
 - After a network/read-state error, show the confirmed server state or a clear pending/error indicator; do not silently claim a successful change.
@@ -49,23 +48,18 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 
 ## HOW
 
-### Proposed interfaces and records
+### Implemented behavior and modules
 
-- Add an Expo Router list/detail entry with request/polling hooks outside the route directory; keep any badge derived from the owned response.
-- Illustrative contracts, not live endpoints: `GET /api/v1/notifications` and an idempotent read-state update for one owned notification.
-- Resolve the exact read method, pagination fields, and unread-count behavior in the shared API contract before coding.
-- Use the [schema](../../../schema.md) notification proposal: recipient user, source-event key, safe text/type, relevant link, creation/read timestamps, and recipient/event uniqueness.
-- Supplier publication/assistance services create notification rows or durable work; customer notification reads do not recreate them.
-- On destination open, fetch the current [report](../report/spec.md), [assistance request](../assistance/spec.md), or published notice using its normal authorized API.
-- Use current source revisions for [guidance](../guidance/spec.md); historical notification text is not an instruction to ignore later approved notices.
+`aqours-app/src/features/notifications/notifications-screen.tsx` and `src/app/(customer)/notifications.tsx` implement owned pagination, read updates and authorized destination navigation.
 
-### Sequencing and future verification
+`aqours-api/src/routes/guidance.ts` implements notification list/detail/read routes; publication and fulfillment services create rows transactionally. SQL uniqueness on recipient/source event deduplicates audience overlap. Read updates preserve the first read time and do not republish anything. Foreground refetch/polling uses `src/hooks/use-resource.ts`; external channels are outside this release.
 
-1. Establish [auth](../auth/spec.md), recipient-scoped persistence, and an owned list/read contract.
-2. Implement publication and assistance fan-out with stable event identifiers and transactional/durable guarantees.
-3. Add foreground refresh and authorized navigation, then exercise retries and account switching.
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 
-- Test API ownership, duplicate event/audience matching, pagination, repeated read-state changes, and transaction rollback around publication.
-- Test Android foreground refresh, failed refresh/read updates, expired sessions, old notice links, and navigation back to the list.
-- Log publication/event correlation and delivery failures without credentials or private message bodies.
-- Sources and broader constraints: [architecture](../../../architecture.md), [workflows/setup](../../../workspace.md), and [customer role](../../../domains/customers.md).
+### Verification and limits
+
+Notification DTOs use an explicit allowlist. Generated appointment labels display Asia/Manila while immutable stored UTC text remains untouched. A failed open/read request keeps the confirmed unread state and offers retry; destination reads remain independently authorized.
+
+Actual installed N10/N21/N34/N37/N40 verify persisted read state/owned destination, empty/stale recovery, generated Manila appointment text, offline open remaining unread and successful real-network retry, plus notice receipt with zero reports. Backend audiences/deduplication/private destination guards/rollback are separately verified in the [native ledger](../../../native-verification.md) and traceability.
+
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
