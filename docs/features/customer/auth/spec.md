@@ -1,6 +1,6 @@
 # Customer Authentication
 
-Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
+Status: **implemented first-release behavior; acceptance evidence remains qualified**. Updated: **2026-10-19**.
 
 ---
 
@@ -10,7 +10,6 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 - Users are fictional demo customers; staff/admin accounts belong to the supplier workspace.
 - Scope is login, session restoration, logout/revocation, and protected customer navigation.
 - Public registration is optional; this feature does not assume an account-approval queue, password reset, or social login.
-- Current evidence: the [Expo manifest](../../../../aqours-app/package.json) and [starter layout](../../../../aqours-app/src/app/_layout.tsx) contain no authentication flow or secure credential integration.
 
 ---
 
@@ -19,12 +18,12 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 ### Identity and permissions
 
 - Satisfy REQ-ACCESS-01 through REQ-ACCESS-05 in [requirements](../../../requirements.md).
-- Use individual seeded accounts linked to sample service connections; obtain demonstration credentials from the future documented account list.
+- Use individual seeded accounts linked to sample service connections; obtain demonstration credentials from the documented demo account list.
 - Authenticate through the API; never embed a shared demo password or production secret in the Android bundle.
 - Derive customer identity from the authenticated session, never a customer ID supplied by the client.
 - Authorize every owned-record request on the server, including attachments and notification links.
 - Do not grant supplier capabilities because a route or role value is changed locally.
-- Hash passwords server-side and support revocable sessions; the concrete session scheme remains open.
+- Hash passwords server-side and support revocable sessions; the implemented session scheme is described below.
 - Store mobile credentials in secure device storage using an approved implementation choice.
 - Never log passwords, session credentials, or private response bodies.
 
@@ -51,29 +50,16 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 
 ## HOW
 
-### Components and interfaces
+### Implemented behavior and modules
 
-- **Proposed approach:** add customer sign-in/session handling to the existing Expo Router routes under `aqours-app/src/app/`; keep session hooks, request code, and storage adapters outside the route directory.
-- Add authentication and current-user services in `aqours-api/`, with password verification, session persistence/revocation, validation, and rate limits.
-- Illustrative endpoints, not existing contracts: `POST /api/v1/auth/login`, `POST /api/v1/auth/logout`, and `GET /api/v1/me`.
-- A customer-safe identity response should contain only required identity/profile fields, role, and owned connection references; never return password hashes or internal account notes.
-- Authentication failures must have a consistent error shape; record-level denial must not reveal the target record's content.
-- Use [schema](../../../schema.md) proposals for users and revocable authentication records; choose migration, hashing, and secure-storage tooling only during implementation.
-- Server access checks follow the deny-by-default and per-request model described by the [OWASP authorization guidance](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html).
+`aqours-app/src/auth/session.tsx`, `src/app/login.tsx` and protected `src/app/(customer)/_layout.tsx` implement sign-in, server-verified restoration and sign-out. `src/lib/api.ts` handles bearer requests/errors.
 
-### Data flow and sequencing
+`aqours-api/src/auth.ts` and `src/routes/auth.ts` implement salted scrypt passwords, hashed revocable sessions, active-account checks and safe identity responses. Android stores only session material in Expo SecureStore. Interrupted logout hides private content and retains a pending-revocation retry; account switching clears operation intentions.
 
-1. Implement seeded users/connections and server identity/authorization contracts before protected customer features.
-2. Validate login on the API, establish a revocable session, and return the authenticated customer identity.
-3. Persist only the approved credential material securely; fetch the current identity and owned connection context.
-4. Load [dashboard](../dashboard/spec.md), [profile](../profile/spec.md), and [notifications](../notifications/spec.md) within that verified context.
-5. On logout or session failure, remove private in-memory/cache state and apply the revocation/retry behavior above.
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 
-### Future verification and open decisions
+### Verification and limits
 
-- Add API tests for password verification, expiry/revocation, role denial, ownership checks, rate limits, and repeated logout.
-- Add Android integration checks for cold-start restoration, failed login, account switching, expired credentials, and network loss during logout.
-- Audit request/error logging for credential disclosure; use fictional test accounts.
-- Resolve session lifetime, credential format, offline logout retry behavior, password policy, and secure-storage dependency before implementation; no package is installed by this specification.
-- Public registration and password recovery need separate confirmed requirements before inclusion.
-- Broader sources: [architecture](../../../architecture.md), [workflows/setup](../../../workspace.md), and [customer role](../../../domains/customers.md).
+Review API security tests and mobile session checks. Installed-device cold start, SecureStore behavior, account switching and interrupted logout still require Android execution.
+
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

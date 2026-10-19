@@ -1,20 +1,20 @@
 # Supplier staff domain
 
-Status: **target capabilities, unimplemented** as of 18 October 2026. The supplier web and API directories are empty. Product source: brief v0.4 and [requirements](../requirements.md).
+Status: **implemented first-release capabilities**, updated 19 October 2026; acceptance evidence and remaining gaps are in [verification](../verification.md) and [traceability](../traceability.md). Product source: brief v0.4 and [requirements](../requirements.md).
 
-Staff handles supplier operations for reports, incidents and assistance. The detailed staff/admin split below is a **proposed default**, to confirm before backend authorization implementation. Feature specs live under `features/admin/` because that directory represents the supplier workspace, not universal administrative access.
+Staff handles supplier operations for reports, incidents and assistance. The project owner adopted the detailed staff/admin split below and the API enforces it. Feature specs live under `features/admin/` because that directory represents the supplier workspace, not universal administrative access.
 
-| Feature | What staff can do under the proposal | Detailed specification |
+| Feature | What staff can do under the adopted policy | Detailed specification |
 | --- | --- | --- |
 | Authentication | Sign in/out and use a revocable supplier session | [Authentication](../features/admin/auth/spec.md) |
 | Overview | Review active incidents, unresolved reports, category counts and explicitly defined response/resolution metrics | [Dashboard](../features/admin/dashboard/spec.md) |
 | Reports | Filter the inbox, inspect operational customer/connection details, acknowledge, clarify, assign and prioritize with a reason; perform reviewed duplicate/invalid closure | [Report inbox](../features/admin/report/spec.md) |
 | Map | Review authorized markers/clusters, service zones and published areas; filter and find reports without coordinates | [Operational map](../features/admin/map/spec.md) |
 | Incidents | Confirm/correct report links, maintain owner/status/internal notes and publish customer-facing progress updates | [Incidents](../features/admin/incident/spec.md) |
-| Advisories | Read and apply approved current notices; publication/lifting of official advisories is proposed admin-only | [Advisories](../features/admin/advisory/spec.md) |
+| Advisories | Read and apply approved current notices; publication/lifting of official advisories is admin-only | [Advisories](../features/admin/advisory/spec.md) |
 | Assistance | Review all three service types; accept with owner, schedule/reschedule, update progress and record findings/contact outcome/completion | [Assistance queue](../features/admin/assistance/spec.md) |
 | Distribution | Maintain pickup sites/sessions, record stock, accept reservations, collect once and handle cancellation/follow-up | [Pickup/distribution](../features/admin/distribution/spec.md) |
-| Settings context | Use operational zone/connection and approved guidance information; account, zone and rule administration remains proposed admin-only | [Settings](../features/admin/settings/spec.md) |
+| Settings context | Use operational zone/connection and approved guidance information; account, zone and rule administration remains admin-only | [Settings](../features/admin/settings/spec.md) |
 
 ## Operational workflow summary
 
@@ -30,7 +30,7 @@ Staff handles supplier operations for reports, incidents and assistance. The det
 
 - The API restricts operational access and every state change. No customer may call staff endpoints or retrieve staff notes by changing an ID.
 - Keep internal notes, contact information and raw household coordinates out of customer-facing updates/notifications.
-- Under the proposed split, staff does not administer accounts/zones/rules or publish/lift official advisories. Confirm any later grant explicitly before implementation.
+- Under the adopted split, staff does not administer accounts/zones/rules or publish/lift official advisories. Any later grant requires an explicit requirements change.
 - Clusters are visual aids; explicit reviewed associations establish incident/notice matching. Staff cannot infer an outage boundary or water safety from cluster size or photos.
 - Request acceptance/scheduling, report resolution, incident resolution and advisory lifting are separate authorized actions. Assistance completion does not resolve the underlying water problem automatically.
 - No separate inspector app, delivery fleet or commerce order workflow is required.

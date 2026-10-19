@@ -1,6 +1,6 @@
 # Customer domain
 
-Status: **target capabilities, unimplemented** as of 18 October 2026. The customer application currently contains an Expo starter. Product source: brief v0.4 and [requirements](../requirements.md).
+Status: **implemented first-release customer workflows**, updated 19 October 2026. Android installation/device flows remain unverified; see [verification](../verification.md) and [traceability](../traceability.md). Product source: brief v0.4 and [requirements](../requirements.md).
 
 The customer is a seeded individual account linked to fictional service connections and saved addresses. Android is the confirmed customer platform. Public registration is optional; this documentation does not introduce a registration approval process.
 
@@ -9,7 +9,7 @@ The customer is a seeded individual account linked to fictional service connecti
 | Authentication | Sign in with the documented demo account, retain a protected session and sign out with server revocation | [Authentication](../features/customer/auth/spec.md) |
 | Home | See applicable current published notices for the saved address, open reports and a shortcut to reporting | [Dashboard](../features/customer/dashboard/spec.md) |
 | Reports | Submit outage, low-pressure, leak or water-quality concerns; use saved address/optional GPS; confirm a native map location; attach optional photos; track owned reports, exchange clarification messages and send follow-up | [Reports](../features/customer/report/spec.md) |
-| Guidance | Answer targeted questions, see a contextual action with reason/source/update time, and choose another appropriate action or decline; rules-based assistance remains proposed pending the academic rubric | [Contextual guidance](../features/customer/guidance/spec.md) |
+| Guidance | Answer targeted questions, see a contextual action with reason/source/update time, and choose another appropriate action or decline; rules-based assistance is implemented, with academic acceptance externally unverified | [Contextual guidance](../features/customer/guidance/spec.md) |
 | Assistance | Explicitly request callback/support, inspection or water pickup; see acceptance/schedule/progress/outcome; cancel before work/collection starts and follow up | [Assistance](../features/customer/assistance/spec.md) |
 | Notifications | Read owned persisted in-app notices about published updates and request progress, and follow links only to permitted records | [Notifications](../features/customer/notifications/spec.md) |
 | Profile | View own profile, fictional connection details and saved service address | [Profile](../features/customer/profile/spec.md) |
@@ -35,4 +35,4 @@ See [workspace workflows](../workspace.md) for the full sequence and [supplier s
 - Quality advisories remain applicable until explicitly lifted by an authorized user. An outage resolution or completed assistance does not lift them.
 - Requests use liters and staff-managed pickup/distribution. Payments, commerce orders and home delivery are deferred.
 
-Primary requirement groups: `REQ-ACCESS-*`, `REQ-UI-C*`, `REQ-REPORT-*`, customer actions in `REQ-INCIDENT-*`, `REQ-ASSIST-*`, `REQ-WATER-*`, and proposed `REQ-DECISION-*`. Detailed implementation and academic choices remain labeled in [requirements](../requirements.md); this summary creates no extra role or permission.
+Primary requirement groups: `REQ-ACCESS-*`, `REQ-UI-C*`, `REQ-REPORT-*`, customer actions in `REQ-INCIDENT-*`, `REQ-ASSIST-*`, `REQ-WATER-*`, and `REQ-DECISION-*`. Adopted implementation choices and external academic approval remain distinguished in [requirements](../requirements.md); this summary creates no extra role or permission.

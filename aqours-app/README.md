@@ -1,56 +1,87 @@
-# Welcome to your Expo app 👋
+# Aqours customer Android application
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Expo SDK 57 (`57.0.30`), React Native `0.86.3`, React `19.2.3`, TypeScript 6 and Expo Router. Native MapLibre `11.5.0` requires a rebuilt Android app; Expo Go cannot run this app. The existing Expo stack and npm lockfile are retained. iOS and customer web delivery are outside this release.
 
-## Get started
+## Setup
 
-1. Install dependencies
+Build the local public contracts package from the repository root before installing:
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```sh
+npm --prefix aqours-contracts run build
+cd aqours-app
+export npm_config_cache="$PWD/../.cache/npm"
+export XDG_CACHE_HOME="$PWD/../.cache"
+export GRADLE_USER_HOME="$PWD/../.cache/gradle"
+export ANDROID_USER_HOME="$PWD/../.cache/android"
+export ANDROID_AVD_HOME="$ANDROID_USER_HOME/avd"
+export ANDROID_EMULATOR_HOME="$ANDROID_USER_HOME"
+export ANDROID_TMP="$PWD/../.cache/tmp/android"
+export TMPDIR="$PWD/../.cache/tmp"
+export EXPO_NO_TELEMETRY=1
+export EXPO_NO_DOTENV=1
+mkdir -p "$ANDROID_USER_HOME" "$ANDROID_AVD_HOME" "$ANDROID_TMP" "$TMPDIR"
+npm ci
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Use Node.js 22.13+ supported by SDK 57. Follow the root workspace guide to migrate/seed PostgreSQL and start the API. No user password or server secret is bundled here. Use an individually provisioned customer login from the demonstration account documentation; staff accounts belong to the supplier web app.
 
-### Other setup steps
+Provide only public bundle configuration through the shell or build environment. `.env.example` documents every consumed public variable; this project does not need access to secret-bearing `.env` files.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```sh
+export EXPO_PUBLIC_API_URL=http://10.0.2.2:4000/api/v1
+export EXPO_PUBLIC_MAP_STYLE_URL=https://demotiles.maplibre.org/style.json
+```
 
-## Learn more
+`10.0.2.2` reaches the host from the standard Android emulator. For a physical phone use the development computer's reachable LAN address and permit the local API port. The phone's `localhost` refers to the phone. Production API URLs must use HTTPS; `app.config.ts` permits Android cleartext only when an explicitly supplied public API URL starts with `http://`. Change this configuration and rebuild when switching deployment environments.
 
-To learn more about developing your project with Expo, look at the following resources:
+The example MapLibre style is development demonstration tiles. For deployment choose an appropriately licensed native-compatible map provider, keep its required attribution visible, and restrict any public provider credential. Map rendering and Geoapify geocoding are independent. The private Geoapify key stays in Express. A missing or failed map does not prevent address-based reporting.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Build and run Android
 
-## Join the community
+Use JDK17 and an Android SDK with platform36, build-tools35.0.0 and36.0.0, NDK27.1.12297006, CMake3.22.1 and platform-tools. These exact native toolchains built both APK variants locally; build-tools35 is required by Expo modules even though the app targets36. Set `JAVA_HOME` to your JDK17, and `ANDROID_HOME`/`ANDROID_SDK_ROOT` to your SDK. Configure project-local caches as above. Existing toolchains may be read without modification; use a project-local SDK if installing components. Do not auto-install into or modify the surrounding environment without permission.
 
-Join our community of developers creating universal apps.
+```sh
+npx expo prebuild --platform android --no-install
+npm run android
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Native directories are generated and ignored. Configure native behavior through Expo config/plugins, never manual changes to generated Android or iOS files. Local release APK packaging, when the SDK/build tools and signing configuration are available:
+
+```sh
+cd android
+./gradlew :app:assembleRelease --no-daemon --max-workers=2 \
+  -PreactNativeArchitectures=arm64-v8a,x86_64 \
+  -Dorg.gradle.java.installations.paths="$JAVA_HOME" \
+  -Dorg.gradle.java.installations.auto-download=false \
+  -Pandroid.builder.sdkDownload=false
+```
+
+An unsigned or development-signed APK is suitable only for local demonstration. Review release signing before distributing publicly. `eas.json` records optional internal-APK/AAB profiles, but cloud builds are unverified and need additional monorepo preparation: the ignored sibling `aqours-contracts/dist` must be built in an EAS install hook before bundling. No such remote hook, account provisioning, paid cloud build or store submission has been performed. Configure and verify those steps yourself before invoking EAS. The local instructions above are the implemented build path; neither configuration nor JavaScript export proves a successful device installation.
+
+Both `:app:assembleDebug` and the standalone `:app:assembleRelease` succeeded for ARM64/x86_64, with native MapLibre and verified APK v2 signatures. Outputs are `android/app/build/outputs/apk/{debug,release}/app-{debug,release}.apk`. Debug needs Metro; release embeds JavaScript. Install the local release using `adb -s <device-serial> install -r android/app/build/outputs/apk/release/app-release.apk`, then launch Aqours. A supported device must provide Android7/API24 or newer. Android29 installed the nondebuggable release and rendered its native login, but SystemUI ANRs/framework restarts blocked reliable input on the unaccelerated target; Android36 also restarted repeatedly. Both owned guests were stopped. No authenticated device workflow passed. Use a stable accelerated emulator or phone and record the remaining checks in [verification](../docs/verification.md); APK compilation and login rendering do not prove native session, map, GPS or picker behavior.
+
+## Implemented customer workflows
+
+- SecureStore bearer session restoration, customer-only login, server logout/revocation retry, and clearing private views when identity changes or expires.
+- Home with owned service connections, all-page applicable advisories/published incidents/open reports, synthetic-data labels, and foreground refresh. A failed later page is an error, never a silently complete first page.
+- Reports with category-specific details preserved for supplier review and observed Manila time; saved address, confirmed server-geocoded candidate, optional foreground GPS, native map preview and explicit address-only fallback. Alternate issue locations do not change saved connection details.
+- Report receipts, owned paginated history, protected attachments, messages, published incident timeline, deduplicated affected assertions and still-affected review using the current server version.
+- Optional JPEG/PNG/WebP photos uploaded after report commit. A failed upload retains the tracking reference and retries only the same attachment. Additional photos can be added from detail.
+- API-evaluated questionnaire and explained action/source/revision cards. Current official advisories precede incident and assistance context. Source checks run every 30 seconds while focused and on foreground entry; changed or unverifiable cards are hidden and support remains available. Choosing/declining records a choice; a separate form confirmation creates assistance.
+- Explicit callback, inspection and water-pickup forms; paginated sessions use the linked report's confirmed issue zone, include unavailable/full states and provide callback fallback. Owned request history shows agreed appointments, pickup references, allocation state, outcomes, next steps and reasoned eligible cancellation.
+- Persisted notifications, foreground polling, server-confirmed read state and allowlisted navigation to freshly authorized destinations; owned profile and saved supplier-maintained connection details.
+
+API failures never become demo success. Domain commands reuse the same operation UUID and original payload after uncertain responses. A pending operation survives route refetch/remount in memory and clears on account change. It is not a durable offline queue and does not survive app process termination; after restarting, inspect owned reports/requests before deliberately submitting again. Android image uploads use native multipart file descriptors; protected photo requests send credentials in headers, never URLs. No passwords, tokens or private response bodies are logged.
+
+## Validation
+
+```sh
+npm run lint
+npm run typecheck
+npm test
+npm run export:android
+```
+
+Ten targeted Node tests exercise bearer/envelope/error boundaries, multipart headers, stable report/photo retry intentions, account/version isolation, strict Manila date parsing and complete pagination/error handling beyond 100 records. They do not substitute for real API/native/device verification. Expo Android prebuild and Hermes export were verified during implementation. The lead integration report records native APK/device and live end-to-end results; foreground GPS permission, photo picker and MapLibre rendering still require an actual Android target.
+
+All application modules live outside `src/app/`; that directory contains only Expo Router routes/layouts. Handwritten TypeScript/TSX files remain below 300 physical lines. Root documentation describes backend authorization, operations, provider setup, retention and demonstrated limitations.

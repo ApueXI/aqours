@@ -1,7 +1,6 @@
 # Supplier accounts, zones, guidance, and rules
 
-- Status: **unimplemented target**, documented 2026-10-18 from brief v0.4.
-- Baseline: no account administration, zones, approved guidance, rule storage, seeds, or settings UI exists.
+- Status: **implemented first-release behavior; acceptance evidence remains qualified**, updated 2026-10-19.
 - References: [requirements](../../../requirements.md), [architecture](../../../architecture.md), [schema](../../../schema.md), [workflows/workspace](../../../workspace.md), [supplier domain](../../../domains/admin.md).
 - Requirement coverage: REQ-UI-S05, REQ-ACCESS-01–05, REQ-REPORT-04, REQ-NOTICE-01–03, REQ-DECISION-01–02 and 09–10, REQ-OPS-01, 03–05 and REQ-DEMO-01–03.
 
@@ -10,10 +9,10 @@
 ## WHAT
 
 - Maintain demo accounts/service connections, explicit service zones, approved guidance, and versioned contextual-assistance rules.
-- Proposed split: admin performs these administrative writes; staff reads operational information and uses approved content without receiving admin privileges.
-- Confirm fine-grained permissions before implementation; no role beyond customer/staff/admin is introduced.
+- Adopted split: admin performs these administrative writes; staff reads operational information and uses approved content without receiving admin privileges.
+- Enforce the adopted fine-grained permissions; no role beyond customer/staff/admin is introduced.
 - Authentication belongs to [auth](../auth/spec.md), notice publication/lifting to [advisory](../advisory/spec.md), and sites/stock to [distribution](../distribution/spec.md).
-- Rules-based decision support is a proposed academic approach; the professor's rubric remains unresolved and AI is not confirmed.
+- Rules-based decision support is implemented; the professor's academic acceptance remains externally unverified and AI is outside this release.
 - Public registration approvals, live customer-data imports, billing settings, multi-supplier tenancy, and autonomous AI actions are outside scope.
 
 ---
@@ -23,10 +22,10 @@
 ### Demo accounts and connections
 
 - Seed individual fictional customer accounts linked to sample connections/saved addresses and provide a documented demo login list when implemented.
-- Support supplier-managed demo-account maintenance as the proposed default; do not presume a public-registration approval queue.
+- Support supplier-managed demo-account maintenance as the adopted default; do not presume a public-registration approval queue.
 - Validate known role values, normalized login uniqueness, account state, and customer/connection ownership server-side.
 - Hash passwords on the server and never return stored hashes or expose real credentials through settings/logs/source control.
-- Show only safe account information; credential provisioning must use the authentication design chosen before implementation.
+- Show only safe account information; credential provisioning must use the implemented authenticated administrative design.
 - Keep account/role changes behind confirmed admin permission checks; navigation visibility alone is insufficient.
 - Revoke relevant sessions after deactivation or security-relevant permission changes according to the confirmed session policy.
 - Preserve referential history instead of deleting accounts/connections that own reports/requests.
@@ -43,14 +42,14 @@
 - Do not silently rewrite old report/inspection location snapshots when a saved address or connection zone changes.
 - Record administrative association/boundary changes with actor/time and relevant reason.
 - Preserve linked notice/incident/session integrity when deactivating or changing a zone; do not orphan targets.
-- Reevaluate applicable contextual guidance after relevant connection/zone changes; define any new-area notification policy before implementation.
+- Reevaluate applicable contextual guidance after relevant connection/zone changes; do not imply that editing a connection republishes existing advisories or sends retrospective notifications.
 
 ### Approved guidance and rule versions
 
 - Store approved source/reference, text, last-updated time, and version for supplier guidance.
 - Keep boil-water, do-not-drink, and do-not-use content distinct; settings edits must not silently publish/lift a notice.
 - Preserve earlier guidance/rule versions referenced by published advisories or recommendation history.
-- Proposed rules use issue category, reviewed location/zone, report time, stated needs/answers, active advisories, incident status, and current pickup availability.
+- Implemented rules use issue category, reviewed location/zone, report time, stated needs/answers, active advisories, incident status, and current pickup availability.
 - Apply applicable official safety guidance before contextual incident guidance; escalation remains visible alongside both.
 - Require explanation/source/update time and a usable next action, with explicit uncertainty/support fallback.
 - Recommendations never submit, accept, schedule, reserve water, invent restoration times, or diagnose drinkability.
@@ -62,7 +61,7 @@
 
 ### Failure, access, and acceptance
 
-- Reject unauthorized direct account/zone/guidance/rule writes under the proposed admin-only split.
+- Reject unauthorized direct account/zone/guidance/rule writes under the adopted admin-only split.
 - Use input validation, expected-version conflict detection, and idempotent mutation identities for administrative changes.
 - Show explicit invalid input, stale edit, unavailable service, and uncertain-result states without claiming a failed save succeeded.
 - Do not log passwords, session material, or full private account/contact data.
@@ -79,26 +78,16 @@
 
 ## HOW
 
-### Proposed components and interfaces
+### Implemented behavior and modules
 
-- Proposed React responsibilities: focused account/connection, zone, approved-guidance, and rule-version forms/history in `aqours-web/`.
-- Proposed Express responsibilities: administrative permission guard, validated maintenance services, session revocation integration, and transactional repositories in `aqours-api/`.
-- Proposed data: users, service connections/zones, reviewed target associations, approved guidance/rule versions, recommendation input history, and audit events.
-- Proposed administrative account/connection read/write interfaces expose safe profile/link fields, not password hashes.
-- Proposed zone read/write interfaces validate identifiers, reviewed associations, and optional display geometry.
-- Proposed approved-guidance/rule version interfaces create immutable versions and explicit activation/history events.
-- Proposed route group: `/api/v1/staff/settings/*`, protected by the confirmed administrative permissions despite the shared supplier namespace.
-- All route/module boundaries are proposals; no maintenance endpoints, rule editor, or physical tables exist.
-- Keep administrative guidance editing separate from the explicit publication/lifting commands in [advisories](../advisory/spec.md).
+`aqours-web/src/pages/Settings.tsx` and `SettingsAccounts.tsx`, `SettingsConnections.tsx`, `SettingsZones.tsx`, `SettingsGuidance.tsx`, `SettingsAudit.tsx` implement focused account/connection/zone/version/audit workflows.
 
-### Verification and operation
+`aqours-api/src/routes/settings.ts`, `settings-accounts.ts` and `settings-connections.ts` enforce admin-only maintenance, safe account DTOs, session revocation, last-active-admin protection and expected-version conflicts. Approved guidance/rules are immutable records; a new rule version becomes current without executing arbitrary user code. Staff can read operational guidance/rules and audit context. Reviewed connection changes preserve old report locations and change subsequent applicability/freshness checks; settings cannot lift/publish advisories implicitly.
 
-- Test permission/field boundaries, login uniqueness, ownership links, deactivation/revocation, and restricted deletion with real API/database state.
-- Test unknown-zone review, geometry validation, changed saved-address snapshots, and immutable old guidance/rule references.
-- Test representative rule precedence/fallback scenarios and verify no rule automatically submits/approves assistance.
-- Test concurrent/stale edits, idempotent retry, administrative audit evidence, and failed recommendation invalidation/recovery.
-- Seed/reset tooling and demo login documentation are later implementation deliverables, not new commands promised here.
-- Observe failed administrative writes, conflicts, and reevaluation failures with actor/time/target; keep logs free of secrets and personal payload dumps.
-- Dependencies: [authentication](../auth/spec.md), [advisories](../advisory/spec.md), [incidents](../incident/spec.md), and contextual assistance.
-- Open choices: exact admin permissions, credential-provisioning mechanism, approved local content, rule representation/activation policy, and academic acceptance.
-- No account, zone, rule, dependency, or environment setting is changed by creating this specification.
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
+
+### Verification and limits
+
+Review assistance/admin, advisory/guidance and security API tests plus browser settings rendering. Connection edits update matching on subsequent reads and invalidate guidance signatures; they do not fan out retrospective notice notifications. Academic approval and approval of any real supplier safety wording remain external; this release uses fictional demonstration content.
+
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

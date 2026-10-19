@@ -1,7 +1,6 @@
 # Supplier incident management
 
-- Status: **unimplemented target**, documented 2026-10-18 from brief v0.4.
-- Baseline: no incident records, linking service, publication, or supplier interface exists.
+- Status: **implemented first-release behavior; acceptance evidence remains qualified**, updated 2026-10-19.
 - References: [requirements](../../../requirements.md), [architecture](../../../architecture.md), [schema](../../../schema.md), [workflows/workspace](../../../workspace.md), [supplier domain](../../../domains/admin.md).
 - Requirement coverage: REQ-UI-S04, REQ-INCIDENT-01–09, REQ-NOTICE-04, REQ-ACCESS-03–04 and REQ-OPS-04–05.
 
@@ -12,7 +11,7 @@
 - Let authorized staff/admin manage a shared supplier event while retaining each customer's separate report and outcome.
 - Coordinate report associations, incident ownership/state, internal notes, and deliberately published progress updates.
 - Give linked customers consistent published updates and notifications without exposing other households' reports or internal discussion.
-- Operational incident management and progress publication are proposed staff/admin permissions; official advisory publication/lifting is separate.
+- Operational incident management and progress publication are adopted staff/admin permissions; official advisory publication/lifting is separate.
 - Map clusters, report-count thresholds, or a recommendation must not automatically confirm an incident or publish guidance.
 - Bulk deletion/merging of reports, automatic water-safety diagnosis, and automatic advisory lifting are outside scope.
 
@@ -25,7 +24,7 @@
 - Record incident category, summary, explicit affected zones/area, assigned staff owner, status, and relevant times.
 - Use `investigating`, `confirmed`, `work_in_progress`, `monitoring`, and `resolved`.
 - Record every transition with actor/time and relevant reason; preserve corrections rather than overwriting history.
-- Finalize the allowed transition/permission matrix before implementation; reject unsupported and stale transitions.
+- Enforce the implemented allowed transition/permission matrix; reject unsupported and stale transitions.
 - Keep a restoration estimate or explicit unknown state; never invent an estimate from elapsed time or similar incidents.
 - Show estimated affected customers with the estimate's basis/update time, separately from reports and unique reporting connections.
 - Keep internal notes separate from draft/published customer-facing progress.
@@ -86,36 +85,16 @@
 
 ## HOW
 
-### Proposed components and interfaces
+### Implemented behavior and modules
 
-- Proposed React responsibilities: incident list/detail, workflow controls, report-link review, internal notes, publication preview, and published history in `aqours-web/`.
-- Proposed Express responsibilities: authorized incident/link services, publication/audience service, history repositories, and customer-safe response mapping in `aqours-api/`.
-- Proposed data: incidents, reports/current incident FK, immutable link/status events, internal notes, incident updates, notifications/outbox, recommendation input references, and audit events.
-- Proposed `GET /api/v1/staff/incidents` and `GET /api/v1/staff/incidents/:id`: paginated authorized list/detail.
-- Proposed incident create/assign/transition interfaces: validated fields, expected version, actor-derived identity, and operation key.
-- Proposed `POST /api/v1/staff/incidents/:id/report-links`: staff-confirmed link/reassignment command with reason and conflict detection.
-- Proposed `POST /api/v1/staff/incidents/:id/updates`: validated publication command producing one canonical publication event.
-- Proposed published-incident read interface: intentional customer-safe DTO without linked customers' private records.
-- The exact routes/DTOs and module filenames remain proposals, not existing code or contracts.
+`aqours-web/src/pages/Incidents.tsx`, `IncidentDetail.tsx`, `components/IncidentFields.ts` and report-detail link controls implement incident review, owner/status, notes, explicit report associations and published history.
 
-### Transaction and validation approach
+`aqours-api/src/routes/incidents.ts` and `incident-publication.ts` keep internal incident state separate from immutable incident_update records. Staff-confirmed link changes require a reason/version and retain events. Publication saves the snapshot and deduplicated linked-reporter notifications atomically. Customer reads use published DTOs; still-affected feedback changes one report. Quality advisories and assistance keep independent states.
 
-- Authorize before loading/mutating restricted records and recheck transition/link invariants within the write transaction.
-- Validate IDs, allowed enum values, staff assignment, text lengths, coordinate/GeoJSON format, explicit zone targets, and estimate/unknown fields.
-- Use a version/compare-and-set or equivalent locking strategy for conflicting edits; select and document the mechanism before implementation.
-- Persist link/status changes and their history atomically; do not derive history from mutable current state later.
-- Resolve one deterministic publication audience or persist the audience inputs/version for reliable asynchronous fan-out.
-- Use a unique recipient/source-event key so overlapping reporter memberships do not duplicate notifications.
-- Keep current published projection and historic revisions separate; notification links must recheck recipient/record access.
-- Store times as UTC instants and display `Asia/Manila`; keep publication time distinct from the event's reported/estimated times.
-- Reevaluate relevant recommendation inputs after the committed event, with reliable work/state so stale guidance cannot be treated as current.
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 
-### Verification and operation
+### Verification and limits
 
-- Integration-test link correction/concurrency, every allowed transition, publication rollback/retry, recipient dedupe, and published DTO privacy.
-- Exercise two customers, one shared incident, an isolated severe report, unknown restoration, and an unmatched report.
-- Verify advisory independence and one-customer follow-up across web, API, database, and Android customer views when implemented.
-- Observe publication/link conflicts, failed fan-out work, and stale recommendation invalidation; audit actor/time/target without logging private notes.
-- Dependencies: [authentication](../auth/spec.md), [reports](../report/spec.md), [map](../map/spec.md), [advisories](../advisory/spec.md), and [assistance](../assistance/spec.md).
-- Open choices: detailed transition permissions, publication revision representation, notification transaction/outbox choice, and incident-estimate input policy.
-- All acceptance checks are future implementation checks; this document creates no running incident workflow.
+Review reports/incidents and advisory independence API tests plus browser incident rendering. End-to-end Android publication/timeline receipt remains unverified on a device.
+
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

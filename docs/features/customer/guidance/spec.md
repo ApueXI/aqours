@@ -1,16 +1,15 @@
 # Customer Contextual Guidance
 
-Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
+Status: **implemented first-release behavior; acceptance evidence remains qualified**. Updated: **2026-10-19**.
 
 ---
 
 ## WHAT
 
 - Help customers understand reported water problems and choose a useful next action with a reason and supporting source.
-- Proposed first-release approach: a short guided questionnaire, API-evaluated explainable rules, and action cards.
-- The professor's decision-support rubric remains open; rules-based guidance is proposed and AI is not confirmed as necessary.
+- Adopted first-release approach: a short guided questionnaire, API-evaluated explainable rules, and action cards.
+- The professor's decision-support rubric remains open; rules-based guidance is implemented and AI is outside this release.
 - Users are customers viewing their own report context and applicable published supplier guidance.
-- Current evidence: [starter routes](../../../../aqours-app/src/app/) and the empty API contain no questionnaire, rule engine, guidance cards, or recommendation history.
 - Scope covers recommendation generation/explanation, uncertainty, source freshness, and a deliberate handoff to assistance.
 - Fulfillment belongs to [assistance](../assistance/spec.md); this feature cannot submit/accept/schedule services or publish advisories automatically.
 - Exclude diagnosis, autonomous water-safety decisions, risky repairs, invented restoration times, and an AI chatbot implementation.
@@ -21,8 +20,8 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 
 ### Scope status and hard boundaries
 
-- Trace the proposed behavior to REQ-DECISION-01 through REQ-DECISION-10 and REQ-UI-C04 in [requirements](../../../requirements.md).
-- Keep the questionnaire/rule details labeled proposed until academic expectations are confirmed.
+- Trace the adopted behavior to REQ-DECISION-01 through REQ-DECISION-10 and REQ-UI-C04 in [requirements](../../../requirements.md).
+- Keep academic acceptance explicitly unverified; implementation of the adopted questionnaire/rules does not establish academic approval.
 - The required privacy, ownership, authorized-publication, and safety limits apply regardless of the later decision-support approach.
 - Read only the current customer's report/connection/answers and customer-safe published incident/advisory records.
 - Never expose staff notes, another household's coordinates/contact details, or another customer's recommendation history.
@@ -30,7 +29,7 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 - Keep boil-water, do-not-drink, and do-not-use instructions distinct and use only applicable authorized supplier/public-health guidance.
 - An outage resolution must not lift a quality restriction; only explicit authorized advisory action can do that.
 
-### Inputs and precedence for the proposed rules
+### Inputs and precedence for the adopted rules
 
 - Evaluate category, service location/zone, report time, customer-stated needs, targeted answers, active advisories, incident status, and current pickup-session availability.
 - Use explicit confirmed zone/record associations, not map clusters, as the matching authority.
@@ -40,7 +39,7 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 - Keep question sets relevant to the category and customer need; do not collect unrelated personal information.
 - Persist the rule version and relevant input/source revisions needed to explain an evaluation later.
 
-### Scenario rules, proposed
+### Scenario rules, adopted
 
 - Known outage: show the published incident progress and restoration estimate, or explicitly say the estimate is unknown.
 - If water is needed before restoration or the estimate is unknown, offer currently listed pickup options or a water-support request.
@@ -80,42 +79,16 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 
 ## HOW
 
-### Proposed components and contracts
+### Implemented behavior and modules
 
-- Build focused questionnaire, explanation/source, alternative, and action components outside `aqours-app/src/app/`; routes compose them.
-- Implement rule evaluation and published-source matching in `aqours-api/`; both clients must receive consistent API-owned decisions.
-- Illustrative interface, not a finalized route: evaluate guidance for an owned report using customer needs and typed questionnaire answers.
-- Finalize DTOs for action type, reason, source references/revisions, evaluation time, rule version, freshness, and allowed alternatives before coding.
-- Reject foreign report IDs and unsupported answers server-side; derive identity from [authentication](../auth/spec.md).
-- Use an explicit rule ordering/decision table with approved content references rather than logic duplicated inside mobile screens.
-- Never put provider/database credentials or editable server rule implementation in the client bundle.
+`aqours-app/src/features/guidance/guidance-screen.tsx` and `use-guidance.ts` render the questionnaire, explanations, sources, uncertainty, alternatives and explicit assistance handoff.
 
-### Evaluation and evidence flow
+`aqours-api/src/services/guidance.ts`, `guidance-context.ts` and `routes/guidance.ts` evaluate current published advisory/incident context, approved rule versions and eligible pickup availability. Evaluations/choices are immutable owned records; source signatures distinguish historical output from current output. A choice or evaluation never submits assistance. The client checks freshness every 30 seconds while active and on foreground; outdated cards require reevaluation. User-adopted rules are implemented; academic acceptance remains external.
 
-1. Load the [owned report](../report/spec.md), confirmed connection/zone context, and current published source revisions.
-2. Ask only relevant targeted questions and record missing/unconfirmed inputs rather than replacing them with guessed values.
-3. Evaluate safety precedence and contextual rules against current incident/advisory/session records.
-4. Save the evaluation context and result in proposed `recommendation_history`; preserve source/rule revisions for review.
-5. Render explanation/action cards, then hand off the chosen service to the [assistance form](../assistance/spec.md) without submitting it.
-6. Refetch/reevaluate after relevant source changes or [notifications](../notifications/spec.md); distinguish old evaluations from current guidance.
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 
-- Proposed supporting persistence includes versioned approved guidance/rules and source relationships in [schema](../../../schema.md).
-- Reevaluation may occur on demand with source-revision checks; exact invalidation/fan-out mechanism is an open implementation choice.
-- Evaluation itself must not mutate report/incident/advisory status, reserve stock, or create fulfillment work.
-- Audit rule edits by authorized supplier actors and evaluation correlation without logging credentials or unnecessary personal data.
+### Verification and limits
 
-### Research and dependencies
+Review advisory/guidance API tests and mobile guidance checks. Android card navigation/freshness and academic approval are outstanding independent checks; technical tests do not validate real water safety.
 
-- [The CDC advisory overview](https://www.cdc.gov/water-emergency/about/drinking-water-advisories-an-overview.html) supports distinct advisory categories; it does not supply Aqours's locally approved notice text.
-- Consolidated technical research and trust boundaries are in [architecture](../../../architecture.md); use its separation of published guidance, owned data, and API authority.
-- Sequence after auth, report/connection reads, approved incident/advisory records, and pickup availability contracts; integrate assistance actions before final scenario acceptance.
-- Confirm academic expectations and the rule/questionnaire content before implementing the proposed guidance method.
-
-### Future verification and unresolved choices
-
-- Add rule-table tests for precedence, all stated issue cases, unknown/conflicting input, no availability, changed source revisions, and alternative/decline behavior.
-- Add API tests for owned evidence/history, published-only projections, rule-version retention, and zero fulfillment side effects during evaluation.
-- Exercise Android cards, explanations, source times, failed refresh, stale historical output, and explicit form confirmation.
-- Confirm approved guidance content, hazard escalation wording, answer schema, rule governance, versioning/storage, and exact evaluate/read endpoints.
-- Do not treat a successful technical rule test as academic acceptance or validation of a real water-safety claim.
-- Wider workflow/role sources: [workflows/setup](../../../workspace.md) and [customer role](../../../domains/customers.md).
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

@@ -1,0 +1,68 @@
+# Aqours
+
+Aqours connects a water supplier and its customers through reporting, incident updates, independent advisories and three assistance services. This repository contains a TypeScript Express/PostgreSQL API, an Expo Android customer app and a React supplier workspace with MapLibre.
+
+The first-release implementation is connected across these applications. Verification is still in progress; [the verification report](docs/verification.md) distinguishes executed checks from native/device and live-provider work. Fictional fixtures and quality notices are demonstration data, never real water-safety advice. Rules-based decision support is implemented; academic acceptance remains externally unverified.
+
+## Start locally
+
+Requirements: Node.js 22.13+ (Node 26 used for verification), npm, Docker Compose, and an Android development environment for the customer app. All package installations and caches stay in this repository.
+
+```sh
+./scripts/install.sh
+```
+
+Copy the environment examples into ignored local files yourself, generate your database password and signing secret, and set your paths/API addresses as described in [setup](docs/setup.md). No real credentials are committed or required from you during implementation.
+
+```sh
+mkdir -p .local/container-postgres
+# After configuring your root .env, including its absolute project-local data path:
+docker compose up -d db
+# After configuring aqours-api/.env:
+(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/migrate.ts)
+(cd aqours-api && SEED_DEMO=1 TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/seed.ts)
+(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/server.ts)
+```
+
+In separate terminals:
+
+```sh
+npm --prefix aqours-web run dev
+# Configure public Android API/style variables first; see aqours-app/README.md.
+cd aqours-app
+npm run android
+```
+
+Supplier web: `http://localhost:5173`. API: `http://localhost:4000/api/v1`. Android emulator API: `http://10.0.2.2:4000/api/v1`; phones need the development computer's LAN address. Native MapLibre requires a development/native build and does not run in Expo Go.
+
+The fictional seed provides `admin@demo.aqours.test`, `staff@demo.aqours.test`, and `customer01@demo.aqours.test` through `customer12@demo.aqours.test`. The fixture password is `DemoWater2026!`; it is exclusively for the development seed. Staff/admin use the supplier app and customers use Android. Starting the API never resets data or automatically runs the seed.
+
+## Read and verify
+
+- [Setup, configuration, providers and backups](docs/setup.md)
+- [API contract](docs/api.md) and [public TypeScript DTOs](aqours-contracts/src/index.ts)
+- [Demo walkthrough](docs/demo.md)
+- [Requirements and feature index](docs/README.md)
+- [Verification evidence and remaining checks](docs/verification.md)
+- [Every requirement, feature criterion and demo mapping](docs/traceability.md)
+- [API details](aqours-api/README.md), [Android build guide](aqours-app/README.md), [supplier app guide](aqours-web/README.md)
+
+```sh
+npm run typecheck
+npm run lint
+npm run build
+npm --prefix aqours-api test
+npm --prefix aqours-web test
+npm --prefix aqours-app test
+# With the isolated seeded API and PostgreSQL test database running:
+npm run test:api
+npm run test:browser
+npm run test:maintenance
+npm run test:operations
+npm run test:recovery
+npm run test:map
+npm run test:seed
+npm run check:repository
+```
+
+Root integration tests use an isolated database ending `_test`; fault-injection tests deliberately create temporary database triggers and must never target real customer data. Run login-heavy HTTP/browser suites serially and allow at least a minute between suites so the normal login limit remains active. The [setup guide](docs/setup.md) describes their configuration and prerequisites.

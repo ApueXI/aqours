@@ -1,27 +1,22 @@
 # Requirements
 
-Source: **Water Supply Reporting and Customer Assistance — Project Brief v0.4**, supplied by the project owner and updated **18 October 2026**. This document records product requirements for a future implementation. See the [index and feature specs](README.md), [architecture](architecture.md) for boundaries and technology, [schema](schema.md) for persistence status and proposed structures, and [workspace](workspace.md) for workflows and local setup.
+Source: **Water Supply Reporting and Customer Assistance — Project Brief v0.4**, supplied by the project owner and updated **18 October 2026**. This document retains the original product requirements and stable identifiers, reconciled with the first-release implementation on 19 October 2026. See the [index and feature specs](README.md), [architecture](architecture.md) for boundaries and technology, [schema](schema.md) for the implemented JSONB/relational persistence design, and [workspace](workspace.md) for workflows and local setup.
 
 ## Status and scope
 
-As verified on **2026-10-18**, `aqours-app/` contains an Expo React Native starter; `aqours-api/` and `aqours-web/` are empty. No domain reporting, authentication, supplier interface, database, migrations, seeds, or assistance features are implemented. See [the progress log](../PROGRESS.md) and [the mobile package manifest](../aqours-app/package.json). Requirements below describe the target system, not working functionality or completed acceptance tests.
+The 18 October baseline contained an Expo starter and empty API/web directories. The first release now implements the Express/PostgreSQL API, React supplier workspace and connected Expo customer workflows. Source presence is not full acceptance: [traceability](traceability.md) maps requirements to code/evidence, and [verification](verification.md) records executed checks and remaining Android, provider and operational gaps.
 
-| Label | Meaning |
-| --- | --- |
-| Required target | A requirement from the brief's MUST section or an explicitly confirmed product choice; implementation remains pending. |
-| Proposed default | A design or first-release assumption to validate before implementing the affected behavior. |
-| Optional / deferred | Outside the required first release unless explicitly added to implementation scope. |
-| Open decision | A consequential requirement or planning detail that is not yet confirmed. |
+The project owner adopted the proposed first-release defaults: one supplier, seeded individual accounts, customer/staff/admin permissions, explainable API rules/questionnaire/action cards, workflows, REST contracts and metric definitions. Academic approval remains externally unverified. Optional/deferred items remain outside this release. No AI is implemented.
 
-Requirement identifiers are stable within this document. A proposed detail does not become confirmed merely because it has an identifier. Unless explicitly labeled otherwise, the requirements below are **required target** behavior.
+Requirement identifiers and the ten DEMO scenarios remain stable; the 126 feature checkboxes remain the original acceptance inventory. An implemented path does not certify every scenario or failure case. Read the [API contract](api.md), [setup](setup.md) and [demo](demo.md) alongside these requirements.
 
 | ID | Requirement |
 | --- | --- |
-| REQ-SCOPE-01 | Connect a water supplier with customers who report outages, low pressure, leaks, and water-quality concerns, receive incident updates, and choose useful next actions. Success includes a submitted and trackable report, a supplier-managed shared incident, and a contextual recommendation with a reason and a usable action. The recommendation approach remains proposed pending the academic rubric. |
+| REQ-SCOPE-01 | Connect a water supplier with customers who report outages, low pressure, leaks, and water-quality concerns, receive incident updates, and choose useful next actions. Success includes a submitted and trackable report, a supplier-managed shared incident, and a contextual recommendation with a reason and a usable action. The adopted rules-based approach is implemented; academic acceptance remains externally unverified. |
 | REQ-SCOPE-02 | Use TypeScript, Express in `aqours-api/`, React in `aqours-web/`, and React Native with the existing Expo setup in `aqours-app/`. The customer product targets Android only. Keep the existing directories; a workspace restructure is not required. |
-| REQ-SCOPE-03 | Use containerized standard PostgreSQL, ordinary numeric coordinate columns, MapLibre GL JS for supplier maps, MapLibre React Native for Android maps, and Geoapify for typed-address geocoding. These are confirmed target choices; they are not currently integrated. |
+| REQ-SCOPE-03 | Use containerized standard PostgreSQL, ordinary numeric coordinate columns, MapLibre GL JS for supplier maps, MapLibre React Native for Android maps, and Geoapify for typed-address geocoding. These choices are integrated in source/configuration; live Geoapify and installed Android/native map verification remain separate checks. |
 | REQ-SCOPE-04 | Use sample customer records and fictional people, accounts, service zones, incidents, notices, restoration estimates, and availability. Visibly label synthetic incidents, notices, and seeded water availability as demonstration data. Do not present fictional safety notices as real public advice. |
-| REQ-SCOPE-05 | **Proposed default:** the first release serves one supplier, seeded customer accounts, and supplier staff/admin accounts. A one-week demonstration schedule is an assumption, not a confirmed deadline. |
+| REQ-SCOPE-05 | **Adopted first-release default:** the first release serves one supplier, seeded customer accounts, and supplier staff/admin accounts. A one-week demonstration schedule is an assumption, not a confirmed deadline. |
 
 ## Domain vocabulary
 
@@ -39,9 +34,9 @@ Requirement identifiers are stable within this document. A proposed detail does 
 
 ## Roles, identity, and access
 
-The brief requires customer, staff, and admin boundaries but does not confirm every fine-grained staff/admin permission. The following split is a **proposed default to confirm before authorization implementation**. It introduces no additional roles.
+The project owner adopted the following customer, staff and admin split for the first release. Express enforces these roles and record ownership; it introduces no additional roles.
 
-| Capability | Customer | Staff, proposed | Admin, proposed |
+| Capability | Customer | Staff | Admin |
 | --- | --- | --- | --- |
 | Sign in, sign out, view own profile | Own account | Own account | Own account |
 | View saved service connections | Own connections | Operational access needed to handle reports and requests | Same operational access |
@@ -57,22 +52,22 @@ The brief requires customer, staff, and admin boundaries but does not confirm ev
 
 | ID | Requirement |
 | --- | --- |
-| REQ-ACCESS-01 | Seed individual customer accounts linked to sample service connections and saved addresses, and supply a documented demo account list. The list and provisioning process are future deliverables; no real credentials are included in these requirements. |
-| REQ-ACCESS-02 | Support login, logout, profile viewing, and session revocation. Hash passwords on the server. Public self-registration is optional for the demo; no account-approval queue is required by the brief. Supplier-managed provisioning is the proposed default. |
+| REQ-ACCESS-01 | Seed individual customer accounts linked to sample service connections and saved addresses, and supply a documented demo account list. Development seed and demo instructions supply fictional accounts; no real credentials are included in these requirements. |
+| REQ-ACCESS-02 | Support login, logout, profile viewing, and session revocation. Hash passwords on the server. Public self-registration is optional for the demo; no account-approval queue is required by the brief. Supplier-managed provisioning is the adopted default. |
 | REQ-ACCESS-03 | Enforce roles and individual-record ownership in the API on every applicable read and mutation, including reports, attachments, messages, notifications, assistance requests, and their linked records. Changing an identifier must not reveal another customer's data. UI visibility alone is insufficient. |
 | REQ-ACCESS-04 | Customer responses may expose owned report locations and published affected areas, incidents, and notices. They must not expose other households' raw coordinates, contact information, reports, or internal notes. Staff access remains restricted to authorized operations. |
-| REQ-ACCESS-05 | Store mobile credentials in secure device storage. Browser authentication must protect credentials and state-changing requests. The concrete session/token and browser protection mechanisms remain implementation decisions, not installed features. |
+| REQ-ACCESS-05 | Store mobile credentials in secure device storage. Browser authentication must protect credentials and state-changing requests. The API uses revocable hashed sessions; Android uses bearer sessions in SecureStore and the browser uses HttpOnly cookies plus Origin/CSRF checks. |
 
 ## Required screens
 
-These are target capabilities, not claims that routes or screens exist. Route naming and detailed layouts remain implementation choices.
+The first-release screens implement these capabilities; exact paths and layouts are in source and the feature specs. Full native acceptance remains subject to the verification ledger.
 
 | ID | Customer screen | Required capability |
 | --- | --- | --- |
 | REQ-UI-C01 | Home | Current published notices applicable to the saved service address, a report shortcut, and open reports. |
 | REQ-UI-C02 | Report form | Category, guided details, time noticed, saved address or optional GPS/alternate issue location, native MapLibre preview and confirmation, optional photos, and explicit submission/retry feedback. |
 | REQ-UI-C03 | My reports and report detail | Owner-only list and detail with tracking reference, status, messages, linked incident, timeline, and a follow-up action. |
-| REQ-UI-C04 | Assistance | Recommended action, explanation, supporting notice, last-updated time, and usable inspection, callback, or water-support request actions. The recommendation method is proposed. |
+| REQ-UI-C04 | Assistance | Recommended action, explanation, supporting notice, last-updated time, and usable inspection, callback, or water-support request actions. The adopted method is API-evaluated explainable rules; academic acceptance is unverified. |
 | REQ-UI-C05 | My assistance requests | Selected service, linked report, request status, appointment or pickup details, timeline, and permitted follow-up/cancellation actions. |
 | REQ-UI-C06 | Notifications and profile | Persisted in-app updates, profile, and saved connection details. |
 
@@ -94,7 +89,7 @@ These are target capabilities, not claims that routes or screens exist. Route na
 | REQ-REPORT-03 | Resolve typed addresses through server-side Geoapify lookup and require confirmation of a returned candidate. GPS provides device coordinates directly and does not require forward geocoding. Persist confirmed coordinates and reuse them in both clients. |
 | REQ-REPORT-04 | Handle no result, ambiguous matches, quota limits, provider failure, and missing coordinates without inventing a location or falling back to `(0, 0)`. Retain the address/report for staff review. Flag missing/ambiguous coordinates and unconfirmed service zones; an alternate issue location must not silently inherit the saved address's zone. |
 | REQ-REPORT-05 | Use WGS84 longitude/latitude, both present or both absent, with latitude in `-90..90` and longitude in `-180..180`. Convert to GeoJSON as `[longitude, latitude]` for web and native rendering. |
-| REQ-REPORT-06 | The API validates required fields, accepted values, attachment type, and attachment size. Store uploads in controlled file/object storage with database metadata and ownership relationships. The precise file-size/type allowlist remains to be configured before implementation. |
+| REQ-REPORT-06 | The API validates required fields, accepted values, attachment type, and attachment size. Store uploads in controlled file/object storage with database metadata and ownership relationships. The API accepts decoded still JPEG/PNG/WebP images up to 5 MiB with a 25-million-input-pixel limit, reencodes them and stores protected bytes separately from report creation. |
 | REQ-REPORT-07 | Make report creation safe to retry: repeated submission of the same operation must not create duplicate reports. On success, immediately show a tracking reference, submission timestamp, and initial `received` status. |
 | REQ-REPORT-08 | Support customer/staff clarification messages and an owner-visible timeline. Keep staff-only notes outside customer messages and customer API responses. Failed network or photo upload operations need an explicit retry state rather than a false success. |
 
@@ -102,7 +97,7 @@ These are target capabilities, not claims that routes or screens exist. Route na
 
 | Record | Required statuses | Additional rule |
 | --- | --- | --- |
-| Report | `received`, `under_review`, `in_progress`, `resolved` | Allow a reviewed closure outcome for duplicate or invalid reports. **Proposed default:** retain the four status values and record a separate outcome/reason; duplicate/invalid closure is not successful service restoration. |
+| Report | `received`, `under_review`, `in_progress`, `resolved` | Allow a reviewed closure outcome for duplicate or invalid reports. **Adopted first-release default:** retain the four status values and record a separate outcome/reason; duplicate/invalid closure is not successful service restoration. |
 | Incident | `investigating`, `confirmed`, `work_in_progress`, `monitoring`, `resolved` | Record every transition with actor and time. Review and record corrective transitions rather than silently overwriting history. |
 | Assistance request | `requested`, `accepted`, `scheduled`, `in_progress`, `completed`, `unavailable`, `cancelled` | Governed separately below. |
 
@@ -126,7 +121,7 @@ The report and incident status lists are confirmed; a complete transition/author
 | --- | --- |
 | REQ-NOTICE-01 | Maintain scheduled interruptions and approved supplier guidance with applicable service-zone/affected-area information, publication/source information, and last-updated times. Present current applicable published notices on the customer home and assistance views. |
 | REQ-NOTICE-02 | Keep boil-water, do-not-drink, and do-not-use notices distinct. Only authorized supplier/public-health guidance determines which restriction applies. The system must not diagnose water safety or infer drinkability from report text, photos, absent reports, or outage resolution. |
-| REQ-NOTICE-03 | Publishing and lifting an advisory are explicit authorized actions with actor/time audit history. Under the proposed permission split, admin performs official advisory publication/lifting; this split needs confirmation before implementation. A quality restriction remains applicable until explicitly lifted by an authorized user; new incident status alone cannot remove it. |
+| REQ-NOTICE-03 | Publishing and lifting an advisory are explicit authorized actions with actor/time audit history. Under the adopted permission split, admin performs official advisory publication/lifting. A quality restriction remains applicable until explicitly lifted by an authorized user; new incident status alone cannot remove it. |
 | REQ-NOTICE-04 | Commit a publication and its notification records atomically or through a reliable outbox, with stable operation/delivery identifiers. Retries must not publish duplicate updates or create duplicate notification deliveries. First-release delivery is persisted in-app notifications with foreground polling/refetch. |
 
 ## Assistance fulfillment
@@ -138,7 +133,7 @@ All three assistance services are confirmed scope: `callback` (callback/support 
 | ID | Requirement |
 | --- | --- |
 | REQ-ASSIST-01 | Every request has a customer, service type, linked report, status, customer-visible updates, and timestamps. Incident linkage is optional. On acceptance, assign a staff owner. Prevent duplicate active requests of the same type for the same customer/report. |
-| REQ-ASSIST-02 | Follow `requested -> accepted -> scheduled -> in_progress -> completed`, with `unavailable` and `cancelled` as alternate outcomes. Immediate support may skip scheduling only with a recorded reason. Detailed allowed transitions and the definition of active requests are proposed persistence/workflow defaults in [schema](schema.md) and [workspace](workspace.md). |
+| REQ-ASSIST-02 | Follow `requested -> accepted -> scheduled -> in_progress -> completed`, with `unavailable` and `cancelled` as alternate outcomes. Immediate support may skip scheduling only with a recorded reason. Detailed allowed transitions and the definition of active requests are adopted persistence/workflow defaults in [schema](schema.md) and [workspace](workspace.md). |
 | REQ-ASSIST-03 | A submitted request does not guarantee an appointment or water availability. Clearly distinguish submitted, accepted, and scheduled states. Recommendations never automatically submit, accept, or schedule a request. |
 | REQ-ASSIST-04 | Record and notify the customer of unavailability, cancellation, or rescheduling, including the reason. Allow customer cancellation before work or collection begins and retain history. Staff must not erase earlier appointment details or updates when rescheduling. |
 | REQ-ASSIST-05 | Staff can review the queue, assign owners, accept, mark unavailable with a reason, schedule, update progress, and record completion. Customers can see their own request timeline and permitted follow-up/cancellation actions. |
@@ -165,9 +160,9 @@ All three assistance services are confirmed scope: `callback` (callback/support 
 
 ## Customer decision support
 
-**Proposed first-release approach, pending academic acceptance:** API-evaluated, explainable rules, a short guided questionnaire, and action cards. The professor's required form of decision support is unresolved; AI is not confirmed as a requirement. The rules below preserve the brief's proposed behavior without claiming the academic question is settled.
+**Adopted and implemented first-release approach:** API-evaluated explainable rules, a short guided questionnaire and action cards. The professor's required form of decision support remains externally unverified. Implementation does not establish academic acceptance; AI is outside this release.
 
-| ID | Proposed requirement |
+| ID | Requirement |
 | --- | --- |
 | REQ-DECISION-01 | Evaluate category, service location/zone, report time, customer-stated needs, targeted answers, active applicable advisories, incident status, and current pickup-session availability. Retain relevant input references and rule version for review. |
 | REQ-DECISION-02 | Apply applicable official safety guidance before contextual incident guidance. Keep escalation conditions visible alongside both. Show the action, why it applies, source/supporting notice, last-updated time, and a working action button. |
@@ -184,21 +179,21 @@ All three assistance services are confirmed scope: `callback` (callback/support 
 
 | ID | Requirement |
 | --- | --- |
-| REQ-OPS-01 | Validate inputs server-side, sanitize rendered text, limit upload types/sizes, rate-limit sensitive endpoints, and avoid logging credentials. Keep database/provider secrets out of source control and web/mobile bundles. Concrete limits and security mechanisms remain implementation decisions. |
+| REQ-OPS-01 | Validate inputs server-side, sanitize rendered text, limit upload types/sizes, rate-limit sensitive endpoints, and avoid logging credentials. Keep database/provider secrets out of source control and web/mobile bundles. Concrete input/upload limits, process-local rate limits, protected images and session mechanisms are implemented; deployment limitations are recorded in architecture and verification. |
 | REQ-OPS-02 | Keep report entry usable when the basemap is unavailable. Provide list views and explicit network/upload failure and retry states. Address-based reporting remains available after GPS denial; map/provider failure must not generate invented coordinates. This does not require an offline synchronization system. |
 | REQ-OPS-03 | Persist PostgreSQL data through container replacement using a named data volume. Document backup and restore separately: a persistent volume is not a backup procedure. Use migrations and a repeatable development-only seed; require deliberate action before resetting demo data. |
 | REQ-OPS-04 | Store report/advisory times in UTC and display them in the service timezone, initially `Asia/Manila`. Apply the same explicit timezone handling to appointments, session times, updates, and audit history. |
 | REQ-OPS-05 | Audit publication/lifting, priority changes, report linking/reassignment, status transitions, and rule edits with actor/time. Retain the history needed to explain changes without exposing staff notes or credentials to customers. |
 | REQ-OPS-06 | Scope staff map queries by numeric viewport bounds and category/status/time filters; preserve ownership rules in customer responses. GeoJSON polygons and visual clusters support rendering rather than supply-network inference. |
-| REQ-OPS-07 | Geoapify requests use a server-side key, service-region bias/filter, request limits, and timeouts. Select compatible map styles/tiles and attribution separately; any required client-visible tile credentials must have appropriate restrictions. Provider selection/credentials and native-version compatibility remain implementation tasks. |
-| REQ-OPS-08 | **Proposed API default:** Express REST under `/api/v1`, shared DTOs/enums/validation contracts, pagination, consistent errors, and server-side validation/authorization. Shared contracts must not expose database credentials or server-only code. Exact endpoint contracts and shared-package location are not yet implemented or finalized. |
-| REQ-OPS-09 | Produce an installable Android APK when implementation is requested. Verify Expo/React Native/native MapLibre compatibility early with a development/native Android build, configure the native plugin/style, and pin tested versions. The planned native map is not an Expo Go feature; current starter dependencies do not prove compatibility. |
+| REQ-OPS-07 | Geoapify requests use a server-side key, service-region bias/filter, request limits, and timeouts. Select compatible map styles/tiles and attribution separately; any required client-visible tile credentials must have appropriate restrictions. Provider credentials and installed-device/native compatibility remain verification gates; MapLibre and configurable styles are integrated in source. |
+| REQ-OPS-08 | **Adopted API default:** Express REST under `/api/v1`, shared DTOs/enums/validation contracts, pagination, consistent errors, and server-side validation/authorization. Shared contracts must not expose database credentials or server-only code. The implemented endpoint contract is in [api.md](api.md); public DTOs/enums live in `aqours-contracts/src/`, with runtime validation on the API. |
+| REQ-OPS-09 | Produce an installable Android APK when implementation is requested. Verify Expo/React Native/native MapLibre compatibility early with a development/native Android build, configure the native plugin/style, and pin tested versions. The native map is not an Expo Go feature; CNG prebuild/Hermes export do not prove an installable APK or device compatibility. |
 
 ### Metric definitions
 
-The brief requires defined metric events. The following are **proposed defaults** to confirm before implementation and reporting. Display the reporting period, sample count, excluded outcomes, and timezone; do not present absent data as zero-duration service.
+The following metric definitions were adopted for the first release and are implemented by the API. Display the reporting period, sample count, excluded outcomes, and timezone; do not present absent data as zero-duration service.
 
-| ID | Metric | Proposed definition |
+| ID | Metric | Adopted definition |
 | --- | --- | --- |
 | REQ-METRIC-01 | Active incidents / unresolved reports | Active incidents have status other than `resolved`. Unresolved reports remain `received`, `under_review`, or `in_progress`; include a report returned for “still affected” review. Reviewed duplicate/invalid closures are shown separately from successful resolutions. |
 | REQ-METRIC-02 | Counts by category | Count the underlying report records by category for the selected period/status filter. Identify duplicate/invalid outcomes separately; display unique reporting connections independently of report totals and estimated affected customers. |
@@ -207,7 +202,7 @@ The brief requires defined metric events. The following are **proposed defaults*
 
 ## Demo fixtures
 
-The repeatable demo seed is a future deliverable. It must remain development-only and use fictional data.
+The repeatable demo seed is implemented and remains development-only with fictional data. Its reset is deliberate; normal startup does not reset state.
 
 | ID | Required fixture coverage |
 | --- | --- |
@@ -217,7 +212,7 @@ The repeatable demo seed is a future deliverable. It must remain development-onl
 
 ## Acceptance scenarios
 
-These are **required future checks** from the brief, not tests already run. Each scenario must be demonstrable against the integrated Android app, supplier web app, API, and database where applicable. These scenario IDs are separate from the documentation-only `.loop/` acceptance criteria.
+These ten scenarios retain their original required scope. Focused API/browser checks provide partial evidence, while native/device and live-provider steps remain unverified unless recorded in [verification](verification.md). Each scenario must be demonstrable against the integrated Android app, supplier web app, API and database where applicable. These scenario IDs are separate from `.loop/` execution criteria.
 
 | ID | Scenario and passing evidence |
 | --- | --- |
@@ -240,13 +235,13 @@ These are **required future checks** from the brief, not tests already run. Each
 | IoT sensors, automatic contamination/drinkability diagnosis | Deferred; reported data and approved guidance do not constitute automatic water-safety diagnosis. |
 | iOS, app-store publication | Deferred; Android APK demonstration is the confirmed customer target. |
 | Vehicle/repair routing, home delivery, fleet tracking, route optimization | Deferred; first-release water assistance uses staff-managed pickup/distribution. |
-| Multiple suppliers | Deferred; one supplier is the proposed first-release default. |
+| Multiple suppliers | Deferred; one supplier is the adopted first-release default. |
 | SMS, email, push notifications, WebSockets | Optional later work; first release uses persisted in-app records and foreground polling/refetch. |
 | Public registration | Optional for the demo; required access is seeded individual accounts. No registration approval process is presumed. |
 | AI chatbot | Optional future work; confirm the academic requirement before adding it. |
 | Decision-support rubric | Open: confirm whether contextual rules, explanations, and actionable alternatives satisfy the professor's expectations. |
-| Detailed permissions and workflow transitions | Open implementation decisions: confirm the proposed staff/admin publication split and transition rules without weakening ownership, audit, advisory, or stock requirements. |
-| Authentication mechanism, upload limits, tile/style provider, native compatibility | Open implementation details to resolve and document during the corresponding implementation work. |
+| Detailed permissions and workflow transitions | Adopted and implemented for this release; ownership, audit, advisory and stock invariants remain mandatory. |
+| Authentication mechanism, upload limits, tile/style provider, native compatibility | Sessions, upload limits and configurable map styles are implemented; actual provider credentials, production deployment and installed-device native compatibility remain verification/deployment work. |
 | Working title, demonstration geography, deployment destination, exact deadline | Configurable planning details; the supplied one-week sequence is conditional, not a committed schedule. Do not reopen the confirmed Android, location, or assistance choices. |
 
-When implementation is separately requested, expected deliverables include application source, setup guide, placeholder-only `.env.example`, Compose configuration, migrations/seeds, API contracts, sample logins, demo script, and Android build instructions. This documentation-only task creates none of that infrastructure or functionality. Dependency additions still require explicit user approval under [project guidance](../AGENTS.md).
+Application source, environment examples, Compose, migrations/seeds, contracts and setup/demo/build guidance now exist. The user authorized necessary project-local dependencies for this implementation. Release completion still requires the evidence and outstanding checks recorded in [verification](verification.md), including the Android deliverable; do not infer completion from this requirement inventory.

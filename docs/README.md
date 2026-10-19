@@ -1,15 +1,17 @@
 # Aqours documentation
 
-Baseline: **18 October 2026**, Water Supply Reporting and Customer Assistance brief **v0.4**, supplied by the project owner. This documentation defines the intended system. The repository currently contains an Expo customer starter and empty API/web directories; the domain features, database and integrations below are **unimplemented**.
+Updated **19 October 2026** against the first-release implementation of Water Supply Reporting and Customer Assistance brief **v0.4**. Express/PostgreSQL, the React supplier workspace and connected Expo customer workflows now exist. The earlier Expo-starter baseline is historical. Source implementation and full acceptance are distinct: [verification](verification.md) records executed evidence and gaps, and [traceability](traceability.md) maps the original requirements and criteria.
 
 ## Reference documents
 
 | Document | Purpose |
 | --- | --- |
-| [Architecture](architecture.md) | Verified current structure, confirmed stack, proposed components, trust boundaries, data flows and implementation constraints |
-| [Requirements](requirements.md) | Role capabilities, shared rules, stable `REQ-*` identifiers, ten future demo scenarios, deferred scope and open decisions |
-| [Schema](schema.md) | No implemented database; separately labeled proposed records, relationships, integrity and transaction requirements |
-| [Workflows and workspace](workspace.md) | Step-by-step provisioning, authentication, review, publication, assistance/pickup lifecycles, actual starter commands and future operational setup |
+| [Architecture](architecture.md) | Implemented components, trust boundaries, data flows and limitations |
+| [Requirements](requirements.md) | Role capabilities, shared rules, stable `REQ-*` identifiers, ten demo scenarios, adopted defaults, deferred scope and open decisions |
+| [Schema](schema.md) | Physical JSONB record store, relational ownership/history/stock constraints and logical entity mapping |
+| [Workflows and workspace](workspace.md) | Step-by-step provisioning, authentication, review, publication, assistance/pickup lifecycles, actual workspace tooling and operational setup references |
+
+Additional execution references: [API contract](api.md), [setup and backup/restore](setup.md), [demo](demo.md), [verification](verification.md), and [traceability](traceability.md).
 
 Use these together: requirements define the behavior, architecture defines boundaries, schema describes persistence status/design, and workspace traces the target workflows. [PROGRESS.md](../PROGRESS.md) records completed repository work and verification.
 
@@ -19,13 +21,13 @@ Use these together: requirements define the behavior, architecture defines bound
 | --- | --- |
 | [Customer](domains/customers.md) | Own service connection, reports, guidance, assistance, notifications and profile |
 | [Supplier staff](domains/staff.md) | Operational report review, map, incidents, incident updates and assistance/distribution |
-| [Supplier admin](domains/admin.md) | Supplier operations plus proposed account, zone, approved-guidance/rule and official-advisory controls |
+| [Supplier admin](domains/admin.md) | Supplier operations plus account, zone, approved-guidance/rule and official-advisory controls |
 
-The fine-grained staff/admin permission split is a **proposed default** in [requirements](requirements.md), to confirm before authorization implementation. A folder named `admin` describes the supplier workspace; it does not grant every staff account administrative authority.
+The project owner adopted the staff/admin permission split in [requirements](requirements.md); the API enforces it. A folder named `admin` describes the supplier workspace; it does not grant every staff account administrative authority.
 
 ## Detailed feature specifications
 
-Each feature has its own `docs/features/<role>/<feature>/spec.md`. The specs use the requested [feature-spec](https://github.com/ZieksQ/feature-spec) workflow and `WHAT`, `MUST`, `HOW` format, with testable future acceptance criteria. They are implementation specifications, not additional agent skills or completed software. Proposed interfaces and modules do not imply existing routes/files or approved dependencies.
+Each feature has its own `docs/features/<role>/<feature>/spec.md`. The specs use the requested [feature-spec](https://github.com/ZieksQ/feature-spec) workflow and `WHAT`, `MUST`, `HOW` format, with the original 126 acceptance criteria. The WHAT/MUST sections preserve required behavior and HOW links actual modules and limitations. Unchecked criteria are an acceptance inventory, not a blanket failure or pass; consult verification and traceability for exact evidence. These documents are not additional agent skills.
 
 | Customer feature | Specification | Main requirement groups |
 | --- | --- | --- |
@@ -53,10 +55,9 @@ Keep detailed feature behavior in its spec and shared invariants in the referenc
 
 ## Status, scope and open decisions
 
-- **Confirmed choices:** Express/React/React Native with TypeScript; Android; standard containerized PostgreSQL; numeric coordinates; MapLibre web/native; Geoapify; all three assistance services; fictional demo data.
-- **Proposed implementation defaults:** one supplier, rules/questionnaire/action cards, REST API groups, shared contracts strategy, exact permission split, physical schema and workflow details. Academic acceptance of the decision-support approach remains open.
-- **Deferred:** billing/payments/commerce orders, home delivery/fleet/routing, IoT, automated water-safety diagnosis, iOS, multiple suppliers and app-store publication. External notification channels, public registration and AI are optional later decisions.
-- **Unimplemented first-release requirements:** reporting, incidents, advisories, assistance, stock, authentication, database and notifications are still required targets; their absence does not make them deferred features.
-- **Documentation verification:** check links, requirement/spec coverage, facts against repository evidence, state/role consistency and diff. The future `DEMO-*` scenarios and acceptance checkboxes are not test results from this documentation task.
+- **Implemented:** one supplier, seeded individual customer/staff/admin accounts, owned reporting/location/photo workflows, supplier map/review/incidents, independent advisories/publication, API rules/action cards, all three assistance services, transactional pickup stock, persisted in-app notifications, settings/audit, migrations and demo seed.
+- **Adopted release defaults:** the role matrix, workflows, REST contracts/public DTOs, exact liters and metric definitions. Academic decision-support approval remains externally unverified.
+- **Verification limits:** browser/API/database checks and client static/build checks cover subsets of the original requirements. Android prebuild/export evidence does not certify an installed APK, native map, GPS/SecureStore/photo flows or end-to-end mobile scenarios. Live Geoapify depends on provider configuration. Use the current verification ledger for release status.
+- **Deferred/optional:** billing/payments/commerce, home delivery/fleet/routing, IoT, automated water-safety diagnosis, iOS, multiple suppliers, app-store publication, external notification channels, public registration and AI.
 
-Implement only when separately requested, follow [root guidance](../AGENTS.md) and [mobile guidance](../aqours-app/AGENTS.md), and update the affected reference/spec documents when behavior becomes real. Exact deadline, demo geography and deployment remain configurable; the seven-day sequence is not a committed delivery date.
+Follow [root guidance](../AGENTS.md) and [mobile guidance](../aqours-app/AGENTS.md) for future changes. Keep synthetic notices/availability clearly labeled, preserve independent report/incident/advisory/assistance outcomes and update affected documentation with source and verification changes. Exact deadline, deployment destination and demonstration geography remain configurable.

@@ -11,7 +11,11 @@
     "test:api": "node --experimental-strip-types --experimental-test-isolation=none --test --test-concurrency=1 verification/*.test.ts",
     "test:browser": "node --experimental-strip-types verification/browser.ts",
     "check:repository": "python3 -B scripts/check_repository.py",
-    "test:map": "node --experimental-strip-types verification/browser-map.ts"
+    "test:map": "node --experimental-strip-types verification/browser-map.ts",
+    "test:maintenance": "node --experimental-strip-types verification/browser-maintenance.ts",
+    "test:seed": "node --experimental-strip-types verification/seed.ts",
+    "test:recovery": "node --experimental-strip-types verification/browser-recovery.ts",
+    "test:operations": "node --experimental-strip-types verification/browser-operations.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.0",

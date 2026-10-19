@@ -61,12 +61,27 @@ test('DEMO-002/005: shared incident links, publication dedupe, private snapshots
 
 test('review operations require reasons, prevent stale overwrite, separate clarification and staff notes',async()=>{
   const {a,staff}=users;
-  let item=await report(a,'leak');
+  let item=await ok<Report>(a,'POST','/reports',{
+    connectionId:(await connection(a)).id,category:'leak',description:'Fictional isolated unlocated severe leak',noticedAt:new Date().toISOString(),
+    location:{address:'Fictional address awaiting location review',source:'geocoded_address',confirmed:false},
+  });
+  assert.equal(item.latitude,null);assert.equal(item.longitude,null);assert.equal(item.zoneId,null);
   const missingReason=await request(staff,'PATCH',`/staff/reports/${item.id}`,{expectedVersion:item.version,priority:'urgent'},key());
   assert.equal(missingReason.status,400);
   const originalVersion=item.version;
+  const beforeReview=Date.now();
   item=await ok<Report>(staff,'PATCH',`/staff/reports/${item.id}`,{expectedVersion:item.version,priority:'urgent',reason:'Isolated hazardous leak needs assessment',ownerId:staff.user.id});
+  const afterReview=Date.now();
   assert.equal(item.priority,'urgent');
+  assert.equal(item.ownerId,staff.user.id);
+  assert.equal(item.latitude,null);assert.equal(item.longitude,null);assert.equal(item.zoneId,null);
+  const privateNote=`Private report review note ${key()}`;
+  await ok(staff,'POST',`/staff/reports/${item.id}/notes`,{text:privateNote});
+  const reviewed=await ok<ReportDetail>(staff,'GET',`/staff/reports/${item.id}`);
+  const audit=reviewed.timeline.find(event=>event.action==='reviewed'&&event.text==='Isolated hazardous leak needs assessment');
+  assert.ok(audit);assert.equal(audit.actorId,staff.user.id);
+  assert.ok(Date.parse(audit.createdAt)>=beforeReview&&Date.parse(audit.createdAt)<=afterReview);
+  assert.equal((await ok<ReportDetail>(a,'GET',`/reports/${item.id}`)).firstRespondedAt,null);
   const stale=await request(staff,'PATCH',`/staff/reports/${item.id}`,{expectedVersion:originalVersion,status:'under_review',reason:'Stale edit'},key());
   assert.equal(stale.status,409);
   const messageKey=key();
@@ -77,6 +92,7 @@ test('review operations require reasons, prevent stale overwrite, separate clari
   const detail=await ok<ReportDetail>(a,'GET',`/reports/${item.id}`);
   assert.ok(detail.firstRespondedAt);
   assert.equal(detail.messages.filter(x=>x.id===msg.id).length,1);
+  assert.ok(!JSON.stringify(detail).includes(privateNote));
 });
 
 test('map queries enforce bounds, cap disclosure and persisted point ordering without invented coordinates',async()=>{

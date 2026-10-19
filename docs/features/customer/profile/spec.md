@@ -1,6 +1,6 @@
 # Customer Profile and Saved Connection
 
-Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
+Status: **implemented first-release behavior; acceptance evidence remains qualified**. Updated: **2026-10-19**.
 
 ---
 
@@ -8,7 +8,6 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 
 - Let a signed-in customer view their profile and supplier-provisioned service connection/address.
 - Provide reliable saved-address context for reporting, targeted notices, and assistance.
-- Current evidence: the [mobile starter](../../../../aqours-app/src/app/) has no profile, customer account, or service-connection data.
 - Scope is viewing owned information; self-service connection reassignment, supplier-address edits, and account approval are not confirmed requirements.
 
 ---
@@ -40,20 +39,16 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 
 ## HOW
 
-### Proposed implementation
+### Implemented behavior and modules
 
-- Add a focused Expo Router profile view; keep owned-data hooks and response mapping outside `src/app/`.
-- Illustrative read contracts, not existing endpoints: `GET /api/v1/me` and `GET /api/v1/me/connections`.
-- Derive the current user from [authentication](../auth/spec.md); apply ownership predicates before reading connection records.
-- Use the [schema](../../../schema.md) proposals for `users` and `service_connections`; serialize a restricted customer profile DTO rather than a raw database row.
-- Supply saved-location context to [reporting](../report/spec.md) and [dashboard](../dashboard/spec.md) without copying supplier-only fields into client state.
-- The API retains report/inspection address snapshots independently; profile refresh must not update those snapshots.
+`aqours-app/src/app/(customer)/profile.tsx` displays current safe identity and owned saved connections with location/zone review information and sign-out.
 
-### Dependencies, future checks, and open choices
+`aqours-api/src/routes/auth.ts` implements `/me` and `/me/connections`; `src/services/projection.ts` and `src/store.ts` restrict returned fields. The profile is read-only. Admin connection maintenance cannot silently rewrite report/inspection address snapshots. Missing connection context offers supplier follow-up rather than customer reassignment.
 
-- Sequence after seeded identity/connection data and authentication; it can precede report creation and notice targeting.
-- Add API tests for current-user projection and foreign-connection access, plus Android checks for missing data, refresh errors, and account switching.
-- Validate that customer responses omit credentials, internal fields, and another household's coordinates/contact data.
-- Confirm profile field display and any future correction-request workflow before adding mutations; this spec does not invent editable fields.
-- Resolve multiple-connection selection behavior if needed; do not assume one connection can be assigned by the customer.
-- Sources and workflow boundaries: [architecture](../../../architecture.md), [workflows/setup](../../../workspace.md), and [customer role](../../../domains/customers.md).
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
+
+### Verification and limits
+
+Review identity/ownership API tests. Actual Android profile recovery, missing connection display and account switching remain device checks.
+
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

@@ -1,6 +1,6 @@
 # Customer Dashboard
 
-Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
+Status: **implemented first-release behavior; acceptance evidence remains qualified**. Updated: **2026-10-19**.
 
 ---
 
@@ -9,7 +9,6 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 - Provide the Android customer's home view: applicable published notices, open reports, and a shortcut to report a problem.
 - Help a customer find the latest known supplier information before deciding whether to report or request assistance.
 - The saved service connection/address establishes home context; an alternate report location does not replace it.
-- Current evidence: [the home route](../../../../aqours-app/src/app/index.tsx) is a starter welcome screen without customer data.
 - This feature does not contain supplier metrics, other customers' report maps, billing, or a new recommendation engine.
 
 ---
@@ -26,7 +25,7 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 - Show the customer's open reports with category, tracking reference, current status, and a detail action.
 - Provide a report shortcut and access to guidance, assistance requests, notifications, and profile.
 - Do not expose unpublished updates, internal notes, other households' locations, or other customers' reports.
-- If multiple owned connections are supported, make the selected home context explicit; the selection convention remains proposed.
+- Make multiple owned connections explicit; the implemented home lists all owned connections and applicable notices rather than silently selecting one.
 
 ### Empty, stale, and failed states
 
@@ -49,21 +48,16 @@ Status: **UNIMPLEMENTED target specification**. Updated: **2026-10-18**.
 
 ## HOW
 
-### Proposed composition and data flow
+### Implemented behavior and modules
 
-- Keep the Expo Router home screen small; use focused notice, open-report, and navigation components plus request hooks outside `src/app/`.
-- Load authenticated identity/connection context before requesting targeted home content.
-- Proposed API groups are `me/connections`, published advisories/incidents, and owned reports; a combined home response is optional, not a confirmed endpoint.
-- The API computes applicable notice matches from explicit zone/connection links and returns only customer-safe published fields.
-- Use [schema](../../../schema.md) users/connections, report summaries, advisory revisions, and published incident updates; no dashboard table is required by this spec.
-- A shared source event/revision identifier can keep summary and detail views consistent; fetching the home view must not publish updates or create notifications.
-- Use server UTC timestamps and display `Asia/Manila` initially; do not infer current publication state from a client clock alone.
+`aqours-app/src/features/home/home-screen.tsx` composes saved connections, applicable advisories, published incidents, open reports and report navigation.
 
-### Dependencies, future checks, and open choices
+Authenticated reads use `/me/connections`, `/advisories`, `/incidents` and owned `/reports`; no special dashboard table is used. `src/hooks/use-resource.ts` refetches on focus/foreground and polls selected resources every 30 seconds while active. Notices and incidents carry demo labels and source/update context; matching uses API-reviewed zone/connection associations.
 
-- Sequence after [auth](../auth/spec.md) and the read contracts for [reports](../report/spec.md); integrate published notice targeting before final acceptance.
-- Link to [guidance](../guidance/spec.md) for contextual recommendations and [assistance](../assistance/spec.md) for service fulfillment, rather than duplicating their rules.
-- Add API ownership/targeting tests and Android home checks for published/lifted notices, open/resolved reports, missing context, stale data, and retries.
-- Verify no raw other-household coordinates or unpublished fields reach the response.
-- Choose refresh interval, any cache policy, and multiple-connection home selection during implementation; none is an existing app behavior.
-- Sources and boundaries: [architecture](../../../architecture.md), [workflows/setup](../../../workspace.md), and [customer role](../../../domains/customers.md).
+Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
+
+### Verification and limits
+
+Review published projection/targeting API tests. Actual Android home navigation, foreground refresh and failure states remain device checks.
+
+The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

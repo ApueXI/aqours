@@ -1,0 +1,12 @@
+# Customer Android state
+
+Status: IMPLEMENTED_NATIVE_BUILD_VERIFIED; authenticated runtime acceptance requires a stable target.
+Updated2026-10-19. Implementation worker finished/released UI; native worker resumed after the usage-limit reset, completed bounded actual Android29 checks and released ownership. Lead reviewed screenshots/logs and stopped the owned emulator before final integration. Requested gpt-6.1-sol/high; effective settings not exposed. No worker currently editing.
+
+Preserved Expo57/RN0.86.3 and implemented connected customer authentication/SecureStore, Home/owned reports, four categories and guided details, GPS/address/native map/photos, messages/incidents/advisories, stale-safe API questionnaire/action cards, three assistance services/pickup options, notifications/profile and retries. No ExpoGo/web substitute, synthetic API success, AI or durable offline queue.
+
+Evidence: type/lint,10 helper tests, CNG and Hermes export PASS. Actual Gradle debug352 tasks and standalone release546 tasks BUILD SUCCESSFUL with JDK17/NDK27.1, compile/target36, min24, ARM64+x86_64 native MapLibre and APK v2 signature checks. Release embeds final public API/style and Hermes bundle. See root docs/verification.md for hashes/artifacts.
+
+Runtime: Android36 software guest repeatedly restarted its framework and APK installation failed package-service Broken pipe32. Official Android29 AOSP target installed the nondebuggable release package, resumed MainActivity and rendered actual native login. It then suffered SystemUI ANRs, zygote/system_server replacement and process termination, preventing usable input. Original installer exited1 without output; actual package/startup observation is separate from a passed install command. Neither target proved login, native MapLibre/GPS/picker or SecureStore lifecycle. Both owned guests stopped; data/caches remain project-local. Evidence: .local/evidence/native-runtime-assessment.txt and linked logs/screenshots.
+
+Exact next action: obtain a stable accelerated emulator or Android phone through the developer's existing environment. Configure the public API address and build/install using README commands; execute the precise native acceptance steps in docs/demo.md and docs/verification.md. No new keys or environment settings are requested during implementation. API/browser checks do not substitute for these device checks; remaining source/docs commits proceed independently.

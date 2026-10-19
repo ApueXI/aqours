@@ -1,6 +1,6 @@
 # Workflows and workspace
 
-Baseline: 18 October 2026, supplied project brief v0.4. **These are target workflows, not working features.** The repository currently contains only an Expo customer starter; the API, supplier web application, database, authentication, reports and fulfillment are unimplemented.
+Updated 19 October 2026 against the first-release implementation of brief v0.4. The workflows below describe implemented API/client paths and their required invariants. Full integrated Android acceptance remains unverified; see [verification](verification.md) and [traceability](traceability.md).
 
 Related documents: [Documentation index](README.md) · [Architecture](architecture.md) · [Requirements](requirements.md) · [Schema](schema.md). Role summaries and detailed feature specifications are linked from the index.
 
@@ -8,12 +8,12 @@ This document covers both role workflows requested by the project owner and loca
 
 ## 1. Account provisioning and registration
 
-Required demo access uses individual seeded customers linked to fictional service connections. Supplier-managed provisioning is the proposed default; **public registration is optional**, and no registration approval queue is specified or implemented.
+Required demo access uses individual seeded customers linked to fictional service connections. Supplier-managed provisioning is the adopted default; **public registration is optional**, and no registration approval queue is specified or implemented.
 
 1. Prepare the development-only dataset: one supplier context, three synthetic zones, twelve fictional customer connections, staff/admin accounts and saved service addresses.
 2. Link each customer account to the correct connection/address and reviewed zone. Keep unknown coordinates/zones explicitly unconfirmed rather than inventing a map position.
-3. Hash passwords and publish a clearly labeled demo account list through the future setup/demo documentation. There is currently no seed command or usable login list.
-4. Under the proposed permission split, admin maintains demo accounts, zones, approved guidance and rule versions; staff handles operational reports, incidents, assistance and distribution. Confirm this split before implementing authorization.
+3. Hash passwords and publish a clearly labeled demo account list through [setup](setup.md) and [demo](demo.md). The explicit development seed creates the fictional accounts; never use real credentials in documentation.
+4. Under the adopted permission split, admin maintains demo accounts, zones, approved guidance and rule versions; staff handles operational reports, incidents, assistance and distribution. The API enforces this split.
 5. A customer signs in with their own seeded account. If public registration is added later, define verification, connection ownership and approval requirements separately before building it; a submitted connection ID cannot establish ownership.
 
 Account creation is separate from staff acceptance of assistance. The required “approvals” below concern service requests, report linking and authorized publication.
@@ -21,13 +21,13 @@ Account creation is separate from staff acceptance of assistance. The required �
 ## 2. Authentication and session lifecycle
 
 1. Customer opens the Android sign-in screen; staff/admin uses the supplier web sign-in screen.
-2. The API validates credentials, account state and intended access, then creates the chosen revocable session. The exact token/cookie mechanism and expiry policy remain proposed implementation choices.
-3. Android stores authentication material in secure device storage. The browser uses protected authentication and state-changing requests; the proposed cookie approach is described in [architecture](architecture.md).
+2. The API validates credentials, account state and intended access, then creates a revocable client-specific session with configured expiry. Browser sessions use HttpOnly cookies plus Origin/CSRF protection; Android uses bearer tokens backed by SecureStore.
+3. Android stores authentication material in secure device storage. The browser uses protected authentication and state-changing requests; the implemented cookie approach is described in [architecture](architecture.md).
 4. The API derives the actor and role from the session on every request, then checks record ownership or authorized staff access. It rejects a customer's attempt to read another customer's report, file, notification or assistance request.
 5. On expiry/revocation, show sign-in recovery without displaying another user's cached private data. Failed requests must not appear to have saved a report or accepted a service.
 6. Logout revokes the relevant server session, clears local authentication/private view state and returns to sign-in. Removing a token from the screen alone does not satisfy logout.
 
-No real authentication flow is available in the starter. Password recovery, MFA and public registration are not implicitly added to the demonstration scope.
+Password recovery, MFA and public registration are not implicitly added to the demonstration scope.
 
 ## 3. Customer home and service location
 
@@ -48,14 +48,14 @@ No real authentication flow is available in the starter. Password recovery, MFA 
 7. Submit using the same operation identifier when retrying. On committed success, show a tracking reference, server submission time and initial `received` status.
 8. Open My reports/detail to see owned status, messages, incident link, timeline and next action. Reply to clarification requests through the owned report.
 
-The brief does not prescribe atomic report-plus-photo submission. Before implementation, decide how to recover a committed report with a failed attachment while retaining an honest report reference and an idempotent attachment retry. Offline queueing/synchronization is not required.
+Report creation and optional photo upload are separate operations. A photo failure preserves the committed report reference and offers an attachment retry using the same upload operation key. Offline queueing/synchronization is not required.
 
 ## 5. Supplier review and incident management
 
 1. Staff opens the inbox or map, filters reports, and reviews customer/connection details and unlocated reports. The list remains usable if map tiles fail.
 2. Acknowledge or send a customer-visible clarification, assign an owner and set priority with a reason. Severe isolated reports remain eligible for review without a surrounding cluster.
-3. Progress the report through `received -> under_review -> in_progress -> resolved` as appropriate. This is the ordinary target path; the exact authorization/transition matrix remains a proposed implementation detail.
-4. For duplicate/invalid submissions, perform reviewed closure with actor/time/reason and retain the record. The proposed model uses a separate closure outcome; do not count this as restored service.
+3. Progress the report through `received -> under_review -> in_progress -> resolved` as appropriate. The API enforces this ordinary path; reviewed duplicate/invalid closure can end review earlier with an explicit outcome and reason.
+4. For duplicate/invalid submissions, perform reviewed closure with actor/time/reason and retain the record. The implemented model uses a separate closure outcome; do not count this as restored service.
 5. Review suggested relationships based on category, time and zone/location. Confirm a link to one current incident or create an incident; preserve link/unlink/reassignment history.
 6. Maintain incident owner, internal notes and transitions through `investigating -> confirmed -> work_in_progress -> monitoring -> resolved`. A link or incident state must not blindly copy a status into every customer's report.
 7. Distinguish unique reporting connections from estimated affected customers. Report counts and zoom-dependent map clusters cannot establish an outage or its actual boundary.
@@ -66,7 +66,7 @@ A customer selecting “I am affected” on a published incident reuses or creat
 
 ## 6. Official advisories and recovery
 
-1. An authorized user prepares scheduled interruption or quality guidance with its source, applicable zones/area, demo label and publication details. Proposed default: admin publishes/lifts official advisories; staff publishes operational incident updates.
+1. An authorized user prepares scheduled interruption or quality guidance with its source, applicable zones/area, demo label and publication details. Adopted default: admin publishes/lifts official advisories; staff publishes operational incident updates.
 2. Publish the approved notice and notify matching service connections independently of incident-report linkage. Deduplicate per recipient and publication even if several connections/reports match.
 3. Show applicable guidance on Home and Assistance. Keep boil-water, do-not-drink and do-not-use restrictions distinct; do not generate local safety advice from a photo or an outage status.
 4. When an outage is resolved, review the incident and individual report outcomes. A quality advisory remains current until an authorized user explicitly lifts it; a restoration estimate or scheduled end time cannot lift it automatically.
@@ -75,7 +75,7 @@ A customer selecting “I am affected” on a published incident reuses or creat
 
 ## 7. Contextual guidance and customer choice
 
-Rules, a short questionnaire and explained action cards are the **proposed** approach pending the professor's rubric; AI is not a confirmed requirement.
+Rules, a short questionnaire and explained action cards are the adopted and implemented approach. Academic acceptance remains externally unverified; AI is outside this release.
 
 1. Evaluate issue category, location/zone, time noticed, customer needs/answers, current advisories, incident state and session availability on the API.
 2. Apply current official safety guidance first, then contextual incident guidance, while keeping escalation visible. Show the action, explanation, supporting source/update time and a usable next-step button.
@@ -87,7 +87,7 @@ Rules, a short questionnaire and explained action cards are the **proposed** app
 
 ## 8. Shared assistance approval and fulfillment
 
-Each request has a customer, linked owned report, type, timestamps and customer-visible history; incident linkage is optional. Proposed active states are `requested`, `accepted`, `scheduled` and `in_progress`, with at most one active request of each type per customer/report.
+Each request has a customer, linked owned report, type, timestamps and customer-visible history; incident linkage is optional. Active states are `requested`, `accepted`, `scheduled` and `in_progress`, with at most one active request of each type per customer/report.
 
 | Stage | Actor and target behavior |
 | --- | --- |
@@ -96,7 +96,7 @@ Each request has a customer, linked owned report, type, timestamps and customer-
 | `scheduled` | Staff records the agreed callback/visit time or pickup/session arrangements and notifies the customer. Preserve the originally requested window separately. |
 | `in_progress` | Staff records that contact, site work or collection has begun. Immediate support may progress from accepted without scheduling only with a recorded reason. |
 | `completed` | Staff records service outcome, findings/contact or collection details and next steps. Retain all history. |
-| `unavailable` | Staff records why fulfillment cannot be offered and notifies the customer, with an appropriate support alternative. Final allowed transitions require an implementation matrix. |
+| `unavailable` | Staff records why fulfillment cannot be offered and notifies the customer, with an appropriate support alternative. The transition matrix below is enforced by the API. |
 | `cancelled` | Customer may cancel before work/collection begins, supplying/recording a reason. Staff records session/service cancellation and follow-up. Release any uncollected water reservation atomically. |
 
 Rescheduling records the old/new arrangement, actor/time and reason, then notifies the customer. A missed callback can be rescheduled. A stale action after another user changes the request must return the current state or a clear conflict rather than overwriting history. Staff validates every transition on the API.
@@ -127,7 +127,7 @@ Completing or cancelling assistance does not resolve the underlying report, inci
 6. Before work/collection begins, customer cancellation releases the reservation and preserves history. A released allocation cannot later be collected.
 7. Session cancellation blocks further acceptance and serializes against collection/approval, releases all uncollected reservations, notifies every affected customer, and offers staff follow-up. Already collected quantities remain recorded.
 
-Proposed request-outcome default: session cancellation marks pending/uncollected water requests `unavailable` with a reason and support follow-up; collected requests retain their outcome. Customer cancellation remains `cancelled`. The exact allowed transition matrix must be confirmed before implementation.
+Implemented request-outcome policy: session cancellation marks pending/uncollected water requests `unavailable` with a reason and support follow-up; collected requests retain their outcome. Customer cancellation remains `cancelled`. The API enforces allowed transitions and expected-version checks.
 
 ```text
 remaining liters = total liters - uncollected reserved liters - collected liters
@@ -141,45 +141,38 @@ Customers see only their persisted in-app notifications and owned linked records
 
 Audit publication/lifting, priority changes, associations, status transitions, rule edits and stock actions with actor/time and relevant reason. Avoid credentials or unnecessary personal information in logs.
 
-Proposed overview metrics follow [requirements](requirements.md): report creation to first staff-authored, customer-visible acknowledgment/clarification for response time; report creation to substantive reviewed resolution for first-resolution time. Exclude duplicate/invalid closure from service-resolution durations. Preserve prior resolution events after still-affected review, label current unresolved/follow-up state, and show period, sample count and `Asia/Manila` display timezone. Automatic receipts/internal notes do not count as first responses.
+Implemented overview metrics follow [requirements](requirements.md): report creation to first staff-authored, customer-visible acknowledgment/clarification for response time; report creation to substantive reviewed resolution for first-resolution time. Exclude duplicate/invalid closure from service-resolution durations. Preserve prior resolution events after still-affected review, label current unresolved/follow-up state, and show period, sample count and `Asia/Manila` display timezone. Automatic receipts/internal notes do not count as first responses.
 
-## 10. Current local workspace
+## 10. Local workspace and operational commands
 
-| Location | What can currently be inspected or run |
+The root npm manifest coordinates contract build, typecheck, lint, API/web build, repository checks and integrated API/browser verification. Each application has its own manifest/lockfile; `aqours-contracts/` is a local file dependency. Follow [setup](setup.md) for exact install, environment, Compose, migration/seed, start and verification commands. [API contract](api.md) defines actual endpoints; [demo](demo.md) describes fictional accounts/scenarios.
+
+| Location | Implemented local tooling |
 | --- | --- |
-| Repository root | Guidance, progress, documentation and loop state; no root package/workspace scripts |
-| `aqours-app/` | Expo starter, npm lockfile, TypeScript configuration and installed dependencies in this checkout |
-| `aqours-api/`, `aqours-web/` | Empty directories; no start/build/test commands |
-| Database/integrations | No Compose, migration/seed tooling, environment examples, server configuration or native MapLibre build |
+| Root | `npm run contracts`, `typecheck`, `lint`, `build`, `test:api`, `test:browser`, `check:repository` |
+| `aqours-api/` | `npm run dev`, `build`, `start`, `migrate`, `seed`, `typecheck`, `lint`, `test` |
+| `aqours-web/` | Vite `dev`, `build`, `preview`, plus `typecheck`, `lint`, `test` |
+| `aqours-app/` | Expo `start`, native `android`, `export:android`, `typecheck`, `lint`, `test`; EAS/build configuration is present |
+| Database | Compose PostgreSQL 18.6, project-local persistent data, ordered migrations, explicit development seed |
 
-The mobile manifest declares Expo `~57.0.30`, React Native `0.86.3`, React `19.2.3` and TypeScript `~6.0.3`. Use [Expo SDK 57 documentation](https://docs.expo.dev/versions/v57.0.0/), which lists Node.js 22.13.x as its minimum. These facts do not prove a successful Android build. Keep the npm lockfile and existing package-manager convention; package additions require approval.
+The mobile `android` script runs `expo run:android`, which requires the native toolchain; Metro alone does not produce an APK. Expo 57 / React Native 0.86.3 / MapLibre React Native 11.5.0 are configured. CNG prebuild and Hermes export evidence is distinct from a working installed APK, native map and actual-device workflows. Refer to the current [verification ledger](verification.md) before claiming compatibility.
 
-The following commands are references for the **current starter**, run from `aqours-app/`; they were inspected rather than executed during this documentation-only task:
+All tool caches, generated outputs, native build work and temporary verification artifacts must remain project-local under the user-authorized setup. Do not repurpose HOME, change global settings, read secret files or install global tooling. Environment examples contain placeholders; database/Geoapify secrets remain on the API. A phone's localhost is the phone: configure a reachable development API address and keep published ports/access deliberate.
 
-| Command | Actual behavior or limitation |
+## 11. Transition matrices and operational verification
+
+Report review normally advances `received -> under_review -> in_progress -> resolved`. A reviewed duplicate/invalid closure may resolve earlier with outcome and reason; restored closure records a substantive first-resolution timestamp. A customer still-affected action returns a resolved report to review without reopening its incident or other reports. Incident transitions normally follow `investigating -> confirmed -> work_in_progress -> monitoring -> resolved`; an authorized reasoned review can explicitly return an incident to investigating. Published snapshots remain deliberate separate actions.
+
+| Assistance from | Permitted staff destinations |
 | --- | --- |
-| `npm run start` | Runs the existing `expo start` script; starts Metro for the starter. |
-| `npm run android` | Runs `expo start --android`; opens an Android target through the dev server. It does **not** build an APK or install native MapLibre. |
-| `./node_modules/.bin/tsc --noEmit --incremental false` | Invokes installed TypeScript without emitted application files or incremental build metadata. Application typechecking was not required for this documentation-only change. |
-| `npm run lint` | Runs `expo lint`, but the baseline has neither ESLint/config packages nor an ESLint configuration. Expo can propose installation/configuration; do not accept new dependencies without approval. No lint pass is claimed. |
+| `requested` | `accepted`, `cancelled`, `unavailable` |
+| `accepted` | `scheduled`, `in_progress` with immediate-support reason, `cancelled`, `unavailable` |
+| `scheduled` | `scheduled` with reschedule reason, `in_progress`, `cancelled`, `unavailable` |
+| `in_progress` | `scheduled` with reschedule reason, `completed`, `unavailable` |
+| Terminal states | No arbitrary reopening; prior history remains retained |
 
-Routes live in `aqours-app/src/app/`, not root `app/` as the generic starter README suggests. iOS/web scripts and starter UI examples do not expand the confirmed Android product scope. The reset-project script moves starter files; it is not required for documentation or ordinary development.
+Acceptance requires an eligible active staff/admin owner. Scheduling needs an agreed appointment; completion needs outcome and next steps. Once work started, cancellation is rejected even after a reschedule. Water completes only through the allocation collection command, after scheduling/progress or a recorded immediate-collection reason. Pickup appointments must fall within the session interval. Customer cancellation is restricted to unstarted requested/accepted/scheduled requests; session cancellation independently handles active uncollected allocations.
 
-Under root guidance, keep generated files, tool configuration, caches and temporary outputs inside this repository. Configure tools before invoking commands that would otherwise write outside it; do not change global settings or repurpose `HOME`. SDK installation, device/emulator changes and Docker-managed host storage require the applicable project-policy consent before execution. This pass performs none of those operations.
+Compose recreation must retain accounts/reports using the same persistent volume. A volume is not a backup: [setup](setup.md) documents database/migration and attachment backup/restore; executed restore evidence belongs in [verification](verification.md). Reset is an explicit development operation and must never run as startup behavior.
 
-## 11. Future implementation and operational setup
-
-These are prerequisites and future deliverables, **not commands available today**:
-
-1. Establish API/web package manifests, the approved shared-contract strategy, environment examples, and a versioned API contract. Keep the current `aqours-*` layout unless a later task explicitly changes it.
-2. Select database tooling and a pinned supported standard PostgreSQL image. Add Compose health checks, private connectivity, a named volume and separate host/container connection configuration. The host API connects through the published host address/port; a containerized API uses the database service hostname/container port.
-3. Add migrations and repeatable development-only seeds, with an explicit nonautomatic reset step. Supply the documented fictional demo logins and scenario data. Starting a container must not silently reset records.
-4. Choose a client API address reachable from the actual Android phone/emulator. A physical phone's `localhost` points to the phone, not the development computer. Exact hostname/port variables remain to be defined in the future environment examples.
-5. Keep database credentials and Geoapify key on the API. Choose web/native map styles, tile credentials and attribution separately; only appropriately restricted public map configuration belongs in client bundles.
-6. Add approved native MapLibre dependencies/configuration and test an Android development/native build early; pin compatible versions after device verification. Expo Go cannot host MapLibre React Native. An installable demo APK and exact build instructions remain unimplemented. [MapLibre Expo setup](https://maplibre.org/maplibre-react-native/docs/setup/expo/).
-7. Add controlled upload storage and retention/retry handling, session revocation, rate/input limits and the required transactional notification/stock behaviors.
-8. Verify persistence by recreating the database container with the same data volume and checking retained accounts/reports. A persistent volume and a backup are different safeguards. [Docker volume lifecycle](https://docs.docker.com/engine/storage/volumes/).
-9. Add a separate backup/restore runbook: create a database-consistent backup plus attachment metadata/bytes, retain the migration version, restore into an isolated target, and verify records/ownership and representative attachments before use. Exact backup/restore commands depend on absent infrastructure/tooling and cannot yet be claimed as verified.
-10. Run the ten integration scenarios in [requirements](requirements.md), including ownership denial, GPS denial, ambiguous geocoding, coordinate order, isolated severity, advisory independence, idempotency, concurrent stock, session cancellation and restoration of persisted data. Prepare a demo script with synthetic labels.
-
-The suggested seven-day implementation sequence is conditional planning. Exact deadline, geography, deployment, academic decision-support acceptance and fine-grained permission details remain open; these do not block writing the documentation.
+The ten [DEMO scenarios](requirements.md#acceptance-scenarios) remain the integrated acceptance target. API/database and browser checks exercise important subsets; native GPS permission, photo picker, secure-storage lifecycle, live typed-address lookup and installed Android map/fulfillment flows still need their own evidence. Academic approval and approved real supplier/public-health content cannot be established by technical tests. Deployment destination and exact demonstration deadline remain configurable.
