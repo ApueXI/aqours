@@ -54,7 +54,6 @@ Seven further quality-review browser checks pass: the isolated water-quality rep
 | Check | Exact action / prerequisite |
 | --- | --- |
 | Live geocoding | Manually create a Geoapify key, configure server-only `GEOAPIFY_API_KEY` and locally generated `GEOCODE_SIGNING_SECRET`, then verify genuine suggestions/confidence, candidate confirmation, real restriction/quota/timeout handling and address-only fallback. No key was requested, provisioned or committed |
-
 | Map provider for real use | Manually choose a licensed compatible style/tile service, keep attribution visible and restrict intentionally public map credentials. The public MapLibre demo style is for development; no production availability commitment or paid resource is provisioned |
 | Academic acceptance | Obtain external confirmation that the implemented API-evaluated rules/questionnaire/action cards meet academic expectations. No AI integration or academic approval is claimed |
 | Actual supplier/safety content | Replace clearly fictional fixture notices with supplier-approved content before any real use; technical tests cannot approve public-health instructions |
