@@ -1,1 +1,1 @@
-export { GuidanceScreen as default } from '@/features/guidance/guidance-screen';
+export { GuidanceScreen as default } from '@/features/guidance/screens/guidance-screen';

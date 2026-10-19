@@ -60,9 +60,9 @@
 
 ### Implemented behavior and modules
 
-`aqours-web/src/pages/Login.tsx`, `hooks/useSession.ts`, `api/client.ts` and `App.tsx` implement supplier login, cookie-session restoration, role-aware navigation and logout.
+`aqours-web/src/features/auth/screens/Login.tsx`, `hooks/useSession.ts`, `api/client.ts` and `App.tsx` implement supplier login, cookie-session restoration, role-aware navigation and logout.
 
-`aqours-api/src/auth.ts`, `routes/auth.ts` and `http.ts` enforce active accounts, revocable hashed sessions and backend role/ownership checks. Browser cookies are HttpOnly, SameSite=Lax and Secure in production; mutations require the configured Origin plus in-memory CSRF token. Customers cannot become supplier users by changing a route or local role. Deactivation/security changes revoke sessions.
+`aqours-api/src/middleware/authentication.ts`, `routes/auth.ts` and `http.ts` enforce active accounts, revocable hashed sessions and backend role/ownership checks. Browser cookies are HttpOnly, SameSite=Lax and Secure in production; mutations require the configured Origin plus in-memory CSRF token. Customers cannot become supplier users by changing a route or local role. Deactivation/security changes revoke sessions.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 

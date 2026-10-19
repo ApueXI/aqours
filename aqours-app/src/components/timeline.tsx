@@ -1,6 +1,6 @@
 import type { IncidentUpdate, TimelineEvent } from '@aqours/contracts';
 import { View } from 'react-native';
-import { displayTime, label } from '@/lib/time';
+import { displayTime, label } from '@/utils/time';
 import { Body, Demo, Section, styles } from './ui';
 
 export function Timeline({ events }: { events: TimelineEvent[] }) {

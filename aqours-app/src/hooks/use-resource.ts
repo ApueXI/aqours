@@ -2,9 +2,9 @@ import type { Envelope } from '@aqours/contracts';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { AppState } from 'react-native';
-import { useSession } from '@/auth/session';
-import { errorText, RequestError } from '@/lib/api';
-import { fetchAllPages, type PageFetcher } from '@/lib/pagination';
+import { useSession } from '@/features/auth/hooks/session';
+import { errorText, RequestError } from '@/services/http-client';
+import { fetchAllPages, type PageFetcher } from '@/utils/pagination';
 
 type Loader<T> = (fetch: PageFetcher, path: string) => Promise<Envelope<T>>;
 type Resource<T> = { identity: string; result: Envelope<T> | null; receivedAt: string | null; loading: boolean; error: string | null };

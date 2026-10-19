@@ -153,7 +153,7 @@ The root npm manifest coordinates contract build, typecheck, lint, API/web build
 | `aqours-api/` | `npm run dev`, `build`, `start`, `migrate`, `seed`, `typecheck`, `lint`, `test` |
 | `aqours-web/` | Vite `dev`, `build`, `preview`, plus `typecheck`, `lint`, `test` |
 | `aqours-app/` | Expo `start`, native `android`, `export:android`, `typecheck`, `lint`, `test`; EAS/build configuration is present |
-| Database | Compose PostgreSQL 18.6, project-local persistent data, ordered migrations, explicit development seed |
+| Database | Compose PostgreSQL 18.6, project-local persistent data, Prisma migrations with verified legacy adoption, explicit development seed |
 
 The mobile `android` script runs `expo run:android`, which requires the native toolchain; Metro alone does not produce an APK. Expo 57 / React Native 0.86.3 / MapLibre React Native 11.5.0 are configured. Signed standalone dual-architecture APKs and actual KVM-backed Android29/36 workflows are recorded in the [native ledger](native-verification.md), with exact artifact boundaries. CNG/export/type checks remain distinct evidence. Refer to the current [verification ledger](verification.md) before claiming compatibility.
 
@@ -176,3 +176,7 @@ Acceptance requires an eligible active staff/admin owner. Scheduling needs an ag
 Compose recreation must retain accounts/reports using the same persistent volume. A volume is not a backup: [setup](setup.md) documents database/migration and attachment backup/restore; executed restore evidence belongs in [verification](verification.md). Reset is an explicit development operation and must never run as startup behavior.
 
 The ten [DEMO scenarios](requirements.md#acceptance-scenarios) remain the integrated acceptance target. API/database, supplier browser and installed Android checks have separately scoped evidence in the native and verification ledgers, including secure-storage lifecycle, GPS denial/controlled acquisition, photo picker/protected decoding, real native map failure and all three fulfillment paths. Live signed typed-address lookup still requires private Geoapify configuration. Academic approval and approved real supplier/public-health content cannot be established by technical tests. Deployment destination and exact demonstration deadline remain configurable.
+
+## Source navigation
+
+See [directory navigation](directory-structure.md) for API layers and feature-based client folders. Prisma generates backend-only database types; shared public DTOs remain in `aqours-contracts`. Tailwind applies only to the supplier web, preserving native mobile styles. Existing-database adoption is explicit and must precede the first Prisma deployment.

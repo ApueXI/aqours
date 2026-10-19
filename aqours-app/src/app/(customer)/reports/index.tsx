@@ -1,1 +1,1 @@
-export { ReportList as default } from '@/features/reports/report-list';
+export { ReportList as default } from '@/features/reports/screens/report-list';

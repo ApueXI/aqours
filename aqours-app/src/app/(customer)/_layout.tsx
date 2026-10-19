@@ -1,5 +1,5 @@
 import { Redirect, Stack, type Href } from 'expo-router';
-import { useSession } from '@/auth/session';
+import { useSession } from '@/features/auth/hooks/session';
 import { Loading, Screen, colors } from '@/components/ui';
 
 export default function CustomerLayout() {

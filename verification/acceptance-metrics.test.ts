@@ -52,7 +52,7 @@ test('dashboard exact cohorts separate unresolved categories, pending responses,
   for (const [index, category] of ['outage', 'outage', 'low_pressure', 'leak', 'water_quality', 'water_quality', 'outage'].entries()) {
     const item = await report(index === 3 ? b : a, category, 'Fictional isolated dashboard cohort');
     const submittedAt = new Date(clock + (index === 6 ? 1000 : index * 100)).toISOString();
-    sql(`UPDATE records SET data=jsonb_set(data,'{submittedAt}',to_jsonb('${submittedAt}'::text)) WHERE kind='report' AND id='${uuid(item.id)}'`);
+    sql(`UPDATE reports SET submitted_at='${submittedAt}'::timestamptz WHERE id='${uuid(item.id)}'`);
     items.push(await ok<Report>(staff, 'GET', `/staff/reports/${item.id}`));
   }
   const read = (index: number) => ok<ReportDetail>(staff, 'GET', `/staff/reports/${items[index].id}`);

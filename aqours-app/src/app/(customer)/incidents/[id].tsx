@@ -1,1 +1,1 @@
-export { IncidentScreen as default } from '@/features/home/incident-screen';
+export { IncidentScreen as default } from '@/features/home/screens/incident-screen';

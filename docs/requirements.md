@@ -1,6 +1,6 @@
 # Requirements
 
-Source: **Water Supply Reporting and Customer Assistance — Project Brief v0.4**, supplied by the project owner and updated **18 October 2026**. This document retains the original product requirements and stable identifiers, reconciled with the first-release implementation on 19 October 2026. See the [index and feature specs](README.md), [architecture](architecture.md) for boundaries and technology, [schema](schema.md) for the implemented JSONB/relational persistence design, and [workspace](workspace.md) for workflows and local setup.
+Source: **Water Supply Reporting and Customer Assistance — Project Brief v0.4**, supplied by the project owner and updated **18 October 2026**. This document retains the original product requirements and stable identifiers, reconciled with the first-release implementation on 19 October 2026. See the [index and feature specs](README.md), [architecture](architecture.md) for boundaries and technology, [schema](schema.md) for the implemented Prisma relational persistence design, and [workspace](workspace.md) for workflows and local setup.
 
 ## Status and scope
 

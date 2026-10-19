@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
-import { createIntent, query, RequestError, request, sendIntent, setCsrfToken } from '../src/api/client';
+import { createIntent, query, RequestError, request, sendIntent, setCsrfToken } from '../src/services/http-client';
 
 const originalFetch = globalThis.fetch;
 const browser = new EventTarget();

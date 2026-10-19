@@ -50,7 +50,7 @@ Status: **implemented first-release behavior; acceptance evidence remains qualif
 
 ### Implemented behavior and modules
 
-`aqours-app/src/features/home/home-screen.tsx` composes saved connections, applicable advisories, published incidents, open reports and report navigation.
+`aqours-app/src/features/home/screens/home-screen.tsx` composes saved connections, applicable advisories, published incidents, open reports and report navigation.
 
 Authenticated reads use `/me/connections`, `/advisories`, `/incidents` and owned `/reports`; no special dashboard table is used. `src/hooks/use-resource.ts` refetches on focus/foreground and polls selected resources every 30 seconds while active. Notices and incidents carry demo labels and source/update context; matching uses API-reviewed zone/connection associations.
 

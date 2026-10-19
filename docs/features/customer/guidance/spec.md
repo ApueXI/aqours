@@ -81,9 +81,9 @@ Status: **implemented first-release behavior; acceptance evidence remains qualif
 
 ### Implemented behavior and modules
 
-`aqours-app/src/features/guidance/guidance-screen.tsx` and `use-guidance.ts` render the questionnaire, explanations, sources, uncertainty, alternatives and explicit assistance handoff.
+`aqours-app/src/features/guidance/screens/guidance-screen.tsx` and `use-guidance.ts` render the questionnaire, explanations, sources, uncertainty, alternatives and explicit assistance handoff.
 
-`aqours-api/src/services/guidance.ts`, `guidance-context.ts` and `routes/guidance.ts` evaluate current published advisory/incident context, approved rule versions and eligible pickup availability. Evaluations/choices are immutable owned records; source signatures distinguish historical output from current output. A choice or evaluation never submits assistance. The client checks freshness every 30 seconds while active and on foreground; outdated cards require reevaluation. User-adopted rules are implemented; academic acceptance remains external.
+`aqours-api/src/services/guidance/evaluation.service.ts`, `guidance-context.ts` and `routes/guidance.ts` evaluate current published advisory/incident context, approved rule versions and eligible pickup availability. Evaluations/choices are immutable owned records; source signatures distinguish historical output from current output. A choice or evaluation never submits assistance. The client checks freshness every 30 seconds while active and on foreground; outdated cards require reevaluation. User-adopted rules are implemented; academic acceptance remains external.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 

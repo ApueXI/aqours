@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFields, type Field } from '../src/components/ActionForm';
-import { transitionTargets } from '../src/components/AssistanceActions';
+import { transitionTargets } from '../src/features/assistance/components/AssistanceActions';
 import type { AssistanceRequest } from '@aqours/contracts';
 
 test('exact liter amounts remain strings and missing optional coordinates remain null', () => {

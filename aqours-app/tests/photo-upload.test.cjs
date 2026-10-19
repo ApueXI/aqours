@@ -56,7 +56,7 @@ function sdkHarness() {
     './convertFormData': converter,
     '../../utils/blobUtils': blobUtils,
   }, globals);
-  const builder = loadModule('src/lib/photo-upload.ts', {
+  const builder = loadModule('src/features/reports/services/photo-upload.ts', {
     'expo-file-system': { File: NativeFileDouble },
   }, globals);
   return { ...builder, ...converter, ...normalizer, FormData: NativeFormDataDouble };
@@ -88,7 +88,7 @@ test('production photo builder passes file bytes, name and type through installe
 
 test('uncertain photo retry retains its original file body and key with repeatable Expo multipart bytes', async () => {
   const sdk = sdkHarness();
-  const { acquireIntention } = loadModule('src/lib/operations.ts');
+  const { acquireIntention } = loadModule('src/services/operation-intentions.ts');
   const body = sdk.createPhotoUploadBody(photoUri);
   const first = acquireIntention('fictional-customer', '/reports/owned/attachments', body, 'POST', () => 'first-key', photoUri);
   // No finishIntention occurs after an uncertain response, matching useCommand.

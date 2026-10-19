@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { Advisory, StaffIncident, Zone, Geometry } from '@aqours/contracts';
-import { areaFeatures } from '../src/map/layers';
+import { areaFeatures } from '../src/features/map/utils/layers';
 
 const polygon: Geometry = { type: 'Polygon', coordinates: [[[120.9, 14.5], [121, 14.5], [121, 14.6], [120.9, 14.5]]] };
 const advisory = (fields: Partial<Advisory>): Advisory => ({

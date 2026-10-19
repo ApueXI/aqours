@@ -105,10 +105,10 @@ test('staff can read all 18 operational endpoints but cannot use any of 12 admin
 
 test('isolated production auth emits secure cookies, generic invalid credentials and exact throttling without affecting main API', async () => {
   const app = new URL('../aqours-api/dist/app.js', import.meta.url).href;
-  const db = new URL('../aqours-api/dist/db.js', import.meta.url).href;
-  const script = `import { createApp } from ${JSON.stringify(app)}; import { pool } from ${JSON.stringify(db)};
+  const db = new URL('../aqours-api/dist/config/database.js', import.meta.url).href;
+  const script = `import { createApp } from ${JSON.stringify(app)}; import { prisma } from ${JSON.stringify(db)};
     const server = createApp().listen(0, '127.0.0.1', () => process.send({ port: server.address().port }));
-    process.once('SIGTERM', () => server.close(() => pool.end().then(() => process.exit(0))));`;
+    process.once('SIGTERM', () => server.close(() => prisma.$disconnect().then(() => process.exit(0))));`;
   const child = spawn(process.execPath, ['--input-type=module', '-e', script], {
     cwd: new URL('..', import.meta.url), stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
     env: { NODE_ENV: 'production', WEB_ORIGIN: 'https://supplier.demo.aqours.test',

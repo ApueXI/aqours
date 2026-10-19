@@ -18,8 +18,12 @@ function incidentProjection(value: PublishedIncident) {
 function privateField(id: string, sentinel: string) {
   assert.match(id, /^[0-9a-f-]{36}$/i);
   assert.match(sentinel, /^[a-z0-9-]+$/i);
-  // Only this test's new record changes: catch future private columns added to stored documents.
-  databaseSQL(`UPDATE records SET data=data||jsonb_build_object('futurePrivateField','${sentinel}') WHERE id='${id}'`, database);
+  // Add a future private column only in this disposable verification database.
+  const kind = databaseSQL(`SELECT kind FROM entities WHERE id='${id}'`, database);
+  const table = ({report:'reports', incident:'incidents', advisory:'advisories', assistance:'assistance_requests'} as Record<string,string>)[kind];
+  assert.ok(table);
+  databaseSQL(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS future_private_field text;
+    UPDATE ${table} SET future_private_field='${sentinel}' WHERE id='${id}'`, database);
 }
 async function sharedIncident() {
   return ok<StaffIncident>(users.staff, 'POST', '/staff/incidents', {

@@ -9,5 +9,6 @@ npm ci --no-fund --no-audit
 npm --prefix aqours-contracts ci --no-fund --no-audit
 npm --prefix aqours-contracts run build
 npm --prefix aqours-api ci --no-fund --no-audit
+npm --prefix aqours-api run generate
 npm --prefix aqours-web ci --no-fund --no-audit
 npm --prefix aqours-app ci --no-fund --no-audit

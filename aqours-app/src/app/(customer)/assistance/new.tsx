@@ -1,1 +1,1 @@
-export { AssistanceForm as default } from '@/features/assistance/assistance-form';
+export { AssistanceForm as default } from '@/features/assistance/screens/assistance-form';

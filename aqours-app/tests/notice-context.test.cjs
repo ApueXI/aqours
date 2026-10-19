@@ -1,7 +1,7 @@
 require('./load-typescript.cjs');
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
-const { matchingConnections } = require('../src/lib/notice-context.ts');
+const { matchingConnections } = require('../src/features/home/utils/notice-context.ts');
 
 test('advisory context identifies only owned explicit or confirmed-zone connections without duplicates', () => {
   const owned = [
