@@ -45,12 +45,12 @@ docker compose ps
 Compose pins standard `postgres:18.6-alpine3.23`, publishes the configured port on `127.0.0.1`, checks readiness, and uses a private Compose network. PostgreSQL 18 stores data below the mounted `/var/lib/postgresql`; no PostGIS extension is used. A host API URL uses `127.0.0.1:<POSTGRES_PORT>`; if you separately containerize the API, its private database hostname is `db` and port is `5432`. Database configuration never belongs in either client.
 
 ```sh
-(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/migrate.ts)
-(cd aqours-api && SEED_DEMO=1 TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/seed.ts)
+(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/migrate.ts)
+(cd aqours-api && SEED_DEMO=1 TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/seed.ts)
 (cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/server.ts)
 ```
 
-Migrations are checksum tracked and transactional; repeated migration/seed commands preserve existing records. The seed refuses production and nonempty unseeded databases. Reset requires deliberately creating a separate empty development database or explicitly removing your own demo database; there is no reset endpoint, startup reset, or automated destructive command. Keep original migration files unchanged after they are applied.
+Prisma migrations are versioned and transactional; repeated migration/seed commands preserve existing records. Existing databases must follow the adoption steps below before their first Prisma migration. The seed refuses production and nonempty unseeded databases. Reset requires deliberately creating a separate empty development database or explicitly removing your own demo database; there is no reset endpoint, startup reset, or automated destructive command. Keep original migration files unchanged after they are applied.
 
 The private attachment directory defaults to `aqours-api/storage/attachments` and must remain inside this repository. Images are decoded/re-encoded and accessed through the authenticated API; the directory has no public static route. Restore its bytes together with database metadata. A crash between file rename and transaction commit may leave an unreferenced UUID file; reconcile against attachment metadata while writes are paused. Never delete referenced files simply because a client timed out.
 
@@ -145,8 +145,8 @@ Normal Node/Expo/Android tooling also uses the explicitly configured project-loc
 | Choice | Reason and record |
 | --- | --- |
 | Independent npm packages plus local public DTO package | Preserves the existing Expo project and avoids a workspace/module-resolution migration. Build contracts first; each application and root toolset has its own committed lockfile |
-| Express5, `pg`8, Zod4 | Small TypeScript HTTP/validation layer with explicit SQL transactions and backend permission checks. SQL migrations enforce typed references/ownership/history instead of relying on UI or a new ORM |
-| PostgreSQL18.6 with numeric coordinates and exact NUMERIC liters | Container version is pinned; viewport filtering needs no PostGIS. Session/request/allocation locks and exact sums enforce stock authority; four checksummed migrations are committed |
+| Express5, Prisma7 with PostgreSQL adapter, Zod4 | Layered TypeScript API with generated Prisma models, transaction-scoped repositories and backend permissions. Migration SQL retains ownership, history, stock and lock safeguards. |
+| PostgreSQL18.6 with numeric coordinates and exact NUMERIC liters | Container version is pinned; viewport filtering needs no PostGIS. Session/request/allocation locks and exact sums enforce stock authority; Prisma baseline and normalization migrations preserve the original four SQL migrations |
 | Multer2 and sharp0.34 | Bounded multipart still-image uploads plus actual decode/reencode/metadata stripping; private bytes remain authenticated. Hashing/password/session primitives use Node crypto rather than an external identity service |
 | Existing Expo57/RN0.86.3/React19.2.3, SDK-matched SecureStore/location/image-picker and MapLibre RN11.5 | Keeps the approved Android stack. Compatible native modules are in the mobile lockfile; real dual-architecture APK builds verify native compilation |
 | Explicit expo-file-system57.0.7 | Expo57 installs its fetch globally; multipart uploads use the SDK's byte-capable `File`, as described in the [versioned FileSystem guide](https://docs.expo.dev/versions/v57.0.0/sdk/filesystem/#uploading-files-using-expofetch). This package was already an Expo dependency; direct application use is now recorded in package/lockfile. Offline Expo installation used the SDK's bundled version list; the unavailable remote compatibility check was skipped, not counted as passed |
@@ -154,3 +154,24 @@ Normal Node/Expo/Android tooling also uses the explicitly configured project-loc
 | TypeScript6, ESLint9, Node tests/tsx, Playwright | Local type/lint/build/behavioral checks. Browser verification uses the existing Chromium executable and a project profile rather than installing a browser globally |
 
 Project `.npmrc` files keep ordinary npm caches under the invoking project directory's `.cache/npm`; the install script explicitly shares the root cache. Expo telemetry is disabled by its local scripts, and lint disables implicit dotenv reads. Android generated directories/toolchains/build caches and evidence are ignored. No global installation, new paid account, production deployment or AI dependency was introduced.
+
+## Adopting Prisma on an existing database
+
+Stop API writers and take a verified database/attachment backup. Do not run the baseline SQL directly against existing tables. With the existing private database configuration supplied to the process:
+
+```sh
+(cd aqours-api && node --env-file=.env --import tsx src/scripts/adopt-baseline.ts)
+(cd aqours-api && node --env-file=.env --import tsx src/scripts/migrate.ts)
+```
+
+Adoption verifies all four legacy migration checksums and supported record types, then marks `0_legacy_baseline` applied in Prisma's ledger. Deployment transactionally creates and backfills domain tables, moves target arrays into junctions, separates assistance details, reattaches foreign keys and preserves database safeguards. IDs, timestamps, versions, sessions, password hashes, replay responses and attachment references remain preserved. Historical guidance without recorded evidence remains nullable. The original records remain in frozen `legacy_records`; `records` becomes a read-only inspection view. Future migrations belong in `aqours-api/prisma/migrations/`; preserve both applied migration histories.
+
+The root installation script generates the client after installing API dependencies. Generate it explicitly with `npm --prefix aqours-api run generate` after a standalone API installation or schema changes. Development startup, build and typecheck generate it automatically. Generated code and CLI cache remain project-local and untracked. Use a separately supplied disposable shadow database when developing migrations; never use the ordinary application database as a shadow database.
+
+Rehearse the upgrade on a restored database ending `_test`, then run `AQOURS_MIGRATION_DATABASE_URL=<private-upgraded-test-url> AQOURS_MIGRATION_SOURCE_DATABASE_URL=<matching-frozen-source-test-url> npm run test:migration`. Migration failure rolls back the normalization transaction; correct and resolve that failed migration before retrying. After a successful cutover, rollback requires restoring the pre-upgrade backup with the matching previous application version; the frozen archive alone is not a rollback procedure. Resume API writers only after migration, ownership, stock and gated-image checks pass. The ordinary local database was not upgraded automatically during development of this refactor.
+
+Backup now includes the Prisma schema/migrations/config and historical migration files. Keep the whole backup private. [Directory navigation](directory-structure.md) explains the new source layout.
+
+Technical references: [Prisma existing-database baselining](https://www.prisma.io/docs/orm/prisma-migrate/workflows/baselining), [custom migration SQL for database safeguards](https://www.prisma.io/docs/orm/v7/prisma-migrate/workflows/unsupported-database-features), and [Tailwind Vite integration](https://tailwindcss.com/docs/installation/using-vite).
+
+The refactor Android smoke test used the existing project-local SDK/JDK/Gradle caches in offline mode and an isolated ADB server. Its emulator initially logged native map allocation errors; `-feature -Vulkan` produced a visible style/point on retry. Keep `ANDROID_TMP`, `ANDROID_EMULATOR_HOME`, Android user/AVD paths and caches project-local. See the [bounded native result](native-verification.md#prisma-refactor-native-smoke--20-october-2026).

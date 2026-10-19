@@ -43,7 +43,7 @@ Status: **implemented first-release behavior; acceptance evidence remains qualif
 
 `aqours-app/src/app/(customer)/profile.tsx` displays current safe identity and owned saved connections with location/zone review information and sign-out.
 
-`aqours-api/src/routes/auth.ts` implements `/me` and `/me/connections`; `src/services/projection.ts` and `src/store.ts` restrict returned fields. The profile is read-only. Admin connection maintenance cannot silently rewrite report/inspection address snapshots. Missing connection context offers supplier follow-up rather than customer reassignment.
+`aqours-api/src/routes/auth.ts` implements `/me` and `/me/connections`; `src/services/presentation/projection.ts` and `src/store.ts` restrict returned fields. The profile is read-only. Admin connection maintenance cannot silently rewrite report/inspection address snapshots. Missing connection context offers supplier follow-up rather than customer reassignment.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 

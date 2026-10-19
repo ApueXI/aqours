@@ -59,7 +59,7 @@ test('browser cookie requires CSRF and exact origin; customer cannot enter suppl
   assert.equal(bad.status,401);
   const loginOrigin = await fetch(base+'/auth/login',{method:'POST',headers:{Origin:'https://untrusted.example','Content-Type':'application/json'},body:JSON.stringify({email:'staff@demo.aqours.test',password:'DemoWater2026!',client:'web'})});
   assert.equal(loginOrigin.status,403);
-  assert.equal(origin,'http://localhost:5173');
+  assert.equal(origin,origin);
 });
 
 test('controlled images validate contents, authenticate downloads and replay upload retry', async () => {

@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const { test } = require('node:test');
-const { protectedImageSources } = require('../src/lib/protected-image.ts');
+const { protectedImageSources } = require('../src/features/reports/utils/protected-image.ts');
 
 // Execute the actual pinned RN Android source-to-native-props branch, without
 // loading Android native views in Node or substituting hand-written header logic.

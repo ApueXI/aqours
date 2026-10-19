@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Envelope } from '@aqours/contracts';
-import { request } from '../api/client';
+import { request } from '../services/http-client';
 
 export function useResource<T>(path: string | null) {
   const [result, setResult] = useState<Envelope<T>>();

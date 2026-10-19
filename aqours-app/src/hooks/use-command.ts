@@ -1,8 +1,8 @@
 import { randomUUID } from 'expo-crypto';
 import { useRef, useState } from 'react';
-import { useSession } from '@/auth/session';
-import { errorText, RequestError, type RequestOptions } from '@/lib/api';
-import { acquireIntention, finishIntention, type Intention } from '@/lib/operations';
+import { useSession } from '@/features/auth/hooks/session';
+import { errorText, RequestError, type RequestOptions } from '@/services/http-client';
+import { acquireIntention, finishIntention, type Intention } from '@/services/operation-intentions';
 
 export function useCommand<T>() {
   const { api, user } = useSession();

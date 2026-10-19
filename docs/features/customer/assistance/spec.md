@@ -87,9 +87,9 @@ Status: **implemented first-release behavior; acceptance evidence remains qualif
 
 ### Implemented behavior and modules
 
-`aqours-app/src/features/assistance/assistance-form.tsx`, `pickup-options.tsx` and `assistance-detail.tsx` implement all three request types, listed pickup options, owned detail/history and eligible cancellation. Routes live under `src/app/(customer)/assistance/`.
+`aqours-app/src/features/assistance/screens/assistance-form.tsx`, `pickup-options.tsx` and `assistance-detail.tsx` implement all three request types, listed pickup options, owned detail/history and eligible cancellation. Routes live under `src/app/(customer)/assistance/`.
 
-`aqours-api/src/routes/assistance.ts`, `assistance-workflow.ts`, `collection.ts` and `services/stock.ts` own validation, deduplication, appointment history, reservation and completion. Callback/inspection/water details are JSONB in one assistance record, not separate detail tables. Water acceptance reserves exact liters and issues a reference; collection is separate. Uncollected session cancellation produces unavailable plus support follow-up. Neither completion nor cancellation resolves a report, incident or advisory.
+`aqours-api/src/routes/assistance.ts`, `assistance-workflow.ts`, `collection.ts` and `services/distribution/stock.service.ts` own validation, deduplication, appointment history, reservation and completion. Callback/inspection/water details are JSONB in one assistance record, not separate detail tables. Water acceptance reserves exact liters and issues a reference; collection is separate. Uncollected session cancellation produces unavailable plus support follow-up. Neither completion nor cancellation resolves a report, incident or advisory.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 

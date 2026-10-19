@@ -78,9 +78,9 @@
 
 ### Implemented behavior and modules
 
-`aqours-web/src/pages/Advisories.tsx` and `components/AdvisoryEditor.tsx` implement draft/target/source editing, explicit publish/lift controls and revision history; administrative controls depend on role.
+`aqours-web/src/features/advisories/screens/Advisories.tsx` and `components/AdvisoryEditor.tsx` implement draft/target/source editing, explicit publish/lift controls and revision history; administrative controls depend on role.
 
-`aqours-api/src/routes/advisories.ts` and `services/advisories.ts` enforce admin publication/lifting, approved content and explicit zone/connection audiences. Revisions and recipient-deduplicated notifications commit atomically. Quality restrictions stay published until explicit authorized lifting, independently of outage resolution and end times. Guidance freshness uses source signatures; approved-content settings alone do not publish or lift a notice.
+`aqours-api/src/routes/advisories.ts` and `services/advisories/advisory-context.service.ts` enforce admin publication/lifting, approved content and explicit zone/connection audiences. Revisions and recipient-deduplicated notifications commit atomically. Quality restrictions stay published until explicit authorized lifting, independently of outage resolution and end times. Guidance freshness uses source signatures; approved-content settings alone do not publish or lift a notice.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 

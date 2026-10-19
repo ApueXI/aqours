@@ -1,5 +1,5 @@
 import { Body, Button, ErrorNotice, Loading } from './ui';
-import { displayTime } from '@/lib/time';
+import { displayTime } from '@/utils/time';
 
 export function ResourceState({ loading, error, empty, stale, receivedAt, reload }: {
   loading: boolean; error: string | null; empty?: string | false; stale?: boolean; receivedAt?: string | null; reload(): Promise<void>;

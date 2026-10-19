@@ -8,7 +8,7 @@ from urllib.parse import unquote
 ROOT = Path(__file__).resolve().parents[1]
 errors = []
 limits = {'aqours-api': 200, 'aqours-web': 250, 'aqours-app': 300}
-ignored = {'node_modules', 'dist', 'android', 'ios', '.expo', 'coverage', '.cache', '.local'}
+ignored = {'node_modules', 'dist', 'android', 'ios', '.expo', 'coverage', '.cache', '.local', 'generated'}
 counts = {}
 for project, maximum in limits.items():
     files = []

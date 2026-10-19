@@ -9,12 +9,20 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src test",
     "start": "node dist/server.js",
-    "migrate": "TSX_DISABLE_CACHE=1 node --import tsx src/migrate.ts",
-    "seed": "TSX_DISABLE_CACHE=1 node --import tsx src/seed.ts",
-    "test": "TSX_DISABLE_CACHE=1 node --experimental-test-isolation=none --import tsx --test test/*.test.ts"
+    "migrate": "TSX_DISABLE_CACHE=1 node --import tsx src/scripts/migrate.ts",
+    "seed": "TSX_DISABLE_CACHE=1 node --import tsx src/scripts/seed.ts",
+    "test": "TSX_DISABLE_CACHE=1 node --experimental-test-isolation=none --import tsx --test test/*.test.ts",
+    "generate": "XDG_CACHE_HOME=../.cache PRISMA_HIDE_UPDATE_MESSAGE=1 prisma generate",
+    "prebuild": "node --input-type=module -e 'import { rmSync } from \"node:fs\"; rmSync(\"dist\", { recursive: true, force: true });' && npm run generate",
+    "pretypecheck": "npm run generate",
+    "prisma:validate": "XDG_CACHE_HOME=../.cache PRISMA_HIDE_UPDATE_MESSAGE=1 prisma validate",
+    "migrate:adopt": "TSX_DISABLE_CACHE=1 node --import tsx src/scripts/adopt-baseline.ts",
+    "predev": "npm run generate"
   },
   "dependencies": {
     "@aqours/contracts": "file:../aqours-contracts",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
     "express": "^5.1.0",
     "multer": "^2.0.2",
     "pg": "^8.16.0",
@@ -28,6 +36,7 @@
     "@types/pg": "^8.15.5",
     "eslint": "^9.39.1",
     "prettier": "^3.6.2",
+    "prisma": "7.10.1",
     "tsx": "^4.20.6",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.46.3"

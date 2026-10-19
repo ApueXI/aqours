@@ -80,7 +80,7 @@
 
 ### Implemented behavior and modules
 
-`aqours-web/src/pages/Settings.tsx` and `SettingsAccounts.tsx`, `SettingsConnections.tsx`, `SettingsZones.tsx`, `SettingsGuidance.tsx`, `SettingsAudit.tsx` implement focused account/connection/zone/version/audit workflows.
+`aqours-web/src/features/settings/screens/Settings.tsx` and `SettingsAccounts.tsx`, `SettingsConnections.tsx`, `SettingsZones.tsx`, `SettingsGuidance.tsx`, `SettingsAudit.tsx` implement focused account/connection/zone/version/audit workflows.
 
 `aqours-api/src/routes/settings.ts`, `settings-accounts.ts` and `settings-connections.ts` enforce admin-only maintenance, safe account DTOs, session revocation, last-active-admin protection and expected-version conflicts. Approved guidance/rules are immutable records; a new rule version becomes current without executing arbitrary user code. Staff can read operational guidance/rules and audit context. Reviewed connection changes preserve old report locations and change subsequent applicability/freshness checks; settings cannot lift/publish advisories implicitly.
 

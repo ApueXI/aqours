@@ -61,9 +61,9 @@
 
 ### Implemented behavior and modules
 
-`aqours-web/src/pages/Overview.tsx` implements period/status filtering, counts, definitions and drill-down navigation.
+`aqours-web/src/features/overview/screens/Overview.tsx` implements period/status filtering, counts, definitions and drill-down navigation.
 
-`aqours-api/src/routes/analytics.ts` and `services/metrics.ts` calculate report cohorts with inclusive UTC from/exclusive to boundaries and arithmetic mean elapsed seconds. First response is the first staff-authored public message; first substantive resolution excludes duplicate/invalid closures. Follow-up retains first-resolution history while unresolved counts use current status. Responses include timezone/as-of, sample/pending/excluded context; missing durations are null. Active incidents are a current total, not a count of the selected report cohort.
+`aqours-api/src/routes/analytics.ts` and `services/analytics/metrics.service.ts` calculate report cohorts with inclusive UTC from/exclusive to boundaries and arithmetic mean elapsed seconds. First response is the first staff-authored public message; first substantive resolution excludes duplicate/invalid closures. Follow-up retains first-resolution history while unresolved counts use current status. Responses include timezone/as-of, sample/pending/excluded context; missing durations are null. Active incidents are a current total, not a count of the selected report cohort.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 

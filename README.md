@@ -19,8 +19,8 @@ mkdir -p .local/container-postgres
 # After configuring your root .env, including its absolute project-local data path:
 docker compose up -d db
 # After configuring aqours-api/.env:
-(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/migrate.ts)
-(cd aqours-api && SEED_DEMO=1 TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/seed.ts)
+(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/migrate.ts)
+(cd aqours-api && SEED_DEMO=1 TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/seed.ts)
 (cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/server.ts)
 ```
 
@@ -67,3 +67,5 @@ npm run check:repository
 ```
 
 Root integration tests use an isolated database ending `_test`; fault-injection tests deliberately create temporary database triggers and must never target real customer data. Run login-heavy HTTP/browser suites serially and allow at least a minute between suites so the normal login limit remains active. The [setup guide](docs/setup.md) describes their configuration and prerequisites.
+
+The source now uses Prisma domain models, layered API modules, feature-based clients and Tailwind for the supplier web. Start with [directory navigation](docs/directory-structure.md). Existing databases require [verified baseline adoption](docs/setup.md#adopting-prisma-on-an-existing-database) before running the new migration command; the ordinary local database is not automatically upgraded.

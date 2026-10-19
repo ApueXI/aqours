@@ -2,7 +2,32 @@
 
 Updated 20 October 2026. Source implements the connected first release; release acceptance is **IN PROGRESS**. A native APK build is verified separately from installed Android behavior. Live Geoapify and academic acceptance remain external. No skipped or unavailable check is counted as passed. [Traceability](traceability.md) maps all 84 requirements, 126 original feature criteria and DEMO-001 through DEMO-010 to implementation and the exact assertions/manual checks.
 
-## Executed checks
+## Prisma and Tailwind refactor — 20 October 2026
+
+Verification used isolated `aqours_prisma_test` and restored `aqours_prisma_upgrade_test` databases, API port 4003 and supplier assets on port 5176. The ordinary database was not migrated. Evidence is retained privately under `.local/refactor/`; original release evidence below remains a separate historical checkpoint.
+
+| Check | Actual result |
+| --- | --- |
+| Fresh install | PASS: Prisma baseline and domain migration, fictional seed; no startup migration/reset |
+| Populated upgrade | PASS: all 4,104 legacy domain rows retain IDs, kinds, versions, storage/workflow timestamps and original domain fields; private legacy test sentinels remain archived |
+| Security and ledger preservation | PASS: fingerprints match the original credentials, sessions, operations, events, notifications, stock sessions, allocations and original migration ledger |
+| Database safeguards | PASS: composite ownership, exact stock, immutable history/archive and immutable publication targeting; assistance details match their parent type |
+| Schema drift | PASS: Prisma reports an empty diff against the populated upgraded database; archive/ledger metadata is modeled but excluded from Client |
+| Types, lint, builds | PASS: root typecheck/lint/build and Prisma validation/generation |
+| Unit/helper suites | PASS: API 18, supplier 15, customer 18; 51 total |
+| HTTP/PostgreSQL | PASS: 56 scenarios; authorization, private projections, expiry/revocation, frozen retries, rollback, concurrent stock and exact metric cohorts |
+| Supplier browser | PASS: 60 workflow/maintenance/operations/recovery/quality checks, plus five actual MapLibre rendering/cluster/zoom/selection checks |
+| Appearance | PASS: ten before/after screenshots across 1440px and 720px widths; layout bounds match, with under 0.03% differing pixels in equivalent states |
+| Android bundle/build | PASS: Expo Hermes export and offline signed release APK build, with four compiled native architectures; APK v2 signature verified |
+| Installed Android smoke | PASS/bounded: Android29 x86_64 sign-in, SecureStore restoration after process/APK restart, Home, reports/detail, guidance, assistance, updates, profile, protected image and native point preview; [artifact notes](native-verification.md#prisma-refactor-native-smoke--20-october-2026) |
+| Backup/restore | PASS: all 37 tables and nine private files retain identical counts/fingerprints/bytes; restored image owner200, foreign404, anonymous401 |
+| Repeat commands | PASS: repeated Prisma deploy has no pending migrations and seed preserves existing records |
+
+Prisma connections explicitly use UTC. Initial regressions against the Manila-default PostgreSQL server exposed shifted instants and incorrect expiry/cohorts; the connection correction passes the real expiry and exact-cohort scenarios. The oldest legacy guidance evaluations lack evidence, which remains null. Initial simultaneous browser runs correctly hit the real login throttle; separate reruns passed without changing limits. Tailwind tab-border ordering was corrected after screenshot comparison. Final service-folder verification caught a renamed upload temporary suffix; it was restored and all 56 HTTP checks passed again. The emulator logged MapLibre allocation errors; a Vulkan-disabled retry visibly rendered the public map style and persisted-point circle, without changing application code. This is bounded graphics evidence, not a claim of universal driver compatibility.
+
+Live signed Geoapify/geocoded-point verification and academic acceptance remain externally unverified. Historical installed-native evidence below applies to its named artifacts; the refactor smoke checks use the separate signed artifact documented in the native ledger.
+
+## Earlier first-release checkpoint checks
 
 All checks use fictional data. Original records are preserved; HTTP/browser runs add new fixtures. The API ran against PostgreSQL 18.6 in an isolated project-local test database; supplier browser tests used the real API and Chromium. Native tools/caches/data are project-local. Node 26 was used for verification; the documented minimum is Node 22.13.
 

@@ -50,7 +50,7 @@ Status: **implemented first-release behavior; acceptance evidence remains qualif
 
 ### Implemented behavior and modules
 
-`aqours-app/src/features/notifications/notifications-screen.tsx` and `src/app/(customer)/notifications.tsx` implement owned pagination, read updates and authorized destination navigation.
+`aqours-app/src/features/notifications/screens/notifications-screen.tsx` and `src/app/(customer)/notifications.tsx` implement owned pagination, read updates and authorized destination navigation.
 
 `aqours-api/src/routes/guidance.ts` implements notification list/detail/read routes; publication and fulfillment services create rows transactionally. SQL uniqueness on recipient/source event deduplicates audience overlap. Read updates preserve the first read time and do not republish anything. Foreground refetch/polling uses `src/hooks/use-resource.ts`; external channels are outside this release.
 

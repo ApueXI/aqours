@@ -75,9 +75,9 @@
 
 ### Implemented behavior and modules
 
-`aqours-web/src/pages/Reports.tsx`, `ReportDetail.tsx` and reusable action/history/attachment components implement inbox filters, protected detail, messages, notes, reasoned review and candidate incident linking.
+`aqours-web/src/features/reports/screens/Reports.tsx`, `ReportDetail.tsx` and reusable action/history/attachment components implement inbox filters, protected detail, messages, notes, reasoned review and candidate incident linking.
 
-`aqours-api/src/routes/reports.ts`, `report-review.ts`, `incidents.ts` and `services/reports.ts` enforce operational access, expectedVersion conflicts, ownership-safe customer projections and audited transitions. Normal report progression is received to under_review to in_progress to resolved; duplicate/invalid reviewed closure may occur earlier with a reason. Prior first-resolution history survives still-affected review. Messages and internal notes have separate public/private representations.
+`aqours-api/src/routes/reports.ts`, `report-review.ts`, `incidents.ts` and `services/reports/report-context.service.ts` enforce operational access, expectedVersion conflicts, ownership-safe customer projections and audited transitions. Normal report progression is received to under_review to in_progress to resolved; duplicate/invalid reviewed closure may occur earlier with a reason. Prior first-resolution history survives still-affected review. Messages and internal notes have separate public/private representations.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 

@@ -105,9 +105,9 @@
 
 ### Implemented behavior and modules
 
-`aqours-web/src/pages/Assistance.tsx`, `AssistanceDetail.tsx` and `components/AssistanceActions.tsx` implement filtered queue/detail, ownership, scheduling, progress, reasons, outcomes and notes for all three services.
+`aqours-web/src/features/assistance/screens/Assistance.tsx`, `AssistanceDetail.tsx` and `components/AssistanceActions.tsx` implement filtered queue/detail, ownership, scheduling, progress, reasons, outcomes and notes for all three services.
 
-`aqours-api/src/routes/assistance.ts`, `assistance-workflow.ts`, `collection.ts` and `services/stock.ts` enforce the transition matrix, staff owners and immutable event/appointment history. Scheduling needs an agreed instant; rescheduling/immediate support/unavailability require reasons. Callback/inspection completion requires outcome and next steps; water completes only via collection. Cancellation is disallowed after work begins; session cancellation releases uncollected stock and supplies follow-up.
+`aqours-api/src/routes/assistance.ts`, `assistance-workflow.ts`, `collection.ts` and `services/distribution/stock.service.ts` enforce the transition matrix, staff owners and immutable event/appointment history. Scheduling needs an agreed instant; rescheduling/immediate support/unavailability require reasons. Callback/inspection completion requires outcome and next steps; water completes only via collection. Cancellation is disallowed after work begins; session cancellation releases uncollected stock and supplies follow-up.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 

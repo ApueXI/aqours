@@ -1,7 +1,7 @@
 require('./load-typescript.cjs');
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
-const { fetchAllPages } = require('../src/lib/pagination.ts');
+const { fetchAllPages } = require('../src/utils/pagination.ts');
 
 test('home obtains an older active restriction and incident beyond the first hundred records', async () => {
   for (const path of ['/advisories', '/incidents', '/reports']) {

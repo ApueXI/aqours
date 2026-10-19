@@ -87,7 +87,7 @@
 
 ### Implemented behavior and modules
 
-`aqours-web/src/pages/Incidents.tsx`, `IncidentDetail.tsx`, `components/IncidentFields.ts` and report-detail link controls implement incident review, owner/status, notes, explicit report associations and published history.
+`aqours-web/src/features/incidents/screens/Incidents.tsx`, `IncidentDetail.tsx`, `components/IncidentFields.ts` and report-detail link controls implement incident review, owner/status, notes, explicit report associations and published history.
 
 `aqours-api/src/routes/incidents.ts` and `incident-publication.ts` keep internal incident state separate from immutable incident_update records. Staff-confirmed link changes require a reason/version and retain events. Publication saves the snapshot and deduplicated linked-reporter notifications atomically. Customer reads use published DTOs; still-affected feedback changes one report. Quality advisories and assistance keep independent states.
 

@@ -17,3 +17,6 @@
 **/uploads/
 
 /aqours-api/storage/
+
+# Generated Prisma client
+/aqours-api/src/generated/

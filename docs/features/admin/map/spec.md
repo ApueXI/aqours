@@ -65,7 +65,7 @@
 
 ### Implemented behavior and modules
 
-`aqours-web/src/pages/MapPage.tsx`, `map/MapCanvas.tsx` and `map/layers.ts` implement MapLibre points/clusters, filters, zone/published shapes and an accessible report list/failure fallback.
+`aqours-web/src/features/map/screens/MapPage.tsx`, `map/MapCanvas.tsx` and `map/layers.ts` implement MapLibre points/clusters, filters, zone/published shapes and an accessible report list/failure fallback.
 
 `aqours-api/src/routes/analytics.ts` implements staff-only numeric viewport queries using generated numeric coordinate columns and parameterized filters. Bounds must be ordered and cannot cross the antimeridian. The response has a result cap/truncation count and unlocated count; unlocated records remain reviewable in the inbox. GeoJSON points use longitude then latitude. Layers and clusters never establish network topology or water safety.
 

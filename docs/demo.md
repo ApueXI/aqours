@@ -16,7 +16,7 @@ All people, addresses, water notices, restoration estimates and stock here are f
 
 ## Fictional demo accounts and fixture context
 
-These are intentionally public **development fixture credentials**, defined by [`seed-identities.ts`](../aqours-api/src/seed-identities.ts). They are not production credentials or values obtained from an environment file. Use only an isolated nonproduction dataset.
+These are intentionally public **development fixture credentials**, defined by [`seed-identities.ts`](../aqours-api/src/scripts/seed-identities.ts). They are not production credentials or values obtained from an environment file. Use only an isolated nonproduction dataset.
 
 | Role | Login | Fixture password | Context |
 | --- | --- | --- | --- |

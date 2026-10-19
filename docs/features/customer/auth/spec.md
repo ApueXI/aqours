@@ -52,9 +52,9 @@ Status: **implemented first-release behavior; acceptance evidence remains qualif
 
 ### Implemented behavior and modules
 
-`aqours-app/src/auth/session.tsx`, `src/app/login.tsx` and protected `src/app/(customer)/_layout.tsx` implement sign-in, server-verified restoration and sign-out. `src/lib/api.ts` handles bearer requests/errors.
+`aqours-app/src/features/auth/hooks/session.tsx`, `src/app/login.tsx` and protected `src/app/(customer)/_layout.tsx` implement sign-in, server-verified restoration and sign-out. `src/services/http-client.ts` handles bearer requests/errors.
 
-`aqours-api/src/auth.ts` and `src/routes/auth.ts` implement salted scrypt passwords, hashed revocable sessions, active-account checks and safe identity responses. Android stores only session material in Expo SecureStore. Interrupted logout hides private content and retains a pending-revocation retry; account switching clears operation intentions.
+`aqours-api/src/middleware/authentication.ts` and `src/routes/auth.ts` implement salted scrypt passwords, hashed revocable sessions, active-account checks and safe identity responses. Android stores only session material in Expo SecureStore. Interrupted logout hides private content and retains a pending-revocation retry; account switching clears operation intentions.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 

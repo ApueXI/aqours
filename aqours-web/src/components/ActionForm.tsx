@@ -1,5 +1,6 @@
+import { styleClasses } from '../utils/style-classes';
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { createIntent, errorText, RequestError, sendIntent, type Intent } from '../api/client';
+import { createIntent, errorText, RequestError, sendIntent, type Intent } from '../services/http-client';
 
 export type Option = { value: string; label: string };
 export type Field = {
@@ -43,8 +44,8 @@ export function Fields({ fields }: { fields: Field[] }) {
         autoComplete={field.type === 'password' ? 'new-password' : undefined}
         defaultValue={field.type === 'datetime-local' ? localTime(field.value) : String(field.value ?? '')} />;
     }
-    return <label className={field.type === 'checkbox' ? 'check-field' : 'field'} key={id}>
-      <span>{field.label}{field.required ? ' *' : ''}</span>{control}{field.hint && <span className="hint">{field.hint}</span>}
+    return <label className={styleClasses(field.type === 'checkbox' ? 'check-field' : 'field')} key={id}>
+      <span>{field.label}{field.required ? ' *' : ''}</span>{control}{field.hint && <span className="hint text-[#475569] text-[13px]">{field.hint}</span>}
     </label>;
   })}</>;
 }
@@ -79,19 +80,19 @@ export function ActionForm({ path, method = 'POST', fields, submit, version, ext
       const next = createIntent(path, method, body); setIntent(next); void send(next);
     } catch { setError(new RequestError(400, 'validation', 'Check the form. Geometry must be valid JSON and dates must be valid Manila times.')); }
   };
-  return <form className="action-form" onSubmit={start}>
+  return <form className="action-form mt-[16px] max-w-[720px] [&_fieldset_>_button]:mt-[4px]" onSubmit={start}>
     <fieldset disabled={pending || Boolean(intent) || Boolean(draft)}><Fields fields={fields} />{children}
       <button className="primary" type="submit">{submit}</button>
     </fieldset>
-    {draft && <section className="preview" aria-label="Publication preview">{preview?.(draft)}
-      <div className="actions"><button type="button" disabled={pending || Boolean(intent)} onClick={() => setDraft(undefined)}>Back to edit</button>
+    {draft && <section className="preview p-[16px] mt-[20px] [border:1px_solid_#0f766e] bg-[#f8fafc]" aria-label="Publication preview">{preview?.(draft)}
+      <div className="actions flex flex-wrap gap-[8px] mt-[20px]"><button type="button" disabled={pending || Boolean(intent)} onClick={() => setDraft(undefined)}>Back to edit</button>
         <button className="primary" type="button" disabled={pending || Boolean(intent)} onClick={() => {
           const next = createIntent(path, method, draft); setIntent(next); void send(next);
         }}>Confirm {submit.toLowerCase()}</button></div>
     </section>}
     {pending && <p role="status">Saving…</p>}
-    {Boolean(error) && <p className="error" role="alert">{errorText(error)}</p>}
+    {Boolean(error) && <p className="error [border-left:3px_solid] [padding:10px_12px] [margin:12px_0] text-[#9f1239] bg-[#fff1f2] [border-color:#be123c]" role="alert">{errorText(error)}</p>}
     {intent && !pending && <button type="button" onClick={() => void send(intent)}>Retry original action</button>}
-    {saved && <p className="success" role="status">Saved. Current records are refreshing.</p>}
+    {saved && <p className="success [border-left:3px_solid] [padding:10px_12px] [margin:12px_0] text-[#115e59] bg-[#f0fdfa] [border-color:#0f766e]" role="status">Saved. Current records are refreshing.</p>}
   </form>;
 }

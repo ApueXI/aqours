@@ -1,0 +1,646 @@
+generator client {
+  provider = "prisma-client"
+  output = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Supplier {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  name String @map("name")
+  demo Boolean @map("demo")
+  @@index([storedAt, id])
+  @@map("suppliers")
+}
+
+model User {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  email String @map("email")
+  name String @map("name")
+  phone String? @map("phone")
+  active Boolean @map("active")
+  role String @map("role")
+  connection_customer ServiceConnection[] @relation("connection_customer")
+  report_customer Report[] @relation("report_customer")
+  report_owner Report[] @relation("report_owner")
+  message_author ReportMessage[] @relation("message_author")
+  incident_owner Incident[] @relation("incident_owner")
+  assistance_customer AssistanceRequest[] @relation("assistance_customer")
+  assistance_owner AssistanceRequest[] @relation("assistance_owner")
+  guidance_customer GuidanceEvaluation[] @relation("guidance_customer")
+  guidance_choice_customer GuidanceChoice[] @relation("guidance_choice_customer")
+  credential Credential?
+  sessions Session[]
+  operations Operation[]
+  notifications Notification[]
+  events Event[]
+  @@unique([email])
+  @@index([storedAt, id])
+  @@map("users")
+}
+
+model Zone {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  code String @map("code")
+  name String @map("name")
+  boundary Json? @map("boundary")
+  active Boolean @map("active")
+  demo Boolean @map("demo")
+  connection_zone ServiceConnection[] @relation("connection_zone")
+  report_zone Report[] @relation("report_zone")
+  incidentTargets IncidentZoneIds[]
+  incident_updateTargets IncidentPublicationZoneIds[]
+  advisoryTargets AdvisoryZoneIds[]
+  pickup_sessionTargets PickupSessionZoneIds[]
+  @@unique([code])
+  @@index([storedAt, id])
+  @@map("zones")
+}
+
+model ServiceConnection {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  customerId String @db.Uuid @map("customer_id")
+  reference String @map("reference")
+  address String @map("address")
+  zoneId String? @db.Uuid @map("zone_id")
+  zoneConfirmed Boolean @map("zone_confirmed")
+  latitude Float? @map("latitude")
+  longitude Float? @map("longitude")
+  customer User @relation("connection_customer", fields: [customerId], references: [id], onDelete: Restrict)
+  zone Zone? @relation("connection_zone", fields: [zoneId], references: [id], onDelete: Restrict)
+  report_connection Report[] @relation("report_connection")
+  advisoryTargets AdvisoryConnectionIds[]
+  @@unique([reference])
+  @@unique([id, customerId])
+  @@index([storedAt, id])
+  @@map("service_connections")
+}
+
+model Report {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  customerId String @db.Uuid @map("customer_id")
+  connectionId String @db.Uuid @map("connection_id")
+  reference String @map("reference")
+  category String @map("category")
+  description String @map("description")
+  noticedAt DateTime @db.Timestamptz(6) @map("noticed_at")
+  submittedAt DateTime @db.Timestamptz(6) @map("submitted_at")
+  status String @map("status")
+  address String @map("address")
+  locationSource String @map("location_source")
+  latitude Float? @map("latitude")
+  longitude Float? @map("longitude")
+  accuracy Float? @map("accuracy")
+  locationConfirmed Boolean @map("location_confirmed")
+  zoneId String? @db.Uuid @map("zone_id")
+  zoneConfirmed Boolean @map("zone_confirmed")
+  locationReview Boolean @map("location_review")
+  priority String @map("priority")
+  priorityReason String? @map("priority_reason")
+  ownerId String? @db.Uuid @map("owner_id")
+  incidentId String? @db.Uuid @map("incident_id")
+  assertedIncidentId String? @db.Uuid @map("asserted_incident_id")
+  closureOutcome String? @map("closure_outcome")
+  closureReason String? @map("closure_reason")
+  firstRespondedAt DateTime? @db.Timestamptz(6) @map("first_responded_at")
+  firstResolvedAt DateTime? @db.Timestamptz(6) @map("first_resolved_at")
+  answers Json @map("answers")
+  customer User @relation("report_customer", fields: [customerId], references: [id], onDelete: Restrict)
+  connection ServiceConnection @relation("report_connection", fields: [connectionId, customerId], references: [id, customerId], onDelete: NoAction, onUpdate: NoAction, map: "report_connection_owner")
+  zone Zone? @relation("report_zone", fields: [zoneId], references: [id], onDelete: Restrict)
+  owner User? @relation("report_owner", fields: [ownerId], references: [id], onDelete: Restrict)
+  incident Incident? @relation("report_incident", fields: [incidentId], references: [id], onDelete: Restrict)
+  assertedIncident Incident? @relation("report_assertedIncident", fields: [assertedIncidentId], references: [id], onDelete: Restrict)
+  message_report ReportMessage[] @relation("message_report")
+  attachment_report Attachment[] @relation("attachment_report")
+  assistance_report AssistanceRequest[] @relation("assistance_report")
+  guidance_report GuidanceEvaluation[] @relation("guidance_report")
+  @@unique([id, customerId])
+  @@index([longitude, latitude])
+  @@index([storedAt, id])
+  @@map("reports")
+}
+
+model ReportMessage {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  reportId String @db.Uuid @map("report_id")
+  text String @map("text")
+  authorId String @db.Uuid @map("author_id")
+  authorRole String @map("author_role")
+  createdAt DateTime @db.Timestamptz(6) @map("created_at")
+  report Report @relation("message_report", fields: [reportId], references: [id], onDelete: Restrict)
+  author User @relation("message_author", fields: [authorId], references: [id], onDelete: Restrict)
+  @@index([storedAt, id])
+  @@map("report_messages")
+}
+
+model Attachment {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  reportId String @db.Uuid @map("report_id")
+  filename String @map("filename")
+  mediaType String @map("media_type")
+  byteSize Int @map("byte_size")
+  createdAt DateTime @db.Timestamptz(6) @map("created_at")
+  report Report @relation("attachment_report", fields: [reportId], references: [id], onDelete: Restrict)
+  @@index([storedAt, id])
+  @@map("attachments")
+}
+
+model Incident {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  category String @map("category")
+  summary String @map("summary")
+  status String @map("status")
+  ownerId String? @db.Uuid @map("owner_id")
+  area String @map("area")
+  geometry Json? @map("geometry")
+  restorationAt DateTime? @db.Timestamptz(6) @map("restoration_at")
+  estimatedAffected Int? @map("estimated_affected")
+  estimateBasis String? @map("estimate_basis")
+  estimateUpdatedAt DateTime? @db.Timestamptz(6) @map("estimate_updated_at")
+  demo Boolean @map("demo")
+  createdAt DateTime @db.Timestamptz(6) @map("created_at")
+  owner User? @relation("incident_owner", fields: [ownerId], references: [id], onDelete: Restrict)
+  report_incident Report[] @relation("report_incident")
+  report_assertedIncident Report[] @relation("report_assertedIncident")
+  incident_update_incident IncidentPublication[] @relation("incident_update_incident")
+  assistance_incident AssistanceRequest[] @relation("assistance_incident")
+  zoneIds IncidentZoneIds[]
+  @@index([storedAt, id])
+  @@map("incidents")
+}
+
+model IncidentPublication {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  incidentId String @db.Uuid @map("incident_id")
+  category String @map("category")
+  summary String @map("summary")
+  status String @map("status")
+  progress String @map("progress")
+  area String @map("area")
+  restorationAt DateTime? @db.Timestamptz(6) @map("restoration_at")
+  geometry Json? @map("geometry")
+  publishedAt DateTime @db.Timestamptz(6) @map("published_at")
+  demo Boolean @map("demo")
+  incident Incident @relation("incident_update_incident", fields: [incidentId], references: [id], onDelete: Restrict)
+  zoneIds IncidentPublicationZoneIds[]
+  @@index([storedAt, id])
+  @@map("incident_publications")
+}
+
+model Advisory {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  kind String @map("kind")
+  title String @map("title")
+  text String @map("text")
+  source String @map("source")
+  geometry Json? @map("geometry")
+  startsAt DateTime? @db.Timestamptz(6) @map("starts_at")
+  endsAt DateTime? @db.Timestamptz(6) @map("ends_at")
+  state String @map("state")
+  publishedAt DateTime? @db.Timestamptz(6) @map("published_at")
+  liftedAt DateTime? @db.Timestamptz(6) @map("lifted_at")
+  liftReason String? @map("lift_reason")
+  demo Boolean @map("demo")
+  updatedAt DateTime @db.Timestamptz(6) @map("updated_at")
+  advisory_revision_advisory AdvisoryRevision[] @relation("advisory_revision_advisory")
+  zoneIds AdvisoryZoneIds[]
+  connectionIds AdvisoryConnectionIds[]
+  @@index([storedAt, id])
+  @@map("advisories")
+}
+
+model AdvisoryRevision {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  advisoryId String @db.Uuid @map("advisory_id")
+  snapshot Json @map("snapshot")
+  action String @map("action")
+  createdAt DateTime @db.Timestamptz(6) @map("created_at")
+  advisory Advisory @relation("advisory_revision_advisory", fields: [advisoryId], references: [id], onDelete: Restrict)
+  @@index([storedAt, id])
+  @@map("advisory_revisions")
+}
+
+model AssistanceRequest {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  customerId String @db.Uuid @map("customer_id")
+  reportId String @db.Uuid @map("report_id")
+  incidentId String? @db.Uuid @map("incident_id")
+  reference String @map("reference")
+  type String @map("type")
+  status String @map("status")
+  ownerId String? @db.Uuid @map("owner_id")
+  appointmentAt DateTime? @db.Timestamptz(6) @map("appointment_at")
+  outcome String? @map("outcome")
+  nextSteps String? @map("next_steps")
+  reason String? @map("reason")
+  startedAt DateTime? @db.Timestamptz(6) @map("started_at")
+  createdAt DateTime @db.Timestamptz(6) @map("created_at")
+  updatedAt DateTime @db.Timestamptz(6) @map("updated_at")
+  customer User @relation("assistance_customer", fields: [customerId], references: [id], onDelete: Restrict)
+  report Report @relation("assistance_report", fields: [reportId, customerId], references: [id, customerId], onDelete: NoAction, onUpdate: NoAction, map: "assistance_report_owner")
+  incident Incident? @relation("assistance_incident", fields: [incidentId], references: [id], onDelete: Restrict)
+  owner User? @relation("assistance_owner", fields: [ownerId], references: [id], onDelete: Restrict)
+  callback CallbackDetails?
+  inspection InspectionDetails?
+  waterSupport WaterSupportDetails?
+  allocation Allocation?
+  @@index([storedAt, id])
+  @@map("assistance_requests")
+}
+
+model PickupSite {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  name String @map("name")
+  address String @map("address")
+  instructions String @map("instructions")
+  latitude Float? @map("latitude")
+  longitude Float? @map("longitude")
+  active Boolean @map("active")
+  demo Boolean @map("demo")
+  pickup_session_site PickupSession[] @relation("pickup_session_site")
+  @@index([storedAt, id])
+  @@map("pickup_sites")
+}
+
+model PickupSession {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  siteId String @db.Uuid @map("site_id")
+  startsAt DateTime @db.Timestamptz(6) @map("starts_at")
+  endsAt DateTime @db.Timestamptz(6) @map("ends_at")
+  status String @map("status")
+  instructions String @map("instructions")
+  demo Boolean @map("demo")
+  updatedAt DateTime @db.Timestamptz(6) @map("updated_at")
+  site PickupSite @relation("pickup_session_site", fields: [siteId], references: [id], onDelete: Restrict)
+  zoneIds PickupSessionZoneIds[]
+  stock StockSession?
+  waterRequests WaterSupportDetails[]
+  @@index([storedAt, id])
+  @@map("pickup_sessions")
+}
+
+model ApprovedGuidance {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  kind String @map("kind")
+  text String @map("text")
+  source String @map("source")
+  createdAt DateTime @db.Timestamptz(6) @map("created_at")
+  @@index([storedAt, id])
+  @@map("approved_guidance")
+}
+
+model GuidanceRule {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  active Boolean @map("active")
+  contactText String @map("contact_text")
+  inspectionText String @map("inspection_text")
+  waterText String @map("water_text")
+  createdAt DateTime @db.Timestamptz(6) @map("created_at")
+  @@index([storedAt, id])
+  @@map("guidance_rules")
+}
+
+model GuidanceEvaluation {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  customerId String @db.Uuid @map("customer_id")
+  reportId String @db.Uuid @map("report_id")
+  evaluatedAt DateTime @db.Timestamptz(6) @map("evaluated_at")
+  ruleVersion Int @map("rule_version")
+  current Boolean @map("current")
+  uncertainty Json @map("uncertainty")
+  questions Json @map("questions")
+  cards Json @map("cards")
+  alternatives Json @map("alternatives")
+  sourceSignature String @map("source_signature")
+  evidence Json? @map("evidence")
+  answers Json @map("answers")
+  customer User @relation("guidance_customer", fields: [customerId], references: [id], onDelete: Restrict)
+  report Report @relation("guidance_report", fields: [reportId], references: [id], onDelete: Restrict)
+  guidance_choice_evaluation GuidanceChoice[] @relation("guidance_choice_evaluation")
+  @@index([storedAt, id])
+  @@map("guidance_evaluations")
+}
+
+model GuidanceChoice {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  guidanceId String @db.Uuid @map("guidance_id")
+  action String @map("action")
+  createdAt DateTime @db.Timestamptz(6) @map("created_at")
+  customerId String @db.Uuid @map("customer_id")
+  customer User @relation("guidance_choice_customer", fields: [customerId], references: [id], onDelete: Restrict)
+  evaluation GuidanceEvaluation @relation("guidance_choice_evaluation", fields: [guidanceId], references: [id], onDelete: Restrict)
+  @@index([storedAt, id])
+  @@map("guidance_choices")
+}
+
+model SeedMarker {
+  id String @id @db.Uuid
+  version Int @default(1)
+  storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
+  changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
+  entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  fixture String @map("fixture")
+  appliedAt DateTime @db.Timestamptz(6) @map("applied_at")
+  demo Boolean @map("demo")
+  @@index([storedAt, id])
+  @@map("seed_markers")
+}
+
+model Entity {
+  id String @id @db.Uuid
+  kind String
+  supplier Supplier?
+  user User?
+  zone Zone?
+  connection ServiceConnection?
+  report Report?
+  message ReportMessage?
+  attachment Attachment?
+  incident Incident?
+  incident_update IncidentPublication?
+  advisory Advisory?
+  advisory_revision AdvisoryRevision?
+  assistance AssistanceRequest?
+  site PickupSite?
+  pickup_session PickupSession?
+  approved_guidance ApprovedGuidance?
+  rule GuidanceRule?
+  guidance GuidanceEvaluation?
+  guidance_choice GuidanceChoice?
+  seed_marker SeedMarker?
+  events Event[]
+  @@map("entities")
+}
+
+model IncidentZoneIds {
+  entityId String @db.Uuid @map("entity_id")
+  targetId String @db.Uuid @map("target_id")
+  position Int
+  parent Incident @relation(fields: [entityId], references: [id], onDelete: Restrict)
+  target Zone @relation(fields: [targetId], references: [id], onDelete: Restrict)
+  @@id([entityId, targetId])
+  @@map("incidents_zone_ids")
+}
+
+model IncidentPublicationZoneIds {
+  entityId String @db.Uuid @map("entity_id")
+  targetId String @db.Uuid @map("target_id")
+  position Int
+  parent IncidentPublication @relation(fields: [entityId], references: [id], onDelete: Restrict)
+  target Zone @relation(fields: [targetId], references: [id], onDelete: Restrict)
+  @@id([entityId, targetId])
+  @@map("incident_publications_zone_ids")
+}
+
+model AdvisoryZoneIds {
+  entityId String @db.Uuid @map("entity_id")
+  targetId String @db.Uuid @map("target_id")
+  position Int
+  parent Advisory @relation(fields: [entityId], references: [id], onDelete: Restrict)
+  target Zone @relation(fields: [targetId], references: [id], onDelete: Restrict)
+  @@id([entityId, targetId])
+  @@map("advisories_zone_ids")
+}
+
+model AdvisoryConnectionIds {
+  entityId String @db.Uuid @map("entity_id")
+  targetId String @db.Uuid @map("target_id")
+  position Int
+  parent Advisory @relation(fields: [entityId], references: [id], onDelete: Restrict)
+  target ServiceConnection @relation(fields: [targetId], references: [id], onDelete: Restrict)
+  @@id([entityId, targetId])
+  @@map("advisories_connection_ids")
+}
+
+model PickupSessionZoneIds {
+  entityId String @db.Uuid @map("entity_id")
+  targetId String @db.Uuid @map("target_id")
+  position Int
+  parent PickupSession @relation(fields: [entityId], references: [id], onDelete: Restrict)
+  target Zone @relation(fields: [targetId], references: [id], onDelete: Restrict)
+  @@id([entityId, targetId])
+  @@map("pickup_sessions_zone_ids")
+}
+
+model CallbackDetails {
+  requestId String @db.Uuid @map("request_id") @id
+  question String? @map("question")
+  contactMethod String? @map("contact_method")
+  contactNumber String? @map("contact_number")
+  preferredWindow String? @map("preferred_window")
+  request AssistanceRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  @@map("callback_details")
+}
+
+model InspectionDetails {
+  requestId String @db.Uuid @map("request_id") @id
+  issueDetails String? @map("issue_details")
+  siteAddress String? @map("site_address")
+  preferredWindow String? @map("preferred_window")
+  accessInstructions String? @map("access_instructions")
+  request AssistanceRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  @@map("inspection_details")
+}
+
+model WaterSupportDetails {
+  requestId String @db.Uuid @map("request_id") @id
+  requestedLiters Decimal? @db.Decimal(14, 2) @map("requested_liters")
+  sessionId String? @db.Uuid @map("session_id")
+  notes String? @map("notes")
+  request AssistanceRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  session PickupSession? @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+  @@map("water_support_details")
+}
+
+model Credential {
+  userId String @id @db.Uuid @map("user_id")
+  passwordHash String @map("password_hash")
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  @@map("credentials")
+}
+model Session {
+  tokenHash String @id @map("token_hash")
+  userId String @db.Uuid @map("user_id")
+  client String
+  csrf String
+  expiresAt DateTime @db.Timestamptz(6) @map("expires_at")
+  revokedAt DateTime? @db.Timestamptz(6) @map("revoked_at")
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  @@index([userId], map: "sessions_user")
+  @@map("sessions")
+}
+model Operation {
+  actorId String @db.Uuid @map("actor_id")
+  scope String
+  key String @db.Uuid
+  fingerprint String
+  response Json?
+  actor User @relation(fields: [actorId], references: [id], onDelete: Restrict)
+  @@id([actorId, scope, key])
+  @@map("operations")
+}
+model Event {
+  id String @id @db.Uuid
+  targetId String @db.Uuid @map("target_id")
+  actorId String? @db.Uuid @map("actor_id")
+  action String
+  text String
+  fromStatus String? @map("from_status")
+  toStatus String? @map("to_status")
+  private Boolean @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  metadata Json @default("{}")
+  target Entity @relation(fields: [targetId], references: [id], onDelete: Restrict)
+  actor User? @relation(fields: [actorId], references: [id], onDelete: Restrict)
+  @@map("events")
+}
+model Notification {
+  id String @id @db.Uuid
+  userId String @db.Uuid @map("user_id")
+  sourceEventKey String @map("source_event_key")
+  data Json
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  readAt DateTime? @db.Timestamptz(6) @map("read_at")
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  @@unique([userId, sourceEventKey])
+  @@map("notifications")
+}
+model StockSession {
+  id String @id @db.Uuid
+  total Decimal @db.Decimal(14, 2)
+  recordKind String @default("pickup_session") @map("record_kind")
+  session PickupSession @relation(fields: [id], references: [id], onDelete: Restrict)
+  allocations Allocation[]
+  @@map("stock_sessions")
+}
+model Allocation {
+  id String @id @db.Uuid
+  requestId String @unique @db.Uuid @map("request_id")
+  sessionId String @db.Uuid @map("session_id")
+  liters Decimal @db.Decimal(14, 2)
+  reference String @unique
+  state String
+  reservedAt DateTime @default(now()) @db.Timestamptz(6) @map("reserved_at")
+  collectedAt DateTime? @db.Timestamptz(6) @map("collected_at")
+  releasedAt DateTime? @db.Timestamptz(6) @map("released_at")
+  request AssistanceRequest @relation(fields: [requestId], references: [id], onDelete: Restrict)
+  session StockSession @relation(fields: [sessionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  @@index([sessionId, state], map: "allocation_session")
+  @@map("allocations")
+}
+
+// Migration-only archive metadata. Excluded from Prisma Client, retained by future schema diffs.
+model LegacyRecord {
+  id String @id(map: "records_pkey") @db.Uuid
+  kind String
+  ownerId String? @db.Uuid @map("owner_id")
+  parentId String? @db.Uuid @map("parent_id")
+  version Int @default(1)
+  data Json
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) @map("updated_at")
+  connectionCustomer String? @default(dbgenerated()) @db.Uuid @map("connection_customer")
+  reportCustomer String? @default(dbgenerated()) @db.Uuid @map("report_customer")
+  reportConnection String? @default(dbgenerated()) @db.Uuid @map("report_connection")
+  assistanceCustomer String? @default(dbgenerated()) @db.Uuid @map("assistance_customer")
+  latitude Float? @default(dbgenerated())
+  longitude Float? @default(dbgenerated())
+  owner LegacyRecord? @relation("LegacyOwner", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "records_owner_fk")
+  owned LegacyRecord[] @relation("LegacyOwner")
+  parent LegacyRecord? @relation("LegacyParent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "records_parent_fk")
+  children LegacyRecord[] @relation("LegacyParent")
+  connectionOwner LegacyRecord? @relation("LegacyConnectionOwner", fields: [reportConnection, reportCustomer], references: [id, connectionCustomer], onDelete: NoAction, onUpdate: NoAction, map: "report_connection_owner")
+  connectionReports LegacyRecord[] @relation("LegacyConnectionOwner")
+  reportOwner LegacyRecord? @relation("LegacyReportOwner", fields: [parentId, assistanceCustomer], references: [id, reportCustomer], onDelete: NoAction, onUpdate: NoAction, map: "assistance_report_owner")
+  reportAssistance LegacyRecord[] @relation("LegacyReportOwner")
+  @@unique([id, kind], map: "records_id_kind_key")
+  @@unique([id, connectionCustomer], map: "connection_customer_unique")
+  @@unique([id, reportCustomer], map: "report_customer_unique")
+  @@index([kind, ownerId], map: "records_kind_owner")
+  @@index([parentId, kind], map: "records_parent")
+  @@map("legacy_records")
+  @@ignore
+}
+
+model LegacyMigration {
+  name String @id
+  checksum String
+  appliedAt DateTime @default(now()) @db.Timestamptz(6) @map("applied_at")
+  @@map("schema_migrations")
+  @@ignore
+}

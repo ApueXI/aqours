@@ -15,5 +15,7 @@ umask 077
 mkdir "$AQOURS_BACKUP_DIR"
 pg_dump --no-owner --format=custom --file="$AQOURS_BACKUP_DIR/database.dump" "$DATABASE_URL"
 tar -C "$task_files_path" -cf "$AQOURS_BACKUP_DIR/attachments.tar" .
-cp aqours-api/migrations/*.sql "$AQOURS_BACKUP_DIR/"
+cp -R aqours-api/prisma "$AQOURS_BACKUP_DIR/prisma"
+cp aqours-api/prisma.config.ts "$AQOURS_BACKUP_DIR/"
+cp -R aqours-api/migrations "$AQOURS_BACKUP_DIR/legacy-migrations"
 echo 'Backup saved. Keep it private; verify restoration into an isolated database.'

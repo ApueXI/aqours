@@ -80,3 +80,19 @@ Reproduce individual checks with the [ten-scenario walkthrough](demo.md), using 
 Live signed Geoapify candidate/confidence/restriction/quota/timeout checks require privately configured operator credentials. No credential was requested or provisioned, and adapter mocks are confined to tests. This still blocks required live-geocoded-point acceptance in DEMO-007; GPS equality does not replace that substep. Academic acceptance remains externally unverified. Production map licensing, provider restrictions and supplier-approved safety content require the manual setup described in [setup](setup.md).
 
 The later online installed-Expo dependency check reports Dependencies are up to date. The actual public Directory endpoint returns200 with native-package architecture metadata and no unsupported entries; five core/local packages are unlisted and are not certified by that metadata. Earlier offline install skipped the remote check and remains separately recorded. Exact results are in `.local/evidence/release-final-{expo-dependency-check.txt,native-directory.json}`.
+
+## Prisma refactor native smoke — 20 October 2026
+
+This is a separate artifact from the earlier A–G acceptance ledger. The TypeScript change reorganizes source and imports while retaining Expo57/React Native0.86.3/MapLibre11.5 and native styles. Expo Hermes export and an offline Gradle release build pass. The APK contains native MapLibre libraries for four architectures; runtime checks below use only Android29 x86_64. Its v2 signature verifies.
+
+Final artifact SHA-256: `39018a6568fba21f0680e32887379bc82fe17a452aa0b3b6f0c23add14165f14`, retained privately as `.local/refactor/app-release-39018a6568fb.apk`. Public test configuration uses emulator API `http://10.0.2.2:4003/api/v1` and `https://demotiles.maplibre.org/style.json`. The earlier source-refactor build without a style correctly displayed the existing address/coordinate fallback; public configuration was then explicitly rebundled and packaged. This test artifact is not a deployment APK.
+
+Actual checks on emulator5560/isolatedADB5040:
+
+- Existing revoked/expired identity returns to sign-in; fictional customer login loads current Home/owned connections.
+- Saved session restores after force-stop, APK update and emulator restart, without signing in again.
+- Moved report list/detail, guidance questionnaire/evaluation, assistance list, updates and profile route wrappers load current API data.
+- An owned protected attachment renders through the moved photo component; its image view remains present without a retry/error state. HTTP tests separately verify exact bytes and denied foreign/anonymous access.
+- An owned report retains its GPS snapshot/accuracy and shows the native public map style, attribution and persisted-point circle. Initial SwiftShader/Vulkan rendering produced blank frames and `std::bad_alloc` log entries. A retry with `-feature -Vulkan` rendered the style and circle; allocation errors also remain in that retry's log. No graphics compatibility fix or universal device claim is inferred from that bounded positive render.
+
+Evidence: `.local/refactor/native/{home,reports,report-detail,guidance,scrolled,assistance,notifications,profile,restored-home,map-configured,map-gles,protected-photo-final}.{xml,png}`, final APK hash/signature files, and native build/emulator logs. The first input automation attempt targeted an obscured field; corrected keyboard handling completed the real login. No source test hook or success fixture was introduced. Emulator startup follows [Android's documented Vulkan-disable option](https://developer.android.com/studio/run/emulator-troubleshooting). Owned emulator/ADB and temporary API/web processes are stopped after verification; databases/backups/evidence remain project-local. Live signed Geoapify, physical ARM64 runtime and academic acceptance remain unverified.

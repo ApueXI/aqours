@@ -8,7 +8,7 @@ Updated **19 October 2026** against the first-release implementation of Water Su
 | --- | --- |
 | [Architecture](architecture.md) | Implemented components, trust boundaries, data flows and limitations |
 | [Requirements](requirements.md) | Role capabilities, shared rules, stable `REQ-*` identifiers, ten demo scenarios, adopted defaults, deferred scope and open decisions |
-| [Schema](schema.md) | Physical JSONB record store, relational ownership/history/stock constraints and logical entity mapping |
+| [Schema](schema.md) | Prisma domain models, relational ownership/history/stock constraints, migration adoption and frozen legacy archive |
 | [Workflows and workspace](workspace.md) | Step-by-step provisioning, authentication, review, publication, assistance/pickup lifecycles, actual workspace tooling and operational setup references |
 
 Additional execution references: [API contract](api.md), [setup and backup/restore](setup.md), [demo](demo.md), [verification](verification.md), and [traceability](traceability.md).
@@ -61,3 +61,5 @@ Keep detailed feature behavior in its spec and shared invariants in the referenc
 - **Deferred/optional:** billing/payments/commerce, home delivery/fleet/routing, IoT, automated water-safety diagnosis, iOS, multiple suppliers, app-store publication, external notification channels, public registration and AI.
 
 Follow [root guidance](../AGENTS.md) and [mobile guidance](../aqours-app/AGENTS.md) for future changes. Keep synthetic notices/availability clearly labeled, preserve independent report/incident/advisory/assistance outcomes and update affected documentation with source and verification changes. Exact deadline, deployment destination and demonstration geography remain configurable.
+
+- [Directory navigation](directory-structure.md): API layers, Prisma models and client feature folders.

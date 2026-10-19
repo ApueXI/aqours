@@ -101,9 +101,9 @@
 
 ### Implemented behavior and modules
 
-`aqours-web/src/pages/Distribution.tsx`, `components/DistributionForms.tsx` and assistance collection controls implement site/session maintenance, exact stock breakdown, reservation context, collection and reasoned cancellation.
+`aqours-web/src/features/distribution/screens/Distribution.tsx`, `components/DistributionForms.tsx` and assistance collection controls implement site/session maintenance, exact stock breakdown, reservation context, collection and reasoned cancellation.
 
-`aqours-api/src/routes/distribution.ts`, `pickup-sites.ts`, `collection.ts` and `services/stock.ts` share one session-before-request locking protocol. SQL NUMERIC(14,2) liters serialize as decimal strings; stock is total minus reserved minus collected. Database constraints/triggers prevent overcommitment, ledger deletion and invalid transitions. Session cancellation makes active uncollected requests unavailable while retaining collected history; stock edits cannot undercut commitments.
+`aqours-api/src/routes/distribution.ts`, `pickup-sites.ts`, `collection.ts` and `services/distribution/stock.service.ts` share one session-before-request locking protocol. SQL NUMERIC(14,2) liters serialize as decimal strings; stock is total minus reserved minus collected. Database constraints/triggers prevent overcommitment, ledger deletion and invalid transitions. Session cancellation makes active uncollected requests unavailable while retaining collected history; stock edits cannot undercut commitments.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 
