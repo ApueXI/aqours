@@ -1,0 +1,53 @@
+# Aqours API
+
+TypeScript Express API implementing [the shared v1 contract](../docs/api.md). Requires Node 22.13+ and PostgreSQL 18. Application configuration is read from the process environment; no `.env` file is loaded. Database and geocoding credentials stay on the server. Build the sibling `aqours-contracts` package first, then install with the existing npm lockfile. All commands below run in `aqours-api/`.
+
+```sh
+npm ci --cache ../.cache/npm
+npm run build
+npm run typecheck
+npm run lint
+npm test
+# Set DATABASE_URL to your designated development database first.
+npm run migrate
+SEED_DEMO=1 npm run seed
+npm run dev
+# Production/build execution:
+npm start
+```
+
+`migrate` applies checksum-tracked numbered SQL files in one transaction under an advisory lock; repeats preserve state, and changed applied migrations fail. The demo seed requires `SEED_DEMO=1`, rejects production and nonempty unseeded databases, runs atomically, and preserves existing records on repeated runs. Startup never migrates, seeds, resets or clears data. `createApp()` in `src/app.ts` supports HTTP integration tests. `/health` confirms HTTP process health; it does not claim database readiness. Default API port is 4000 and exact browser origin is `http://localhost:5173`. Configuration names/defaults are in `.env.example`; placeholder values are not working credentials. `TSX_DISABLE_CACHE=1` prevents development transform caches outside this project.
+
+## Fictional demonstration logins
+
+Every listed account uses the fixture password **`DemoWater2026!`**, exclusively for synthetic local demonstration data. Admin and staff sign in through the supplier web client; customers through the mobile client. There is no public signup.
+
+| Login | Role |
+| --- | --- |
+| `admin@demo.aqours.test` | admin |
+| `staff@demo.aqours.test` | staff |
+| `customer01@demo.aqours.test` through `customer12@demo.aqours.test` | customer |
+
+The dataset has one fictional supplier, three zones, twelve customer connections/reports, four category-specific published incidents, a synthetic quality advisory, two pickup sites, available/full/cancelled sessions, callback/inspection/water-support requests, a reopened report with first-resolution history, and an unmatched customer connection without coordinates/confirmed zone. All incident/advisory/pickup examples carry demonstration flags. Synthetic quality text is not real public-health advice.
+
+## Physical model and transaction boundaries
+
+`records` stores focused typed domain documents in JSONB plus UUID identity, kind, relational owner/parent, optimistic version, creation/update times and generated numeric latitude/longitude. The API uses deliberate public projections: passwords live only in `credentials`; sessions store hashed opaque verifiers; internal notes live only in private immutable events; incident public reads use immutable publication snapshots. A numeric coordinate index supports SQL viewport filtering/count/capping without PostGIS. Missing locations remain null and count separately.
+
+Migrations enforce composite report-to-connection ownership and assistance-to-report ownership, unique active assistance/affected assertions, unique normalized account emails/connection references/zone codes, valid statuses/categories, coordinate pairs/ranges and customer ownership. Reference triggers validate zone/connection arrays and typed incident/report/site/owner/session references. `events` and historical domain rows reject mutation; water ledger rows reject deletion. Immutable rule rows derive their current active flag from the highest domain revision. The application additionally enforces actor roles, record ownership, transition/required-field rules, candidate token confirmation and active target eligibility.
+
+`operations` retains actor+method/path+UUID operation keys and request fingerprints indefinitely. Password-bearing requests first apply a slow, operation-scoped scrypt fingerprint; operations never retain plaintext passwords or a fast password-only verifier. The advisory lock on an operation precedes all domain locks, and committed response replay precedes stale-version validation. Domain data, immutable history, notifications and operation result commit together. Different payloads with the same key return 409. Notification uniqueness is recipient+source event. Browser sessions use HttpOnly SameSite=Lax cookies, exact origin checks and CSRF headers; mobile uses bearer tokens. Logout and account security changes revoke sessions. Passwords use independently salted scrypt; login and general API traffic have rate limits.
+
+Water stock is authoritative PostgreSQL `NUMERIC(14,2)` with SQL exact sums. Every stock workflow locks session, request, then allocation, including acceptance, collection, cancellation and session cancellation. Reservations/collections are retained ledger rows; reservation-to-collection keeps remaining liters constant. Triggers also prevent aggregate overcommit, shrinking totals below commitments and invalid allocation state/identity changes. Cancellation releases an uncollected reservation once and blocks later collection. Session cancellation serializes with creation/acceptance/collection, marks pending/uncollected requests unavailable, preserves collected results and inserts follow-up notifications atomically. A persistent first-work timestamp prevents customer cancellation after work has begun, including after rescheduling.
+
+## Protected photos and external adapters
+
+Photos are accepted only after authenticated report ownership, then limited to 5 MiB, decoded with sharp (JPEG/PNG/WebP, still image, at most 25 million pixels), rotated/re-encoded to remove metadata and checked again for size. The server writes a random UUID-named file with restrictive permissions through an atomic temporary-file rename, then commits metadata; request rollback removes the staged final file. `ATTACHMENT_DIR` must resolve inside the project (default `aqours-api/storage/attachments`); it is never served statically. Download rechecks report ownership/staff authorization and returns private/no-store bytes. Attachment idempotency fingerprints file content/name. Failed upload retries do not create a second report. A process crash between file rename and DB commit can leave an unreferenced file; such files grant no API access and should be reconciled against attachment metadata during operational maintenance. Backups must include both PostgreSQL metadata and the attachment directory.
+
+Geoapify forward search is server-only, times out after 5 seconds by default and returns genuine provider candidates with confidence when supplied. Candidate HMAC tokens bind address/coordinates and expire after 15 minutes. Both provider key and signing secret must be configured. Region bias/filter default to `countrycode:ph` and can be explicitly configured or disabled with empty values. Missing configuration, upstream errors/timeouts return 503; address-only reporting stays usable. GPS remains optional and coordinates never default to zero. Live provider success requires a real configured provider account and is not implied by unit tests.
+
+## Scope and verification
+
+All API routes in the v1 contract are registered, including supplier map/metrics, owner-only reporting/attachments/guidance, assistance/stock, advisories, account/connection/zone/rule settings and persisted in-app notifications. No push/SMS/email delivery, offline queue, automatic advisory lifting, automated diagnosis, or home delivery is implemented. The trusted reverse proxy/deployment must enforce HTTPS in production and provide the configured web origin; secure cookies are enabled in production. Rate limits are process-local for this single-server release.
+
+Run the API unit suite for cryptographic/input/advisory invariants. Root verification exercises real HTTP/PostgreSQL behavior and concurrency; see the repository's verification evidence for executed checks and deployment limitations. Local unit tests alone do not prove Android device behavior, live Geoapify availability, external TLS deployment or backup restoration.

@@ -1,0 +1,35 @@
+{
+  "name": "aqours-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "TSX_DISABLE_CACHE=1 node --watch --import tsx src/server.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src test",
+    "start": "node dist/server.js",
+    "migrate": "TSX_DISABLE_CACHE=1 node --import tsx src/migrate.ts",
+    "seed": "TSX_DISABLE_CACHE=1 node --import tsx src/seed.ts",
+    "test": "TSX_DISABLE_CACHE=1 node --experimental-test-isolation=none --import tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@aqours/contracts": "file:../aqours-contracts",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "pg": "^8.16.0",
+    "sharp": "^0.34.5",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.10.0",
+    "@types/pg": "^8.15.5",
+    "eslint": "^9.39.1",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.6",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.46.3"
+  }
+}

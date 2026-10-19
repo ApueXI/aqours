@@ -1,0 +1,24 @@
+{
+  "name": "aqours-release",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "contracts": "npm --prefix aqours-contracts run build",
+    "typecheck": "npm --prefix aqours-contracts run typecheck && npm --prefix aqours-api run typecheck && npm --prefix aqours-web run typecheck && npm --prefix aqours-app run typecheck && tsc -p verification/tsconfig.json --noEmit",
+    "lint": "npm --prefix aqours-api run lint && npm --prefix aqours-web run lint && npm --prefix aqours-app run lint",
+    "build": "npm run contracts && npm --prefix aqours-api run build && npm --prefix aqours-web run build",
+    "test:api": "node --experimental-strip-types --experimental-test-isolation=none --test --test-concurrency=1 verification/*.test.ts",
+    "test:browser": "node --experimental-strip-types verification/browser.ts",
+    "check:repository": "python3 -B scripts/check_repository.py",
+    "test:map": "node --experimental-strip-types verification/browser-map.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0",
+    "@types/node": "^24.0.0",
+    "typescript": "~6.0.3"
+  },
+  "engines": {
+    "node": ">=22.13"
+  }
+}

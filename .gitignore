@@ -1,1 +1,19 @@
 .env
+
+# Local configuration, dependencies, tooling, generated/native output
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules/
+**/dist/
+**/.expo/
+**/android/
+**/ios/
+.cache/
+.local/
+**/coverage/
+**/*.tsbuildinfo
+**/expo-env.d.ts
+**/uploads/
+
+/aqours-api/storage/

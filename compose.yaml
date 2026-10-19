@@ -1,0 +1,28 @@
+name: aqours
+services:
+  db:
+    image: postgres:18.6-alpine3.23
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-aqours}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root local environment}
+      POSTGRES_DB: ${POSTGRES_DB:-aqours}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - database:/var/lib/postgresql
+    networks: [database]
+volumes:
+  database:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${AQOURS_PGDATA_PATH:?Set an absolute project-local .local/container-postgres path}
+networks:
+  database:
