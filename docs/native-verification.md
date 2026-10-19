@@ -1,6 +1,6 @@
 # Android verification evidence
 
-Updated 19 October 2026. These checks used the installed standalone Android application, the real Express API/PostgreSQL database and, for supplier actions, the production React application in Chromium. All people, addresses, notices, images and outcomes are fictional. This ledger supplements [verification](verification.md) and [traceability](traceability.md); an individual check proves only the behavior described.
+Updated 20 October 2026. These checks used the installed standalone Android application, the real Express API/PostgreSQL database and, for supplier actions, the production React application in Chromium. All people, addresses, notices, images and outcomes are fictional. This ledger supplements [verification](verification.md) and [traceability](traceability.md); an individual check proves only the behavior described.
 
 ## Artifacts and test targets
 
@@ -53,6 +53,7 @@ Evidence names in this table are under ignored `.local/evidence/`. `native-runti
 | N36/N38 | PASS/F/G: distinct scheduled interruption; G shows planned start/end and matching own CON003/address. API projects only explicitly targeted owned connection IDs; another household ID is excluded by H-V1 | `native-scheduled-notice-fixture.json`, `native-media-api36/N38-final-owned-context-and-window` |
 | N37 | PASS/G: generated appointment and restoration sentences display Asia/Manila; guest-offline notification open stays unread with error, real-network retry opens current authorized appointment and persists read state | `native-notification-recovery-result.json`, `native-presentation-fixture.json`, `native-media-api36/N37-notification-*`, `N37-restoration-reason-manila` |
 | N39–40 | PASS/G: published quality notice past planned end retains explicit end-does-not-lift warning. A connection-targeted general notice appears on Home and as unread for a customer with zero reports | `native-final-notice-checks.json`, `native-report-free-notice.json`, `native-media-api36/N39-final-quality-past-end-context`, `N40-report-free-{home,notification,no-reports}` |
+| N41 | PASS with retained A/E native reports and current supplier build: two different native customers’ distinct reports appear in one actual supplier-map viewport response; each rendered point, isolated by exact submission period, opens its own reference. Full reports remain identical; no writes/uncaught errors | `native-two-customer-map-{run.txt,result.json}`, `native-two-customer-map-cohort.png`, `native-two-customer-selected-<report-id>.png` |
 
 Media evidence is under `.local/evidence/native-media-api36/` unless stated otherwise.
 
@@ -77,3 +78,5 @@ These are bounded actual emulator checks, not a claim about all devices, every U
 Reproduce individual checks with the [ten-scenario walkthrough](demo.md), using an isolated seeded database and the build/install instructions. Record actual device/SDK, artifact hash, owned references, server results and screenshots. Use only fictional records for expiry, network interruption or stock races; do not log sessions or authorization values. Android UI capture tooling is local verification support, not production code or a durable automated device suite.
 
 Live signed Geoapify candidate/confidence/restriction/quota/timeout checks require privately configured operator credentials. No credential was requested or provisioned, and adapter mocks are confined to tests. This still blocks required live-geocoded-point acceptance in DEMO-007; GPS equality does not replace that substep. Academic acceptance remains externally unverified. Production map licensing, provider restrictions and supplier-approved safety content require the manual setup described in [setup](setup.md).
+
+The later online installed-Expo dependency check reports Dependencies are up to date. The actual public Directory endpoint returns200 with native-package architecture metadata and no unsupported entries; five core/local packages are unlisted and are not certified by that metadata. Earlier offline install skipped the remote check and remains separately recorded. Exact results are in `.local/evidence/release-final-{expo-dependency-check.txt,native-directory.json}`.

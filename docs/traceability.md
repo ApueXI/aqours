@@ -1,6 +1,6 @@
 # Requirement and acceptance traceability
 
-Updated 19 October 2026. This is an evidence map, not a blanket acceptance certificate. It preserves all **84 REQ identifiers**, **126 original feature acceptance identifiers** and **ten DEMO scenarios**. Their authoritative wording remains in [requirements](requirements.md) and the sixteen linked specifications. Original unchecked boxes remain unchanged.
+Updated 20 October 2026. This is an evidence map, not a blanket acceptance certificate. It preserves all **84 REQ identifiers**, **126 original feature acceptance identifiers** and **ten DEMO scenarios**. Their authoritative wording remains in [requirements](requirements.md) and the sixteen linked specifications. Original unchecked boxes remain unchanged.
 
 Source implementation, API assertions, browser interaction and actual Android behavior are separate evidence. The named tests below exist and are executable; their latest run/result belongs in [verification](verification.md), not this inventory. A reference proves only its actual assertions, not every phrase in the associated criterion. Client unit tests exercise helpers; typecheck/lint/build never certify individual UI criteria. The HTTP context and database error-redaction regressions are included in final verification; consult the run ledger for their outcomes.
 
@@ -273,6 +273,7 @@ These are actual device checks, not additional Node test titles. Exact captures,
 | N31–32 | Unknown-zone/null-coordinate customer profile/report/quality guidance; no pickup availability and working callback alternative without automatic submission |
 | N33–36 | Reviewed duplicate label without restoration claim; actual empty lists/Home and stale last-loaded/recovery; available/full/cancelled pickup selection states; distinct current scheduled notice |
 | N37–40 | Final G generated Manila appointment/restoration text, offline unread/open recovery, planned windows/own matching context, published quality end-does-not-lift warning and actual report-free Home/notification receipt |
+| N41 | Two actual native owners’ distinct report features in one real supplier viewport; each isolated rendered point opens its reference, full records unchanged/no writes/errors |
 | NM1–3, NM7–11 | Denied GPS/saved-address and real geocoder503/address-only reports; system picker, byte upload, foreground retention, native point and authenticated photo decoding |
 | NM13–14 | Actual committed-response503 report/photo retries with one record/event; final stored GPS accuracy, unconfirmed zone, confirmed native preview and identical real supplier-map point selection |
 | NM16–17 | Real native style404/error/retry with successful saved-address report using a labeled configuration-fault APK; normal source APK restored; reviewed-closure presentation |
@@ -598,7 +599,7 @@ These identifiers and criteria remain unchanged in their source specs. The descr
 
 | Scenario | Modules | Existing executable/operator evidence | Remaining acceptance |
 | --- | --- | --- | --- |
-| DEMO-001 | REPORT, MAP, AUTH | H-R1–2, H-S1; BO1, LM1–5; N5–6, N31, NM2–3, NM14 | Actual distinct native submissions/owned histories and real native-created supplier-map point pass; original exact two-owner browser inbox/cluster checks remain separate evidence. |
+| DEMO-001 | REPORT, MAP, AUTH | H-R1–2, H-S1; BO1, LM1–5; N5–6, N31, NM2–3, NM14; N41 | Actual native submissions/receipts are separate owned records; two native owners’ report features share a real supplier viewport and each isolated rendered point opens its own reference. Full records remain unchanged/no writes/errors. |
 | DEMO-002 | INCIDENT, DATA, HOME | H-R2, H-D2, H-I3; BW5; N7, N10, N16 | Actual native published unknown/resolved timeline, private-note exclusion and persisted notification/read navigation pass alongside audience/rollback API checks. |
 | DEMO-003 | GUIDE, ASSIST | H-G3–5, H-C1, H-Q1–3, H-F1–2; N8–9, N11–13, N29, N31–32 | Actual native questionnaire, explained current cards, choices/no-stock alternatives and explicit service submissions pass. Academic acceptance remains externally unverified. |
 | DEMO-004 | NOTICE, INCIDENT, ASSIST | H-G1, H-V1–2; BW7–9; N17, N27 | Actual native three-restriction past-end/resolved-outage/completed-service scenario and explicit lift/current/history passed; API full independence also passes. |
