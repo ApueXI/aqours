@@ -52,7 +52,7 @@ All guarded writes use the current expected version and operation identity speci
 3. In staff web, open Report inbox, find the two references, then Report map. Open the authorized records and compare saved issue coordinates. If tiles fail, use the list and record map rendering as unavailable rather than claiming point verification.
 4. Verify owned detail through `GET /reports/:id` and operational detail through `GET /staff/reports/:id` if using API tooling. See the privacy scenario before any ID substitution.
 
-Existing executable subset: `verification/reports-incidents.test.ts` tests “DEMO-001/010: concurrent same-key report submissions commit one result and reject changed payload” and “DEMO-002/005: shared incident links, publication dedupe, private snapshots and individual follow-up”; `verification/security.test.ts` tests ownership. Actual Android submission/map presentation remains a separate check.
+Existing executable subset: `verification/reports-incidents.test.ts` tests “DEMO-001/010: concurrent same-key report submissions commit one result and reject changed payload” and “DEMO-002/005: shared incident links, publication dedupe, private snapshots and individual follow-up”; `verification/security.test.ts` tests ownership. Native N6/N31/NM2/NM14 separately prove actual owned submissions/receipts and persisted map points; N16–18 prove independent two-owner outcomes. NM14 also opens the native-created GPS point on the real supplier canvas.
 
 ## DEMO-002
 
@@ -63,7 +63,7 @@ Existing executable subset: `verification/reports-incidents.test.ts` tests “DE
 3. Open incident detail, add a private note, then publish customer progress using **Publish update**. Enter explicit progress/area and unknown restoration. Refresh each customer's report and Notifications; compare update/publication identity and exclude the private note.
 4. Replaying a publication requires the exact original operation UUID and payload, including expectedVersion. Use the named HTTP test below to automate this rather than clicking a newly prepared publication, which is a new operation. Confirm one notification per recipient/source event, including an additional manual case with two linked reports belonging to the same customer.
 
-Existing executable subset: `verification/reports-incidents.test.ts`, “DEMO-002/005: shared incident links, publication dedupe, private snapshots and individual follow-up”; `verification/database.test.ts`, “publication failure rolls back both incident update and all notification work; same key then succeeds”. The dedicated tests in `verification/acceptance-incidents.test.ts` also exercise two reports/one owner with one persisted notification; native notification/timeline rendering remains separate.
+Existing executable subset: `verification/reports-incidents.test.ts`, “DEMO-002/005: shared incident links, publication dedupe, private snapshots and individual follow-up”; `verification/database.test.ts`, “publication failure rolls back both incident update and all notification work; same key then succeeds”. The dedicated tests in `verification/acceptance-incidents.test.ts` also exercise two reports/one owner with one persisted notification; native N7/N10/N16–18 independently verify timeline/notification rendering and independent follow-up.
 
 ## DEMO-003
 
@@ -75,7 +75,7 @@ Existing executable subset: `verification/reports-incidents.test.ts`, “DEMO-00
 4. Choose an alternative or decline and inspect the request list before explicit form submission: no service should be created. Then submit the form deliberately and observe requested, not accepted/scheduled.
 5. Change a rule version as admin, or publish/lift a relevant notice, and check that older cards become historical/non-current before reevaluation. Record academic review separately; passing technical checks cannot establish it.
 
-Existing executable subsets: all five tests in `verification/advisories-guidance.test.ts`, report-zone/card checks in `verification/context.test.ts`, and immutable/private history in `verification/database.test.ts`. Decision/freshness tables in `verification/guidance-rules-decisions.test.ts` and `guidance-rules-freshness.test.ts` execute outage/needs, assessment/hazard, quality conflicts and source changes. Actual Android card interactions and academic review remain separate.
+Existing executable subsets: all five tests in `verification/advisories-guidance.test.ts`, report-zone/card checks in `verification/context.test.ts`, and immutable/private history in `verification/database.test.ts`. Decision/freshness tables in `verification/guidance-rules-decisions.test.ts` and `guidance-rules-freshness.test.ts` execute outage/needs, assessment/hazard, quality conflicts and source changes. Native N8–9/N27–29/N31–32 verify actual answers/current explanations, historical hiding, decline and uncertainty/no-stock callback alternatives. Academic review remains external.
 
 ## DEMO-004
 
@@ -85,7 +85,7 @@ Existing executable subsets: all five tests in `verification/advisories-guidance
 2. As staff, advance a separate outage incident through its valid statuses to resolved and publish that progress explicitly. Refresh customer Home and guidance. The quality restriction must remain current even after its planned end time or after completing a separate assistance request.
 3. As staff, attempt official publication/lifting through the API: it must be denied. As admin, explicitly lift with current version and a reason. Refresh Home/guidance; the notice disappears from current applicability but remains distinguishable in historical detail/revisions.
 
-Existing executable subset: `verification/advisories-guidance.test.ts`, “DEMO-004: quality restrictions are distinct, independently published and persist past end or outage resolution”; `aqours-web/tests/map.test.ts` checks current layer filtering. `verification/acceptance-privacy.test.ts` additionally combines resolved incident/other report, expired-date quality restriction and completed assistance without coupling their outcomes. Actual Android presentations remain separate.
+Existing executable subset: `verification/advisories-guidance.test.ts`, “DEMO-004: quality restrictions are distinct, independently published and persist past end or outage resolution”; `aqours-web/tests/map.test.ts` checks current layer filtering. `verification/acceptance-privacy.test.ts` additionally combines resolved incident/other report, expired-date quality restriction and completed assistance without coupling their outcomes. Native N17/N27 prove all three restrictions past planned end and resolved outage/completed services, then actual current removal after explicit admin lifts with historical details retained. N39 verifies the final APK end-does-not-lift warning.
 
 ## DEMO-005
 
@@ -95,7 +95,7 @@ Existing executable subset: `verification/advisories-guidance.test.ts`, “DEMO-
 2. In that owner's Android report detail, enter **What is still happening?** and choose **Request another review**. Refresh staff detail. Only that report returns to under_review; prior first-resolution history remains.
 3. Confirm the incident, another customer's report and any active quality advisory retain their states. Review Overview: current unresolved state and historical first-resolution duration are distinct; no assistance action should have been submitted automatically.
 
-Existing executable subset: `verification/reports-incidents.test.ts`, “DEMO-002/005: shared incident links, publication dedupe, private snapshots and individual follow-up”; metric-history tests in `verification/database.test.ts` and `aqours-api/test/transactions-metrics.test.ts`. Actual native action/display is separate evidence.
+Existing executable subset: `verification/reports-incidents.test.ts`, “DEMO-002/005: shared incident links, publication dedupe, private snapshots and individual follow-up”; metric-history tests in `verification/database.test.ts` and `aqours-api/test/transactions-metrics.test.ts`. Native N18 performs the action and independently compares the unchanged incident/other report/notices/services; its first-resolution history stays retained.
 
 ## DEMO-006
 
@@ -106,7 +106,7 @@ Existing executable subset: `verification/reports-incidents.test.ts`, “DEMO-00
 3. Expect ownership-safe denial, usually 404 for a foreign owned object; unauthenticated access is 401 and role denial is 403 as specified by the route. Do not demand one status for every endpoint; verify no record contents/private notes/contact/other-household coordinates leak in any response.
 4. On Android try a foreign report deep link and notification destination, then sign out and switch accounts. Verify private screen/state recovery and secure session lifecycle; never include tokens/cookies/private request headers in screenshots or evidence.
 
-Existing executable subsets: `verification/security.test.ts` owner guards, controlled images, profile/connection and session tests; guidance private-evidence test in `verification/database.test.ts`. Native deep-link/account-switch behavior requires actual-device evidence.
+Existing executable subsets: `verification/security.test.ts` owner guards, controlled images, profile/connection and session tests; guidance private-evidence test in `verification/database.test.ts`. Native N1–5/N14/N22–26 verify account isolation, foreign report denial, revocation/expiry and offline logout/restart/retry. Backend ID-tampering assertions cover the other protected record types.
 
 ## DEMO-007
 
@@ -117,7 +117,7 @@ Existing executable subsets: `verification/security.test.ts` owner guards, contr
 3. Without credentials, or on provider/no-result/ambiguous failure, record that live lookup is unavailable. Choose **Use this address without coordinates** to retain the address as reviewable, or return to saved address. Inspect staff detail/unlocated list; do not infer a service zone or fabricate a point. A forged candidate must fail server validation.
 4. Block map style/tiles on each actual client while retaining API access. Verify fields, list navigation and address-only/saved reporting still work. Compare cluster zoom changes against unchanged persisted incident links/priority/boundaries.
 
-Existing executable subsets: both `aqours-api/test/geocode.test.ts` tests use explicit adapter mocks/signatures, `verification/reports-incidents.test.ts` checks persisted point order/bounds, and provider/unlocated tests cover failure paths. Chromium tile-failure fallback is separate from native map behavior. Live Geoapify success and denied-GPS/native equality are unavailable until credentials and an Android target are present.
+Existing executable subsets: both `aqours-api/test/geocode.test.ts` tests use explicit adapter mocks/signatures, `verification/reports-incidents.test.ts` checks persisted point order/bounds, and provider/unlocated tests cover failure paths. Chromium tile-failure fallback is separate from native map behavior. Native NM2/NM3/NM14/NM16 verify denied GPS/saved reporting, genuine503/address-only fallback, controlled GPS accuracy/native-supplier equality and native style404 fallback. Live signed Geoapify candidate/confidence/confirmation/ambiguity/quota/restriction checks still require private operator credentials; GPS does not close that geocoded substep.
 
 ## DEMO-008
 
@@ -129,7 +129,7 @@ Existing executable subsets: both `aqours-api/test/geocode.test.ts` tests use ex
 4. Complete callback with contact outcome/next steps; inspection with findings/next steps. Water uses **Record collection**, after verifying the issued reference and quantity, then outcome/next steps. Generic water completed is rejected.
 5. Refresh customer detail/timeline/notifications after every step. In another eligible unstarted request, cancel with a reason; after work starts, cancellation must fail even if later rescheduled. Inspect independent report/incident/advisory states.
 
-Existing executable subsets: both lifecycle tests in `verification/assistance-admin.test.ts`, `verification/stock.test.ts` collection/release paths and `verification/context.test.ts` report-zone eligibility. This does not certify that all appointment/notification contents have appeared on an installed Android app.
+Existing executable subsets: both lifecycle tests in `verification/assistance-admin.test.ts`, `verification/stock.test.ts` collection/release paths and `verification/context.test.ts` report-zone eligibility. Native N11–13/N21/N30/N37 actually verify all three submissions with supplier-browser fulfillment reflected on Android, exact old/new agreed appointments/reasons, outcomes/next steps, reference/collection and generated Manila notification time.
 
 ## DEMO-009
 
@@ -141,7 +141,7 @@ Existing executable subsets: both lifecycle tests in `verification/assistance-ad
 4. Exercise request cancel versus collect and session cancel versus acceptance. Session cancellation releases only uncollected stock, makes pending/active uncollected requests unavailable with support follow-up and preserves collected outcomes. Verify every affected customer notification and unchanged independent reports/advisories.
 5. Try lowering total below reserved plus collected and reject it. Repeat with exact two-decimal liters. Show full/cancelled/no-option state and callback support on Android; a stale list cannot force acceptance.
 
-Existing executable subsets: all six tests in `verification/stock.test.ts` and acceptance fault rollback in `verification/database.test.ts`. `verification/acceptance-workflow-edges.test.ts` also exercises session-cancel versus collection and cancel versus first work with one irreversible outcome. Actual native reference/unavailability display remains separate.
+Existing executable subsets: all six tests in `verification/stock.test.ts` and acceptance fault rollback in `verification/database.test.ts`. `verification/acceptance-workflow-edges.test.ts` also exercises session-cancel versus collection and cancel versus first work with one irreversible outcome. Native N13/N32/N35 independently verify reference/reserved→collected presentation, exact12.50-liter fulfillment, disabled full/cancelled selections and no-session callback support.
 
 ## DEMO-010
 
@@ -152,7 +152,7 @@ Existing executable subsets: all six tests in `verification/stock.test.ts` and a
 3. Record database/application counts, recreate the database container with the same configured volume using the setup runbook, reconnect and compare retained accounts/reports. Do not run `down -v` for this check.
 4. Follow the separate [backup/restore runbook](setup.md#backup-and-restore): pause writers, back up database/migrations plus controlled attachment bytes, restore into a different empty target, compare counts and two image SHA-256 values, then start an isolated API on the restore and verify owner image retrieval, foreign denial and anonymous denial. Container persistence is not backup/restore.
 
-Existing executable subsets: report/publication/stock replay tests and injected transaction rollback tests; operator persistence/restore evidence is recorded in [verification](verification.md). Actual frozen browser administrative retry and isolated restored-image authorization passed; native report/photo uncertain-result handling remains separate.
+Existing executable subsets: report/publication/stock replay tests and injected transaction rollback tests; operator persistence/restore evidence is recorded in [verification](verification.md). Actual frozen browser administrative retry and isolated restored-image authorization passed; Native NM13 actually retries report/photo requests after a test-only503 following each real commit, with matching operation/canonical-body digests and exactly one report/attachment/upload event. The ordinary API was restored afterward.
 
 ## Run the executable subset and record outcomes
 
@@ -163,6 +163,7 @@ npm run test:api
 npm run test:browser
 npm run test:maintenance
 npm run test:operations
+npm run test:quality
 npm run test:recovery
 npm run test:map
 npm run test:seed

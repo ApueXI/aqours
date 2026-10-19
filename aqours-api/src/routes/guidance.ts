@@ -1,5 +1,6 @@
 import type { Express } from 'express';
 import { z } from 'zod';
+import { notificationSafe } from '../services/notification-projection.js';
 import { route, page } from '../http.js';
 import { create, event, get, now, own } from '../store.js';
 import { evaluate } from '../services/guidance.js';
@@ -74,7 +75,7 @@ export function guidanceRoutes(app: Express) {
     );
     return page(
       req,
-      rows.map((v) => ({ ...v.data, id: v.id, createdAt: v.created_at, readAt: v.read_at })),
+      rows.map(notificationSafe),
     );
   });
   route(app, 'get', '/notifications/:id', 'customer', async (db, req) => {
@@ -84,7 +85,7 @@ export function guidanceRoutes(app: Express) {
     );
     if (!rows[0]) fail(404, 'Notification not found');
     const v = rows[0];
-    return { ...v.data, id: v.id, createdAt: v.created_at, readAt: v.read_at };
+    return notificationSafe(v);
   });
   route(
     app,
@@ -99,7 +100,7 @@ export function guidanceRoutes(app: Express) {
       );
       if (!rows[0]) fail(404, 'Notification not found');
       const v = rows[0];
-      return { ...v.data, id: v.id, createdAt: v.created_at, readAt: v.read_at };
+      return notificationSafe(v);
     },
     false,
   );

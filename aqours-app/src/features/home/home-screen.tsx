@@ -4,6 +4,7 @@ import { Body, Button, Demo, Screen, Section, navigate, styles } from '@/compone
 import { ResourceState } from '@/components/resource-state';
 import { useAllResources, useResource } from '@/hooks/use-resource';
 import { displayTime, label } from '@/lib/time';
+import { AdvisoryContext } from './advisory-context';
 
 export function HomeScreen() {
   const connections = useResource<Connection[]>('/me/connections');
@@ -24,6 +25,7 @@ export function HomeScreen() {
       {notices.data?.map((notice) => <View key={notice.id} style={styles.item}>
         <Demo visible={notice.demo} /><Body>{label(notice.kind)} · {notice.title}</Body><Body>{notice.text}</Body>
         <Body muted>{notice.source} · Updated {displayTime(notice.updatedAt)}</Body>
+        <AdvisoryContext notice={notice} connections={connections.data} verified={!connections.loading && !connections.error && connections.data !== null} />
         <Button title="Read advisory" secondary onPress={() => navigate(`/advisories/${notice.id}`)} />
       </View>)}
     </Section>

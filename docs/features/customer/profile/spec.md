@@ -49,6 +49,6 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 
 ### Verification and limits
 
-Review identity/ownership API tests. Actual Android profile recovery, missing connection display and account switching remain device checks.
+Actual installed N3/N5/N20/N31/N34 verify owned identity/connection details, unknown zone/null coordinates, isolated empty context and clearing across accounts. Native saved/address-only report checks preserve saved connection details; API tests separately enforce ownership and snapshot behavior. See the [native ledger](../../../native-verification.md) for build boundaries and remaining device checks.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

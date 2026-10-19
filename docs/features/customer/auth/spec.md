@@ -60,6 +60,6 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 
 ### Verification and limits
 
-Review API security tests and mobile session checks. Installed-device cold start, SecureStore behavior, account switching and interrupted logout still require Android execution.
+Actual installed N1–5/N14/N20/N22–26 cover accounts, server-verified SecureStore cold starts, generic invalid credentials, foreign denial, revocation/expiry and guest-offline sign-out with persisted pending revocation across restart and real-network retry. See the [native ledger](../../../native-verification.md); API replay/role checks remain separate evidence.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

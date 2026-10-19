@@ -1,6 +1,6 @@
-import { Camera, Map, ViewAnnotation } from '@maplibre/maplibre-react-native';
+import { Camera, GeoJSONSource, Layer, Map } from '@maplibre/maplibre-react-native';
 import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Body, Button } from '@/components/ui';
 import { mapStyleUrl } from '@/lib/api';
 
@@ -13,7 +13,9 @@ export function MapPreview({ latitude, longitude }: { latitude: number; longitud
   return <View style={{ height: 240 }} accessibilityLabel={`Issue location latitude ${latitude}, longitude ${longitude}`}>
     <Map style={{ flex: 1 }} mapStyle={mapStyleUrl} onDidFailLoadingMap={() => setFailed(true)}>
       <Camera initialViewState={{ center: [longitude, latitude], zoom: 15 }} />
-      <ViewAnnotation lngLat={[longitude, latitude]}><Text style={{ color: '#9f2d22', fontSize: 30 }}>◆</Text></ViewAnnotation>
+      <GeoJSONSource id="issue-location" data={{ type: 'Point', coordinates: [longitude, latitude] }}>
+        <Layer id="issue-location-point" type="circle" paint={{ 'circle-radius': 8, 'circle-color': '#9f2d22', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2 }} />
+      </GeoJSONSource>
     </Map>
   </View>;
 }

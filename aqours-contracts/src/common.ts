@@ -18,6 +18,7 @@ export interface Zone { id: string; code: string; name: string; boundary: Geomet
 export interface TimelineEvent {
   id: string; action: string; text: string; createdAt: string; actorId: string | null;
   fromStatus?: string | null; toStatus?: string | null;
+  appointmentChange?: { from: string | null; to: string };
 }
 export interface Note { id: string; text: string; authorId: string; createdAt: string }
 export interface Notification {

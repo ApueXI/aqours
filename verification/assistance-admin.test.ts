@@ -21,6 +21,13 @@ test('DEMO-008: callback and inspection lifecycles retain details, appointments,
     service=await transition(staff,service,'scheduled',{appointmentAt:new Date(Date.now()+7200000).toISOString(),reason:'Customer requested a later appointment'});
     assert.notEqual(service.appointmentAt,firstAppointment);
     assert.ok(service.timeline?.length);
+    const publicHistory=(await ok<AssistanceRequest>(a,'GET',`/assistance-requests/${service.id}`)).timeline!;
+    const appointments=publicHistory.filter(event=>event.action==='scheduled');
+    assert.deepEqual(appointments.map(event=>event.appointmentChange),[
+      {from:null,to:firstAppointment},{from:firstAppointment,to:service.appointmentAt},
+    ]);
+    assert.equal(appointments[1]!.text,'Customer requested a later appointment');
+    assert.ok(appointments.every(event=>!('metadata' in event)));
     service=await transition(staff,service,'in_progress');
     const late=await request(a,'POST',`/assistance-requests/${service.id}/cancel`,{expectedVersion:service.version,reason:'Too late'},key());
     assert.equal(late.status,409);

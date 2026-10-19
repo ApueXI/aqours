@@ -35,12 +35,11 @@ export async function reportCreate(
     locationSource: location?.source ?? 'saved_address',
     latitude: location ? (location.latitude ?? null) : connection.latitude,
     longitude: location ? (location.longitude ?? null) : connection.longitude,
+    accuracy: location?.source === 'gps' ? (location.accuracy ?? null) : null,
     locationConfirmed: location ? location.confirmed : connection.latitude != null,
     zoneId: location ? null : connection.zoneId,
     zoneConfirmed: location ? false : connection.zoneConfirmed,
-    locationReview: location
-      ? !location.confirmed || location.latitude == null
-      : !connection.zoneConfirmed || connection.latitude == null,
+    locationReview: location ? true : !connection.zoneConfirmed || connection.latitude == null,
     priority: 'normal',
     priorityReason: null,
     ownerId: null,
@@ -57,6 +56,8 @@ export async function reportCreate(
 export function reportSafe(doc: Doc) {
   return {
     ...project(doc, reportFields),
+    accuracy: typeof doc.accuracy === 'number' ? doc.accuracy : null,
+    locationReview: !!doc.locationReview || !doc.zoneConfirmed || doc.latitude == null,
     guidedDetails: typeof doc.answers?.details === 'string' ? doc.answers.details : null,
   };
 }

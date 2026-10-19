@@ -15,7 +15,8 @@
     "test:maintenance": "node --experimental-strip-types verification/browser-maintenance.ts",
     "test:seed": "node --experimental-strip-types verification/seed.ts",
     "test:recovery": "node --experimental-strip-types verification/browser-recovery.ts",
-    "test:operations": "node --experimental-strip-types verification/browser-operations.ts"
+    "test:operations": "node --experimental-strip-types verification/browser-operations.ts",
+    "test:quality": "node --experimental-strip-types verification/browser-quality.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.0",

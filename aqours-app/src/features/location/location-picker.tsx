@@ -41,7 +41,8 @@ export function LocationPicker({ connection, value, onChange, onReadyChange, dis
       const permission = await Location.requestForegroundPermissionsAsync();
       if (permission.status !== 'granted') throw new Error('Location access was denied. Use your saved address or enter an issue address.');
       const position = await Promise.race([
-        Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }),
+        // A user-requested GPS fix must also work without Google's network accuracy service.
+        Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High, mayShowUserSettingsDialog: false }),
         new Promise<never>((_, reject) => setTimeout(() => reject(new Error('GPS is unavailable. Use your saved address or enter an issue address.')), 15000)),
       ]);
       if (run !== generation.current) return;

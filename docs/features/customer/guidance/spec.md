@@ -89,6 +89,6 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 
 ### Verification and limits
 
-Review advisory/guidance API tests and mobile guidance checks. Android card navigation/freshness and academic approval are outstanding independent checks; technical tests do not validate real water safety.
+Actual installed N8–9 verify explicit questionnaire/current explained cards and stale-source hiding; N17 retains all three independent official restrictions after planned end and resolved outage/completed services. API decision/freshness tables cover additional permutations; academic acceptance remains external. See the [native ledger](../../../native-verification.md) for current-removal, alternative-action and provider/device boundaries.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

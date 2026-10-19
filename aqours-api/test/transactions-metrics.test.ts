@@ -70,6 +70,7 @@ test('public projections suppress future internal fields, questionnaire evidence
   assert.equal('assertedIncidentId' in reportSafe(doc), false);
   assert.equal('answers' in reportSafe(doc), false);
   assert.equal('evidence' in guidanceSafe(doc), false);
+  assert.equal(reportSafe(doc).accuracy, null);
 });
 test('transaction outcomes distinguish known rollback from lost COMMIT acknowledgment', async () => {
   const commands: string[] = [];

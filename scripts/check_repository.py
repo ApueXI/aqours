@@ -51,8 +51,8 @@ if trace.exists():
         if len(matches) != 1:
             errors.append(f'Traceability needs exactly one {identifier} row, found {len(matches)}')
     evidence = re.findall(r'^\| ([HUWC]-[A-Z]+\d+) \| \[[^\]]+\]\(([^)]+)\) \| ([^|]+) \|$', text, re.M)
-    if len(evidence) != 95 or len({row[0] for row in evidence}) != 95:
-        errors.append(f'Expected 95 unique named executable test keys, found {len(evidence)}')
+    if len(evidence) != 107 or len({row[0] for row in evidence}) != 107:
+        errors.append(f'Expected 107 unique named executable test keys, found {len(evidence)}')
     for identifier, target, title in evidence:
         source = trace.parent / target
         if source.exists() and title not in source.read_text():

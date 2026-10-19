@@ -1,6 +1,6 @@
 # Aqours API v1 contract
 
-Implementation contract adopted 2026-10-18. Base `/api/v1`. Public DTOs/enums live in `aqours-contracts/src/`; build that local package before installing/building each app. Database models must never be serialized directly. All instants are ISO 8601 UTC; clients display Asia/Manila. IDs are UUIDs; public tracking/pickup references do not authorize access. All text is plain text.
+Implementation contract adopted 2026-10-18. Base `/api/v1`. Public DTOs/enums live in `aqours-contracts/src/`; build that local package before installing/building each app. Database models must never be serialized directly. Structured instants are ISO 8601 UTC; clients display Asia/Manila. Generated human-readable appointment/restoration labels in notification text/incident-card reasons are projected in Asia/Manila; stored history remains unchanged. IDs are UUIDs; public tracking/pickup references do not authorize access. All text is plain text.
 
 ## Transport and security
 
@@ -40,7 +40,13 @@ Success: `{data: T, page?: {offset,limit,total}, asOf?: string}`. Lists return `
 | GET /notifications/:id | — | Owned Notification |
 | PATCH /notifications/:id/read | `{}` | Notification; repeat-safe, no domain effect |
 
+`Report.accuracy` is nonnegative GPS accuracy in meters, or null for unknown/legacy/non-GPS records. An explicitly confirmed alternate point still needs independent supplier zone review; coordinate confirmation never confirms its supply zone.
+
 Saved location and alternate issue location remain independent. `geocoded_address` confirmed coordinates require the candidate token bound to address+coordinates and expiry. GPS is optional; denied/unavailable GPS, geocoder and map failures allow address-only reporting. Never invent coordinates. Photos upload after report commit: retain report reference on photo failure and retry only the attachment using the same operation key.
+
+Customer advisory `connectionIds` contains only explicitly targeted connections owned by the caller. Other household IDs are excluded; `zoneIds` stays public context, and clients match only their confirmed zones. Planned dates are display context for quality notices and never substitute for explicit lifting.
+
+Public `TimelineEvent.appointmentChange?: {from:string|null,to:string}` is present only on valid scheduling/rescheduling events. Both instants are UTC; arbitrary internal audit metadata is never exposed. Customers and supplier history render old/new agreed Manila times alongside the reason. Notification DTOs use a field allowlist, retain the documented sourceEventKey and exclude arbitrary private metadata.
 
 `answers` accepts only the optional category-specific `details` string, trimmed and limited to 2,000 characters. Report and ReportDetail expose it as `guidedDetails: string | null` to the owner and supplier reviewer; arbitrary internal answer objects are never projected. Guidance cards include `sourceType` (`advisory`, `incident`, `rule`, `guidance` or `pickup`) with source ID/revision, reason and optional supported action. Source type identifies authorized advisory navigation separately from ordinary recommendation actions. A water-support recommendation is a possible next action; it neither accepts a request nor reserves liters.
 

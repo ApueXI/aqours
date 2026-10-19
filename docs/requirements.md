@@ -212,7 +212,7 @@ The repeatable demo seed is implemented and remains development-only with fictio
 
 ## Acceptance scenarios
 
-These ten scenarios retain their original required scope. Focused API/browser checks provide partial evidence, while native/device and live-provider steps remain unverified unless recorded in [verification](verification.md). Each scenario must be demonstrable against the integrated Android app, supplier web app, API and database where applicable. These scenario IDs are separate from `.loop/` execution criteria.
+These ten scenarios retain their original required scope. API/database, actual supplier-browser and installed Android checks have individually scoped evidence in [verification](verification.md). Required live Geoapify candidate/confirmation/geocoded-point checks remain unverified; controlled GPS equality does not replace them. Each scenario must be demonstrable against the integrated Android app, supplier web app, API and database where applicable. These scenario IDs are separate from `.loop/` execution criteria.
 
 | ID | Scenario and passing evidence |
 | --- | --- |

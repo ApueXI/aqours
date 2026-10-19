@@ -58,6 +58,8 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 
 ### Verification and limits
 
-Review API security and publication/fulfillment notification tests. Android foreground refresh, stale notice destinations, network errors and account switching remain device checks.
+Notification DTOs use an explicit allowlist. Generated appointment labels display Asia/Manila while immutable stored UTC text remains untouched. A failed open/read request keeps the confirmed unread state and offers retry; destination reads remain independently authorized.
+
+Actual installed N10/N21/N34/N37/N40 verify persisted read state/owned destination, empty/stale recovery, generated Manila appointment text, offline open remaining unread and successful real-network retry, plus notice receipt with zero reports. Backend audiences/deduplication/private destination guards/rollback are separately verified in the [native ledger](../../../native-verification.md) and traceability.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

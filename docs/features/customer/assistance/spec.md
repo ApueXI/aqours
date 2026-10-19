@@ -95,6 +95,6 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 
 ### Verification and limits
 
-Review assistance/admin and concurrent stock API tests. Actual Android form, request status/appointment visibility and cancellation/pickup flows remain device checks.
+Actual installed N11–13/N15/N21/N30/N32/N35 cover all three native submissions, real supplier-browser acceptance/scheduling/rescheduling/completion, exact12.50-liter pickup/reference/collection, outcomes/next steps and eligible reasoned cancellation. Native old/new agreed appointments, disabled full/cancelled options and no-session callback fallback are verified. API PostgreSQL races establish stock/cancellation concurrency separately. See the [native ledger](../../../native-verification.md).
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

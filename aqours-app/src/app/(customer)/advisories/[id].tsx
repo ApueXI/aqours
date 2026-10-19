@@ -1,14 +1,16 @@
-import type { Advisory } from '@aqours/contracts';
+import type { Advisory, Connection } from '@aqours/contracts';
 import { useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 import { Body, Demo, Screen, Section, styles } from '@/components/ui';
 import { ResourceState } from '@/components/resource-state';
 import { useResource } from '@/hooks/use-resource';
 import { displayTime, label } from '@/lib/time';
+import { AdvisoryContext } from '@/features/home/advisory-context';
 
 export default function AdvisoryDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const advisory = useResource<Advisory>(`/advisories/${id}`, true);
+  const connections = useResource<Connection[]>('/me/connections');
   return <Screen title="Advisory">
     <ResourceState {...advisory} />
     {advisory.data && <>
@@ -17,6 +19,8 @@ export default function AdvisoryDetail() {
         <Body>{label(advisory.data.kind)} · {label(advisory.data.state)}</Body><Body>{advisory.data.text}</Body>
         <Body muted>Source: {advisory.data.source}</Body><Body muted>Updated {displayTime(advisory.data.updatedAt)} · Revision {advisory.data.version}</Body>
         <Body muted>Published {displayTime(advisory.data.publishedAt)}</Body>
+        <ResourceState {...connections} />
+        <AdvisoryContext notice={advisory.data} connections={connections.data} verified={!connections.loading && !connections.error && connections.data !== null} />
         {advisory.data.liftedAt ? <Body>Lifted {displayTime(advisory.data.liftedAt)}: {advisory.data.liftReason}</Body>
           : ['boil_water', 'do_not_drink', 'do_not_use'].includes(advisory.data.kind) && <Body>This restriction remains in effect until the supplier explicitly lifts it.</Body>}
       </Section>

@@ -4,7 +4,7 @@ Updated 19 October 2026. This is an evidence map, not a blanket acceptance certi
 
 Source implementation, API assertions, browser interaction and actual Android behavior are separate evidence. The named tests below exist and are executable; their latest run/result belongs in [verification](verification.md), not this inventory. A reference proves only its actual assertions, not every phrase in the associated criterion. Client unit tests exercise helpers; typecheck/lint/build never certify individual UI criteria. The HTTP context and database error-redaction regressions are included in final verification; consult the run ledger for their outcomes.
 
-“Pending” identifies a required manual or missing executable check. The lead reports a successful signed dual-architecture debug APK build; standalone release APK also passes; installed emulator/device workflows, live Geoapify and academic approval remain separate pending gates; this file does not preempt the verification ledger if later evidence arrives. See [setup](setup.md), [demo walkthrough](demo.md), [API contract](api.md) and [Android guide](../aqours-app/README.md).
+“Pending” identifies a required missing check. Actual KVM-backed Android workflows now have individually scoped evidence in the [native ledger](native-verification.md), including artifact hashes and real defects/fixes. Live Geoapify still requires private operator configuration; academic acceptance remains externally unverified. Build and helper checks are not substitutes for native interaction. See [setup](setup.md), [demo walkthrough](demo.md), [API contract](api.md) and [Android guide](../aqours-app/README.md).
 
 ## Implementation module key
 
@@ -46,10 +46,11 @@ Run HTTP tests with the isolated database/API setup in [setup](setup.md): root `
 | H-R3 | [verification/reports-incidents.test.ts](../verification/reports-incidents.test.ts) | review operations require reasons, prevent stale overwrite, separate clarification and staff notes |
 | H-R4 | [verification/reports-incidents.test.ts](../verification/reports-incidents.test.ts) | map queries enforce bounds, cap disclosure and persisted point ordering without invented coordinates |
 | H-G1 | [verification/advisories-guidance.test.ts](../verification/advisories-guidance.test.ts) | DEMO-004: quality restrictions are distinct, independently published and persist past end or outage resolution |
-| H-G2 | [verification/advisories-guidance.test.ts](../verification/advisories-guidance.test.ts) | area notice audiences need no report and publication/read retries never duplicate notifications |
+| H-G2 | [verification/advisories-guidance.test.ts](../verification/advisories-guidance.test.ts) | area notice audiences need no report and publication/lift/read retries never duplicate notifications |
 | H-G3 | [verification/advisories-guidance.test.ts](../verification/advisories-guidance.test.ts) | DEMO-003: rules retain evidence, apply safety precedence and choices never create assistance |
 | H-G4 | [verification/advisories-guidance.test.ts](../verification/advisories-guidance.test.ts) | guidance source revisions invalidate history and current evaluation includes the latest source |
 | H-G5 | [verification/advisories-guidance.test.ts](../verification/advisories-guidance.test.ts) | unconfirmed zones remain uncertain, failed/missing geocoder configuration returns honest error |
+| H-G6 | [verification/advisories-guidance.test.ts](../verification/advisories-guidance.test.ts) | scheduled interruptions respect their published time window without ending independent quality restrictions |
 | H-A1 | [verification/assistance-admin.test.ts](../verification/assistance-admin.test.ts) | DEMO-008: callback and inspection lifecycles retain details, appointments, outcomes and independent report status |
 | H-A2 | [verification/assistance-admin.test.ts](../verification/assistance-admin.test.ts) | immediate support needs reason; unavailable/reschedule/cancel preserve coherent timeline |
 | H-A3 | [verification/assistance-admin.test.ts](../verification/assistance-admin.test.ts) | administration validates roles/login uniqueness, revokes deactivated sessions and retains ownership |
@@ -70,6 +71,7 @@ Run HTTP tests with the isolated database/API setup in [setup](setup.md): root `
 | H-W6 | [verification/stock.test.ts](../verification/stock.test.ts) | session-cancel versus acceptance serializes and never leaves a live reservation in cancelled session |
 | H-C1 | [verification/context.test.ts](../verification/context.test.ts) | pickup options use the owned report zone across multiple connections and reviewed alternate locations |
 | H-C2 | [verification/context.test.ts](../verification/context.test.ts) | category-specific report details reach both customer and staff review without arbitrary answer projection |
+| H-C3 | [verification/context.test.ts](../verification/context.test.ts) | confirmed GPS retains measured accuracy and requires separate supplier zone review |
 | H-I1 | [verification/acceptance-incidents.test.ts](../verification/acceptance-incidents.test.ts) | concurrent and repeated affected assertions reuse one owned report without merging independent reports |
 | H-I2 | [verification/acceptance-incidents.test.ts](../verification/acceptance-incidents.test.ts) | simultaneous corrective incident links have one version winner and preserve exact old/new history |
 | H-I3 | [verification/acceptance-incidents.test.ts](../verification/acceptance-incidents.test.ts) | two reports at one connection stay separate from unique connections and independent affected estimates |
@@ -100,6 +102,8 @@ Run HTTP tests with the isolated database/API setup in [setup](setup.md): root `
 | U-T2 | [aqours-api/test/transactions-metrics.test.ts](../aqours-api/test/transactions-metrics.test.ts) | filter parsing rejects invalid enum values and malformed UUIDs across list and map reads |
 | U-T3 | [aqours-api/test/transactions-metrics.test.ts](../aqours-api/test/transactions-metrics.test.ts) | public projections suppress future internal fields, questionnaire evidence and first-work markers |
 | U-T4 | [aqours-api/test/transactions-metrics.test.ts](../aqours-api/test/transactions-metrics.test.ts) | transaction outcomes distinguish known rollback from lost COMMIT acknowledgment |
+| U-T5 | [aqours-api/test/timeline.test.ts](../aqours-api/test/timeline.test.ts) | public appointment history preserves agreed times without exposing arbitrary audit metadata |
+| U-T6 | [aqours-api/test/presentation.test.ts](../aqours-api/test/presentation.test.ts) | generated appointment and restoration text uses Manila time while retaining immutable UTC records |
 | U-G1 | [aqours-api/test/geocode.test.ts](../aqours-api/test/geocode.test.ts) | disabled geocoder fails honestly and candidates bind address, point and expiry |
 | U-G2 | [aqours-api/test/geocode.test.ts](../aqours-api/test/geocode.test.ts) | provider adapter preserves real confidence/coordinates and converts transport failures to503 |
 | U-O1 | [aqours-api/test/operation-fingerprint.test.ts](../aqours-api/test/operation-fingerprint.test.ts) | account operation retries match while changed passwords and operation scopes differ |
@@ -131,6 +135,14 @@ Run HTTP tests with the isolated database/API setup in [setup](setup.md): root `
 | C-B8 | [aqours-app/tests/customer-boundaries.test.cjs](../aqours-app/tests/customer-boundaries.test.cjs) | observed times use Manila and reject normalized invalid dates |
 | C-P1 | [aqours-app/tests/pagination.test.cjs](../aqours-app/tests/pagination.test.cjs) | home obtains an older active restriction and incident beyond the first hundred records |
 | C-P2 | [aqours-app/tests/pagination.test.cjs](../aqours-app/tests/pagination.test.cjs) | failed or incomplete later pages never become a partial successful home list |
+| C-U1 | [aqours-app/tests/photo-upload.test.cjs](../aqours-app/tests/photo-upload.test.cjs) | installed Expo 57 converter rejects the previous React Native URI descriptor |
+| C-U2 | [aqours-app/tests/photo-upload.test.cjs](../aqours-app/tests/photo-upload.test.cjs) | production photo builder passes file bytes, name and type through installed Expo multipart conversion |
+| C-U3 | [aqours-app/tests/photo-upload.test.cjs](../aqours-app/tests/photo-upload.test.cjs) | uncertain photo retry retains its original file body and key with repeatable Expo multipart bytes |
+| C-U4 | [aqours-app/tests/photo-upload.test.cjs](../aqours-app/tests/photo-upload.test.cjs) | native file preparation failure is raised before an upload body is returned |
+| C-I1 | [aqours-app/tests/protected-image.test.cjs](../aqours-app/tests/protected-image.test.cjs) | installed RN Android object-image branch drops the old source authorization header |
+| C-I2 | [aqours-app/tests/protected-image.test.cjs](../aqours-app/tests/protected-image.test.cjs) | protected image builder forwards credentials and reload policy through installed RN Android image branch |
+| C-I3 | [aqours-app/tests/protected-image.test.cjs](../aqours-app/tests/protected-image.test.cjs) | missing mobile session never creates a literal null bearer credential for an image |
+| C-N1 | [aqours-app/tests/notice-context.test.cjs](../aqours-app/tests/notice-context.test.cjs) | advisory context identifies only owned explicit or confirmed-zone connections without duplicates |
 
 ### Browser and operational checks
 
@@ -219,6 +231,20 @@ Root `npm run test:operations` runs [verification/browser-operations.ts](../veri
 | BO6 | Staff browser edits incident status/owner/estimate with reason/time history while restoration remains explicitly unknown |
 | BO7 | Browser links both owners then deliberately unlinks one while retaining report content/history and distinct counts/estimate |
 
+### Supplier quality-review browser checks
+
+Root `npm run test:quality` runs [verification/browser-quality.ts](../verification/browser-quality.ts). All seven checks passed against production assets and the real API. Supplier actions use Chromium; the customer guidance assertions use HTTP and do not substitute for Android presentation.
+
+| Key | Actual checked behavior |
+| --- | --- |
+| BQ1 | Water-quality inbox/detail expose the isolated category and customer-reported hazard for staff review |
+| BQ2 | Staff opens the protected quality photo as an observation without a generated safety diagnosis |
+| BQ3 | Browser requires a reason then acknowledges, assigns and prioritizes quality review with persisted actor/time history |
+| BQ4 | Customer-safe quality detail/timeline retain acknowledgement and attachment without invented location or automatic resolution |
+| BQ5 | Customer API guidance retains exact approved source/version, callback and hazard escalation with explicit safety/location/availability uncertainty |
+| BQ6 | Quality review and callback choice neither publish official notices nor submit assistance or transition the report automatically |
+| BQ7 | Quality browser run has no uncaught exceptions and staff explicitly signs out |
+
 ### Actual rendered map checks
 
 Root `npm run test:map` runs [verification/browser-map.ts](../verification/browser-map.ts) against the real keyless public style and production supplier build. All five checks passed.
@@ -231,19 +257,39 @@ Root `npm run test:map` runs [verification/browser-map.ts](../verification/brows
 | LM4 | No uncaught JavaScript exceptions during actual map rendering and selection |
 | LM5 | Selecting a real two-report cluster expands its viewport without writes, merging or changing either persisted report |
 
+### Installed Android check key
+
+These are actual device checks, not additional Node test titles. Exact captures, actions and APK boundaries are in the [native ledger](native-verification.md). A range means only its listed individual checks.
+
+| Key | Executed scope |
+| --- | --- |
+| N1–5, N20 | Native sign-in, SecureStore cold start, owned profile/history, logout, account isolation and foreground restoration |
+| N6–7, N14 | Native report receipt/history/clarification/private-note exclusion and foreign-record deep-link denial |
+| N8–10 | Questionnaire/current explained cards, stale-source hiding, persisted notification read and authorized navigation |
+| N11–13, N15, N21 | All three native submissions with actual supplier-browser fulfillment, exact pickup reference/collection, cancellation and reloaded outcomes |
+| N16–19 | Published unknown/restored incident history, three past-end independent restrictions, individual still-affected and repeated affected deduplication |
+| N22–26 | Invalid/revoked/expired sessions; online logout; guest-offline private clearing, persisted pending revocation and real-network retry/server revocation |
+| N27–30 | Explicit three-notice lifts/current removal/history; unverifiable guidance hidden; native decline without assistance; exact callback/inspection old/new agreed times |
+| N31–32 | Unknown-zone/null-coordinate customer profile/report/quality guidance; no pickup availability and working callback alternative without automatic submission |
+| N33–36 | Reviewed duplicate label without restoration claim; actual empty lists/Home and stale last-loaded/recovery; available/full/cancelled pickup selection states; distinct current scheduled notice |
+| N37–40 | Final G generated Manila appointment/restoration text, offline unread/open recovery, planned windows/own matching context, published quality end-does-not-lift warning and actual report-free Home/notification receipt |
+| NM1–3, NM7–11 | Denied GPS/saved-address and real geocoder503/address-only reports; system picker, byte upload, foreground retention, native point and authenticated photo decoding |
+| NM13–14 | Actual committed-response503 report/photo retries with one record/event; final stored GPS accuracy, unconfirmed zone, confirmed native preview and identical real supplier-map point selection |
+| NM16–17 | Real native style404/error/retry with successful saved-address report using a labeled configuration-fault APK; normal source APK restored; reviewed-closure presentation |
+
 ### Manual checks and recorded boundaries
 
 | Key | Required manual procedure and evidence |
 | --- | --- |
-| M1 | O1 records actual initial isolated seed counts and persistence. O4 checks all 14 salted fixture credentials/roles,12 owned connections,3 zones/2 sites, four categories, unknown/still-affected and available/full/cancelled scenarios/future end dates. API/browser role logins passed; native all-account presentation remains M2/M3. |
-| M2 | Installed Android sign-in/cold start/SecureStore/account switch; invalid login, expired/revoked session, offline logout/retry. Supplier login throttling/network failure and production HTTPS cookie checks are separate subchecks. Record each result, not one generic pass. |
-| M3 | Installed Android Home/report/detail/profile/notifications links and empty/error/revoked/private states; inspect exact owned fields, all-page data, demo labels, foreground refresh and account isolation. |
-| M4 | Present each published quality restriction on actual Android Home and guidance; resolve an outage, complete assistance, pass end time, refresh, then explicitly lift and refresh. Verify old notice history stays distinguishable. |
-| M5 | Installed Android GPS allow/deny/timeout, saved/address-only reporting, actual live signed Geoapify candidate, native preview confirmation, identical persisted web/native point, basemap failure, zoom/cluster invariance, map filters/caps/unlocated list. Live candidate success is unavailable without private operator-provided credentials. |
-| M6 | Actual web-to-Android callback/inspection/water request lifecycle including owner, agreed appointment, reschedule, reasons, findings/outcome/next steps, notification text and cancellation; inspect no-stock alternative, exact liters, pickup reference and independent report/incident/advisory state. |
-| M7 | H-Q1–3 and H-F1–2 execute outage/restoration/needed-by, assessment/hazard/persistence, conflicting quality guidance and changed incident/advisory/stock freshness tables. Remaining actual Android card/refresh/alternative interaction is separate. Get academic acceptance separately; technical tests cannot grant it. |
-| M8 | H-M1, H-P1–3 and H-V1–2 directly assert exact cohorts, full documented role matrix, private projections, audit and combined independence. BM1–8 and BR-AUTH/DASH/MAP/SET cover actual supplier maintenance, conflicts, failure recovery, filters and immutable settings. Additional exhaustive permutations are not implied by those assertions; native/device/live-provider/academic boundaries remain separate. H-I1–3, H-N1–2 now directly verify repeated affected, link races, two reports/one connection with one-owner publication, report-free overlapping connection audience and advisory rollback. BO1–7 additionally verify exact two-owner inbox, unlocated review, protected-photo decoding/retry and incident create/edit/link/unlink. Native/device/live-provider checks above remain unexecuted; no exhaustive unlisted permutation is claimed. |
-| M9 | Actual client uncertain transport/report/photo retry with the same operation identity and payload; known conflict recovery; inspect persisted IDs/counts after ambiguous results. In-memory intentions do not survive application process/browser reload. |
+| M1 | O1/O4 verify the fourteen salted fixture credentials/roles, twelve owners and coherent original contexts/stock. N1–5/N31 additionally exercise selected native accounts; this is not an all-fourteen-account native login claim. |
+| M2 | N1–5/N20/N22–26 verify actual native sign-in/restoration/logout/account isolation, generic invalid credentials, expiry/revocation and offline logout/restart/retry. Supplier browser throttling and production cookie checks remain separate named evidence. |
+| M3 | N3/N5–7/N10/N14/N20–21/N31/N33–34 cover actual owned profile/history/messages/links, denied foreign records, unknown/empty contexts, reviewed closure, notification state and stale/error recovery. All-page helpers and exact private DTO/role tests remain separate backend evidence. |
+| M4 | N17/N27 verify all three restrictions after planned end/resolved outage/completed services, explicit admin lifting, native current removal and historical lifted details. N36/N38–40 and H-G6 cover scheduled windows, owned connection context, explicit quality end warning and actual report-free notice reception. |
+| M5 | NM1–3/NM10/NM14/NM16 cover actual denied/unavailable/controlled GPS, address-only503 fallback, native confirmation/point/attribution, real native style404 recovery and equal persisted GPS point selection on the supplier map. LM1–5/BR-MAP cover supplier clusters/filters/caps. Successful live signed Geoapify candidate/confidence/restriction/quota/timeout checks still require private operator credentials; GPS equality does not close the geocoded-point criterion. |
+| M6 | N11–13/N15/N21/N30/N32/N35 cover actual three-service submissions and supplier-browser fulfillment reflected on Android, old/new appointments/reasons/outcomes/next steps, pickup reference/12.50-liter collection, cancellation and unavailable alternatives. PostgreSQL concurrent reservation/cancel/collection guarantees remain H-W/H-E assertions. |
+| M7 | H-Q/H-F cover decision/freshness tables. N8–9/N17/N27–29/N31–32 verify actual questionnaire/explanation/source, precedence, stale hiding, independent restrictions, decline and unknown/no-stock alternatives. External academic acceptance is recorded separately and is not inferred from tests. |
+| M8 | H-M/H-P/H-V and H-I/H-N verify exact cohorts, endpoint roles/private projections, audience/link races, rollback and combined independence. Supplier BM/BR/BO/BQ and native N18 independently cover their named client paths. No unlisted exhaustive permutation is implied. |
+| M9 | NM13 verifies actual native report and photo retry after a test-only503 following the real commit, with identical operation/payload digests and one report/attachment/event. NM7–11/F-source image checks cover picker retention/decoding; BM5 covers frozen browser write recovery. Operation intentions remain memory-only and are not a durable offline queue. |
 
 ## Stable requirements
 
@@ -251,90 +297,90 @@ The row note states the scope actually supported and its residual checks. “API
 
 | Requirement | Modules | Executable evidence / manual check | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
-| REQ-SCOPE-01 | REPORT, INCIDENT, GUIDE | H-R1, H-R2, H-G3 | API behavior covered; integrated native actions and academic acceptance pending. |
-| REQ-SCOPE-02 | HTTP, AUTH, HOME | B1; project typecheck/build commands | Structure/static/build evidence; installed Android acceptance pending. |
-| REQ-SCOPE-03 | OPS, DATA, MAP, LOCATION | H-R4, U-G1–2; O1 | Database/map adapter covered; live Geoapify and native map pending. |
-| REQ-SCOPE-04 | SEED, NOTICE, STOCK | H-G1, W-M1; M4 | Fictional fixture/source labels implemented; inspect every native presentation manually. |
+| REQ-SCOPE-01 | REPORT, INCIDENT, GUIDE | H-R1, H-R2, H-G3; N6–9, N16–19, N31–32 | Connected native report/incident/guidance actions and source explanations passed; academic acceptance remains externally unverified. |
+| REQ-SCOPE-02 | HTTP, AUTH, HOME | B1; project typecheck/build commands; N1–40, NM1–17 | The documented TypeScript stack builds and actual Android workflows run; exact build/check boundaries are in the native ledger. |
+| REQ-SCOPE-03 | OPS, DATA, MAP, LOCATION | H-R4, U-G1–2; O1; NM10, NM14, NM16 | Approved Docker/PostgreSQL persistence and real web/native MapLibre passed. Live signed Geoapify remains pending private configuration. |
+| REQ-SCOPE-04 | SEED, NOTICE, STOCK | H-G1, W-M1; M4; N17, N31, N35–36 | Actual native notice/incident/pickup fixtures retain demonstration labels and uncertainty; no real-water-safety approval is implied. |
 | REQ-SCOPE-05 | SEED, AUTH | H-A3; O1 | One supplier/three roles implemented; no deadline acceptance inferred. |
-| REQ-ACCESS-01 | SEED | H-A3; O1, O4; BW6, BR-SET-01–02 | All14fictional credentials/roles and12 connection owners checked; browser provision/maintenance passed. Native login/account switching remains M2. |
-| REQ-ACCESS-02 | AUTH, SET | U-S1, H-S2, H-S3, H-A3; B1, B8 | Backend/browser covered; native secure restoration/logout pending. |
-| REQ-ACCESS-03 | AUTH, HTTP, FILE | H-S1, H-S4, H-C1 | API ownership assertions; native deep-link UX pending. |
-| REQ-ACCESS-04 | HTTP, REPORT, INCIDENT | H-S1, H-R2, U-T3, H-D6 | API public projection assertions; whole-client display review remains manual. |
-| REQ-ACCESS-05 | AUTH | H-S3, W-C1; B6, B8; M2 | Cookie/CSRF covered; actual SecureStore/device failure states pending. |
-| REQ-UI-C01 | HOME, NOTICE | C-P1–2, H-G1–2; M3 | Home data pagination/targeting covered; Android Home display/refresh pending. |
-| REQ-UI-C02 | REPORT, LOCATION, FILE | H-R1, H-C2, H-S4, C-B5, C-B7; M3, M5 | API/client helpers covered; native form/GPS/map/photo interaction pending. |
-| REQ-UI-C03 | REPORT, INCIDENT | H-S1, H-R2–3; M3 | Owned list/detail/messages API covered; native navigation/history pending. |
-| REQ-UI-C04 | GUIDE | H-G3–5, H-C1; M3, M7 | Rules/API covered partly; Android action cards and academic acceptance pending. |
-| REQ-UI-C05 | ASSIST, STOCK | H-A1–2, H-W1–6; M6 | API services covered; native request/timeline screens pending. |
-| REQ-UI-C06 | HOME, AUTH | H-S1, H-S5, H-G2; M2–3 | Owned profile/notification API covered; Android presentation/account switching pending. |
+| REQ-ACCESS-01 | SEED | H-A3; O1, O4; BW6, BR-SET-01–02; N1–5, N20, N31 | Fourteen original fixture identities/owners are audited; selected native accounts restore distinct histories and connections. No all-fourteen native-login claim. |
+| REQ-ACCESS-02 | AUTH, SET | U-S1, H-S2, H-S3, H-A3; B1, B8; N1–5, N22–26 | Backend/browser authentication and actual native restoration, owned profile, logout/revocation/expiry and offline sign-out recovery passed. |
+| REQ-ACCESS-03 | AUTH, HTTP, FILE | H-S1, H-S4, H-C1; N14, N20, N31 | API ownership covers all record/file operations; actual foreign-report deep links are denied and native account changes clear prior views. |
+| REQ-ACCESS-04 | HTTP, REPORT, INCIDENT | H-S1, H-R2, U-T3, H-D6; N7, N14, N16, N18 | Exact public projections and role guards pass; native messages/public incident/history exclude the tested private fields and foreign body. |
+| REQ-ACCESS-05 | AUTH | H-S3, W-C1; B6, B8; M2; N2, N4–5, N20, N22–26 | Actual server-verified SecureStore cold starts, revocation/expiry and interrupted logout/restart/retry pass; browser cookie/CSRF remains separate evidence. |
+| REQ-UI-C01 | HOME, NOTICE | C-P1–2, H-G1–2; M3; N1, N5, N17, N27, N31, N34–36 | Actual owned Home, demo labels, current/lifted notices, unknown/empty contexts and stale timestamp/recovery are recorded individually. |
+| REQ-UI-C02 | REPORT, LOCATION, FILE | H-R1, H-C2, H-S4, C-B5, C-B7; M3, M5; N6, N31, NM1–3, NM7–17 | Actual Android forms/receipts, permission denial, address-only503 fallback, controlled GPS/confirmation, images and committed retry pass. Live Geoapify candidates remain pending. |
+| REQ-UI-C03 | REPORT, INCIDENT | H-S1, H-R2–3; M3; N6–7, N14, N16, N18–20, N33 | Native owned history/detail/messages, published incident context, affected/follow-up and reviewed-closure labels pass. |
+| REQ-UI-C04 | GUIDE | H-G3–5, H-C1; M3, M7; N8–9, N17, N27–32 | Actual explained cards/questionnaire/alternatives, independent restrictions and stale/unverifiable hiding pass. Academic acceptance remains external. |
+| REQ-UI-C05 | ASSIST, STOCK | H-A1–2, H-W1–6; M6; N11–13, N15, N21, N30, N32, N35 | All three native request/fulfillment/history paths, appointments, exact pickup/collection, cancellation and unavailable alternatives pass. |
+| REQ-UI-C06 | HOME, AUTH | H-S1, H-S5, H-G2; M2–3; N3, N5, N10, N21, N31, N34 | Owned native profiles, persisted notification read/navigation, account clearing, empty and failed-refresh recovery pass. |
 | REQ-UI-S01 | METRIC | H-A5, H-D5, H-M1, U-T1; B1, BR-DASH-01–02 | Exact API cohorts and actual browser combined filters/null samples/drill-down/stale refresh passed. |
 | REQ-UI-S02 | REPORT, FILE | H-R3, H-C2, H-S4, H-V1; B2–3, BM8, BO1–4, BR-MAP-01–02 | Actual two-owner inbox, unlocated urgent review, clarification, authenticated photo decode/failure/retry, link correction and filter retention passed. |
 | REQ-UI-S03 | MAP | H-R4, W-M1; B5, LM1–5 | Real production map renders, expands a two-report cluster and opens a persisted authorized point; basemap-failure list and zoom invariance passed. |
 | REQ-UI-S04 | INCIDENT | H-R2, H-I2–3, H-V1–2; BW5, BM8, BO5–7 | Actual browser incident create/edit/publication/link/unlink preserve audit/counts and unknown restoration; API snapshot/privacy/combined independence passed. |
-| REQ-UI-S05 | NOTICE, SET | H-G1–2, H-A3–4; B4, BW6–9 | Account provision and advisory publish/revise/lift passed in the browser; other settings maintenance/native reception still needs its stated checks. |
-| REQ-UI-S06 | ASSIST, STOCK | H-A1–2, H-W1–6; B4, BW1–4 | API workflows and actual browser callback scheduling/rescheduling/completion and reference-based collection passed; Android request/timeline remains pending. |
-| REQ-REPORT-01 | REPORT, FILE | H-R1, H-C2, H-S4–5 | API category/details/location/image assertions; native entry/picker M3 pending. |
-| REQ-REPORT-02 | LOCATION, REPORT | M5; H-S5 | Saved/unlocated API covered; actual Android denied GPS/fallback not yet executed. |
-| REQ-REPORT-03 | LOCATION | U-G1–2; M5 | Signed adapter/candidate checks use mocks; live successful geocoding and GPS pending. |
-| REQ-REPORT-04 | LOCATION, REPORT | H-G5, H-S5, H-D4, U-G2; M5 | Unlocated/provider failure assertions; full live quota/ambiguity and Android recovery pending. |
-| REQ-REPORT-05 | DATA, LOCATION, MAP | U-S2, H-R4; LM3, M5 | Coordinate validation/order and actual web point selection passed; equal native preview and live geocoded point remain M5. |
-| REQ-REPORT-06 | HTTP, FILE | H-S4, H-C2; BO3–4 | API validates controlled still images and ownership; actual supplier protected PNG retrieval/decode and aborted-download retry pass. Native picker/upload errors remain M3/M9. |
-| REQ-REPORT-07 | HTTP, REPORT | H-R1, C-B5–6 | Concurrent same-key creation and client intention helpers covered; native timeout UX M9 pending. |
-| REQ-REPORT-08 | REPORT, FILE, HTTP | H-R3, H-S1, C-B7, W-C1–5; B2, BO3–4 | Message privacy/replay and actual protected-photo failure/retry pass; native upload/transport recovery remains M9. |
+| REQ-UI-S05 | NOTICE, SET | H-G1–2, H-A3–4; B4, BW6–9; N17, N27, N36 | Browser account/settings/advisory administration and exact permission tests pass; native quality/scheduled reception and explicit lift/current removal are recorded. |
+| REQ-UI-S06 | ASSIST, STOCK | H-A1–2, H-W1–6; B4, BW1–4; N11–13, N21, N30, N35 | Real supplier fulfillment is reflected on Android for every type; preserved old/new appointments, pickup references and outcomes pass. |
+| REQ-REPORT-01 | REPORT, FILE | H-R1, H-C2, H-S4–5; N6, N31, NM1–3, NM7–14 | API covers four categories; actual native outage/quality reports, guided details, saved/alternate locations and controlled images pass. |
+| REQ-REPORT-02 | LOCATION, REPORT | M5; H-S5; NM1–2, NM14 | Actual denied-GPS saved-address and granted controlled-GPS confirmation/native point pass. Injected emulator locations are explicitly test data. |
+| REQ-REPORT-03 | LOCATION | U-G1–2; M5; NM14 | Real adapter/signature behavior has unit evidence and GPS coordinates persist/render identically. Live confirmed Geoapify candidates remain pending. |
+| REQ-REPORT-04 | LOCATION, REPORT | H-G5, H-S5, H-D4, U-G2; M5; H-C3, N31–32, NM3, NM14 | Actual real503/null-coordinate and unknown-zone recovery pass; confirmed GPS retains accuracy and separate review. Live quota/ambiguity/provider restrictions remain pending. |
+| REQ-REPORT-05 | DATA, LOCATION, MAP | U-S2, H-R4; LM3, M5; H-C3, NM14 | Paired/range validation and real supplier/native GPS point use identical persisted longitude/latitude; live geocoded equality remains pending. |
+| REQ-REPORT-06 | HTTP, FILE | H-S4, H-C2; BO3–4; C-U1–4, C-I1–3, NM7–11, NM13–14 | API content/ownership/replay and actual native picker/File-byte upload/protected image decode pass. No production mock substitutes for these requests. |
+| REQ-REPORT-07 | HTTP, REPORT | H-R1, C-B5–6; N6, NM13 | Actual receipt fields and committed-response503 retry return one identical report/key/body; exact persisted count is one. |
+| REQ-REPORT-08 | REPORT, FILE, HTTP | H-R3, H-S1, C-B7, W-C1–5; B2, BO3–4; N7, NM9–11, NM13 | Native two-way clarification/private-note exclusion and explicit committed photo retry pass with one attachment/event; protected image decodes. |
 | REQ-INCIDENT-01 | REPORT | H-R3; B3 | Isolated unlocated severe leak can be assigned/acknowledged without invented coordinates/zone; urgent reason, actor/time audit and stale rejection are asserted. |
 | REQ-INCIDENT-02 | REPORT, INCIDENT | H-R2, H-I2; BM8, BO7 | Actual confirmed/corrected/unlinked associations retain reports/history; concurrent corrective links have one version winner and exact old/new audit. |
-| REQ-INCIDENT-03 | MAP, INCIDENT | LM2 | Actual web zoom leaves report version, priority and association unchanged; native point/zoom remains M5. |
+| REQ-INCIDENT-03 | MAP, INCIDENT | LM2; NM14 | Actual supplier zoom/cluster invariance passes; native uses a read-only single-point preview and makes no clustering/domain inference. |
 | REQ-INCIDENT-04 | INCIDENT, METRIC | H-I3, H-R2 | Exact two reports/one connection versus independent137-customer estimate and unknown estimate are asserted. |
-| REQ-INCIDENT-05 | REPORT, INCIDENT, DATA | H-I1 | Concurrent and repeated affected assertions reuse one owned report, retain independent reports and one affected event. |
-| REQ-INCIDENT-06 | INCIDENT, HTTP | H-R2, U-T3 | Published DTO/unknown restoration asserted; native update display M3 pending. |
-| REQ-INCIDENT-07 | INCIDENT, NOTICE, DATA | H-I3, H-R2, H-N1–2, H-D2 | One-owner multiple linked reports, overlap-free zone audience, replay and publication rollback asserted; native polling receipt remains M3. |
-| REQ-INCIDENT-08 | REPORT, INCIDENT | H-R2 | Individual follow-up and retained first resolution asserted; Android action M3 pending. |
-| REQ-INCIDENT-09 | REPORT, INCIDENT, NOTICE, ASSIST | H-R2, H-G1, H-A1, H-W2 | Independent API outcomes asserted across scenarios; full combined native walkthrough M6 pending. |
-| REQ-NOTICE-01 | NOTICE, HOME, SET | H-G1–2, W-M1, C-P1 | Targeted/current sources and old-page restrictions covered; scheduled-notice/native presentation M4 pending. |
-| REQ-NOTICE-02 | NOTICE, GUIDE | H-G1, H-G3, W-M1 | Distinct restriction kinds/precedence asserted; real local content approval and native presentations M4 pending. |
+| REQ-INCIDENT-05 | REPORT, INCIDENT, DATA | H-I1; N19 | Concurrent API assertions and two actual native affected taps return the same separate personal assertion; database count is one. |
+| REQ-INCIDENT-06 | INCIDENT, HTTP | H-R2, U-T3; N16 | Actual native published investigating/unknown-restoration and resolved updates retain the historical timeline; exact private projection also passes. |
+| REQ-INCIDENT-07 | INCIDENT, NOTICE, DATA | H-I3, H-R2, H-N1–2, H-D2; N10, N16, N21 | Backend deduplication/audiences/rollback and actual native notification read/public timeline receipt pass; no external delivery channel is claimed. |
+| REQ-INCIDENT-08 | REPORT, INCIDENT | H-R2; N18 | Actual native still-affected reason returns only the individual report to review; independent snapshots preserve other state and first resolution. |
+| REQ-INCIDENT-09 | REPORT, INCIDENT, NOTICE, ASSIST | H-R2, H-G1, H-A1, H-W2; N11–13, N17–18, N27 | Combined API and native scenario preserve independent assistance, report, incident and quality outcomes through explicit lifting. |
+| REQ-NOTICE-01 | NOTICE, HOME, SET | H-G1–2, W-M1, C-P1; H-G6, N17, N27, N36 | Scheduled active/future/ended windows are tested separately from enduring quality restrictions; actual native current notices/history are recorded. |
+| REQ-NOTICE-02 | NOTICE, GUIDE | H-G1, H-G3, W-M1; N17, N27, N31 | All three restrictions remain distinct on native Home/guidance and after independent restoration; unknown quality retains approved information and safety uncertainty. |
 | REQ-NOTICE-03 | NOTICE, AUTH | H-P2, H-V1, U-V1–2; BW7–9 | Every documented admin write denies staff; exact revision/lift actor/reason/time and immutable published history passed alongside browser publish/revise/lift. |
-| REQ-NOTICE-04 | NOTICE, DATA, HOME | H-N1–2, H-G2 | True report-free two-connection zone audience deduplication and advisory-specific state/history/notification/operation rollback asserted; native receipt M3. |
-| REQ-ASSIST-01 | ASSIST, DATA | H-A1, H-S1, H-C1 | Owner/duplicate active/owned report assertions; native history display M6 pending. |
-| REQ-ASSIST-02 | ASSIST | H-A1–2, H-W2, H-E1–2 | Ordinary/immediate/reschedule paths, unsupported shortcuts, terminal reopening denial and first-work cancellation races passed; native interaction remains M6. |
-| REQ-ASSIST-03 | ASSIST, GUIDE | H-A1, H-G3, H-C1 | Requested has no appointment/allocation; choices create no service. Native wording M6 pending. |
-| REQ-ASSIST-04 | ASSIST, STOCK | H-A1–2, H-W2, H-W4–6 | Reasons/history and cancellation races asserted; all notification contents/native receipt M6 pending. |
-| REQ-ASSIST-05 | ASSIST | H-A1–2; BW1–4, BM1–2 | Actual browser callback/inspection acceptance, appointments and completion passed; Android request/timeline remains M6. |
-| REQ-ASSIST-06 | ASSIST, REPORT, NOTICE | H-A1, H-W2, H-V2 | Combined API fixture preserves completed assistance, resolved shared incident/other report and unlifted quality notice when only one report reopens; native presentation remains M6. |
-| REQ-CALLBACK-01 | ASSIST | H-A1–2; BW1–3 | Contact details/reschedule API checked; native missed-call display and exact old/new event review M6 pending. |
-| REQ-INSPECTION-01 | ASSIST | H-A1, H-S1; BM1–2 | Alternate site/access details, appointment, private-note exclusion, findings/next steps and independent report outcome passed in browser/API; native display remains M6. |
-| REQ-WATER-01 | STOCK, ASSIST | H-C1, H-W1, W-F1; M6 | Report-zone options/exact liters covered; Android list/address/time/instructions interaction pending. |
-| REQ-WATER-02 | STOCK, SEED | H-W1–6; BM6–7; M1/M6 | Browser site/session creation, versioned edits, exact availability and confirmed cancellation passed. Fresh two-site native maintenance walkthrough remains M1/M6. |
-| REQ-WATER-03 | STOCK, DATA | H-W1, H-W3, H-D1, U-S3 | Concurrent reservation/exact quantity/rollback assertions; Android reference display M6 pending. |
-| REQ-WATER-04 | STOCK, DATA | H-W2–3; BW4 | Exact ledger transfer and repeat collection asserted; native fulfillment display M6 pending. |
-| REQ-WATER-05 | STOCK, DATA | H-W2, H-W4–6, H-E3; BM7 | Request/session cancellation versus acceptance/collection preserve exact stock; browser cancellation notifies both reserved and pending owners once. Native receipt remains M6. |
-| REQ-WATER-06 | STOCK, GUIDE | H-G5, H-W1, H-W5; M6 | Unavailable/race paths covered partly; every full/no-session callback-card presentation pending. |
-| REQ-WATER-07 | ASSIST, STOCK | M6; source review | Pickup-only implementation; no delivery/commerce scope is claimed. |
-| REQ-DECISION-01 | GUIDE | H-Q1–3, H-F1–2, H-G3–4, H-C1 | Outage/needs/time/stock and assessment/conflicting-restriction tables plus immutable freshness sources asserted; Android cards/academic approval remain M7. |
-| REQ-DECISION-02 | GUIDE, NOTICE | H-G3 | Official guidance first, escalation, reasons/sources asserted; native card buttons M3 pending. |
-| REQ-DECISION-03 | GUIDE, STOCK | H-Q1, H-C1 | Five-row known-outage table covers unknown/earlier/later need, no need, unavailable stock and callback fallback. |
-| REQ-DECISION-04 | GUIDE | H-Q2 | Low pressure, leak hazard and post-restoration persistence offer assessment with no automatic report change. |
-| REQ-DECISION-05 | GUIDE, REPORT | H-Q2–3, H-C2 | Hazard details reach staff; safe explained assessment/escalation and official instruction precedence asserted. Android CTA interaction remains M7. |
-| REQ-DECISION-06 | GUIDE, NOTICE, REPORT | H-G1, H-G3; M7 | Published quality guidance covered; manual staff prioritization/native review and real-content approval pending. |
-| REQ-DECISION-07 | GUIDE, LOCATION | H-Q3, H-G5 | Conflicting official notices are retained in safety order with escalation/uncertainty; unknown-zone support asserted. |
-| REQ-DECISION-08 | GUIDE, ASSIST | H-G3 | Decline/inspection choice causes no request; native explicit assistance submission M6 pending. |
-| REQ-DECISION-09 | GUIDE, SET | H-F1–2, H-G4 | Incident publication, advisory publication/revision/lift, stock reserve/release/total and rule changes invalidate immutable history; Android refresh remains M7. |
+| REQ-NOTICE-04 | NOTICE, DATA, HOME | H-N1–2, H-G2; N10, N21, N34, N37, N40 | Publication/lift/read replay and transactional fan-out pass; actual native persisted state, current authorized destination and empty/error recovery are separate checks. |
+| REQ-ASSIST-01 | ASSIST, DATA | H-A1, H-S1, H-C1; N11–13, N21 | Actual three-type submissions/history/owner fulfillment pass; backend active-duplicate and ownership constraints remain directly asserted. |
+| REQ-ASSIST-02 | ASSIST | H-A1–2, H-W2, H-E1–2; N11–13, N15, N30 | Actual ordinary transitions/rescheduling/completion/cancellation pass; backend tests separately deny shortcuts/terminal reopening and serialize races. |
+| REQ-ASSIST-03 | ASSIST, GUIDE | H-A1, H-G3, H-C1; N11–13, N29, N32 | Native requested wording makes no appointment/allocation promise; decline and callback alternative do not create assistance before explicit submission. |
+| REQ-ASSIST-04 | ASSIST, STOCK | H-A1–2, H-W2, H-W4–6; U-T5, N11–15, N30 | Reasons/history/notifications and cancellation races pass. Actual callback/inspection history now shows the retained old and new agreed times. |
+| REQ-ASSIST-05 | ASSIST | H-A1–2; BW1–4, BM1–2; N11–13, N15, N21 | Actual supplier-browser operations and corresponding native timelines/outcomes pass for every type. |
+| REQ-ASSIST-06 | ASSIST, REPORT, NOTICE | H-A1, H-W2, H-V2; N11–13, N17–18 | Actual combined native follow-up preserves completed services and independent incident/other-report/quality state; full API snapshots also pass. |
+| REQ-CALLBACK-01 | ASSIST | H-A1–2; BW1–3; U-T5, N11, N30 | API missed-callback/reason paths and actual native agreed/rescheduled appointment history, outcome and next steps pass. |
+| REQ-INSPECTION-01 | ASSIST | H-A1, H-S1; BM1–2; U-T5, N12, N30 | Actual inspection site/access/appointment/findings/next steps and old/new agreed times pass; private staff notes remain excluded. |
+| REQ-WATER-01 | STOCK, ASSIST | H-C1, H-W1, W-F1; M6; N13, N32, N35 | Native exact-liter/session/address/time/instructions, unavailable/full/cancelled states and callback fallback pass without routing or delivery. |
+| REQ-WATER-02 | STOCK, SEED | H-W1–6; BM6–7; M1/M6; N13, N35 | Original two-site seed, browser maintenance and actual native labeled available/full/cancelled options pass; fixture aging remains documented. |
+| REQ-WATER-03 | STOCK, DATA | H-W1, H-W3, H-D1, U-S3; N13 | Concurrent exact stock/rollback and native12.50-liter reservation/reference pass; displayed availability is not acceptance. |
+| REQ-WATER-04 | STOCK, DATA | H-W2–3; BW4; N13, N21 | Exact transactional transfer/repeat rejection and actual native Reserved→Collected/reference/time/outcome pass. |
+| REQ-WATER-05 | STOCK, DATA | H-W2, H-W4–6, H-E3; BM7; N15, N32 | Database races and supplier cancellation/follow-up are directly asserted; native eligible cancellation and unavailable support alternative pass. |
+| REQ-WATER-06 | STOCK, GUIDE | H-G5, H-W1, H-W5; M6; N32, N35 | Actual native full/cancelled selections are disabled; no eligible options explicitly offers callback and creates no request automatically. |
+| REQ-WATER-07 | ASSIST, STOCK | M6; source review; N13, N32, N35 | Actual list/pickup/reference/collection and no-delivery wording match the scoped implementation; commerce/fleet remains deferred. |
+| REQ-DECISION-01 | GUIDE | H-Q1–3, H-F1–2, H-G3–4, H-C1; N8–9, N17, N31–32 | Decision/freshness tables and actual native answers/cards/current-source behavior pass; academic acceptance remains externally unverified. |
+| REQ-DECISION-02 | GUIDE, NOTICE | H-G3; N8, N17, N27, N31 | Actual official precedence, explanation/source/revision, escalation and callback controls pass without inferred safety/restoration. |
+| REQ-DECISION-03 | GUIDE, STOCK | H-Q1, H-C1; N8, N13, N32 | Five-row API outage/need/stock table and actual native available/no-session alternatives pass. |
+| REQ-DECISION-04 | GUIDE | H-Q2; N8, N18, N31 | API covers low pressure, hazards and post-restoration persistence; native assessment/explanation and independent follow-up are recorded. |
+| REQ-DECISION-05 | GUIDE, REPORT | H-Q2–3, H-C2; N31–32 | Hazard/assessment API tables and actual unknown-quality escalation/support pass; no risky repair or safety diagnosis is introduced. |
+| REQ-DECISION-06 | GUIDE, NOTICE, REPORT | H-G1, H-G3; BQ1–6, M7; N17, N31 | Supplier quality review/photo boundaries and actual native approved information, distinct restrictions and uncertainty pass. Real safety-content approval remains external. |
+| REQ-DECISION-07 | GUIDE, LOCATION | H-Q3, H-G5; BQ4–5 | Conflicting official notices are retained in safety order with escalation/uncertainty; unknown-zone/location/availability support asserted. |
+| REQ-DECISION-08 | GUIDE, ASSIST | H-G3; BQ6; N11–13, N29, N32 | Actual decline/alternative and explicit three-service submission pass; choosing alone creates no assistance. |
+| REQ-DECISION-09 | GUIDE, SET | H-F1–2, H-G4; N9, N27–29 | Immutable source invalidation and actual native stale/unverifiable hiding/current refresh after lifting pass. |
 | REQ-DECISION-10 | GUIDE | M7; source/scope review | Conditional future AI requirement: not applicable to implemented no-AI release; academic approval external. |
 | REQ-OPS-01 | AUTH, HTTP, FILE | H-P1–3, H-V1–2, H-S3–4, U-S1–6, U-O1–2, H-D7; BR-AUTH-01–06 | Full supplier role matrix, exact throttle/generic-error/cookie attributes, browser auth failure/recovery and private-field sentinels passed. Actual HTTPS deployment is outside implemented local verification. |
-| REQ-OPS-02 | LOCATION, MAP, REPORT | B5, C-B2, C-B7, U-G2; M5, M9 | Browser map fallback and helper failures covered; native denied-GPS/upload/tiles recovery pending. |
+| REQ-OPS-02 | LOCATION, MAP, REPORT | B5, C-B2, C-B7, U-G2; M5, M9; NM1–3, NM13, NM16, N34 | Actual denied GPS,503 address-only, committed report/photo retry, native style404 fallback and stale/empty recovery pass. |
 | REQ-OPS-03 | OPS, DATA, SEED | O1, O2 | Docker persistence and isolated backup/restore recorded in verification; repeat on target environment. |
-| REQ-OPS-04 | DATA, ASSIST | W-F2, C-B8, H-A5 | Manila conversion/invalid dates and API timezone asserted; all native/audit rendering M3/M6 pending. |
+| REQ-OPS-04 | DATA, ASSIST | W-F2, C-B8, H-A5; U-T5–6, N11–13, N30, N34 | Structured instants stay UTC; clients render Manila dates, public appointment history preserves both times, and generated appointment/restoration sentences are localized without changing stored history. |
 | REQ-OPS-05 | DATA, REPORT, INCIDENT, SET | H-R3, H-V1–2, H-A4, H-G4, H-D1–2; BM3, BM8, BO2, BO5–7 | Transactional histories/rollback and exact actor/time/reason audit verified for report review, incident create/edit/link, advisory revision/lift, zone and settings; broader permutations are not implied. |
-| REQ-OPS-06 | MAP, HTTP | H-R4, H-D4, U-T2, H-S1; LM2, LM5 | Bounds/filter/cap/privacy API and real rendered cluster/zoom without writes passed; complete combined-filter UI fixture remains M5. |
-| REQ-OPS-07 | LOCATION, MAP, OPS | U-G1–2; M5 | Mock provider success/failure covered; live provider credentials/attribution/device map pending. |
+| REQ-OPS-06 | MAP, HTTP | H-R4, H-D4, U-T2, H-S1; LM2, LM5, BR-MAP01–03 | Bounds/filter/cap/privacy API, real clusters/zoom without writes and combined category/status/period/viewport/unlocated recovery pass. |
+| REQ-OPS-07 | LOCATION, MAP, OPS | U-G1–2; M5; NM10, NM14, NM16 | Real web/native MapLibre and attribution/fallback pass. Geoapify adapter/signature tests are isolated; live provider checks still require private credentials. |
 | REQ-OPS-08 | HTTP, DATA | H-P1–3, H-V1, U-T2–3, W-P1–2, C-P1–2, C-B1 | Documented endpoint role inventory and literal customer DTO key sets are directly asserted; pagination/validation/transport checks remain distinct from native presentation. |
-| REQ-OPS-09 | OPS, LOCATION | O3 | Actual debug and standalone release native APKs pass with MapLibre, ARM64+x86_64, v2 signatures and embedded release JS; installed target checks remain M2–6. |
+| REQ-OPS-09 | OPS, LOCATION | O3; N1–40, NM1–17 | Actual signed ARM64/x86_64 native APKs build; KVM Android29/36 execute the individually documented workflows. No all-device/ARM64-runtime claim. |
 | REQ-METRIC-01 | METRIC, REPORT | H-M1, H-A5, H-R2, H-D5 | Exact unresolved/category counts, reviewed invalid/duplicate exclusions and reopened reports asserted in an isolated historical cohort. |
 | REQ-METRIC-02 | METRIC, INCIDENT | H-M1, H-I3 | Six-report/two-connection exact category cohort and separate two-report/one-connection/137 affected-estimate incident assertions passed. |
 | REQ-METRIC-03 | METRIC, REPORT | H-M1, H-A5, H-R3 | First public response ignores notes/customer messages/later responses; exact pending/sample/mean and null empty/unanswered cohorts asserted. |
 | REQ-METRIC-04 | METRIC, REPORT | H-M1, H-A5, H-D5, U-T1, H-R2 | Exact disjoint sampled/excluded/pending resolution cohorts retain genuine first resolution after reopening; API filters and read-only behavior asserted. |
 | REQ-DEMO-01 | SEED | O1, O4; BW6, BR-SET-01–02 | All original fixture credentials/roles/owned connections and coherent categories/stock checked; not an all-account native login claim. |
-| REQ-DEMO-02 | SEED, INCIDENT, REPORT | O1, O4; M3 | All four categories and unknown/still-affected fixture records checked; actual native presentation remains M3. |
-| REQ-DEMO-03 | SEED, STOCK, ASSIST | O1, O4; H-A1, H-W1–6, H-E1–3; BW1–4, BM1–2, BM6–7 | Seed freshness/available/full/cancelled stock and API/browser assistance paths checked. Complete native scenario remains M6. |
+| REQ-DEMO-02 | SEED, INCIDENT, REPORT | O1, O4; M3; N6, N18, N31 | Four-category original fixture audit, actual native outage/quality and still-affected/unknown-location contexts pass. |
+| REQ-DEMO-03 | SEED, STOCK, ASSIST | O1, O4; H-A1, H-W1–6, H-E1–3; BW1–4, BM1–2, BM6–7; N11–13, N15, N30, N32, N35 | Actual native services/appointments/reference/collection/unavailability and supplier maintenance pass with original seed coherence separately audited. |
 
 ## Original feature acceptance criteria
 
@@ -344,30 +390,30 @@ These identifiers and criteria remain unchanged in their source specs. The descr
 
 | Criterion | Modules | Exact test/check key | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
-| SUP-ADV-01 | NOTICE, SET | H-N1, BW7 | True report-free zone-only audience with two matching connections receives one notice; browser publication passed. Android reception remains M4. |
+| SUP-ADV-01 | NOTICE, SET | H-N1, BW7; N40 | Report-free zone-only/two-connection fan-out passes API; actual native zero-report customer receives a separate connection-targeted notice on Home/Updates. Browser publication passes. |
 | SUP-ADV-02 | NOTICE, SET | H-P1–2, H-G1, H-N2, U-V1–2 | All documented role-denied advisory mutations and target/session locks are asserted; advisory-specific rollback/recovery preserves all recipients/state. |
-| SUP-ADV-03 | NOTICE, SET | H-G1, W-M1 | API kinds/layer filtering; both native presentations M4 pending. |
-| SUP-ADV-04 | NOTICE, SET | H-G1, H-A1 | Separate outcome assertions; complete combined-state native scenario M4 pending. |
-| SUP-ADV-05 | NOTICE, SET | H-V1; BW9 | Explicit lift actor/reason/time, exact published/revised/lifted immutable history and same-key replay are directly asserted; actual browser lift passed. |
-| SUP-ADV-06 | NOTICE, SET | H-N1–2, H-G2 | Two matching connections produce one recipient notification; same-key publication replay remains deduplicated. Lift replay/native reception require stated follow-up. |
+| SUP-ADV-03 | NOTICE, SET | H-G1, W-M1; N17, N27 | All three actual native restriction details/Home/guidance retain distinct kinds and source revisions. |
+| SUP-ADV-04 | NOTICE, SET | H-G1, H-A1; N17 | Actual native restrictions remain after planned end, resolved outage/both reports and completed services. |
+| SUP-ADV-05 | NOTICE, SET | H-V1; BW9; N27 | Real admin-browser lifts and native current removal/historical lifted revisions supplement exact actor/reason/time and immutable revision assertions. |
+| SUP-ADV-06 | NOTICE, SET | H-N1–2, H-G2; N10, N27 | Overlapping audience publication and same-key lift/read retries are directly asserted, with one notification per recipient/source event. |
 | SUP-ADV-07 | NOTICE, SET | H-N2 | Advisory-specific injected fan-out failure leaves state/version/revisions/events/operation/notifications unchanged; same-key recovery commits once. |
-| SUP-ADV-08 | NOTICE, SET | H-F1, BW8 | Actual browser revision and API-specific publication/revision/lift freshness asserted; Android stale-card polling remains M7. |
+| SUP-ADV-08 | NOTICE, SET | H-F1, BW8; N9, N27–29 | Native current refresh/stale hiding and explicit lift removal preserve historical source evidence; API source revisions are immutable. |
 | SUP-ADV-09 | NOTICE, SET | H-V1, H-S1, U-T3 | Literal public incident/advisory/report key sets and private sentinels exclude draft text/notes, other-household details, coordinates/contact and future private fields. |
 
 ### [admin/assistance](features/admin/assistance/spec.md)
 
 | Criterion | Modules | Exact test/check key | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
-| SUP-ASSIST-01 | ASSIST, STOCK | H-A1, H-W2; BW1–4 | API lifecycles; all owner notification contents and native receipt M6 pending. |
-| SUP-ASSIST-02 | ASSIST, STOCK | H-A1; BW1 | Owner and active duplicate API assertions; browser/native display M6 pending. |
-| SUP-ASSIST-03 | ASSIST, STOCK | H-A1–2, H-E1; BW2 | Reasoned reschedule/immediate-support and first-work cancellation boundary survive later appointments; native missed-contact/history wording remains M6. |
-| SUP-ASSIST-04 | ASSIST, STOCK | H-A1, H-S1; BM1–2 | Actual browser inspection preserves site/access details and findings/next steps while hiding private notes from owned API results; native display remains M6. |
-| SUP-ASSIST-05 | ASSIST, STOCK | H-A2, H-E1 | Immediate support requires a reason; unsupported shortcuts and terminal reopening fail without changing history; native presentation remains M6. |
-| SUP-ASSIST-06 | ASSIST, STOCK | H-A1–2, H-W2, H-W4, H-E1–3 | Cancellation stops at first work even after reschedule, and cancel/start/collect races have one authoritative outcome; native recovery remains M6. |
-| SUP-ASSIST-07 | ASSIST, STOCK | H-W1, H-D1, H-C1 | Overspend/rollback/session eligibility covered; no-option UI alternative M6 pending. |
-| SUP-ASSIST-08 | ASSIST, STOCK | H-W4–6, H-A2, H-E2–3 | Cancel-versus-first-start and session-cancel-versus-collection preserve one winner/event/notification; complete native concurrency UX remains M6. |
-| SUP-ASSIST-09 | ASSIST, STOCK | H-S1 | Foreign request/read/cancel denied; full linked-record/native deep-link matrix M6 pending. |
-| SUP-ASSIST-10 | ASSIST, STOCK | H-A1, H-W2, H-V2; BW3, BM2 | Completed callback/inspection and combined API report/incident/advisory outcomes remain independent; native presentation remains M6. |
+| SUP-ASSIST-01 | ASSIST, STOCK | H-A1, H-W2; BW1–4; N11–13, N21 | Actual supplier-to-native acceptance/scheduling/rescheduling/progress/completion and owner outcomes pass for every type. |
+| SUP-ASSIST-02 | ASSIST, STOCK | H-A1; BW1; N11–13, N21 | Active staff ownership/duplicate API guards and actual supplier/native three-service details pass. |
+| SUP-ASSIST-03 | ASSIST, STOCK | H-A1–2, H-E1; BW2; U-T5, N11, N30 | Missed-callback API path preserves reason/old/new time; browser/native histories now visibly show both agreed appointments. |
+| SUP-ASSIST-04 | ASSIST, STOCK | H-A1, H-S1; BM1–2; N12, N30 | Actual browser/native inspection site/access/findings/next steps and rescheduled appointment history pass without private-note exposure. |
+| SUP-ASSIST-05 | ASSIST, STOCK | H-A2, H-E1; N11–13 | Immediate support needs reason; unsupported shortcuts and terminal reopening fail without history mutation. Actual native standard lifecycles are separately recorded. |
+| SUP-ASSIST-06 | ASSIST, STOCK | H-A1–2, H-W2, H-W4, H-E1–3; N15 | Exact cancellation/start/collect races have one authoritative outcome; actual native reasoned prework cancellation passes. |
+| SUP-ASSIST-07 | ASSIST, STOCK | H-W1, H-D1, H-C1; N13, N32, N35 | PostgreSQL exact stock/reference guarantees and actual native reservation/collection/unavailability alternatives pass. |
+| SUP-ASSIST-08 | ASSIST, STOCK | H-W4–6, H-A2, H-E2–3; NM13, N15 | Concurrent backend operations and actual frozen browser/native command retries preserve one operation/history; native cancellation also passes. |
+| SUP-ASSIST-09 | ASSIST, STOCK | H-S1, H-L1; N14 | Backend foreign linked-report/request read/cancel and allocation guards pass. Native foreign report denial passes; no claim of every tampered route being opened in the UI. |
+| SUP-ASSIST-10 | ASSIST, STOCK | H-A1, H-W2, H-V2; BW3, BM2; N11–13, N17–18 | Actual three-service native outcomes and combined API/native independent report/incident/quality outcomes pass. |
 
 ### [admin/auth](features/admin/auth/spec.md)
 
@@ -397,7 +443,7 @@ These identifiers and criteria remain unchanged in their source specs. The descr
 
 | Criterion | Modules | Exact test/check key | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
-| SUP-DIST-01 | STOCK, ASSIST, DATA | H-W1–6, H-C1; BM6–7 | Browser creates/edits site/session and verifies exact labeled customer availability/cancellation. Native labeled options and two-site walkthrough remain M6. |
+| SUP-DIST-01 | STOCK, ASSIST, DATA | H-W1–6, H-C1; BM6–7; N13, N35 | Two original demo sites plus browser-created sessions and actual native labeled availability/options are verified. |
 | SUP-DIST-02 | STOCK, ASSIST, DATA | H-W1 | Direct concurrent 80/100-liter assertion. |
 | SUP-DIST-03 | STOCK, ASSIST, DATA | H-W2; BW4 | Direct 60/40 reservation, collection and release assertion. |
 | SUP-DIST-04 | STOCK, ASSIST, DATA | H-D1 | Injected notification failure asserts request/allocation/history/operation rollback. |
@@ -405,7 +451,7 @@ These identifiers and criteria remain unchanged in their source specs. The descr
 | SUP-DIST-06 | STOCK, ASSIST, DATA | H-W4 | Direct customer cancel versus collection race. |
 | SUP-DIST-07 | STOCK, ASSIST, DATA | H-W5–6, H-W4, H-E3; BM7 | Session cancellation versus collection has one irreversible collected/released result; reserved/pending browser cancellation also passes. |
 | SUP-DIST-08 | STOCK, ASSIST, DATA | H-W3, U-S3 | Exact decimals and commitments guard asserted. |
-| SUP-DIST-09 | STOCK, ASSIST, DATA | H-G5, H-W1, H-W5 | Related unavailable/race assertions; full/cancelled/no-option customer UI M6 pending. |
+| SUP-DIST-09 | STOCK, ASSIST, DATA | H-G5, H-W1, H-W5; N32, N35 | Actual native full/cancelled selections are disabled and no-session callback opens a form without submitting/guaranteeing fulfillment. |
 | SUP-DIST-10 | STOCK, ASSIST, DATA | H-S1, H-L1, H-A1, H-W2 | Direct foreign allocation tampering, customer collection denial and independent report outcome are asserted; combined native states remain M6. |
 
 ### [admin/incident](features/admin/incident/spec.md)
@@ -415,23 +461,23 @@ These identifiers and criteria remain unchanged in their source specs. The descr
 | SUP-INC-01 | INCIDENT, REPORT | H-R2; BO5–7 | Actual browser creates/edits incident, links two distinct owners and later unlinks one without deleting either personal report or history. |
 | SUP-INC-02 | INCIDENT, REPORT | H-R2; BM8 | Browser suggestions leave report unlinked until confirmation; confirmation/correction preserve reference and exact old/new association audit. |
 | SUP-INC-03 | INCIDENT, REPORT | H-I2 | Two simultaneous corrective links yield exactly one version winner and one409; exact old/new association history retained. |
-| SUP-INC-04 | INCIDENT, REPORT | H-R2; BW5 | Published owned context and one notification per owner; native timelines M3 pending. |
+| SUP-INC-04 | INCIDENT, REPORT | H-R2; BW5; N10, N16 | Backend distinct-owner/overlap notification and actual native published timeline/read receipt pass; no private note is published. |
 | SUP-INC-05 | INCIDENT, REPORT | H-R2, H-D2 | Same-key update replay and fault rollback/recovery asserted. |
 | SUP-INC-06 | INCIDENT, REPORT | H-V1, H-S1, U-T3 | Literal published DTO fields and private sentinels exclude draft/internal geometry, notes, contacts and other-household report/answer/address/coordinate data. |
-| SUP-INC-07 | INCIDENT, REPORT | H-G1 | Direct resolved incident leaves quality restriction current. |
-| SUP-INC-08 | INCIDENT, REPORT | H-R2 | Direct single-report follow-up preserves incident/other report status. |
+| SUP-INC-07 | INCIDENT, REPORT | H-G1; N17, N27 | Actual native quality restrictions survive incident resolution and change only after explicit admin lifting. |
+| SUP-INC-08 | INCIDENT, REPORT | H-R2; N18 | Actual native still-affected changes only one report; independent persisted/public snapshots retain all other outcomes. |
 | SUP-INC-09 | INCIDENT, REPORT | H-I3; BO6–7 | Exact two-reports/one-connection independent estimate fixture and actual browser two-owner/connection counts versus17-customer estimate remain distinct after unlink. |
-| SUP-INC-10 | INCIDENT, REPORT | H-F1 | An incident publication invalidates prior immutable guidance and current evaluation uses the new progress; Android refresh remains M7. |
+| SUP-INC-10 | INCIDENT, REPORT | H-F1; N9, N28 | Exact incident-publication invalidation passes API; actual native changed-source and unverifiable-source checks hide historical cards and recover. These are distinct fixtures. |
 
 ### [admin/map](features/admin/map/spec.md)
 
 | Criterion | Modules | Exact test/check key | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
-| SUP-MAP-01 | MAP, LOCATION | H-R4, U-G2; LM1, LM3 | Actual web selection uses persisted longitude/latitude; live Geoapify and matching native preview remain M5. |
+| SUP-MAP-01 | MAP, LOCATION | H-R4, U-G2; LM1, LM3; NM14 | Real GPS native/web point equality passed. This criterion specifically requires a confirmed live geocoded point, still pending private Geoapify setup. |
 | SUP-MAP-02 | MAP, LOCATION | H-S5, H-D4; BR-MAP-01 | Actual browser unlocated-only list retains unknown report while API features omit it; no fabricated point or inferred zone. |
 | SUP-MAP-03 | MAP, LOCATION | H-R4, U-T2; BR-MAP-01–02, LM2 | Actual combined category/status/period/viewport records and map/detail/inbox filter retention pass; invalid/cap filters and real zoom tested separately. |
-| SUP-MAP-04 | MAP, LOCATION | LM2, LM5 | Actual web cluster expansion/zoom send no writes and preserve both independent reports, versions, priorities and incident links; native comparison remains M5. |
-| SUP-MAP-05 | MAP, LOCATION | H-R3, B3, LM3 | Urgent isolated review and actual rendered point selection open authorized report; native preview remains M5. |
+| SUP-MAP-04 | MAP, LOCATION | LM2, LM5; NM14 | Actual web cluster expansion/zoom send no writes and preserve independent reports, versions, priorities and links. Native is an individual-point preview with no operational clustering. |
+| SUP-MAP-05 | MAP, LOCATION | H-R3, B3, LM3; NM14 | Urgent isolated review and actual rendered supplier-point selection open the authorized report; native confirmed preview displays the same persisted GPS point. |
 | SUP-MAP-06 | MAP, LOCATION | H-P1 | All49 supplier endpoints, including household markers and staff detail, reject unauthenticated and customer requests before data or commands. |
 | SUP-MAP-07 | MAP, LOCATION | B5, BR-MAP-03 | Actual tile-failure list/navigation and query-failure error/list recovery pass; failed queries never show an empty successful map. |
 | SUP-MAP-08 | MAP, LOCATION | H-R4 | Invalid/NaN bounds and visible response cap/truncation asserted. |
@@ -441,8 +487,8 @@ These identifiers and criteria remain unchanged in their source specs. The descr
 | Criterion | Modules | Exact test/check key | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
 | SUP-REPORT-01 | REPORT, FILE | H-R2, H-S1; BO1 | Two exact new customer references visibly appear in supplier inbox; each customer list/detail includes only its owner and denies the other ID. |
-| SUP-REPORT-02 | REPORT, FILE | H-R3; BO2 | Actual browser acknowledges/assigns urgent unlocated report without invented zone/coordinates, preserving message and reason/time history. |
-| SUP-REPORT-03 | REPORT, FILE | H-R3; B3, BO2 | Reason-required urgent isolated review retains exact actor/time API audit and visible reason/time UI; stale writes cannot overwrite it. |
+| SUP-REPORT-02 | REPORT, FILE | H-R3; BO2, BQ3–4 | Actual browser acknowledges/assigns urgent unlocated leak and quality reports without invented zone/coordinates, preserving message and reason/time history. |
+| SUP-REPORT-03 | REPORT, FILE | H-R3; B3, BO2, BQ3 | Reason-required urgent isolated leak/quality review retains exact actor/time API audit and visible reason/time UI; stale writes cannot overwrite it. |
 | SUP-REPORT-04 | REPORT, FILE | H-A5, H-S1; B2 | Public clarification/first response/private note boundaries covered. |
 | SUP-REPORT-05 | REPORT, INCIDENT | H-R2, H-I2; BM8, BO7 | Actual suggestion confirmation/correction and deliberate unlink preserve personal contents/references/history; concurrent corrections retain exact old/new audit. |
 | SUP-REPORT-06 | REPORT, FILE | H-A5, H-D5, U-T1 | Reviewed duplicate/excluded durations and historical first resolution asserted. |
@@ -459,7 +505,7 @@ These identifiers and criteria remain unchanged in their source specs. The descr
 | SUP-SET-03 | SET, AUTH, GUIDE | H-A3 | Account deactivation denies current session and retains report ownership. |
 | SUP-SET-04 | SET, AUTH, GUIDE | H-A4; BM3 | Saved-connection history remains a report snapshot; actual display-boundary zone edit records actor/time/reason and a new version. |
 | SUP-SET-05 | SET, AUTH, GUIDE | H-C1, H-S5; BR-SET-02 | Actual unknown connection/report and later explicit coordinates preserve null/unconfirmed zone and old report snapshot; coordinates alone never confirm connectivity. |
-| SUP-SET-06 | SET, AUTH, GUIDE | H-G4, H-D6; BR-SET-03–04 | Browser immutable rule/guidance creation preserves exact historical versions and actual API stale/current evaluations. Android refresh remains M7. |
+| SUP-SET-06 | SET, AUTH, GUIDE | H-G4, H-D6; BR-SET-03–04; N9, N27–29 | Browser immutable edits and API source checks pass; native historical/stale hiding and current refresh are separately observed. |
 | SUP-SET-07 | SET, AUTH, GUIDE | H-Q1–3, H-F1–2; BR-SET-03–04 | Safety precedence/uncertainty/freshness tables pass; browser settings edits do not publish/lift notices and original content is restored by appended versions. Academic acceptance remains external. |
 | SUP-SET-08 | SET, AUTH, GUIDE | U-S5, U-O1, H-A3; BM4–5 | Two browser editors produce visible409 without overwrite; aborted administrative write retries the identical original key/body. |
 
@@ -467,49 +513,49 @@ These identifiers and criteria remain unchanged in their source specs. The descr
 
 | Criterion | Modules | Exact test/check key | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
-| ASSIST-C-01 | ASSIST, STOCK | H-A1, H-C1 | Requested callback/inspection/water have no appointment/allocation; native forms M6 pending. |
-| ASSIST-C-02 | ASSIST, STOCK | H-A1, H-W2; BW1–4 | API fulfillment; owner Android timeline/outcome interaction M6 pending. |
+| ASSIST-C-01 | ASSIST, STOCK | H-A1, H-C1; N11–13 | All three actual native forms return requested with no automatic acceptance/appointment/allocation. |
+| ASSIST-C-02 | ASSIST, STOCK | H-A1, H-W2; BW1–4; N11–13, N21 | Real supplier-browser fulfillment is reflected in native owner timelines/outcomes/next steps for every type. |
 | ASSIST-C-03 | ASSIST, STOCK | H-A1, H-E1 | Active same-type duplicates fail; distinct later same-type requests are accepted after cancelled/unavailable/completed history, which remains intact. |
-| ASSIST-C-04 | ASSIST, STOCK | H-L1, H-S1, H-C1 | Customers cannot collect or create supplier pickup sites; foreign request access and tampered allocation IDs fail without stock/state changes. Native UX remains M6. |
-| ASSIST-C-05 | ASSIST, STOCK | H-W1, H-W3 | Concurrent approvals/reference/liters asserted; native display M6 pending. |
-| ASSIST-C-06 | ASSIST, STOCK | H-W2, H-W4, H-E3 | Release occurs once, repeat collection fails and session-cancel/collect has one exact irreversible outcome; native cancellation remains M6. |
-| ASSIST-C-07 | ASSIST, STOCK | H-W5, H-G5 | Session cancellation outcomes covered; every affected-customer reason/alternative UI M6 pending. |
-| ASSIST-C-08 | ASSIST, STOCK | H-A1–2; BW2 | Reschedule and missed callback API paths; exact appointment metadata/native history M6 pending. |
-| ASSIST-C-09 | ASSIST, STOCK | H-W4–6, H-E2–3, H-A1–2, C-B2; BM5 | Cancel/start/collect races and frozen browser uncertain-write retries pass. Actual native report/photo ambiguous transport recovery remains M9. |
+| ASSIST-C-04 | ASSIST, STOCK | H-L1, H-S1, H-C1; N14 | Full backend request/report/allocation denial tests pass; native foreign report path visibly denies access. |
+| ASSIST-C-05 | ASSIST, STOCK | H-W1, H-W3; N13, N21 | Concurrent stock assertions and actual stable12.50-liter pickup reference/reserved/collected display pass. |
+| ASSIST-C-06 | ASSIST, STOCK | H-W2, H-W4, H-E3; N15 | Backend release/collection/cancel races pass; native eligible reasoned cancellation/history pass. |
+| ASSIST-C-07 | ASSIST, STOCK | H-W5, H-G5; N32, N35 | Actual no-session callback alternative and disabled full/cancelled options pass; supplier session-cancellation recipient/reason guarantees remain API/browser assertions. |
+| ASSIST-C-08 | ASSIST, STOCK | H-A1–2; BW2; U-T5, N11–12, N30 | API missed-contact/reschedule paths and actual native old/new callback/inspection appointments, reasons and next steps pass. |
+| ASSIST-C-09 | ASSIST, STOCK | H-W4–6, H-E2–3, H-A1–2, C-B2; BM5; NM13, N17–18 | Actual committed report/photo recovery and combined native independent outcomes pass; database cancel/start/collect races remain separately asserted. |
 
 ### [customer/auth](features/customer/auth/spec.md)
 
 | Criterion | Modules | Exact test/check key | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
-| AUTH-C-01 | AUTH, HOME | H-S1, H-S5 | Distinct owned API contexts; actual two-account Android restore/history clearing M2 pending. |
-| AUTH-C-02 | AUTH, HOME | H-S3, C-B2 | Credential/network helper errors; actual Android protected-screen recovery M2 pending. |
-| AUTH-C-03 | AUTH, HOME | H-S1, H-S4 | API ownership covered; native foreign deep-link response M2 pending. |
-| AUTH-C-04 | AUTH, HOME | H-S2, C-B6 | Server logout and intention isolation covered; actual next-account SecureStore/cache M2 pending. |
-| AUTH-C-05 | AUTH, HOME | H-D3, H-S2 | Expiry/revocation API portions; interrupted native logout/retry M2 pending. |
+| AUTH-C-01 | AUTH, HOME | H-S1, H-S5; N1–5, N20, N31, N34 | Distinct native accounts restore owned identities/connections/history; switching to unknown/empty customers clears prior context. |
+| AUTH-C-02 | AUTH, HOME | H-S3, C-B2; N23, N26, N34 | Actual invalid credentials/throttling and unavailable/recovered session/notification states never expose an unverified private screen. |
+| AUTH-C-03 | AUTH, HOME | H-S1, H-S4; N14 | Full API ownership and actual native foreign report deep-link denial pass without foreign content. |
+| AUTH-C-04 | AUTH, HOME | H-S2, C-B6; N4–5, N26, N31, N34 | Actual sign-out/restart/account switch and offline pending revocation pass; exact session revocation is independently confirmed. |
+| AUTH-C-05 | AUTH, HOME | H-D3, H-S2; N22–26 | Actual expired/revoked cold starts and interrupted logout/offline restart/real-network retry pass. |
 
 ### [customer/dashboard](features/customer/dashboard/spec.md)
 
 | Criterion | Modules | Exact test/check key | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
-| HOME-C-01 | HOME, NOTICE | H-S1, H-G2, C-P1 | Owned/targeted API and all-page reads; actual Home presentation M3 pending. |
-| HOME-C-02 | HOME, NOTICE | H-G1, C-P1 | Restriction/lift API and old-page read covered; Android refresh M4 pending. |
-| HOME-C-03 | HOME, NOTICE | H-G5, C-P2 | Unknown zone and failed-page helpers; empty/error Android views M3 pending. |
-| HOME-C-04 | HOME, NOTICE | H-S1 | Foreign detail denied; every native shortcut navigation M3 pending. |
-| HOME-C-05 | HOME, NOTICE | C-B6 | Intention isolation only; actual account/context clearing and all native demo labels M2/M3 pending. |
+| HOME-C-01 | HOME, NOTICE | H-S1, H-G2, C-P1; N1, N5, N17, N31, N34 | Actual owned Home/targeted notices and unknown/empty account contexts pass; backend audience/all-page guarantees are separate evidence. |
+| HOME-C-02 | HOME, NOTICE | H-G1, C-P1; N17, N27 | Actual past-end/resolved-outage/completed-service restrictions remain; explicit admin lifts remove only those sources from native Home/fresh guidance. |
+| HOME-C-03 | HOME, NOTICE | H-G5, C-P2; N31, N34 | Actual unknown zone, no matching notices/no open reports/empty notifications and failed-refresh timestamp/recovery are distinct and usable. |
+| HOME-C-04 | HOME, NOTICE | H-S1; N6, N10, N14, N16–19, N27, N36 | Native report, notification, incident/affected, guidance and advisory shortcuts use authorized detail paths; foreign report deep link denies. |
+| HOME-C-05 | HOME, NOTICE | C-B6; N5, N20, N31, N34 | Actual customer changes clear prior connection/report/notice context and preserve synthetic labels. |
 
 ### [customer/guidance](features/customer/guidance/spec.md)
 
 | Criterion | Modules | Exact test/check key | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
-| GUIDE-C-01 | GUIDE, STOCK | H-Q1, H-C1 | Five-row outage/restoration/needed-by/no-need/stock table and report-zone pickup options asserted; Android presentation remains M7. |
-| GUIDE-C-02 | GUIDE, STOCK | H-Q1, H-F1 | No eligible stock yields uncertainty and callback, no water-support card; native fallback action remains M7. |
-| GUIDE-C-03 | GUIDE, STOCK | H-Q2 | Low pressure, leak hazard and post-resolution persistence offer assessment; escalation matches hazard and report state remains independent. |
-| GUIDE-C-04 | GUIDE, STOCK | H-G3, H-G1 | API precedence and independent quality lifecycle; Android card freshness M4 pending. |
-| GUIDE-C-05 | GUIDE, STOCK | H-Q3, H-G5 | All conflicting quality notices remain in safety order with explicit uncertainty/escalation; unknown-zone support asserted. |
-| GUIDE-C-06 | GUIDE, STOCK | H-G3 | Decline/inspection choice has zero assistance side effects; native explicit form handoff M6 pending. |
-| GUIDE-C-07 | GUIDE, STOCK | H-F1–2, H-G4 | Changed incident/advisory/rule/stock evidence makes old evaluation noncurrent while retaining exact historical cards; native hiding remains M7. |
-| GUIDE-C-08 | GUIDE, STOCK | H-S1, H-G3, H-D6, U-T3 | Foreign evaluation/history and projection portions; complete field matrix M7 pending. |
-| GUIDE-C-09 | GUIDE, STOCK | H-G3–4, H-D6 | Source/version/evidence persistence asserted; exhaustive scenario explanations/academic approval M7 pending. |
+| GUIDE-C-01 | GUIDE, STOCK | H-Q1, H-C1; N8, N13 | API need/restoration table and native available150.00-liter explained pickup context/request pass. |
+| GUIDE-C-02 | GUIDE, STOCK | H-Q1, H-F1; N32, N35 | Actual unknown/no-session callback alternative and full/cancelled unavailable selections pass without a stock promise. |
+| GUIDE-C-03 | GUIDE, STOCK | H-Q2; N8, N18, N31 | API low-pressure/leak/post-resolution table and actual native assessment/escalation/source displays pass. |
+| GUIDE-C-04 | GUIDE, STOCK | H-G3, H-G1; N17, N27 | Actual native safety precedence persists independently through end/restoration/completion and changes only on explicit lift. |
+| GUIDE-C-05 | GUIDE, STOCK | H-Q3, H-G5; BQ5; N31–32 | Actual missing-zone/coordinate/availability uncertainty retains quality report and usable supplier support; API covers conflicting restrictions. |
+| GUIDE-C-06 | GUIDE, STOCK | H-G3; BQ6; N11–13, N29, N32 | Actual decline and unavailable callback alternative create no assistance until a deliberate service-form submission. |
+| GUIDE-C-07 | GUIDE, STOCK | H-F1–2, H-G4; N9, N27–29 | Native changed/unverifiable cards are hidden; real refresh and explicit lifts produce current sources without deleting historical evidence. |
+| GUIDE-C-08 | GUIDE, STOCK | H-S1, H-G3, H-D6, U-T3; N14 | API foreign evaluation/history and literal public-field projections pass; native shared unauthorized-record handling denies the tested deep link. |
+| GUIDE-C-09 | GUIDE, STOCK | H-G3–4, H-D6; N8, N17, N31 | Actual explanations/source/revisions are visible and API retains exact immutable context. Academic acceptance remains externally unverified. |
 
 ### [customer/notifications](features/customer/notifications/spec.md)
 
@@ -517,34 +563,34 @@ These identifiers and criteria remain unchanged in their source specs. The descr
 | --- | --- | --- | --- |
 | NOTIFY-C-01 | HOME, NOTICE, INCIDENT, ASSIST | H-I3, H-R2 | Two linked reports for one connection/owner receive one publication notice; two distinct owners also receive their own updates. |
 | NOTIFY-C-02 | HOME, NOTICE, INCIDENT, ASSIST | H-N1 | A brand-new customer with no reports and two matching connections receives one zone-only publication; unrelated customer cannot read it. |
-| NOTIFY-C-03 | HOME, NOTICE, INCIDENT, ASSIST | H-S1 | Foreign get/read denied and list owner-scoped; direct all-notification-list payload audit M3 pending. |
-| NOTIFY-C-04 | HOME, NOTICE, INCIDENT, ASSIST | H-G2, H-R2 | Repeated reads/publication do not duplicate; actual foreground polling/domain invariance M3 pending. |
-| NOTIFY-C-05 | HOME, NOTICE, INCIDENT, ASSIST | H-A2, H-W5 | Related reasoned transitions/cancel outcomes; exact notification text/Android current link M6 pending. |
-| NOTIFY-C-06 | HOME, NOTICE, INCIDENT, ASSIST | H-D3, C-B2, H-G4 | API/helper failure/freshness portions; full native recovery matrix M3 pending. |
+| NOTIFY-C-03 | HOME, NOTICE, INCIDENT, ASSIST | H-S1; N10, N21 | API owner-only list/detail/read and private projection guards pass; actual native list/read/destination use current authorized records. |
+| NOTIFY-C-04 | HOME, NOTICE, INCIDENT, ASSIST | H-G2, H-R2; N10, N21, N34 | Actual foreground/read persistence and error recovery supplement backend read/publication/lift deduplication; no duplicate domain action is inferred from polling. |
+| NOTIFY-C-05 | HOME, NOTICE, INCIDENT, ASSIST | H-A2, H-W5; N10–13, N15, N30 | Reasoned assistance events and current native authorized destinations pass; old/new appointments remain visible in the linked request. |
+| NOTIFY-C-06 | HOME, NOTICE, INCIDENT, ASSIST | H-D3, C-B2, H-G4; N9, N14, N22–26, N34 | Actual empty/network/stale/expired/foreign-record recovery states pass; backend recipient and publication guarantees remain separately scoped. |
 
 ### [customer/profile](features/customer/profile/spec.md)
 
 | Criterion | Modules | Exact test/check key | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
-| PROFILE-C-01 | HOME, AUTH, REPORT | H-S5 | Owned API connection context; native profile fields M3 pending. |
-| PROFILE-C-02 | HOME, AUTH, REPORT | H-S5, H-S1 | Foreign connection use/record denied; modified/deep-link profile UI M3 pending. |
-| PROFILE-C-03 | HOME, AUTH, REPORT | H-S5, H-A4 | Alternate issue/saved address/history snapshot assertions. |
-| PROFILE-C-04 | HOME, AUTH, REPORT | H-S5, H-D4 | Null/unconfirmed data retained; native reporting/profile state M3/M5 pending. |
-| PROFILE-C-05 | HOME, AUTH, REPORT | H-S2, C-B2, C-B6 | Revocation/network/intention helpers; actual Android account switch stale-profile prevention M2 pending. |
+| PROFILE-C-01 | HOME, AUTH, REPORT | H-S5; N3, N5, N31, N34 | Actual native profiles show only the selected customer and owned connection reference/address. |
+| PROFILE-C-02 | HOME, AUTH, REPORT | H-S5, H-S1; N14, N31 | Profile identity is session-derived; API rejects foreign connection use and native foreign-record navigation denies without prior-owner data. |
+| PROFILE-C-03 | HOME, AUTH, REPORT | H-S5, H-A4; NM3, NM14, H-C3 | Actual alternate address/GPS reports preserve saved connection details; exact API snapshot/equality assertions pass. |
+| PROFILE-C-04 | HOME, AUTH, REPORT | H-S5, H-D4; N31, NM3, NM14 | Native null-coordinate/unconfirmed profile and usable address reporting pass; confirmed GPS still requires separate supplier zone review. |
+| PROFILE-C-05 | HOME, AUTH, REPORT | H-S2, C-B2, C-B6; N5, N20, N22–26, N31, N34 | Actual identity switching, revoked/expired cold starts and stale/error recovery prevent another customer seeing retained private views. |
 
 ### [customer/report](features/customer/report/spec.md)
 
 | Criterion | Modules | Exact test/check key | Evidence boundary and outstanding work |
 | --- | --- | --- | --- |
-| REPORT-C-01 | REPORT, LOCATION, FILE, INCIDENT | H-R1–2, H-S1 | Report received/reference/time and distinct owners; two actual Android submissions M3 pending. |
+| REPORT-C-01 | REPORT, LOCATION, FILE, INCIDENT | H-R1–2, H-S1; N6, N31, NM2–3, NM14 | Multiple actual Android customers receive distinct references/times/received states and owned histories; supplier/native map linkage is separately recorded. |
 | REPORT-C-02 | REPORT, LOCATION, FILE, INCIDENT | H-S1, H-S4 | Foreign report/message/photo/follow-up API denied. |
-| REPORT-C-03 | REPORT, LOCATION, FILE, INCIDENT | H-R4, U-G1–2 | API point/mock candidate portions; actual denied GPS and matching native/web map M5 pending. |
-| REPORT-C-04 | REPORT, LOCATION, FILE, INCIDENT | H-G5, H-S5, U-G2 | Unknown zone/missing provider/forged candidate assertions; all live ambiguity/quota cases M5 pending. |
-| REPORT-C-05 | REPORT, LOCATION, FILE, INCIDENT | H-S4, C-B7; B5 | API upload replay/client photo intention and web fallback; actual native tiles/upload recovery M5/M9 pending. |
-| REPORT-C-06 | REPORT, LOCATION, FILE, INCIDENT | H-R2, H-S1, U-T3 | Published owned incident/private fields API; actual native history M3 pending. |
-| REPORT-C-07 | REPORT, LOCATION, FILE, INCIDENT | H-I1 | Five concurrent independent-key assertions and repeated affected action return the same owned personal report/event and preserve an unrelated report. |
-| REPORT-C-08 | REPORT, LOCATION, FILE, INCIDENT | H-R2, H-G1 | Individual follow-up and quality independence separately tested; combined Android action M3 pending. |
-| REPORT-C-09 | REPORT, LOCATION, FILE, INCIDENT | H-A5, H-D5; M3 | Reviewed closure/metric API; native reviewed-outcome labels pending. |
+| REPORT-C-03 | REPORT, LOCATION, FILE, INCIDENT | H-R4, U-G1–2; NM1–2, NM14 | Actual denied-GPS saved reporting and equal confirmed GPS native/web point pass. Required live signed geocoded-point equality remains pending credentials. |
+| REPORT-C-04 | REPORT, LOCATION, FILE, INCIDENT | H-G5, H-S5, U-G2; N31, NM3, H-C3 | Actual provider503/null-coordinate/unknown-zone reports stay reviewable. Adapter unit cases cover more failures; live ambiguity/quota checks remain pending. |
+| REPORT-C-05 | REPORT, LOCATION, FILE, INCIDENT | H-S4, C-B7; B5; NM7–11, NM13, NM16 | Actual native map404/error/retry leaves reporting usable; committed report/photo503 recovery preserves one attachment/event and reference. |
+| REPORT-C-06 | REPORT, LOCATION, FILE, INCIDENT | H-R2, H-S1, U-T3; N7, N16 | Actual native published incident history/messages omit tested internal notes and foreign records; exact API projections also pass. |
+| REPORT-C-07 | REPORT, LOCATION, FILE, INCIDENT | H-I1; N19 | Two actual native taps and database count confirm one affected assertion, separate from the existing legitimate manual report. |
+| REPORT-C-08 | REPORT, LOCATION, FILE, INCIDENT | H-R2, H-G1; N18 | Actual native individual follow-up plus independent full snapshots preserve resolved incident/other report, active restrictions and completed services. |
+| REPORT-C-09 | REPORT, LOCATION, FILE, INCIDENT | H-A5, H-D5; M3; N33, NM17 | Actual supplier/browser and native reviewed Duplicate label retain reason and no substantive restoration timestamp; invalid/duplicate metric handling is separately asserted. |
 
 ## Ten original demonstration scenarios
 
@@ -552,19 +598,19 @@ These identifiers and criteria remain unchanged in their source specs. The descr
 
 | Scenario | Modules | Existing executable/operator evidence | Remaining acceptance |
 | --- | --- | --- | --- |
-| DEMO-001 | REPORT, MAP, AUTH | H-R1–2, H-S1; BO1, LM1–5 | Exact two-owner supplier inbox and real rendered web map passed separately; two actual Android submissions/owned native history remain M3/M5. |
-| DEMO-002 | INCIDENT, DATA, HOME | H-R2, H-D2, H-I3; BW5 | Two-owner and one-owner/two-report publication dedupe passed; actual Android timeline/notification rendering remains M3. |
-| DEMO-003 | GUIDE, ASSIST | H-G3–5, H-C1, H-Q1–3, H-F1–2 | Rule decision/source freshness tables passed; actual native actions and academic acceptance remain M7. |
-| DEMO-004 | NOTICE, INCIDENT, ASSIST | H-G1, H-V1–2; BW7–9 | Combined API state/quality independence and actual browser explicit lift passed; Android Home/guidance presentations remain M4. |
-| DEMO-005 | REPORT, INCIDENT | H-R2, H-V2 | Combined API still-affected independence passed; native action and related display remain M3/M4. |
-| DEMO-006 | AUTH, HTTP, FILE | H-S1, H-S4, H-G3, H-D6 | Native deep links, every field/destination and account switching: M2/M3. |
-| DEMO-007 | LOCATION, MAP, DATA | U-G1–2, U-S2, H-R4, H-S5, H-G5 | Actual denied GPS, live successful Geoapify and equal native/web rendering: M5; unavailable without device/provider setup. |
-| DEMO-008 | ASSIST, STOCK | H-A1–2, H-W2 | Each full supplier-to-native service/timeline/appointment/outcome flow: M6. |
-| DEMO-009 | STOCK, DATA, ASSIST | H-W1–6, H-E3, H-D1; BW4, BM6–7 | Concurrent acceptance/cancel/collect and exact browser stock/collection passed; native reference/unavailability/notification display remains M6. |
-| DEMO-010 | HTTP, DATA, OPS | H-R1–2, H-W2/5, H-D1–2, O1, O2; BM5 | Actual frozen browser retry and isolated restore/private-image access passed; native report/photo ambiguous retry remains M9. |
+| DEMO-001 | REPORT, MAP, AUTH | H-R1–2, H-S1; BO1, LM1–5; N5–6, N31, NM2–3, NM14 | Actual distinct native submissions/owned histories and real native-created supplier-map point pass; original exact two-owner browser inbox/cluster checks remain separate evidence. |
+| DEMO-002 | INCIDENT, DATA, HOME | H-R2, H-D2, H-I3; BW5; N7, N10, N16 | Actual native published unknown/resolved timeline, private-note exclusion and persisted notification/read navigation pass alongside audience/rollback API checks. |
+| DEMO-003 | GUIDE, ASSIST | H-G3–5, H-C1, H-Q1–3, H-F1–2; N8–9, N11–13, N29, N31–32 | Actual native questionnaire, explained current cards, choices/no-stock alternatives and explicit service submissions pass. Academic acceptance remains externally unverified. |
+| DEMO-004 | NOTICE, INCIDENT, ASSIST | H-G1, H-V1–2; BW7–9; N17, N27 | Actual native three-restriction past-end/resolved-outage/completed-service scenario and explicit lift/current/history passed; API full independence also passes. |
+| DEMO-005 | REPORT, INCIDENT | H-R2, H-V2; N18 | Actual native still-affected action and independent whole snapshots preserve incident, other report, notices and completed services. |
+| DEMO-006 | AUTH, HTTP, FILE | H-S1, H-S4, H-G3, H-D6; N5, N14, N22–26, N31, N34 | Full API role/record/file/field checks and actual native foreign denial/account clearing/session failure recovery pass. |
+| DEMO-007 | LOCATION, MAP, DATA | U-G1–2, U-S2, H-R4, H-S5, H-G5; NM1–3, NM14, NM16 | Actual denied GPS/address fallback, stored GPS accuracy/native-web equality and native map failure pass. Live signed Geoapify success/ambiguity/quota/restrictions remain pending credentials. |
+| DEMO-008 | ASSIST, STOCK | H-A1–2, H-W2; N11–13, N15, N21, N30 | Actual native three-service requests, supplier-browser fulfillment, reschedules/outcomes/next steps and pickup collection pass. |
+| DEMO-009 | STOCK, DATA, ASSIST | H-W1–6, H-E3, H-D1; BW4, BM6–7; N13, N32, N35 | Actual native reference/collection/unavailable states supplement real concurrent PostgreSQL reservation/release/collect and browser stock/cancellation checks. |
+| DEMO-010 | HTTP, DATA, OPS | H-R1–2, H-W2/5, H-D1–2, O1, O2; BM5; NM13, N26, N34 | Actual post-commit report/photo retry uniqueness, interrupted logout and stale refresh recovery pass; Docker recreation/isolated restore remain independently recorded. |
 
 ## Coverage gaps that must remain visible
 
-Previously missing repeated affected assertions, corrective-link races, two-reports/one-connection counts, report-free zone audiences and advisory fan-out rollback are now directly exercised by H-I1–3 and H-N1–2. H-Q1–3/H-F1–2 cover rule decisions/source invalidation, and H-E1–3/H-M1 cover remaining workflow races and exact metric cohorts. Required native and live-provider checks remain open; each row retains its actual proof boundary. H-P1–3/H-V1–2 and BR-AUTH/DASH/MAP/SET now cover those additional supplier/security boundaries. No API/browser evidence substitutes for the remaining native walkthrough, live Geoapify or external academic review.
+Previously missing repeated affected assertions, corrective-link races, two-reports/one-connection counts, report-free zone audiences and advisory fan-out rollback are now directly exercised by H-I1–3 and H-N1–2. H-Q1–3/H-F1–2 cover rule decisions/source invalidation, and H-E1–3/H-M1 cover remaining workflow races and exact metric cohorts. The native ledger now supplies the named installed-device proofs; required live Geoapify checks remain open and every row retains its exact boundary. H-P1–3/H-V1–2 and BR-AUTH/DASH/MAP/SET now cover those additional supplier/security boundaries. No API/browser evidence substitutes for the remaining native walkthrough, live Geoapify or external academic review.
 
-The rules include category/zone/time in retained context and use category, published sources, answers and current availability for decisions; not every input has a dedicated independent branch assertion. No exhaustive rule-table or water-quality staff-prioritization UI check has run. Many acceptance criteria intentionally combine API correctness and actual customer presentation; API helper tests cannot close the latter. Native APK/emulator/device, live provider and external academic evidence must be recorded separately when available.
+The rules include category/zone/time in retained context and use category, published sources, answers and current availability for decisions; not every input has a dedicated independent branch assertion, and exhaustive combinations are not claimed. BQ1–7 directly verify actual supplier water-quality prioritization and API safety boundaries. Many acceptance criteria intentionally combine API correctness and actual customer presentation; API helper tests cannot close the latter. Actual native APK/runtime evidence is separately recorded; live provider and external academic evidence remain explicitly distinguished.

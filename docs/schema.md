@@ -46,6 +46,8 @@ Generated `latitude` and `longitude` are ordinary stored `DOUBLE PRECISION` colu
 | `guidance_choice` | Immutable chosen service/decline and evaluation reference. Records a choice without submitting assistance. |
 | `seed_marker` | Development dataset marker for repeatable nonautomatic seeding. |
 
+Report JSONB snapshots also retain optional nonnegative GPS `accuracy` in meters; legacy/non-GPS projection is null. Alternate point confirmation and supply-zone confirmation are independent: an unknown zone remains reviewable even with confirmed coordinates. No migration rewrites prior location snapshots. Appointment scheduling events retain old/new UTC instants in immutable metadata; public timelines expose only validated `appointmentChange` times. Generated human-readable time labels are formatted on read, preserving stored text/history.
+
 Type-specific callback question/contact/window, inspection issue/site/window/access, and water requested liters/session live in `assistance.data.details`. The earlier proposed one-to-one detail tables were not adopted. Likewise, zone/connection target arrays are validated JSONB references rather than separate junction tables. Histories and private notes use events, while immutable publications/rules/evaluations use record kinds. Public DTO names do not imply physical table names.
 
 ## Values, ownership and history
@@ -89,4 +91,4 @@ Attachment bytes are private project-local files, with metadata in immutable att
 
 The development seed implements one supplier, three zones, twelve fictional customer connections/accounts, four-category incidents/reports, two pickup sites, available/full/cancelled session examples, assistance examples and unknown/still-affected contexts. Demo notices, estimates and availability must remain visibly fictional. Seed/reset is explicit; normal startup does not reset records. [Demo instructions](demo.md) describe scenario execution; [verification](verification.md) records actual results.
 
-Billing/payments, commerce orders, home delivery/fleet/routing, multi-supplier tenancy, IoT, automated water-safety diagnosis, external notification channels and AI infrastructure are outside this release. Academic acceptance, live provider checks and installed Android/device workflows remain separate verification gates. Production retention/redaction, orphan reconciliation, high-volume pagination/query tuning and operational monitoring are not implemented services.
+Billing/payments, commerce orders, home delivery/fleet/routing, multi-supplier tenancy, IoT, automated water-safety diagnosis, external notification channels and AI infrastructure are outside this release. Academic acceptance and live provider checks remain external verification gates; individually executed native workflows are recorded in the native ledger. Production retention/redaction, orphan reconciliation, high-volume pagination/query tuning and operational monitoring are not implemented services.

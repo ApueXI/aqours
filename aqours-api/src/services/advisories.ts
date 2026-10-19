@@ -41,8 +41,9 @@ export async function applicable(db: DB, customer: string, includeLifted = false
       connections.some((c) => matches(v, c)),
   );
 }
-export function advisorySafe(doc: Doc) {
-  return { ...project(doc, advisoryFields), connectionIds: [] };
+export function advisorySafe(doc: Doc, ownedConnections: Doc[] = []) {
+  const ownedIds = new Set(ownedConnections.map(connection => connection.id));
+  return { ...project(doc, advisoryFields), connectionIds: doc.connectionIds.filter((id: string) => ownedIds.has(id)) };
 }
 export async function advisoryFanout(db: DB, doc: Doc, action: string) {
   const connections = await all(db, 'connection');

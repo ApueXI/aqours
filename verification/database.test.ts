@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { before,test } from 'node:test';
-import { randomUUID } from 'node:crypto';
+import { createHash,randomUUID } from 'node:crypto';
 import type {AssistanceRequest,StaffIncident,Report,Metrics} from '../aqours-contracts/src/index.ts';
 import {actors,base,connection,denied,key,login,ok,report,request,waterFixture,waterRequest} from './harness.ts';
 import {databaseSQL} from './database-client.ts';
@@ -68,8 +68,12 @@ test('publication failure rolls back both incident update and all notification w
 
 test('expired database sessions are denied and no-cookie hostile browser logout is rejected',async()=>{
   const actor=await login('customer04@demo.aqours.test');
-  sql(`UPDATE sessions SET expires_at=now()-interval '1 second' WHERE user_id='${identifier(actor.user.id)}'`);
+  const companion=await login('customer04@demo.aqours.test');
+  const digest=createHash('sha256').update(actor.token!).digest('hex');
+  sql(`UPDATE sessions SET expires_at=now()-interval '1 second' WHERE token_hash='${digest}' AND user_id='${identifier(actor.user.id)}'`);
   await denied(actor,'GET','/me');
+  assert.equal((await ok<{id:string}>(companion,'GET','/me')).id,actor.user.id);
+  await ok(companion,'POST','/auth/logout',{});
   const response=await fetch(base+'/auth/logout',{method:'POST',headers:{Origin:'https://hostile.example','Content-Type':'application/json'},body:'{}'});
   assert.equal(response.status,403);
 });

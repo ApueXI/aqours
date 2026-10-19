@@ -86,6 +86,6 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 
 ### Verification and limits
 
-Review advisory/guidance and role-security API tests plus browser advisory rendering. Android current/lifted notice refresh and real approved supplier/public-health content still require independent verification.
+Advisory/guidance HTTP tests establish independent restrictions, exact audiences, revision/lift deduplication and rollback. Actual browser publish/revise/lift and native N17/N27/N36–40 establish past-end persistence, current removal after explicit lifting, historical detail, scheduled windows/owned context and report-free reception. Supplier approval of real public-health content remains an operational prerequisite; all test notices are fictional.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

@@ -6,6 +6,9 @@ export function History({ events = [] }: { events?: TimelineEvent[] }) {
   return <section><h2>History</h2>{events.length === 0 ? <p>No history yet.</p> : <ol className="history">
     {events.map(event => <li key={event.id}><div><strong>{label(event.action)}</strong> · {date(event.createdAt)}</div>
       <p>{event.text}</p>{event.fromStatus && <p>{label(event.fromStatus)} → {label(event.toStatus || '')}</p>}
+      {event.appointmentChange && <p>{event.appointmentChange.from
+        ? `Agreed appointment changed from ${date(event.appointmentChange.from)} to ${date(event.appointmentChange.to)}`
+        : `Agreed appointment: ${date(event.appointmentChange.to)}`}</p>}
     </li>)}
   </ol>}</section>;
 }

@@ -2,7 +2,7 @@
 
 Aqours connects a water supplier and its customers through reporting, incident updates, independent advisories and three assistance services. This repository contains a TypeScript Express/PostgreSQL API, an Expo Android customer app and a React supplier workspace with MapLibre.
 
-The first-release implementation is connected across these applications. Verification is still in progress; [the verification report](docs/verification.md) distinguishes executed checks from native/device and live-provider work. Fictional fixtures and quality notices are demonstration data, never real water-safety advice. Rules-based decision support is implemented; academic acceptance remains externally unverified.
+The first-release implementation is connected across these applications. Verification is still in progress; [the verification report](docs/verification.md) records executed API/database/browser/native checks and outstanding live-provider work. Fictional fixtures and quality notices are demonstration data, never real water-safety advice. Rules-based decision support is implemented; academic acceptance remains externally unverified.
 
 ## Start locally
 
@@ -43,7 +43,7 @@ The fictional seed provides `admin@demo.aqours.test`, `staff@demo.aqours.test`, 
 - [API contract](docs/api.md) and [public TypeScript DTOs](aqours-contracts/src/index.ts)
 - [Demo walkthrough](docs/demo.md)
 - [Requirements and feature index](docs/README.md)
-- [Verification evidence and remaining checks](docs/verification.md)
+- [Verification evidence and remaining checks](docs/verification.md), including the [installed Android ledger](docs/native-verification.md)
 - [Every requirement, feature criterion and demo mapping](docs/traceability.md)
 - [API details](aqours-api/README.md), [Android build guide](aqours-app/README.md), [supplier app guide](aqours-web/README.md)
 
@@ -59,6 +59,7 @@ npm run test:api
 npm run test:browser
 npm run test:maintenance
 npm run test:operations
+npm run test:quality
 npm run test:recovery
 npm run test:map
 npm run test:seed

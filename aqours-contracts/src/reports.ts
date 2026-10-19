@@ -13,6 +13,7 @@ export interface Report {
   id: string; reference: string; customerId: string; connectionId: string; category: Category;
   description: string; guidedDetails: string | null; noticedAt: string; submittedAt: string; status: ReportStatus;
   address: string; locationSource: string; latitude: number | null; longitude: number | null;
+  accuracy: number | null;
   locationConfirmed: boolean; zoneId: string | null; zoneConfirmed: boolean; locationReview: boolean;
   priority: 'normal' | 'high' | 'urgent'; priorityReason: string | null; ownerId: string | null;
   incidentId: string | null; closureOutcome: 'restored' | 'duplicate' | 'invalid' | null;

@@ -1,6 +1,6 @@
 # Workflows and workspace
 
-Updated 19 October 2026 against the first-release implementation of brief v0.4. The workflows below describe implemented API/client paths and their required invariants. Full integrated Android acceptance remains unverified; see [verification](verification.md) and [traceability](traceability.md).
+Updated 19 October 2026 against the first-release implementation of brief v0.4. The workflows below describe implemented API/client paths and their required invariants. Installed Android workflows have individually scoped evidence; required live-geocoded-point verification remains external. See [verification](verification.md) and [traceability](traceability.md).
 
 Related documents: [Documentation index](README.md) · [Architecture](architecture.md) · [Requirements](requirements.md) · [Schema](schema.md). Role summaries and detailed feature specifications are linked from the index.
 
@@ -155,7 +155,7 @@ The root npm manifest coordinates contract build, typecheck, lint, API/web build
 | `aqours-app/` | Expo `start`, native `android`, `export:android`, `typecheck`, `lint`, `test`; EAS/build configuration is present |
 | Database | Compose PostgreSQL 18.6, project-local persistent data, ordered migrations, explicit development seed |
 
-The mobile `android` script runs `expo run:android`, which requires the native toolchain; Metro alone does not produce an APK. Expo 57 / React Native 0.86.3 / MapLibre React Native 11.5.0 are configured. CNG prebuild and Hermes export evidence is distinct from a working installed APK, native map and actual-device workflows. Refer to the current [verification ledger](verification.md) before claiming compatibility.
+The mobile `android` script runs `expo run:android`, which requires the native toolchain; Metro alone does not produce an APK. Expo 57 / React Native 0.86.3 / MapLibre React Native 11.5.0 are configured. Signed standalone dual-architecture APKs and actual KVM-backed Android29/36 workflows are recorded in the [native ledger](native-verification.md), with exact artifact boundaries. CNG/export/type checks remain distinct evidence. Refer to the current [verification ledger](verification.md) before claiming compatibility.
 
 All tool caches, generated outputs, native build work and temporary verification artifacts must remain project-local under the user-authorized setup. Do not repurpose HOME, change global settings, read secret files or install global tooling. Environment examples contain placeholders; database/Geoapify secrets remain on the API. A phone's localhost is the phone: configure a reachable development API address and keep published ports/access deliberate.
 
@@ -175,4 +175,4 @@ Acceptance requires an eligible active staff/admin owner. Scheduling needs an ag
 
 Compose recreation must retain accounts/reports using the same persistent volume. A volume is not a backup: [setup](setup.md) documents database/migration and attachment backup/restore; executed restore evidence belongs in [verification](verification.md). Reset is an explicit development operation and must never run as startup behavior.
 
-The ten [DEMO scenarios](requirements.md#acceptance-scenarios) remain the integrated acceptance target. API/database and browser checks exercise important subsets; native GPS permission, photo picker, secure-storage lifecycle, live typed-address lookup and installed Android map/fulfillment flows still need their own evidence. Academic approval and approved real supplier/public-health content cannot be established by technical tests. Deployment destination and exact demonstration deadline remain configurable.
+The ten [DEMO scenarios](requirements.md#acceptance-scenarios) remain the integrated acceptance target. API/database, supplier browser and installed Android checks have separately scoped evidence in the native and verification ledgers, including secure-storage lifecycle, GPS denial/controlled acquisition, photo picker/protected decoding, real native map failure and all three fulfillment paths. Live signed typed-address lookup still requires private Geoapify configuration. Academic approval and approved real supplier/public-health content cannot be established by technical tests. Deployment destination and exact demonstration deadline remain configurable.

@@ -65,7 +65,10 @@ test('known-outage decision table distinguishes unknown, earlier/later water nee
     assert.equal(guide.cards.some(card => card.action === 'water_support'), scenario.water, scenario.name);
     const published = guide.cards.find(card => card.action === 'incident');
     assert.equal(published?.sourceId, incident.id);
-    assert.match(published?.reason ?? '', scenario.restorationAt ? new RegExp(scenario.restorationAt.replaceAll('.', '\\.')) : /Restoration: unknown/);
+    if (scenario.restorationAt) {
+      const localTime=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Manila',dateStyle:'medium',timeStyle:'short',hourCycle:'h23'}).format(new Date(scenario.restorationAt));
+      assert.ok(published?.reason.includes(`Restoration: ${localTime} (Asia/Manila)`));
+    } else assert.match(published?.reason ?? '',/Restoration: unknown/);
     assert.ok(guide.cards.some(card => card.action === 'callback'));
     if (scenario.water) assert.equal(guide.cards.find(card => card.action === 'water_support')?.sourceId, session.id);
     if (scenario.closeStock) assert.ok(guide.uncertainty.some(text => text.includes('No eligible pickup availability')));

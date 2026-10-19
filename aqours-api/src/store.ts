@@ -70,10 +70,19 @@ export async function event(
 }
 export async function timeline(db: DB, id: string, isPrivate = false) {
   const { rows } = await db.query(
-    'SELECT id,action,text,actor_id AS "actorId",from_status AS "fromStatus",to_status AS "toStatus",created_at AS "createdAt" FROM events WHERE target_id=$1 AND private=$2 ORDER BY created_at,id',
+    'SELECT id,action,text,actor_id AS "actorId",from_status AS "fromStatus",to_status AS "toStatus",created_at AS "createdAt",metadata FROM events WHERE target_id=$1 AND private=$2 ORDER BY created_at,id',
     [id, isPrivate],
   );
-  return rows;
+  return rows.map(({ metadata, ...item }) => {
+    const from = metadata?.oldAppointmentAt;
+    const to = metadata?.newAppointmentAt;
+    const validTime = (value: unknown): value is string =>
+      typeof value === 'string' && Number.isFinite(Date.parse(value));
+    if (item.action === 'scheduled' && validTime(to)) {
+      return { ...item, appointmentChange: { from: validTime(from) ? from : null, to } };
+    }
+    return item;
+  });
 }
 export async function notify(
   db: DB,

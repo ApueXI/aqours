@@ -1,11 +1,13 @@
 import type { Attachment } from '@aqours/contracts';
 import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Image, View } from 'react-native';
 import { useSession } from '@/auth/session';
 import { Body, Button, ErrorNotice, Section, styles } from '@/components/ui';
 import { useCommand } from '@/hooks/use-command';
 import { apiUrl, errorText } from '@/lib/api';
+import { createPhotoUploadBody } from '@/lib/photo-upload';
+import { protectedImageSources } from '@/lib/protected-image';
 
 export type Photo = { uri: string; name: string; type: string };
 
@@ -39,17 +41,24 @@ export function PhotoPicker({ photos, onChange, disabled }: { photos: Photo[]; o
 
 export function PhotoUpload({ reportId, photo }: { reportId: string; photo: Photo }) {
   const upload = useCommand<Attachment>();
+  const body = useRef<FormData | null>(null);
+  const [preparationError, setPreparationError] = useState<string | null>(null);
   async function send() {
-    const body = new FormData();
-    body.append('file', photo as unknown as Blob);
-    await upload.execute(`/reports/${reportId}/attachments`, body, { fingerprint: JSON.stringify(photo) });
+    setPreparationError(null);
+    try {
+      body.current ??= createPhotoUploadBody(photo.uri);
+    } catch {
+      setPreparationError('The selected photo could not be prepared. Choose it again.');
+      return;
+    }
+    await upload.execute(`/reports/${reportId}/attachments`, body.current, { fingerprint: JSON.stringify(photo) });
   }
   return <View style={styles.item}>
     <Body>{photo.name}</Body>
     {upload.result ? <Body>Photo attached successfully.</Body> : <>
-      <ErrorNotice error={upload.error} />
+      <ErrorNotice error={preparationError ?? upload.error} />
       <Body muted>Your report is saved. {upload.uncertain ? 'Retry to confirm this same upload.' : 'This photo has not been confirmed attached.'}</Body>
-      <Button title={upload.busy ? 'Uploading…' : upload.error ? 'Retry this photo' : 'Upload photo'} secondary disabled={upload.busy} onPress={() => void send()} />
+      <Button title={upload.busy ? 'Uploading…' : preparationError || upload.error ? 'Retry this photo' : 'Upload photo'} secondary disabled={upload.busy} onPress={() => void send()} />
     </>}
   </View>;
 }
@@ -61,7 +70,7 @@ export function ProtectedPhoto({ attachment }: { attachment: Attachment }) {
   return <View style={styles.item}>
     <Body>{attachment.filename}</Body>
     {error ? <Button title="Retry protected photo" secondary onPress={() => { setError(false); setRetry(retry + 1); }} />
-      : <Image key={retry} source={{ uri: `${apiUrl}/attachments/${attachment.id}`, headers: { Authorization: `Bearer ${token}` }, cache: 'reload' }}
+      : <Image key={retry} source={protectedImageSources(`${apiUrl}/attachments/${attachment.id}`, token)}
         style={{ width: '100%', height: 220 }} resizeMode="contain" accessibilityLabel={attachment.filename} onError={() => setError(true)} />}
   </View>;
 }

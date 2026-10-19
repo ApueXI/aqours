@@ -1,10 +1,11 @@
 # Supplier web state
 
-Status: IMPLEMENTED_LOCALLY_VERIFIED. Updated2026-10-19.
-Implementation worker finished/released; lead reviewed integrated code and owns source/state. Requested gpt-6.1-sol/high for connected operational UI; effective settings unknown. No active worker.
+Status: IMPLEMENTED_LOCALLY_VERIFIED; coordinated release awaits live provider verification.
 
-Live React/MapLibre supplier application covers overview/metrics, report inbox/review/clarification/photos/links/notes, independent incident updates/advisories, all assistance fulfillment, exact stock/reference collection and admin settings. Browser uses revocable HttpOnly cookies/CSRF, no credential browser storage. Frozen mutation intentions survive uncertain responses in memory; partial pagination and malformed success never become false success.
+Updated2026-10-20. Lead owns all source/state; all managed workers finished/released or returned confirmed platform usage-limit errors. No worker edits remain. Requested gpt-6.1-sol/high for component implementation/consequential review; effective settings were not exposed. Root .loop/STATE.md preserves the complete ownership/settings history and exact next actions.
 
-Evidence: type/lint/build PASS;15 unit tests PASS. Production preview on localhost5173 with API4000 passes53 Chromium workflow assertions, including all assistance, protected photos, incident create/edit/link/unlink, account/connection/immutable settings, auth/filter/error recovery and advisory publish/revise/lift. Five additional real MapLibre/WebGL checks pass with live keyless demo style, bundled worker, cluster expansion and viewport zoom without writes or record mutation and authorized rendered point selection. Build emits same-origin worker (~517KB) plus lazy MapLibre (~1.095MB) advisory size warning; main~269KB. No Android success inferred.
+Connected React/MapLibre overview/metrics, reports/review/messages/photos/links, incidents, independent advisories, all assistance fulfillment, pickup stock/collection and audited settings. Cookie/CSRF sessions and stable in-memory retry intentions remain. Public history now displays exact old/new agreed Manila appointments; report detail displays retained GPS accuracy/zone uncertainty.
 
-Exact next action: inspect the verified client/documentation checkpoint commit and evidence in docs/verification.md; finish coordinated Android runtime/manual-provider acceptance. For real-use tiles choose licensed configuration/restrictions/attribution as documented; no private provider key is bundled.
+Evidence:15 unit tests/type/lint/build PASS.60 real production Chromium workflow checks PASS (23core,8maintenance,7operations,15recovery,7quality), plus5real MapLibre render/cluster/zoom/select checks. Core23rerun includes new appointment history. A separate native-created GPS point opens on the actual supplier canvas with matching coordinates/5m accuracy and no writes/errors; not counted again. Lazy MapLibre~1.095MB size warning remains disclosed. Production preview5173 remains healthy.
+
+Exact next action: coordinated final audit/commit. Operator-private Geoapify checks remain required for geocoded-point equality; existing GPS equality does not replace them. For real-use tiles choose licensed configuration/restrictions/attribution; no private credentials are bundled or paid resources provisioned.

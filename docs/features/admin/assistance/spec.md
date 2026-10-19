@@ -113,6 +113,8 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 
 ### Verification and limits
 
-Review assistance/admin and stock API tests plus browser queue/detail rendering. Native receipt of each appointment/outcome and every UI failure state require further device execution.
+Public timeline events expose only validated old/new appointment instants as appointmentChange; both clients show agreed Manila times and the reason. Private arbitrary audit metadata remains excluded.
+
+Assistance/admin/stock HTTP tests and actual supplier browser actions cover fulfillment, exact old/new appointments, ownership and races. N11–13/N15/N21/N30/N32/N35 independently verify native submissions, supplier fulfillment/outcomes, old/new appointments/reasons, pickup collection/cancellation and unavailable alternatives. See the [native ledger](../../../native-verification.md) for bounded evidence; no exhaustive failure-permutation claim is made.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

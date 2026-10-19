@@ -109,6 +109,6 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 
 ### Verification and limits
 
-Review real-database concurrent stock tests, decimal arithmetic, cancellation and repeated collection evidence. Browser distribution rendering is separate from a demonstrated Android pickup flow; no real-world availability is certified.
+Real PostgreSQL tests verify concurrent stock approvals/cancellation/collection, rollback, exact decimals and repeats. Actual supplier forms maintain sites/sessions and collect the native N13 request:12.50 liters, stable reference, remaining137.50 of150.00 after collection. N32/N35 separately verify native no-session fallback and disabled full/cancelled choices. No real-world availability is certified.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

@@ -25,14 +25,11 @@ const content = {
   demo: z.boolean().optional(),
 };
 export function advisoryRoutes(app: Express) {
-  route(app, 'get', '/advisories', 'customer', async (db, req) =>
-    page(
-      req,
-      (await applicable(db, req.actor.id, req.query.includeLifted === 'true')).map(
-        advisorySafe,
-      ),
-    ),
-  );
+  route(app, 'get', '/advisories', 'customer', async (db, req) => {
+    const connections = await all(db, 'connection', req.actor.id);
+    const notices = await applicable(db, req.actor.id, req.query.includeLifted === 'true');
+    return page(req, notices.map(doc => advisorySafe(doc, connections)));
+  });
   route(app, 'get', '/advisories/:id', 'customer', async (db, req) => {
     const doc = (await applicable(db, req.actor.id, true)).find((v) => v.id === req.params.id);
     if (!doc) fail(404, 'Advisory not found');
@@ -45,7 +42,7 @@ export function advisoryRoutes(app: Express) {
         action: v.action,
         createdAt: v.createdAt,
       }));
-    return { ...advisorySafe(doc), revisions };
+    return { ...advisorySafe(doc, await all(db, 'connection', req.actor.id)), revisions };
   });
   route(app, 'get', '/staff/advisories', 'staff', async (db, req) =>
     page(req, await all(db, 'advisory')),

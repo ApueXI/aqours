@@ -58,6 +58,8 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 
 ### Verification and limits
 
-Review published projection/targeting API tests. Actual Android home navigation, foreground refresh and failure states remain device checks.
+Native advisory context shows planned dates, an explicit quality-end-does-not-lift warning and only matching owned connection references/addresses. Connection-targeted customer DTOs exclude all other households. Failed refresh retains last-loaded Manila time with an error, rather than showing a confirmed empty state.
+
+Actual installed N1/N5/N17/N20/N27/N31/N34/N38–40 verify owned Home/demo labels, independent quality persistence/lifting, unknown zone, empty/stale/network recovery, planned dates/own references and report-free notice reception. All-page targeting/failed-page handling have separate API/helper evidence; consult the [native ledger](../../../native-verification.md) and traceability.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.

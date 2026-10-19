@@ -49,3 +49,24 @@ test('category-specific report details reach both customer and staff review with
   const oversized=await request(a,'POST','/reports',{...body,answers:{details:'x'.repeat(2001)}},key());
   assert.equal(oversized.status,400);
 });
+
+test('confirmed GPS retains measured accuracy and requires separate supplier zone review',async()=>{
+  const {a,staff}=users,conn=await connection(a);
+  const location={address:'Fictional GPS issue point',source:'gps',confirmed:true,latitude:14.575,longitude:121.045,accuracy:5.25};
+  const body={connectionId:conn.id,category:'outage',description:'Fictional measured GPS fixture',noticedAt:new Date().toISOString(),location};
+  const item=await ok<Report>(a,'POST','/reports',body);
+  for(const actor of [a,staff]){
+    const detail=await ok<ReportDetail>(actor,'GET',`${actor===staff?'/staff':''}/reports/${item.id}`);
+    assert.equal(detail.accuracy,5.25);assert.equal(detail.locationSource,'gps');
+    assert.equal(detail.latitude,14.575);assert.equal(detail.longitude,121.045);
+    assert.equal(detail.locationConfirmed,true);assert.equal(detail.zoneId,null);
+    assert.equal(detail.zoneConfirmed,false);assert.equal(detail.locationReview,true);
+  }
+  assert.deepEqual(await connection(a),conn);
+  const reviewed=await ok<Report>(staff,'PATCH',`/staff/reports/${item.id}`,{
+    expectedVersion:item.version,zoneId:conn.zoneId,zoneConfirmed:true,reason:'Supplier separately reviewed issue connectivity',
+  });
+  assert.equal(reviewed.locationReview,false);assert.equal(reviewed.accuracy,5.25);
+  const invalid=await request(a,'POST','/reports',{...body,location:{...location,accuracy:-1}},key());
+  assert.equal(invalid.status,400);
+});

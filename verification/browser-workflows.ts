@@ -37,6 +37,12 @@ export async function serviceFlows(page:Page,web:string,customer:Actor,admin:Act
   await page.getByLabel('Required change / immediate-support reason',{exact:true}).fill('Fictional customer requested later callback');
   await page.getByRole('button',{name:'Record reschedule',exact:true}).click();
   await expect.poll(async()=>(await ok<AssistanceRequest>(customer,'GET',`/assistance-requests/${callback.id}`)).appointmentAt).toBe(new Date(second+':00+08:00').toISOString());
+  const changes=(await ok<AssistanceRequest>(customer,'GET',`/assistance-requests/${callback.id}`)).timeline!.filter(event=>event.action==='scheduled');
+  assert.deepEqual(changes.map(event=>event.appointmentChange),[
+    {from:null,to:new Date(first+':00+08:00').toISOString()},
+    {from:new Date(first+':00+08:00').toISOString(),to:new Date(second+':00+08:00').toISOString()},
+  ]);
+  await expect(page.getByText(/^Agreed appointment changed from /)).toBeVisible();
   passed('Browser scheduling and reasoned rescheduling persist Manila appointment instants');
   await page.getByLabel('Next status',{exact:true}).selectOption('in_progress');
   await page.getByRole('button',{name:'Mark in progress',exact:true}).click();

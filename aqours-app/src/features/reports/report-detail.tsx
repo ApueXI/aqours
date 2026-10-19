@@ -21,6 +21,8 @@ export function ReportDetailScreen() {
         {report.guidedDetails && <Body>Additional issue details: {report.guidedDetails}</Body>}
         <Body muted>Noticed {displayTime(report.noticedAt)} · Submitted {displayTime(report.submittedAt)}</Body>
         <Body muted>{label(report.locationSource)} · {report.locationReview ? 'Location requires supplier review' : 'Location recorded'}</Body>
+        {report.accuracy !== null && <Body muted>GPS reported accuracy: approximately {Math.round(report.accuracy)} meters</Body>}
+        {!report.zoneConfirmed && <Body muted>Issue service zone is unconfirmed; supplier review is needed.</Body>}
         {report.latitude !== null && report.longitude !== null && <MapPreview latitude={report.latitude} longitude={report.longitude} />}
         {report.closureOutcome && <Body>Reviewed closure: {label(report.closureOutcome)}. {report.closureReason}</Body>}
       </Section>

@@ -35,7 +35,7 @@ test('DEMO-004: quality restrictions are distinct, independently published and p
   assert.equal((await ok<Advisory>(a,'GET',`/advisories/${before.id}`)).state,'lifted');
 });
 
-test('area notice audiences need no report and publication/read retries never duplicate notifications',async()=>{
+test('area notice audiences need no report and publication/lift/read retries never duplicate notifications',async()=>{
   const {a,b,admin}=users;
   const notice=await draft();
   const operation=key(),body={expectedVersion:notice.version};
@@ -49,6 +49,34 @@ test('area notice audiences need no report and publication/read retries never du
     await ok(a,'PATCH',`/notifications/${matching[0].id}/read`,{});
   }
   assert.equal((await ok<Notification[]>(b,'GET','/notifications?limit=100')).filter(n=>n.targetId===notice.id).length,0);
+  const liftOperation=key(),liftBody={expectedVersion:published.version,reason:'Explicit fictional lift replay verification'};
+  const lifted=await ok<Advisory>(admin,'POST',`/staff/advisories/${notice.id}/lift`,liftBody,liftOperation);
+  assert.deepEqual(await ok<Advisory>(admin,'POST',`/staff/advisories/${notice.id}/lift`,liftBody,liftOperation),lifted);
+  const after=(await ok<Notification[]>(a,'GET','/notifications?limit=100')).filter(n=>n.targetId===notice.id);
+  assert.equal(after.length,2);assert.equal(new Set(after.map(n=>n.sourceEventKey)).size,2);
+  assert.equal((await request(admin,'POST',`/staff/advisories/${notice.id}/lift`,{expectedVersion:lifted.version,reason:'Already lifted new operation'},key())).status,409);
+  assert.equal((await ok<Notification[]>(a,'GET','/notifications?limit=100')).filter(n=>n.targetId===notice.id).length,2);
+});
+
+test('scheduled interruptions respect their published time window without ending independent quality restrictions',async()=>{
+  const {a,admin}=users,conn=await connection(a),now=Date.now();
+  const fixtures:Advisory[]=[];
+  for(const [label,start,end] of [['future',3600000,7200000],['current',-60000,3600000],['ended',-7200000,-3600000]] as const){
+    const draft=await ok<Advisory>(admin,'POST','/staff/advisories',{
+      kind:'scheduled_interruption',title:`Fictional ${label} scheduled interruption`,
+      text:'Fictional planned maintenance only; no water-safety determination.',source:'Fictional supplier scheduling fixture',
+      connectionIds:[conn.id],zoneIds:[],startsAt:new Date(now+start).toISOString(),endsAt:new Date(now+end).toISOString(),demo:true,
+    });
+    fixtures.push(await ok<Advisory>(admin,'POST',`/staff/advisories/${draft.id}/publish`,{expectedVersion:draft.version}));
+  }
+  const current=await ok<Advisory[]>(a,'GET','/advisories?limit=100');
+  assert.deepEqual(fixtures.map(item=>current.some(notice=>notice.id===item.id)),[false,true,false]);
+  const item=await report(a),guide=await ok<Guidance>(a,'POST',`/reports/${item.id}/guidance`,{answers:{}});
+  const sources=new Set(guide.cards.filter(card=>card.sourceType==='advisory').map(card=>card.sourceId));
+  assert.deepEqual(fixtures.map(item=>sources.has(item.id)),[false,true,false]);
+  const ended=await ok<Advisory>(a,'GET',`/advisories/${fixtures[2].id}`);
+  assert.equal(ended.state,'published');assert.equal(ended.kind,'scheduled_interruption');
+  assert.ok(current.some(notice=>['boil_water','do_not_drink','do_not_use'].includes(notice.kind)&&notice.endsAt&&Date.parse(notice.endsAt)<now));
 });
 
 test('DEMO-003: rules retain evidence, apply safety precedence and choices never create assistance',async()=>{

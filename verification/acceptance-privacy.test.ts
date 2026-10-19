@@ -8,7 +8,7 @@ let users: Awaited<ReturnType<typeof actors>>;
 before(async () => { users = await actors(); });
 const database = process.env.AQOURS_TEST_DATABASE_URL ?? 'postgresql://cred@127.0.0.1:55432/aqours_test';
 const fields = (value: object, names: string) => assert.deepEqual(Object.keys(value).sort(), names.split(' ').sort());
-const reportFields = 'id reference customerId connectionId category description guidedDetails noticedAt submittedAt status address locationSource latitude longitude locationConfirmed zoneId zoneConfirmed locationReview priority priorityReason ownerId incidentId closureOutcome closureReason version firstRespondedAt firstResolvedAt';
+const reportFields = 'id reference customerId connectionId category description guidedDetails noticedAt submittedAt status address locationSource latitude longitude accuracy locationConfirmed zoneId zoneConfirmed locationReview priority priorityReason ownerId incidentId closureOutcome closureReason version firstRespondedAt firstResolvedAt';
 const advisoryFields = 'id kind title text source zoneIds connectionIds geometry startsAt endsAt state publishedAt liftedAt liftReason version demo updatedAt';
 function incidentProjection(value: PublishedIncident) {
   fields(value, 'id category summary status zoneIds demo latestUpdate updates');
@@ -99,14 +99,15 @@ test('public incident, advisory and owned-report projections exclude private sen
   assert.ok(reportList.some(value => value.id === own.id));
   for (const value of incidentList) incidentProjection(value);
   for (const value of reportList) fields(value, reportFields);
-  for (const value of advisoryList) { fields(value, advisoryFields); assert.deepEqual(value.connectionIds, []); }
+  const ownConnectionIds=new Set((await ok<{id:string}[]>(a,'GET','/me/connections')).map(value=>value.id));
+  for (const value of advisoryList) { fields(value, advisoryFields); assert.ok(value.connectionIds.every(id=>ownConnectionIds.has(id))); }
   const publicNotice = await ok<Advisory>(a, 'GET', `/advisories/${published.id}`);
   fields(publicNotice, advisoryFields + ' revisions');
-  assert.deepEqual(publicNotice.connectionIds, []);
+  assert.deepEqual(publicNotice.connectionIds,[(await connection(a)).id]);
   for (const revision of publicNotice.revisions!) fields(revision, 'version text source action createdAt');
   const publicPayloads = JSON.stringify([detail, safe, publicNotice, incidentList, advisoryList, reportList]);
   for (const sentinel of [note, future, unpublished, draftText, shared.estimateBasis!, foreign.id, foreign.description,
-    foreign.guidedDetails!, foreign.address, String(foreign.latitude), String(foreign.longitude), b.user.email])
+    foreign.guidedDetails!, foreign.address, foreign.connectionId, String(foreign.latitude), String(foreign.longitude), b.user.email])
     assert.ok(!publicPayloads.includes(sentinel), 'Private sentinel escaped into a customer payload');
   const revisionReason = 'Fictional approved correction', liftReason = 'Fictional authority explicitly lifted this restriction';
   const revised = await ok<Advisory>(admin, 'PATCH', `/staff/advisories/${published.id}`, {

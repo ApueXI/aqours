@@ -1,4 +1,5 @@
 import type { Doc } from '../store.js';
+import { generatedTimeText } from './presentation.js';
 export function project(doc: Record<string, any>, fields: readonly string[]) {
   return Object.fromEntries(fields.map((field) => [field, doc[field]]));
 }
@@ -16,6 +17,7 @@ export const reportFields = [
   'locationSource',
   'latitude',
   'longitude',
+  'accuracy',
   'locationConfirmed',
   'zoneId',
   'zoneConfirmed',
@@ -109,8 +111,8 @@ export const connectionSafe = (doc: Doc) =>
     'zoneConfirmed',
     'version',
   ]);
-export const guidanceSafe = (doc: Doc) =>
-  project(doc, [
+export const guidanceSafe = (doc: Doc) => {
+  const result = project(doc, [
     'id',
     'reportId',
     'evaluatedAt',
@@ -122,3 +124,7 @@ export const guidanceSafe = (doc: Doc) =>
     'alternatives',
     'sourceSignature',
   ]);
+  if (Array.isArray(result.cards)) result.cards = result.cards.map((card) =>
+    card.action === 'incident' ? { ...card, reason: generatedTimeText(card.reason, 'Restoration') } : card);
+  return result;
+};

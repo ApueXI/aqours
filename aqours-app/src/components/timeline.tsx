@@ -8,6 +8,9 @@ export function Timeline({ events }: { events: TimelineEvent[] }) {
     {!events.length && <Body muted>No updates yet.</Body>}
     {events.map((event) => <View key={event.id} style={styles.item}>
       <Body>{label(event.action)}</Body><Body>{event.text}</Body>
+      {event.appointmentChange && <Body muted>{event.appointmentChange.from
+        ? `Agreed appointment changed from ${displayTime(event.appointmentChange.from)} to ${displayTime(event.appointmentChange.to)}`
+        : `Agreed appointment: ${displayTime(event.appointmentChange.to)}`}</Body>}
       <Body muted>{displayTime(event.createdAt)}</Body>
     </View>)}
   </Section>;

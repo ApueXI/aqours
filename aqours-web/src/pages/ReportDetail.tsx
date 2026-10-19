@@ -24,6 +24,7 @@ export function ReportDetail({ id, returnTo }: { id: string; returnTo?: string |
           <dt>Service connection</dt><dd>{d.customer?.connectionReference} · {d.customer?.savedAddress}</dd>
           <dt>Issue address snapshot</dt><dd>{d.address}</dd>
           <dt>Location provenance</dt><dd>{label(d.locationSource)} · {d.locationConfirmed ? 'Confirmed' : 'Unconfirmed'} · {d.latitude === null ? 'No coordinates' : `${d.latitude}, ${d.longitude}`}</dd>
+          {d.accuracy !== null && <><dt>GPS reported accuracy</dt><dd>Approximately {Math.round(d.accuracy)} meters</dd></>}
           <dt>Zone review</dt><dd>{refs.zones.data?.find(zone => zone.id === d.zoneId)?.name || 'Unknown zone'} · {d.zoneConfirmed ? 'Reviewed' : 'Confirmation required'}{d.locationReview ? ' · Location review needed' : ''}</dd>
           <dt>Priority</dt><dd>{label(d.priority)} · {d.priorityReason || 'No priority reason recorded'}</dd>
           <dt>First response</dt><dd>{date(d.firstRespondedAt)}</dd><dt>First substantive resolution</dt><dd>{date(d.firstResolvedAt)}</dd>
