@@ -1,8 +1,10 @@
+import { structuredAddress } from "../structured-address.js";
 import { z } from "zod";
 import { short, text } from "../common.js";
 const siteFields = {
   name: short,
   address: text,
+  structuredAddress,
   instructions: text,
   latitude: z.number().nullable().optional(),
   longitude: z.number().nullable().optional(),

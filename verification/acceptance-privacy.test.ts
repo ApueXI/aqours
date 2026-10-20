@@ -8,7 +8,7 @@ let users: Awaited<ReturnType<typeof actors>>;
 before(async () => { users = await actors(); });
 const database = process.env.AQOURS_TEST_DATABASE_URL ?? 'postgresql://cred@127.0.0.1:55432/aqours_test';
 const fields = (value: object, names: string) => assert.deepEqual(Object.keys(value).sort(), names.split(' ').sort());
-const reportFields = 'id reference customerId connectionId category description guidedDetails noticedAt submittedAt status address locationSource latitude longitude accuracy locationConfirmed zoneId zoneConfirmed locationReview priority priorityReason ownerId incidentId closureOutcome closureReason version firstRespondedAt firstResolvedAt';
+const reportFields = 'id reference customerId connectionId category description guidedDetails noticedAt submittedAt status address structuredAddress locationSource latitude longitude accuracy locationConfirmed zoneId zoneConfirmed locationReview priority priorityReason ownerId incidentId closureOutcome closureReason version firstRespondedAt firstResolvedAt';
 const advisoryFields = 'id kind title text source zoneIds connectionIds geometry startsAt endsAt state publishedAt liftedAt liftReason version demo updatedAt';
 function incidentProjection(value: PublishedIncident) {
   fields(value, 'id category summary status zoneIds demo latestUpdate updates');

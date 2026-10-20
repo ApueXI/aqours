@@ -1,3 +1,7 @@
+import {
+  psgcRegionsController,
+  psgcChildrenController,
+} from "../controllers/locations.controller.js";
 import type { Express } from "express";
 import {
   addReportMessageController,
@@ -11,6 +15,8 @@ import {
 import { route } from "../middleware/endpoint.js";
 import { reportReviewRoutes } from "./report-review.js";
 export function reportRoutes(app: Express) {
+  route(app, "get", "/locations/psgc/regions", "any", psgcRegionsController);
+  route(app, "get", "/locations/psgc/children", "any", psgcChildrenController);
   route(
     app,
     "post",

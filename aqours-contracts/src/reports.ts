@@ -1,3 +1,4 @@
+import type { AddressSnapshot } from './addresses.js';
 import type { Category, ReportStatus, IncidentStatus, Geometry, TimelineEvent, Note } from './common.js';
 export interface Attachment { id: string; filename: string; mediaType: string; byteSize: number; createdAt: string }
 export interface Message { id: string; text: string; authorId: string; authorRole: string; createdAt: string }
@@ -12,7 +13,7 @@ export interface PublishedIncident {
 export interface Report {
   id: string; reference: string; customerId: string; connectionId: string; category: Category;
   description: string; guidedDetails: string | null; noticedAt: string; submittedAt: string; status: ReportStatus;
-  address: string; locationSource: string; latitude: number | null; longitude: number | null;
+  address: string; structuredAddress?: AddressSnapshot | null; locationSource: string; latitude: number | null; longitude: number | null;
   accuracy: number | null;
   locationConfirmed: boolean; zoneId: string | null; zoneConfirmed: boolean; locationReview: boolean;
   priority: 'normal' | 'high' | 'urgent'; priorityReason: string | null; ownerId: string | null;
@@ -33,6 +34,6 @@ export interface StaffIncident {
   reports?: Report[]; notes?: Note[]; timeline?: TimelineEvent[]; reportCount: number; uniqueConnections: number;
 }
 export interface MapResponse {
-  type: 'FeatureCollection'; features: { type: 'Feature'; geometry: { type: 'Point'; coordinates: [number, number] }; properties: { id: string; reference: string; category: Category; status: ReportStatus; priority: string } }[];
+  type: 'FeatureCollection'; features: { type: 'Feature'; geometry: { type: 'Point'; coordinates: [number, number] }; properties: { id: string; reference: string; category: Category; status: ReportStatus; priority: string; address?: string; locationSource?: string; locationReview?: boolean; structuredAddress?: AddressSnapshot | null } }[];
   unlocatedCount: number; total: number; truncated: boolean; limit: number;
 }

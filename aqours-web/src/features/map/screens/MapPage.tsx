@@ -26,7 +26,7 @@ export function MapPage({ params }: { params: URLSearchParams }) {
   const refresh = () => { void reports.refresh(); void list.refresh(); void incidents.refresh(); void advisories.refresh(); };
   return <><PageTitle title="Report map"><a href={`#/reports${query(filters)}`}>Open inbox with filters</a><button onClick={refresh}>Refresh</button></PageTitle>
     <FilterBar values={filters} zones={refs.zones.data} onChange={next => { setFilters(next); setOffset(0); }} />
-    <p className="hint text-[#475569] text-[13px]">Normal reports: teal · High priority: amber · Urgent: red. Service zones: gray · Published incident areas: teal · Official advisory areas: amber. Select a report to review it.</p>
+    <p className="hint text-[#475569] text-[13px]">Normal reports: teal · High priority: amber · Urgent: red. Service zones: gray · Published incident areas: teal · Official advisory areas: amber. Select a report for details, then open it to review.</p>
     <ResourceState resource={reports}>{reports.data && <p>{reports.data.features.length} mapped of {reports.data.total} matching reports in the viewport · {reports.data.unlocatedCount} unlocated reports across the selected filters</p>}
       {reports.data?.truncated && <p className="notice [border-left:3px_solid] [padding:10px_12px] [margin:12px_0] text-[#854d0e] bg-[#fffbeb] [border-color:#b45309]">Results are capped at {reports.data.limit} markers. Zoom in or narrow filters to inspect all locations.</p>}
       {reports.data?.features.length === 0 && <p>No mapped reports in this viewport. This does not establish normal supply or safe water.</p>}

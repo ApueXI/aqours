@@ -76,3 +76,5 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 Five actual production MapLibre checks cover live demonstration style, cluster expansion/zoom without writes and authorized point selection; recovery checks cover combined filters/unlocated/API failures. Native NM14 confirms the same persisted GPS point/5m accuracy on preview and supplier canvas; NM16 verifies actual native map404 fallback. Live signed geocoded-point equality remains blocked on private Geoapify configuration.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
+
+Implementation update: [PSGC addresses and detailed maps](../../../location-and-maps.md) documents the current address/catalog/basemap behavior and remaining provider checks.

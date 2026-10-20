@@ -245,3 +245,7 @@ These ten scenarios retain their original required scope. API/database, actual s
 | Working title, demonstration geography, deployment destination, exact deadline | Configurable planning details; the supplied one-week sequence is conditional, not a committed schedule. Do not reopen the confirmed Android, location, or assistance choices. |
 
 Application source, environment examples, Compose, migrations/seeds, contracts and setup/demo/build guidance now exist. The user authorized necessary project-local dependencies for this implementation. Release completion still requires the evidence and outstanding checks recorded in [verification](verification.md), including the Android deliverable; do not infer completion from this requirement inventory.
+
+## Map and address implementation
+
+See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.

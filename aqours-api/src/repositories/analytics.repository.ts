@@ -50,6 +50,11 @@ export async function mapReports(
       category: true,
       status: true,
       priority: true,
+      address: true,
+      structuredAddress: true,
+      locationSource: true,
+      locationReview: true,
+      zoneConfirmed: true,
     },
   });
   return { rows, total, unlocated };

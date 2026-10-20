@@ -29,12 +29,12 @@ Provide only public bundle configuration through the shell or build environment.
 
 ```sh
 export EXPO_PUBLIC_API_URL=http://10.0.2.2:4000/api/v1
-export EXPO_PUBLIC_MAP_STYLE_URL=https://demotiles.maplibre.org/style.json
+export EXPO_PUBLIC_MAP_STYLE_URL='' # Use the street default
 ```
 
 `10.0.2.2` reaches the host from the standard Android emulator. For a physical phone use the development computer's reachable LAN address and permit the local API port. The phone's `localhost` refers to the phone. Production API URLs must use HTTPS; `app.config.ts` permits Android cleartext only when an explicitly supplied public API URL starts with `http://`. Change this configuration and rebuild when switching deployment environments.
 
-The example MapLibre style is development demonstration tiles. For deployment choose an appropriately licensed native-compatible map provider, keep its required attribution visible, and restrict any public provider credential. Map rendering and Geoapify geocoding are independent. The private Geoapify key stays in Express. A missing or failed map does not prevent address-based reporting.
+An empty/unset map style now selects the OpenStreetMap street basemap. Explicit public style settings still take precedence. For deployment choose an appropriately licensed native-compatible map provider, keep its required attribution visible, and restrict any public provider credential. Map rendering and Geoapify geocoding are independent. The private Geoapify key stays in Express. A missing or failed map does not prevent address-based reporting.
 
 ## Build and run Android
 
@@ -97,3 +97,7 @@ All application modules live outside `src/app/`; that directory contains only Ex
 ## Source navigation
 
 Expo Router files in `src/app/` compose routes and layouts. Screens and feature-only components/hooks/services live in `src/features/<domain>/`. Shared bearer transport and retry intentions are in `src/services/`; time/pagination helpers are in `src/utils/`. Mobile keeps its native styling. See [directory navigation](../docs/directory-structure.md).
+
+## PSGC address entry
+
+Alternate issue locations offer searchable PSGC selection through barangay, street/landmark details, and free-text fallback. Changing the selection invalidates old candidates. GPS and geocoding still require coordinate confirmation; administrative selections never imply a service zone. See [locations and maps](../docs/location-and-maps.md) for the contract, dataset snapshot, default tile policy, and native verification limits.

@@ -63,3 +63,5 @@ Keep detailed feature behavior in its spec and shared invariants in the referenc
 Follow [root guidance](../AGENTS.md) and [mobile guidance](../aqours-app/AGENTS.md) for future changes. Keep synthetic notices/availability clearly labeled, preserve independent report/incident/advisory/assistance outcomes and update affected documentation with source and verification changes. Exact deadline, deployment destination and demonstration geography remain configurable.
 
 - [Directory navigation](directory-structure.md): API layers, Prisma models and client feature folders.
+
+- [Locations and maps](location-and-maps.md): PSGC catalog, guided addresses, snapshots, street basemaps, and provider settings.

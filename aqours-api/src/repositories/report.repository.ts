@@ -16,6 +16,7 @@ export const reportRepository = (db: DB) =>
       submittedAt: "t",
       status: "s",
       address: "s",
+      structuredAddress: "j?",
       locationSource: "s",
       latitude: "f?",
       longitude: "f?",

@@ -1,3 +1,4 @@
+import { addressFields } from "../location/psgc-catalog.service.js";
 import type { DB } from "../../config/database.js";
 import {
   event,
@@ -13,7 +14,7 @@ export async function reviewPickupSite(db: DB, req: CommandContext) {
   const doc = await get(db, "site", String(req.params.id), true);
   version(doc, input.expectedVersion);
   const { expectedVersion: _e, reason: _r, ...patch } = input;
-  const result = { ...doc, ...patch };
+  const result = { ...doc, ...patch, ...addressFields(patch, doc) };
   coordinates(result);
   await event(db, req.actor.id, doc.id, "reviewed", input.reason);
   return save(db, "site", result);

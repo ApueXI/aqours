@@ -1,7 +1,9 @@
+import { structuredAddress } from "../structured-address.js";
 import { z } from "zod";
 import { expected, id, text } from "../common.js";
 const connectionFields = {
   address: text,
+  structuredAddress,
   zoneId: id.nullable().optional(),
   zoneConfirmed: z.boolean(),
   latitude: z.number().nullable().optional(),

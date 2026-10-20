@@ -1,3 +1,4 @@
+import type { AddressSnapshot, StructuredAddressInput } from './addresses.js';
 export const categories = ['outage', 'low_pressure', 'leak', 'water_quality'] as const;
 export type Category = typeof categories[number];
 export type Role = 'customer' | 'staff' | 'admin';
@@ -11,7 +12,7 @@ export interface Envelope<T> { data: T; page?: { offset: number; limit: number; 
 export interface ApiError { error: { code: string; message: string; details?: unknown } }
 export interface User { id: string; email: string; name: string; role: Role; phone: string | null; active: boolean; version: number }
 export interface Connection {
-  id: string; customerId: string; reference: string; address: string;
+  id: string; customerId: string; reference: string; address: string; structuredAddress?: AddressSnapshot | null;
   zoneId: string | null; latitude: number | null; longitude: number | null; zoneConfirmed: boolean; version: number;
 }
 export interface Zone { id: string; code: string; name: string; boundary: Geometry | null; active: boolean; version: number; demo: boolean }
@@ -26,7 +27,7 @@ export interface Notification {
   targetType: 'report' | 'incident' | 'advisory' | 'assistance'; targetId: string; sourceEventKey: string;
 }
 export interface LocationInput {
-  address: string; source: 'saved_address' | 'geocoded_address' | 'gps';
+  address: string; structuredAddress?: StructuredAddressInput | null; source: 'saved_address' | 'geocoded_address' | 'gps';
   latitude?: number | null; longitude?: number | null; confirmed: boolean;
   accuracy?: number | null; candidateToken?: string;
 }

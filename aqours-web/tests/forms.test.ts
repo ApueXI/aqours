@@ -43,3 +43,16 @@ test('water completion is offered only through the dedicated collection action',
   assert.equal(transitionTargets(callback).includes('completed'), true);
   assert.deepEqual(transitionTargets({ type: 'inspection', status: 'completed' } as AssistanceRequest), []);
 });
+
+test('guided addresses retain structured codes and incomplete selections cannot be submitted during loading', () => {
+  const fields: Field[] = [{ name: 'address', label: 'Address', type: 'address' }];
+  const data = new FormData();
+  data.set('address', 'Demo street, Barangay 1, City of Caloocan');
+  data.set('address:guided', 'true'); data.set('address:structured', 'null');
+  assert.throws(() => readFields(fields, data));
+  const structured = { barangayCode: '1380100001', streetDetails: 'Demo street' };
+  data.set('address:structured', JSON.stringify(structured));
+  assert.deepEqual(readFields(fields, data), { address: data.get('address'), structuredAddress: structured });
+  data.set('address:guided', 'false'); data.set('address:structured', 'null');
+  assert.equal(readFields(fields, data).structuredAddress, null);
+});

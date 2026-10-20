@@ -2,6 +2,19 @@
 
 Updated 20 October 2026. Source implements the connected first release; release acceptance is **IN PROGRESS**. A native APK build is verified separately from installed Android behavior. Live Geoapify and academic acceptance remain external. No skipped or unavailable check is counted as passed. [Traceability](traceability.md) maps all 84 requirements, 126 original feature criteria and DEMO-001 through DEMO-010 to implementation and the exact assertions/manual checks.
 
+## Detailed maps and PSGC addresses — 20 October 2026
+
+Verification used separate `aqours_psgc_test` and cloned `aqours_psgc_upgrade_test` databases, local test APIs, and the supplier development server. Ordinary databases were not migrated. Evidence remains project-local under `.local/psgc/`; automated map screenshots use a local raster fixture rather than real public OSM tiles.
+
+- All application type checks and lint pass; Express and supplier production builds pass. Vite retains its existing large-bundle advisory.
+- API22 + web16 + mobile18 = 56 unit/helper tests pass, including catalog counts/hierarchy/duplicate names, leading-zero codes, incomplete selection guards, canonical geocoding context, and signed selection invalidation.
+- All59 HTTP/PostgreSQL scenarios pass with zero failures/skips, including authenticated catalog access, nullable legacy addresses, saved report snapshots, text corrections, role checks, and map projections.
+- Supplier23 workflow, seven maintenance, four PSGC address, and six real WebGL map checks pass. Map checks verify the default raster source, clustering, zoom/query invariants, independent layer controls, attribution, and report popup/open behavior, including precedence over overlapping zone shapes. Browser connection/pickup workflows retain free-text fallback.
+- A populated additive upgrade preserves fingerprints for45 connections,327 reports, and69 pickup sites: IDs, versions, address strings, and coordinates remain identical. All legacy snapshot fields remain null. Fresh deployment also applies all three migrations successfully.
+- Signed ARM64/x86_64 release APK builds and installs on the owned Android29 emulator. Native sign-in, NCR/city/barangay selection, street details, GPS denial fallback, explicit unconfigured-provider failure, and an actual PSGC address-only report submission pass. API readback verifies canonical snapshot, null coordinates, and location-review flags. A controlled saved-point preview renders detailed streets/marker/attribution, and actual supplier point selection opens the matching native report with identical persisted coordinates; one captured native tile remains black. Permission-granted GPS acquisition is unverified in this run: the emulator returns `LocationServices.API` unavailable. Live Geoapify remains unconfigured and is not counted as passing.
+
+The initial native boot needed its System UI dialog cleared. An early HTTP fixture exceeded the intentional login throttle; final tests reuse sessions and pass without changing rate limits. Earlier map checks picked up a local demo-style override; final checks explicitly select the new street default without editing secret/local environment files. See [location configuration](location-and-maps.md) for retained style-override precedence.
+
 ## Prisma and Tailwind refactor — 20 October 2026
 
 Verification used isolated `aqours_prisma_test` and restored `aqours_prisma_upgrade_test` databases, API port 4003 and supplier assets on port 5176. The ordinary database was not migrated. Evidence is retained privately under `.local/refactor/`; original release evidence below remains a separate historical checkpoint.

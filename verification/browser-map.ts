@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import {mkdir,writeFile} from 'node:fs/promises';
+import {mkdir,writeFile,readFile} from 'node:fs/promises';
 import {chromium,expect} from '@playwright/test';
 import type {Report,Zone} from '../aqours-contracts/src/index.ts';
 import {connection,fixturePassword,key,login,ok} from './harness.ts';
@@ -9,7 +9,7 @@ const temporary=path.resolve('.cache/tmp');
 await Promise.all([mkdir(output,{recursive:true}),mkdir(temporary,{recursive:true})]);
 const customer=await login('customer01@demo.aqours.test');
 const admin=await login('admin@demo.aqours.test','web');
-const zone=await ok<Zone>(admin,'POST','/staff/settings/zones',{code:`MAP-${key()}`,name:'Fictional isolated rendered map zone',demo:true});
+const zone=await ok<Zone>(admin,'POST','/staff/settings/zones',{code:`MAP-${key()}`,name:'Fictional isolated rendered map zone',demo:true,boundary:{type:'Polygon',coordinates:[[[121,14.59],[121.02,14.59],[121.02,14.61],[121,14.61],[121,14.59]]]}});
 let item=await ok<Report>(customer,'POST','/reports',{
   connectionId:(await connection(customer)).id,category:'leak',noticedAt:new Date().toISOString(),
   description:'Fictional exact-coordinate rendered-map fixture',
@@ -40,6 +40,7 @@ const mapWrites:string[]=[];
 let observingMap=false;
 const passed=(message:string)=>{evidence.push(message);console.log('PASS',message);};
 page.on('pageerror',error=>errors.push(error.message));
+page.on('console',message=>{ if(message.type()==='error')providerFailures.push(message.text()); });
 page.on('request',request=>{
   if(observingMap&&request.url().includes('/api/v1/')&&!['GET','OPTIONS'].includes(request.method()))
     mapWrites.push(`${request.method()} ${new URL(request.url()).pathname}`);
@@ -61,14 +62,16 @@ try{
   await page.getByLabel('Password',{exact:true}).fill(fixturePassword);
   await page.getByRole('button',{name:'Sign in',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Overview',exact:true})).toBeVisible();
-  const style=page.waitForResponse(response=>response.url()==='https://demotiles.maplibre.org/style.json',{timeout:30000});
+  // Deterministic local raster fixture: never pan/zoom against public OSM in automation.
+  await page.route('https://tile.openstreetmap.org/**', async route => route.fulfill({ contentType:'image/png', body:await readFile(new URL('./fixtures/street-tile.png', import.meta.url)) }));
+  const style=page.waitForResponse(response=>response.url().startsWith('https://tile.openstreetmap.org/'),{timeout:30000});
   observingMap=true;
   await page.goto(`${web}/#/map?zoneId=${zone.id}`);
   assert.equal((await style).status(),200);
   await expect.poll(()=>mapQueries.some(url=>url.searchParams.get('west')!=='120.9'),{timeout:30000}).toBe(true);
   await expect(page.locator('.maplibregl-canvas')).toBeVisible();
   await expect(page.getByText('The basemap or map rendering is unavailable. Use the report list below; the report service can still be available.',{exact:true})).toHaveCount(0);
-  passed('Live public demo style loads in real MapLibre/WebGL and requests viewport data');
+  passed('Default street style loads a local raster fixture in real MapLibre/WebGL and requests viewport data');
   await expect(page.getByText('2 mapped of 2 matching reports in the viewport · 0 unlocated reports across the selected filters', {exact:true})).toBeVisible();
   await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
   const initialBox=await page.locator('.maplibregl-canvas').boundingBox();
@@ -95,11 +98,21 @@ try{
   assert.equal(second.priority,companion.priority);
   assert.deepEqual(mapWrites,[]);
   passed('Zoom changes query bounds without changing report priority, version or incident association');
+  await expect(page.getByRole('link',{name:'OpenStreetMap',exact:true})).toBeVisible();
+  for (const name of ['Reports','Service zones','Incident areas','Advisory areas']) {
+    const control=page.getByLabel('Map layers',{exact:true}).getByRole('checkbox',{name,exact:true});
+    await control.uncheck(); await expect(control).not.toBeChecked(); await control.check();
+  }
+  passed('Independent layer controls preserve viewport data and visible attribution');
   await page.screenshot({path:path.join(output,'web-map-rendered.png'),fullPage:true});
   const box=await page.locator('.maplibregl-canvas').boundingBox();
   assert.ok(box);
   await page.locator('.maplibregl-canvas').click({position:{x:box.width/2,y:box.height/2}});
   const reference=new RegExp(`^(?:${item.reference}|${companion.reference})$`);
+  await expect(page.locator('.maplibregl-popup').getByText(reference)).toBeVisible();
+  await expect(page.locator('.maplibregl-popup').getByText('Fictional map center',{exact:true})).toBeVisible();
+  await expect(page.locator('.maplibregl-popup')).toHaveCount(1);
+  await page.getByRole('button',{name:'Open report',exact:true}).click();
   await expect(page.getByRole('heading',{name:reference})).toBeVisible();
   passed('Rendered point at the persisted longitude/latitude opens its authorized report');
   assert.deepEqual(errors,[]);

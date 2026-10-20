@@ -180,3 +180,7 @@ The ten [DEMO scenarios](requirements.md#acceptance-scenarios) remain the integr
 ## Source navigation
 
 See [directory navigation](directory-structure.md) for API layers and feature-based client folders. Prisma generates backend-only database types; shared public DTOs remain in `aqours-contracts`. Tailwind applies only to the supplier web, preserving native mobile styles. Existing-database adoption is explicit and must precede the first Prisma deployment.
+
+## Guided addresses and detailed maps
+
+See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.

@@ -1,3 +1,4 @@
+import { addressFields } from "../location/psgc-catalog.service.js";
 import type { DB } from "../../config/database.js";
 import {
   event,
@@ -14,7 +15,7 @@ export async function reviewConnection(db: DB, req: CommandContext) {
   const doc = await get(db, "connection", String(req.params.id), true);
   version(doc, input.expectedVersion);
   const { expectedVersion: _e, reason: _r, ...fields } = input,
-    revised = { ...doc, ...fields };
+    revised = { ...doc, ...fields, ...addressFields(fields, doc) };
   coordinates(revised);
   if (revised.zoneId) {
     const zone = await get(db, "zone", revised.zoneId, true);

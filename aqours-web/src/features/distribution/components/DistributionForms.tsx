@@ -6,7 +6,7 @@ import { date } from '../../../components/Status';
 export function SiteForm({ d, refresh }: { d?: PickupSite; refresh: () => void }) {
   const fields: Field[] = [
     { name: 'name', label: 'Pickup site name', value: d?.name, required: true },
-    { name: 'address', label: 'Full address', type: 'textarea', value: d?.address, required: true },
+    { name: 'address', label: 'Full address', type: 'address', value: d?.address, snapshot: d?.structuredAddress, required: true },
     { name: 'instructions', label: 'Site instructions', type: 'textarea', value: d?.instructions, required: true },
     { name: 'latitude', label: 'Latitude (optional)', type: 'number', min: -90, max: 90, step: 'any', value: d?.latitude, nullable: true },
     { name: 'longitude', label: 'Longitude (optional)', type: 'number', min: -180, max: 180, step: 'any', value: d?.longitude, nullable: true },

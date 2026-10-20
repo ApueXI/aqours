@@ -31,7 +31,7 @@ export function addLayers(map: MapLibreMap) {
     'circle-color': '#0f766e', 'circle-radius': ['step', ['get', 'point_count'], 18, 10, 24, 50, 30], 'circle-stroke-width': 1, 'circle-stroke-color': '#fff',
   } });
   map.addLayer({ id: 'cluster-count', type: 'symbol', source: 'reports', filter: ['has', 'point_count'], layout: {
-    'text-field': ['get', 'point_count_abbreviated'], 'text-size': 12,
+    'text-field': ['get', 'point_count_abbreviated'], 'text-font': ['Open Sans Semibold'], 'text-size': 12,
   }, paint: { 'text-color': '#fff' } });
   map.addLayer({ id: 'points', type: 'circle', source: 'reports', filter: ['!', ['has', 'point_count']], paint: {
     'circle-color': ['match', ['get', 'priority'], 'urgent', '#be123c', 'high', '#b45309', '#0f766e'],

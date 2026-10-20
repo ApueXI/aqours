@@ -20,7 +20,7 @@ Updated 20 October 2026 for the Prisma refactor. Source of truth: [Prisma schema
 
 Domain models have UUID IDs, positive versions and separate storage creation/update timestamps. Workflow timestamps map to TIMESTAMPTZ columns. Incident, publication, advisory and pickup-session zone targeting use ordered junction rows; advisory connection targeting is also relational. Stored target positions preserve the existing source-signature ordering. JSONB remains for GeoJSON, immutable snapshots, questionnaire answers, evaluation cards/evidence, operation replay and audit metadata. Historical evaluations without evidence retain null rather than invented evidence.
 
-The public API still exposes its original camel-case DTOs, including a nested `details` object for assistance and target ID arrays. Prisma entities are projected through application repositories/services; generated database types do not enter shared public contracts. Flexible internal workflow values remain a compatibility boundary, while stored fields are defined by generated model types.
+The public API retains camel-case DTOs with optional structured address snapshots, including a nested `details` object for assistance and target ID arrays. Prisma entities are projected through application repositories/services; generated database types do not enter shared public contracts. Flexible internal workflow values remain a compatibility boundary, while stored fields are defined by generated model types.
 
 ## Identity, security and history
 
@@ -55,3 +55,7 @@ Normalization runs in one transaction, preserves IDs/versions/timestamps and exi
 Same-key retries retain their original response and reject changed content. Services pass transaction-scoped clients into repositories so domain changes, events, notifications and replay results commit together. An uncertain commit preserves attachment bytes for retry resolution; ordinary rollback removes pending files. Abrupt filesystem/database interruption can still leave orphan bytes; automated reconciliation remains unimplemented.
 
 Backup includes the database, private attachments, Prisma schema/migrations/config and original migration files. Rollback after cutover requires the pre-upgrade backup and matching application version. See [setup](setup.md), [verification](verification.md) and [directory navigation](directory-structure.md).
+
+## Structured address snapshots
+
+See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.

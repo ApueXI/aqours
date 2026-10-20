@@ -14,7 +14,7 @@ function ConnectionForm({ d, accounts, zones, refresh }: { d?: Connection; accou
       { name: 'customerId', label: 'Customer', type: 'select' as const, required: true, options: accounts.filter(account => account.role === 'customer').map(account => ({ value: account.id, label: `${account.name} · ${account.email}` })) },
       { name: 'reference', label: 'Connection reference', required: true },
     ] : []),
-    { name: 'address', label: 'Saved service address', type: 'textarea', required: true, value: d?.address },
+    { name: 'address', label: 'Saved service address', type: 'address', required: true, value: d?.address, snapshot: d?.structuredAddress },
     { name: 'zoneId', label: 'Explicit service zone', type: 'select', value: d?.zoneId, options: zoneOptions(zones), nullable: true },
     { name: 'zoneConfirmed', label: 'Service zone association reviewed', type: 'checkbox', value: d?.zoneConfirmed },
     { name: 'latitude', label: 'Latitude (optional)', type: 'number', min: -90, max: 90, step: 'any', value: d?.latitude, nullable: true },

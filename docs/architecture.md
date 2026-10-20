@@ -84,3 +84,9 @@ Native MapLibre 11.5.0 is pinned with Expo 57 / React Native 0.86.3 configuratio
 Both clients group screens, feature-only components, hooks and request operations under `features/<domain>/`. Shared UI, hooks, HTTP transport, configuration and utilities stay outside those feature folders. The web `app/` contains bootstrap, routing and navigation. Expo `app/` contains route wrappers and navigator layouts only. Native styles are retained.
 
 The supplier app uses Tailwind 4 through its Vite plugin. Utility classes replace application class selectors while original class markers remain available to browser checks. Shared element defaults and MapLibre overrides live in the Tailwind entry stylesheet; Preflight is deliberately omitted to preserve existing browser form defaults and appearance. Explicit utility mappings cover dynamic class names.
+
+## Location architecture
+
+The authenticated API loads the sibling bundled PSGC region index and caches its hierarchy. Both clients request catalog entries without bundling all barangays. Administrative selections provide names/codes; coordinate and service-zone confirmation remain separate.
+
+See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.
