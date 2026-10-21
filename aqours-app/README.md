@@ -70,6 +70,8 @@ Both `:app:assembleDebug` and the standalone `:app:assembleRelease` succeeded fo
 
 ## Implemented customer workflows
 
+- Current weather and a seven-day Open-Meteo forecast on Home, using owned saved coordinates or explicit Philippine city search. Weather has separate refresh/retry/stale states, Manila dates and provider attribution. See [weather](../docs/weather.md).
+
 - SecureStore bearer session restoration, customer-only login, server logout/revocation retry, and clearing private views when identity changes or expires.
 - Home with owned service connections, all-page applicable advisories/published incidents/open reports, notice planned dates/matching owned references, synthetic-data labels, and foreground refresh. A failed later page is an error, never a silently complete first page.
 - Reports with category-specific details preserved for supplier review and observed Manila time; saved address, confirmed server-geocoded candidate, optional foreground GPS, native map preview and explicit address-only fallback. Alternate issue locations do not change saved connection details.

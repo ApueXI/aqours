@@ -1,6 +1,22 @@
 # Android verification evidence
 
-Updated 20 October 2026. These checks used the installed standalone Android application, the real Express API/PostgreSQL database and, for supplier actions, the production React application in Chromium. All people, addresses, notices, images and outcomes are fictional. This ledger supplements [verification](verification.md) and [traceability](traceability.md); an individual check proves only the behavior described.
+Updated 21 October 2026. These checks used the installed standalone Android application, the real Express API/PostgreSQL database and, for supplier actions, the production React application in Chromium. All people, addresses, notices, images and outcomes are fictional. This ledger supplements [verification](verification.md) and [traceability](traceability.md); an individual check proves only the behavior described.
+
+## Open-Meteo weather — 21 October 2026
+
+The weather release APK has SHA256 `d33812b2da6ba1952bd354e71275db96f46e987765182f93828616ac9cd03fb0`. Its v2 signature verifies; the installed Android29 x86_64 package independently matches that exact hash. Offline Gradle built ARM64/x86_64 with the existing project-local toolchain and caches (546 tasks). The retained test artifact is `.local/weather/app-release-d33812b2da6b.apk`; its public API is `http://10.0.2.2:4005/api/v1`, requiring an API on host port4005. It is a local demonstration artifact, not a deployment configuration.
+
+Actual installed checks used emulator5564, isolatedADB5042, the real API and dedicated PostgreSQL dataset, and live Open-Meteo:
+
+- Customer01 signed in and loaded weather for the saved connection: conditions, feels-like/actual temperature, humidity, precipitation and wind, with distinct model/retrieval times in Manila.
+- Scrolling through the forecast showed all seven dates, October21–27, low/high values, precipitation totals/probabilities and linked provider attribution; supplier advisories remained below the independent weather section.
+- Philippine city search returned disambiguated Cebu results; selecting Cebu City replaced the saved-location label and measurements with that city's live forecast.
+- Stopping the owned API then refreshing retained Cebu weather with an explicit last-loaded/stale message and Retry. Restarting the API and retrying restored current data and cleared the error.
+- Profile sign-out and Customer12 sign-in cleared the former customer's city and forecast. The connection with null coordinates showed the city-search fallback without a GPS prompt.
+- A live Manila search for Customer12 encountered a transient provider failure, showed an honest retry state and then returned real candidates on retry. Selecting Manila displayed its current/seven-day forecast.
+- Authenticated readback confirmed Customer12's saved coordinates remained null after city weather selection.
+
+Evidence: `.local/weather/native/{saved-weather,forecast-middle,forecast-end,cebu-weather,offline-weather,recovered-weather,home,unlocated-weather,city-search-retry,unlocated-city-weather}.{xml,png}` and `.local/weather/artifact.json`. Input automation initially targeted a partly clipped field and exited Home; bringing the field fully onscreen completed the same real flow. The owned emulator, isolated ADB, API/web and project-local PostgreSQL verification services were stopped after checks. This checkpoint covers Android29 x86_64 only; compiled ARM64 and other Android versions have no new weather runtime claim. Earlier native evidence retains its original scope.
 
 ## Artifacts and test targets
 

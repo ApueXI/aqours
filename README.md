@@ -41,6 +41,7 @@ The fictional seed provides `admin@demo.aqours.test`, `staff@demo.aqours.test`, 
 
 - [Setup, configuration, providers and backups](docs/setup.md)
 - [API contract](docs/api.md) and [public TypeScript DTOs](aqours-contracts/src/index.ts)
+- [Open-Meteo weather for customers, staff and admins](docs/weather.md)
 - [Demo walkthrough](docs/demo.md)
 - [Requirements and feature index](docs/README.md)
 - [Verification evidence and remaining checks](docs/verification.md), including the [installed Android ledger](docs/native-verification.md)

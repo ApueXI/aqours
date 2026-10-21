@@ -1,5 +1,7 @@
 # Customer domain
 
+Customers can [check current weather and seven-day forecasts](../weather.md) on Home using an owned saved connection or a selected Philippine city. Weather search does not update saved addresses or require GPS.
+
 Status: **implemented first-release customer workflows**, updated 19 October 2026. Installed Android workflows now have individually scoped [native evidence](../native-verification.md); live-provider and remaining acceptance checks are recorded in [verification](../verification.md) and [traceability](../traceability.md). Product source: brief v0.4 and [requirements](../requirements.md).
 
 The customer is a seeded individual account linked to fictional service connections and saved addresses. Android is the confirmed customer platform. Public registration is optional; this documentation does not introduce a registration approval process.

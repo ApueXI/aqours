@@ -1,5 +1,7 @@
 # Supplier admin domain
 
+Admins also have [current weather, seven-day forecasts and Philippine city search](../weather.md) on Overview. Weather is informational and does not publish an advisory or change incident state.
+
 Status: **implemented first-release capabilities**, updated 19 October 2026; acceptance evidence and remaining gaps are in [verification](../verification.md) and [traceability](../traceability.md). Product source: brief v0.4 and [requirements](../requirements.md).
 
 Admin represents supplier administration in the adopted three-role model: `customer`, `staff`, `admin`. The project owner adopted the administrative grants below; Express enforces role and record access. A feature directory named `admin` also contains shared supplier workflows; it does not make staff an admin.

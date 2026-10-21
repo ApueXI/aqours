@@ -10,6 +10,7 @@ import { guidanceRoutes } from "./routes/guidance.js";
 import { incidentRoutes } from "./routes/incidents.js";
 import { reportRoutes } from "./routes/reports.js";
 import { settingsRoutes } from "./routes/settings.js";
+import { weatherRoutes } from "./routes/weather.js";
 import { errorHandler, fail } from "./utils/errors.js";
 export function createApp() {
   const app = express();
@@ -27,6 +28,7 @@ export function createApp() {
   guidanceRoutes(app);
   analyticsRoutes(app);
   attachmentRoutes(app);
+  weatherRoutes(app);
   app.use((_req, _res, next) => {
     try {
       fail(404, "Endpoint not found", "not_found");

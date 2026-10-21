@@ -1,5 +1,7 @@
 # Aqours supplier web
 
+Overview includes [Open-Meteo current weather and seven-day forecasts](../docs/weather.md) with Philippine city search, manual refresh, provider attribution and independent retry/stale states for staff and admins.
+
 React and TypeScript supplier workspace built with Vite. MapLibre GL JS renders operational report points, zoom-dependent clusters, service zones, and published incident/advisory polygons. The browser uses the live Express API; no production screen substitutes mock data or a simulated successful save.
 
 ## Local setup

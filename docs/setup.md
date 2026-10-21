@@ -74,6 +74,8 @@ No external account, paid resource, provider key or production notice was provis
 
 ## Supplier and Android applications
 
+Weather uses the public Open-Meteo forecast and city-search endpoints for the noncommercial demonstration, without new environment variables or dependencies. Permit outbound HTTPS to `api.open-meteo.com` and `geocoding-api.open-meteo.com`; Geoapify configuration is independent. See [weather setup, limits, attribution and check commands](weather.md).
+
 ```sh
 npm --prefix aqours-web run dev
 ```

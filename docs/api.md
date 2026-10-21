@@ -12,6 +12,8 @@ Success: `{data: T, page?: {offset,limit,total}, asOf?: string}`. Lists return `
 
 ## Customer and shared reads
 
+Authenticated current weather, seven-day forecasts and Philippine city search are available to all existing roles. See [weather endpoints, DTOs and errors](weather.md#api-contract). Customer connection-ID lookups enforce ownership before accessing cached forecasts.
+
 | Method/path | Body/query | Response `data` / authorization |
 | --- | --- | --- |
 | GET /zones | — | Active Zone[] (customer-safe boundaries, no households) |

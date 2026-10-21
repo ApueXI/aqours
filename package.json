@@ -18,7 +18,9 @@
     "test:recovery": "node --experimental-strip-types verification/browser-recovery.ts",
     "test:operations": "node --experimental-strip-types verification/browser-operations.ts",
     "test:quality": "node --experimental-strip-types verification/browser-quality.ts",
-    "test:migration": "node --experimental-strip-types verification/prisma-upgrade.ts"
+    "test:migration": "node --experimental-strip-types verification/prisma-upgrade.ts",
+    "test:weather": "TSX_DISABLE_CACHE=1 node --import ./aqours-api/node_modules/tsx/dist/loader.mjs --test --experimental-test-isolation=none verification/weather-http.ts",
+    "test:weather:browser": "TSX_DISABLE_CACHE=1 node --import ./aqours-api/node_modules/tsx/dist/loader.mjs verification/browser-weather.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.0",

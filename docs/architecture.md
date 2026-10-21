@@ -28,6 +28,7 @@ flowchart LR
     API -->|Prisma Client and transactions| DB[(PostgreSQL)]
     API -->|Authorized image operations| Files[Private project-local attachments]
     API -->|Private key and signed candidates| Geoapify[Geoapify geocoding]
+    API -->|Coordinates / city search| Weather[Open-Meteo weather and city search]
     Customer -->|Configured public style| Tiles[Map tiles]
     Supplier -->|Configured public style| Tiles
     GPS[Optional foreground GPS] --> Customer
@@ -80,6 +81,8 @@ UTC event instants are displayed in `Asia/Manila`. First-response and first-reso
 Native MapLibre 11.5.0 is pinned with Expo 57 / React Native 0.86.3 configuration; Expo Go cannot run that native map. Actual signed standalone APKs run on KVM-backed Android29/36; [native evidence](native-verification.md) distinguishes each verified workflow and build. Expo57 uploads use FileSystem File bytes, and RN0.86 Android protected images use the array-source branch to retain authorization headers. Same-identity foreground resource refresh preserves mounted draft/upload state with explicit stale labels; identity changes and denied results clear it. Do not mark the release complete from source, typechecking or browser tests alone; consult the current [verification ledger](verification.md).
 
 ## Client organization and styling
+
+Weather components live under each client's `features/weather/` and mount independently on Home/Overview. Express weather routes/controllers/services validate Open-Meteo data behind existing authentication, enforce customer connection ownership, and use bounded process-local caches. There is no weather persistence or domain automation. See [weather behavior and provider boundaries](weather.md).
 
 Both clients group screens, feature-only components, hooks and request operations under `features/<domain>/`. Shared UI, hooks, HTTP transport, configuration and utilities stay outside those feature folders. The web `app/` contains bootstrap, routing and navigation. Expo `app/` contains route wrappers and navigator layouts only. Native styles are retained.
 

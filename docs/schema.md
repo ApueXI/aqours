@@ -56,6 +56,10 @@ Same-key retries retain their original response and reject changed content. Serv
 
 Backup includes the database, private attachments, Prisma schema/migrations/config and original migration files. Rollback after cutover requires the pre-upgrade backup and matching application version. See [setup](setup.md), [verification](verification.md) and [directory navigation](directory-structure.md).
 
+## Weather storage
+
+Weather adds no Prisma models or migrations. Forecast/search results use bounded process-local caches; city selection remains in client memory. Saved coordinates are read with ownership authorization and never updated by weather requests. See [weather storage and API boundaries](weather.md).
+
 ## Structured address snapshots
 
 See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.

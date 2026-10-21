@@ -18,6 +18,10 @@ Requirement identifiers and the ten DEMO scenarios remain stable; the 126 featur
 | REQ-SCOPE-04 | Use sample customer records and fictional people, accounts, service zones, incidents, notices, restoration estimates, and availability. Visibly label synthetic incidents, notices, and seeded water availability as demonstration data. Do not present fictional safety notices as real public advice. |
 | REQ-SCOPE-05 | **Adopted first-release default:** the first release serves one supplier, seeded customer accounts, and supplier staff/admin accounts. A one-week demonstration schedule is an assumption, not a confirmed deadline. |
 
+## Weather addition — 21 October 2026
+
+The owner approved current conditions plus seven daily forecasts on customer Home and supplier Overview, available to customer/staff/admin. Customers start at a saved connection and both clients offer Philippine city search. Weather is informational, independently retryable, attributed to Open-Meteo, and preserves backend connection ownership and existing water-advisory lifecycles. This supplemental feature does not renumber the original brief's requirements or acceptance inventory. See [weather behavior, contract and verification](weather.md).
+
 ## Domain vocabulary
 
 | Term | Meaning and boundary |

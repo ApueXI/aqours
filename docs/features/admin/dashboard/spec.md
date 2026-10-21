@@ -59,6 +59,10 @@
 
 ## HOW
 
+### Weather addition — 21 October 2026
+
+Overview includes an independent weather section for both staff and admins. Users explicitly search/select a Philippine city to see current model conditions and seven daily forecasts, Manila times, retrieval time, provider attribution and manual refresh. Failed weather requests retain labeled stale data and retry without blocking metrics. Location changes clear old forecasts; sign-out/dashboard unmount clears selection. See [weather contract and checks](../../../weather.md).
+
 ### Implemented behavior and modules
 
 `aqours-web/src/features/overview/screens/Overview.tsx` implements period/status filtering, counts, definitions and drill-down navigation.

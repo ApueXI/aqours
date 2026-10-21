@@ -4,6 +4,7 @@ import { query } from '../../../services/http-client';
 import { useResource } from '../../../hooks/useResource';
 import { FilterBar } from '../../../components/Filters';
 import { date, label, PageTitle, ResourceState } from '../../../components/Status';
+import { WeatherPanel } from '../../weather/components/WeatherPanel';
 
 function duration(seconds: number | null) {
   if (seconds === null) return 'No completed sample';
@@ -14,6 +15,7 @@ export function Overview() {
   const resource = useResource<Metrics>(`/staff/metrics${query(filters)}`);
   const m = resource.data;
   return <><PageTitle title="Overview"><button onClick={() => void resource.refresh()}>Refresh</button></PageTitle>
+    <WeatherPanel />
     <FilterBar values={filters} onChange={setFilters} />
     <ResourceState resource={resource}>{m && <>
       <p>{date(m.from)} – {date(m.to)} · {m.timezone} · As of {date(m.asOf)}</p>
