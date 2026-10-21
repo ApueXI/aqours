@@ -3,13 +3,13 @@ import L from 'leaflet';
 import type { FeatureCollection } from 'geojson';
 import type { MapResponse, Report } from '@aqours/contracts';
 import { basemapConfig } from '../utils/basemap';
+import { defaultMapCenter, defaultMapZoom } from '../utils/default-view';
 import { createReportLayers, type Visibility } from '../utils/report-layers';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import '../map.css';
 
 export type Bounds = { west: number; south: number; east: number; north: number };
-const initialCenter: L.LatLngExpression = [14.6, 121.01];
 const config = basemapConfig({ apiKey: import.meta.env.VITE_GEOAPIFY_MAPS_API_KEY,
   tileUrl: import.meta.env.VITE_MAP_TILE_URL, attribution: import.meta.env.VITE_MAP_ATTRIBUTION,
   legacyStyleUrl: import.meta.env.VITE_MAP_STYLE_URL });
@@ -33,7 +33,7 @@ export function MapCanvas({ reports, areas, selected, focusKey, onBounds, onSele
   useEffect(() => {
     if (!container.current) return;
     let active = true;
-    const map = L.map(container.current, { center: initialCenter, zoom: 11, minZoom: 3, maxZoom: 20,
+    const map = L.map(container.current, { center: defaultMapCenter, zoom: defaultMapZoom, minZoom: 3, maxZoom: 20,
       maxBounds: [[-85, -180], [85, 180]], maxBoundsViscosity: 1, zoomControl: false,
       zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false });
     L.control.zoom({ position: 'topright' }).addTo(map);
@@ -74,7 +74,7 @@ export function MapCanvas({ reports, areas, selected, focusKey, onBounds, onSele
     <div className="map-layer-toolbar" aria-label="Map layers">
       {Object.entries(visibility).map(([key, value]) => <label key={key}><input type="checkbox" checked={value}
         onChange={event => setVisibility(previous => ({ ...previous, [key]: event.target.checked }))} />{layerLabels[key as keyof Visibility]}</label>)}
-      <button type="button" onClick={() => runtime.current?.map.setView(initialCenter, 11)}>Reset view</button>
+      <button type="button" onClick={() => runtime.current?.map.setView(defaultMapCenter, defaultMapZoom)}>Reset view</button>
     </div>
     {failure && <div className="notice map-provider-notice" role="alert"><p>{failure} Report locations remain available independently of street tiles.</p>
       {config.url && <button type="button" onClick={retry}>Retry basemap</button>}</div>}

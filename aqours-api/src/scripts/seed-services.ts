@@ -9,6 +9,7 @@ import {
 import { insertStock } from "../repositories/stock.repository.js";
 import { reserve } from "../services/distribution/stock.service.js";
 import { fixtureId } from "./seed-identities.js";
+import { seedSiteLocation } from "./seed-locations.js";
 export async function seedServices(
   db: DB,
   context: {
@@ -28,12 +29,9 @@ export async function seedServices(
         db,
         "site",
         {
-          name: ["Demo Riverside Pickup", "Demo Hillcrest Pickup"][n],
-          address: `${n + 1} Fictional Distribution Road`,
+          ...seedSiteLocation(n),
           instructions:
             "Demonstration: bring the issued pickup reference and suitable containers.",
-          latitude: 14.59 + n * 0.01,
-          longitude: 121.0 + n * 0.01,
           active: true,
           demo: true,
         },

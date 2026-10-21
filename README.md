@@ -19,9 +19,9 @@ mkdir -p .local/container-postgres
 # After configuring your root .env, including its absolute project-local data path:
 docker compose up -d db
 # After configuring aqours-api/.env:
-(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/migrate.ts)
-(cd aqours-api && SEED_DEMO=1 TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/seed.ts)
-(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/server.ts)
+(cd aqours-api && npm run migrate)
+(cd aqours-api && SEED_DEMO=1 npm run seed)
+(cd aqours-api && npm run dev)
 ```
 
 In separate terminals:
@@ -34,6 +34,8 @@ npm run android
 ```
 
 Supplier web: `http://localhost:5173`. API: `http://localhost:4000/api/v1`. Android emulator API: `http://10.0.2.2:4000/api/v1`; phones need the development computer's LAN address. Native MapLibre requires a development/native build and does not run in Expo Go.
+
+The demo uses canonical Laguna PSGC addresses with fictional street details and synthetic service geometry. Existing demo databases can use the [explicit location upgrade](docs/setup.md#upgrading-original-demo-locations-to-laguna). Admin Overview and customer Home show current conditions and seven-day [Open-Meteo forecasts](docs/weather.md).
 
 The fictional seed provides `admin@demo.aqours.test`, `staff@demo.aqours.test`, and `customer01@demo.aqours.test` through `customer12@demo.aqours.test`. The fixture password is `DemoWater2026!`; it is exclusively for the development seed. Staff/admin use the supplier app and customers use Android. Starting the API never resets data or automatically runs the seed.
 

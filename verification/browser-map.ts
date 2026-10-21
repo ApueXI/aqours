@@ -13,13 +13,13 @@ await Promise.all([mkdir(output,{recursive:true}),mkdir(temporary,{recursive:tru
 const customer=await login('customer01@demo.aqours.test');
 const other=await login('customer02@demo.aqours.test');
 const admin=await login('admin@demo.aqours.test','web');
-const zone=await ok<Zone>(admin,'POST','/staff/settings/zones',{code:`MAP-${key()}`,name:'Fictional isolated rendered map zone',demo:true,boundary:{type:'Polygon',coordinates:[[[121,14.59],[121.02,14.59],[121.02,14.61],[121,14.61],[121,14.59]]]}});
+const zone=await ok<Zone>(admin,'POST','/staff/settings/zones',{code:`MAP-${key()}`,name:'Fictional isolated rendered map zone',demo:true,boundary:{type:'Polygon',coordinates:[[[121.16,14.22],[121.18,14.22],[121.18,14.24],[121.16,14.24],[121.16,14.22]]]}});
 const fixtures:Report[]=[];
 for (const actor of [customer,other]) {
   let item=await ok<Report>(actor,'POST','/reports',{
     connectionId:(await connection(actor)).id,category:'leak',noticedAt:new Date().toISOString(),
     description:'Fictional independent report at the same rendered map point',
-    location:{address:'Fictional map center',source:'gps',confirmed:true,latitude:14.6,longitude:121.01},
+    location:{address:'Fictional map center',source:'gps',confirmed:true,latitude:14.23,longitude:121.17},
   });
   item=await ok<Report>(admin,'PATCH',`/staff/reports/${item.id}`,{expectedVersion:item.version,zoneId:zone.id,zoneConfirmed:true,reason:'Reviewed independent overlap fixture'});
   fixtures.push(item);

@@ -1,11 +1,29 @@
-# Backend and persistence state
+# Laguna execution state
 
-Status: IMPLEMENTED_LOCALLY_VERIFIED; coordinated release awaits live provider verification.
+COMPLETE — 2026-10-22; cycle3/5. All acceptance criteria verified; implementation commit408968e succeeded. Branch feature/laguna-psgc-seeds, clean baseline7aa94c2. Prior goal archived at archive/pre-laguna-2026-10-22.
 
-Updated2026-10-20. Lead owns all source/state; all managed workers finished/released or returned confirmed platform usage-limit errors. No worker edits remain. Requested gpt-6.1-sol/high for component implementation/consequential review; effective settings were not exposed. Root .loop/STATE.md preserves the complete ownership/settings history and exact next actions.
+## Ownership and integration
 
-All documented first-release Express routes, four migrations, repeatable fictional seed, revocable sessions/roles/record guards, private decoded images, independent reports/incidents/notices, immutable API guidance, all three assistance types and transactional exact stock are implemented. Latest additions retain GPS accuracy/separate zone review, narrowly projected old/new appointments, immutable human-time formatting and owner-only advisory target context.
+Lead owns integration, verification/docs and shared state. API worker /root/laguna_seed requested gpt-6.1-sol/high for conservative fixture recognition and transactional upgrade; completed, changes reviewed/integrated. Weather worker /root/laguna_weather requested gpt-6.1-sol/medium for focused deterministic verification; completed, changes reviewed/integrated, then independently reviewed upgrade with no actionable defect. Effective settings unexposed; spawn metadata reports names/status only. Managed list confirms both workers completed. No further agents or external runner.
 
-Evidence:18 unit tests/type/lint/build PASS;56 real HTTP/PostgreSQL tests PASS0failed/0skipped. Docker recreate/migration checksums and isolated backup/restore counts/two image hashes/access PASS. Latest logs and original criteria are linked in docs/verification.md and docs/traceability.md. Ordinary API4000 and project-local test PostgreSQL55432 remain healthy; fault wrappers stopped.
+Lead handled map default viewport as tightly coupled integration correction: old Metro Manila camera excluded new seed locations. Applied uncodixfy while preserving existing UI. Exact canonical centers/provenance are in docs/location-and-maps.md and seed-locations.ts. Legacy records view omits newer PSGC JSON; acceptance reads actual domain columns instead. Ordinary database/private .env untouched; explicit v1 upgrade remains an operator command.
 
-Exact next action: final coordinated audit/commit, then operator-private live Geoapify candidate/confidence/confirmation/restriction/quota/timeout/fallback and geocoded-map equality checks. Missing credentials return honest503; no secret collection or fake success. Academic acceptance remains external. Do not mark COMPLETE based on local tests alone.
+## Acceptance evidence
+
+| ID | Result/evidence |
+| --- | --- |
+| AC-001 | PASS fresh seed4 groups; canonical12connections/12reports/2sites; `.local/laguna/evidence/fresh-seed.log` |
+| AC-002 | PASS API synthetic geometry tests plus actual seeded Leaflet11reports/3clusters/unlocated customer12, distinct selections/reset; laguna-browser.log |
+| AC-003 | PASS authentic baselinev1, all unaffected table fingerprints, original immutable events/publications/timestamps, unrelated report; upgrade-final.log |
+| AC-004 | PASS production/opt-in/conflict/late-marker failure rollback; concurrent one-upgrade/one-no-op, full repeat fingerprint; upgrade-final.log |
+| AC-005 | PASS credentials/ownership/exact-stock fresh seed; API35+web20+mobile30 tests,59HTTP scenarios |
+| AC-006 | PASS eight deterministic browser weather checks plus live Open-Meteo Calamba seven-day admin Overview; weather-browser.log/laguna-browser.log |
+| AC-007 | PASS weather HTTP3 plus actual Android29/KVM saved Laguna point, all7days; customer12null coords/unconfirmed zone/city fallback/all7days; native screenshots/XML |
+| AC-008 | PASS weather auth/cache/ownership/failure/retry/obsolete responses, account clearing on Android, eight browser checks |
+| AC-009 | PASS docs/progress reconciled, all final types/lint/builds/repository/diff checks pass; implementation commit408968e succeeded |
+
+API/web builds passed. Current installed Android APK hash3f33bd1ceab1311d409e3ee091c86346058a4a6cfaab08206d7c19a0cc85566c matches retained source APK; customer code unchanged, no rebuild. Evidence root `.local/laguna/evidence/`, with existing map/weather artifact directories additionally retained. Native extra-device, private Geoapify and academic acceptance remain outside this task's verified boundary.
+
+## Resources and next action
+
+Owned PostgreSQL55438, API4007/regression4010, preview5179, emulator5568/ADB5046 are stopped. Project-local data/evidence retained; ordinary services/data untouched. Final types/lint, API/web builds and358 application TypeScript limits/docs links/diff checks pass; all criteria verified with implementation commit408968e. No required implementation work remains. Exact next action: none; operator may run the documented explicit upgrade against an original v1 demo database after backing it up/stopping writers. This final completion checkpoint changes only loop/progress documentation.
