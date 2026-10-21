@@ -6,10 +6,10 @@ import { advisoryKinds, options, zoneOptions } from '../../../components/Filters
 import { date, Demo, label, ResourceState } from '../../../components/Status';
 
 export function AdvisoryPreview({ d }: { d: Pick<Advisory, 'title' | 'kind' | 'text' | 'source' | 'zoneIds' | 'connectionIds' | 'demo' | 'startsAt' | 'endsAt'> }) {
-  return <><h3>{d.title}</h3><Demo value={d.demo} /><p><strong>{label(d.kind)}</strong></p><p className="preserve whitespace-pre-wrap [overflow-wrap:anywhere]">{d.text}</p>
+  return <><h3>{d.title}</h3><Demo value={d.demo} /><p><strong>{label(d.kind)}</strong></p><p className="preserve">{d.text}</p>
     <p>Source: {d.source}</p><p>{d.zoneIds.length} explicit zones · {d.connectionIds.length} explicit connections</p>
     <p>Effective: {date(d.startsAt)} – {date(d.endsAt)}</p>
-    {['boil_water', 'do_not_drink', 'do_not_use'].includes(d.kind) && <p className="notice [border-left:3px_solid] [padding:10px_12px] [margin:12px_0] text-[#854d0e] bg-[#fffbeb] [border-color:#b45309]">This quality restriction remains active until an administrator explicitly lifts it.</p>}
+    {['boil_water', 'do_not_drink', 'do_not_use'].includes(d.kind) && <p className="notice">This quality restriction remains active until an administrator explicitly lifts it.</p>}
   </>;
 }
 export function AdvisoryEditor({ d, zones, connections, refresh }: { d?: Advisory; zones: Zone[]; connections: Connection[]; refresh: () => void }) {
@@ -28,7 +28,7 @@ export function AdvisoryEditor({ d, zones, connections, refresh }: { d?: Advisor
     { name: 'geometry', label: 'Optional approved public boundary', type: 'json', value: d?.geometry ? JSON.stringify(d.geometry) : '', nullable: true },
     ...(d ? [{ name: 'reason', label: 'Revision reason', type: 'textarea' as const, required: true }] : [{ name: 'demo', label: 'Fictional demonstration advisory', type: 'checkbox' as const }]),
   ];
-  return <><ResourceState resource={guidance} /><label className="field flex flex-col gap-[6px] mb-[16px] max-w-[640px] [&_>_span:first-child]:font-[550]"><span>Start from approved guidance (optional)</span>
+  return <><ResourceState resource={guidance} /><label className="field"><span>Start from approved guidance (optional)</span>
     <select value={approvedId} onChange={event => setApprovedId(event.target.value)}><option value="">Choose approved guidance…</option>
       {guidance.data?.map(item => <option value={item.id} key={item.id}>{label(item.kind)} · v{item.version} · {item.source}</option>)}
     </select></label>

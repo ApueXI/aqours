@@ -1,6 +1,6 @@
 # Aqours
 
-Aqours connects a water supplier and its customers through reporting, incident updates, independent advisories and three assistance services. This repository contains a TypeScript Express/PostgreSQL API, an Expo Android customer app and a React supplier workspace with MapLibre.
+Aqours connects a water supplier and its customers through reporting, incident updates, independent advisories and three assistance services. This repository contains a TypeScript Express/PostgreSQL API, an Expo Android customer app and a React supplier workspace with direct Leaflet.
 
 The first-release implementation is connected across these applications. Verification is still in progress; [the verification report](docs/verification.md) records executed API/database/browser/native checks and outstanding live-provider work. Fictional fixtures and quality notices are demonstration data, never real water-safety advice. Rules-based decision support is implemented; academic acceptance remains externally unverified.
 
@@ -41,6 +41,7 @@ The fictional seed provides `admin@demo.aqours.test`, `staff@demo.aqours.test`, 
 
 - [Setup, configuration, providers and backups](docs/setup.md)
 - [API contract](docs/api.md) and [public TypeScript DTOs](aqours-contracts/src/index.ts)
+- [UI/UX design and navigation](docs/ui-ux.md)
 - [Open-Meteo weather for customers, staff and admins](docs/weather.md)
 - [Demo walkthrough](docs/demo.md)
 - [Requirements and feature index](docs/README.md)
@@ -63,6 +64,7 @@ npm run test:operations
 npm run test:quality
 npm run test:recovery
 npm run test:map
+npm run test:ux
 npm run test:seed
 npm run check:repository
 ```

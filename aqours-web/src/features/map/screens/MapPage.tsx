@@ -1,21 +1,28 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Advisory, MapResponse, Report, StaffIncident } from '@aqours/contracts';
 import { query } from '../../../services/http-client';
 import { useResource } from '../../../hooks/useResource';
 import { useAllRecords } from '../../../hooks/useAllRecords';
 import { useReferences } from '../../../hooks/useReferences';
 import { FilterBar } from '../../../components/Filters';
-import { Pagination } from '../../../components/Pagination';
 import { label, PageTitle, ResourceState } from '../../../components/Status';
 import { MapCanvas, type Bounds } from '../components/MapCanvas';
+import { MapReportList } from '../components/MapReportList';
 import { areaFeatures } from '../utils/layers';
+import { mapFilters, mapLocation } from '../utils/map-state';
 import { detailLink } from '../../../app/navigation';
 
 export function MapPage({ params }: { params: URLSearchParams }) {
-  const [filters, setFilters] = useState<Record<string, string>>(() => Object.fromEntries(params));
+  const filters = mapFilters(params);
+  const selectedId = params.get('selected') || undefined;
+  const urlUnlocated = params.get('unlocated') === '1';
+  const [unlocated, setUnlocated] = useState(urlUnlocated);
+  useEffect(() => setUnlocated(urlUnlocated), [urlUnlocated]);
+  const view = params.get('view') === 'map' ? 'map' : 'list';
   const [bounds, setBounds] = useState<Bounds>({ west: 120.9, south: 14.5, east: 121.1, north: 14.7 });
-  const [unlocated, setUnlocated] = useState(false);
   const [offset, setOffset] = useState(0);
+  const [focusKey, setFocusKey] = useState(0);
+  const summary = useRef<HTMLElement>(null);
   const refs = useReferences();
   const incidents = useAllRecords<StaffIncident>('/staff/incidents');
   const advisories = useAllRecords<Advisory>('/staff/advisories');
@@ -23,24 +30,44 @@ export function MapPage({ params }: { params: URLSearchParams }) {
   const list = useAllRecords<Report>(`/staff/reports${query(filters)}`);
   const areas = useMemo(() => areaFeatures(refs.zones.data || [], incidents.data || [], advisories.data || []), [refs.zones.data, incidents.data, advisories.data]);
   const rows = (list.data || []).filter(item => !unlocated || item.latitude === null || item.longitude === null);
+  const selected = list.data?.find(item => item.id === selectedId);
+  useEffect(() => {
+    if (selected && view === 'map' && window.matchMedia('(max-width: 850px)').matches) summary.current?.focus({ preventScroll: true });
+  }, [selected?.id, view, focusKey]);
+  const returnTo = mapLocation(filters, { selected: selectedId, view, unlocated });
+  const navigate = (changes: { selected?: string; view?: string; unlocated?: boolean }) => {
+    window.location.hash = mapLocation(filters, { selected: selectedId, view, unlocated, ...changes });
+  };
+  const select = (id: string) => { setFocusKey(value => value + 1); navigate({ selected: id, view: 'map' }); };
+  const open = (id: string) => { window.location.hash = detailLink('reports', id, returnTo); };
   const refresh = () => { void reports.refresh(); void list.refresh(); void incidents.refresh(); void advisories.refresh(); };
+
   return <><PageTitle title="Report map"><a href={`#/reports${query(filters)}`}>Open inbox with filters</a><button onClick={refresh}>Refresh</button></PageTitle>
-    <FilterBar values={filters} zones={refs.zones.data} onChange={next => { setFilters(next); setOffset(0); }} />
-    <p className="hint text-[#475569] text-[13px]">Normal reports: teal · High priority: amber · Urgent: red. Service zones: gray · Published incident areas: teal · Official advisory areas: amber. Select a report for details, then open it to review.</p>
+    <FilterBar values={filters} zones={refs.zones.data} owners={refs.users.data} priority onChange={next => {
+      window.location.hash = mapLocation(next, { view, unlocated }); setOffset(0);
+    }} />
     <ResourceState resource={reports}>{reports.data && <p>{reports.data.features.length} mapped of {reports.data.total} matching reports in the viewport · {reports.data.unlocatedCount} unlocated reports across the selected filters</p>}
-      {reports.data?.truncated && <p className="notice [border-left:3px_solid] [padding:10px_12px] [margin:12px_0] text-[#854d0e] bg-[#fffbeb] [border-color:#b45309]">Results are capped at {reports.data.limit} markers. Zoom in or narrow filters to inspect all locations.</p>}
+      {reports.data?.truncated && <p className="notice">Results are capped at {reports.data.limit} markers. Zoom in or narrow filters to inspect all locations.</p>}
       {reports.data?.features.length === 0 && <p>No mapped reports in this viewport. This does not establish normal supply or safe water.</p>}
     </ResourceState>
-    <MapCanvas reports={reports.data} areas={areas} onBounds={setBounds} onSelect={id => { window.location.hash = detailLink('reports', id, `/map${query(filters)}`); }} />
-    <p className="hint text-[#475569] text-[13px]">Clusters change with zoom. They do not confirm incidents, shared supply, severity, or outage boundaries. Published demonstration shapes retain their label when selected.</p>
+    <div className="map-mobile-view" aria-label="Report view">
+      <button type="button" aria-pressed={view === 'list'} onClick={() => navigate({ view: 'list' })}>List</button>
+      <button type="button" aria-pressed={view === 'map'} onClick={() => navigate({ view: 'map' })}>Map</button>
+    </div>
+    <div className="map-workspace" data-view={view}>
+      <MapReportList resource={list} rows={rows} selectedId={selectedId} returnTo={returnTo} unlocated={unlocated} offset={offset}
+        onUnlocated={value => { setUnlocated(value); navigate({ unlocated: value }); setOffset(0); }} onOffset={setOffset} onSelect={select} />
+      <section className="map-map-panel" aria-label="Map and selected report">
+        <MapCanvas reports={reports.data} areas={areas} selected={selected} focusKey={focusKey} onBounds={setBounds} onSelect={select} onOpen={open} />
+        <p className="map-legend">Normal: teal · High priority: amber · Urgent: red. Service zones: gray · Published incident areas: teal · Official advisory areas: amber.</p>
+        {selected ? <section ref={summary} tabIndex={-1} className="map-selection" aria-label="Selected report">
+          <h2>{selected.reference}</h2><p>{label(selected.category)} · {label(selected.status)} · {label(selected.priority)} priority</p>
+          <p>{selected.address}</p><p>{selected.latitude === null || selected.longitude === null ? 'No coordinates. Review the recorded address in report details.' : 'Selected report location'}{selected.locationReview ? ' · Location review needed' : ''}</p>
+          <div className="map-selection-actions"><a href={detailLink('reports', selected.id, returnTo)}>Open full report</a><button type="button" onClick={() => navigate({ selected: undefined })}>Clear selection</button></div>
+        </section> : <p className="map-selection">Select a report from the list or a map marker to review its location and status.</p>}
+        <p className="map-legend">Clusters change with zoom. They do not confirm incidents, shared supply, severity, or outage boundaries. Select overlapping reports by expanding their cluster. Published demonstration shapes retain their label when selected.</p>
+      </section>
+    </div>
     <ResourceState resource={refs.zones} /><ResourceState resource={incidents} /><ResourceState resource={advisories} />
-    <section><h2>Report list</h2><label className="check-field flex items-center flex-wrap gap-[8px] mb-[16px] [&_>_.hint]:basis-[100%]"><input type="checkbox" checked={unlocated} onChange={event => { setUnlocated(event.target.checked); setOffset(0); }} />Show only reports without coordinates</label>
-      <ResourceState resource={list}>{list.data && <>
-        {rows.length === 0 ? <p>No reports match this list.</p> : <div className="table-scroll w-full overflow-x-auto"><table><thead><tr><th>Reference</th><th>Category / status</th><th>Issue address</th><th>Location</th></tr></thead><tbody>
-          {rows.slice(offset, offset + 30).map(item => <tr key={item.id}><td><a href={detailLink('reports', item.id, `/map${query(filters)}`)}>{item.reference}</a></td><td>{label(item.category)} · {label(item.status)}</td><td>{item.address}</td><td>{item.latitude === null ? 'No coordinates' : 'Located'}{item.locationReview ? ' · Review needed' : ''}</td></tr>)}
-        </tbody></table></div>}
-        <Pagination offset={offset} total={rows.length} onChange={setOffset} />
-      </>}</ResourceState>
-    </section>
   </>;
 }

@@ -3,29 +3,32 @@ import path from 'node:path';
 import {mkdir,writeFile,readFile} from 'node:fs/promises';
 import {chromium,expect} from '@playwright/test';
 import type {Report,Zone} from '../aqours-contracts/src/index.ts';
-import {connection,fixturePassword,key,login,ok} from './harness.ts';
+import {connection,denied,fixturePassword,key,login,ok} from './harness.ts';
+
+// Start the web process with VITE_MAP_TILE_URL=https://tiles.example.test/{z}/{x}/{y}.png.
+// Automated pan/zoom uses local images and never requests public provider tiles.
 const output=path.resolve('.local/evidence');
 const temporary=path.resolve('.cache/tmp');
 await Promise.all([mkdir(output,{recursive:true}),mkdir(temporary,{recursive:true})]);
 const customer=await login('customer01@demo.aqours.test');
+const other=await login('customer02@demo.aqours.test');
 const admin=await login('admin@demo.aqours.test','web');
 const zone=await ok<Zone>(admin,'POST','/staff/settings/zones',{code:`MAP-${key()}`,name:'Fictional isolated rendered map zone',demo:true,boundary:{type:'Polygon',coordinates:[[[121,14.59],[121.02,14.59],[121.02,14.61],[121,14.61],[121,14.59]]]}});
-let item=await ok<Report>(customer,'POST','/reports',{
-  connectionId:(await connection(customer)).id,category:'leak',noticedAt:new Date().toISOString(),
-  description:'Fictional exact-coordinate rendered-map fixture',
-  location:{address:'Fictional map center',source:'gps',confirmed:true,latitude:14.6,longitude:121.01},
-});
-item=await ok<Report>(admin,'PATCH',`/staff/reports/${item.id}`,{expectedVersion:item.version,zoneId:zone.id,zoneConfirmed:true,reason:'Reviewed isolated map test point'});
-let companion=await ok<Report>(customer,'POST','/reports',{
-  connectionId:(await connection(customer)).id,category:'leak',noticedAt:new Date().toISOString(),
-  description:'Fictional independent report at the same rendered map point',
-  location:{address:'Fictional map center',source:'gps',confirmed:true,latitude:14.6,longitude:121.01},
-});
-companion=await ok<Report>(admin,'PATCH',`/staff/reports/${companion.id}`,{expectedVersion:companion.version,zoneId:zone.id,zoneConfirmed:true,reason:'Reviewed independent cluster fixture'});
+const fixtures:Report[]=[];
+for (const actor of [customer,other]) {
+  let item=await ok<Report>(actor,'POST','/reports',{
+    connectionId:(await connection(actor)).id,category:'leak',noticedAt:new Date().toISOString(),
+    description:'Fictional independent report at the same rendered map point',
+    location:{address:'Fictional map center',source:'gps',confirmed:true,latitude:14.6,longitude:121.01},
+  });
+  item=await ok<Report>(admin,'PATCH',`/staff/reports/${item.id}`,{expectedVersion:item.version,zoneId:zone.id,zoneConfirmed:true,reason:'Reviewed independent overlap fixture'});
+  fixtures.push(item);
+}
+const [item,companion]=fixtures;
+await denied(customer,'GET',`/reports/${companion.id}`);
 const context=await chromium.launchPersistentContext(path.resolve('.local/map-browser-profile'),{
   executablePath:'/usr/bin/chromium',headless:true,viewport:{width:1440,height:1000},
-  env:{...process.env,TMPDIR:temporary},
-  args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'],
+  env:{...process.env,TMPDIR:temporary},args:['--no-sandbox'],
 });
 await context.clearCookies();
 const page=await context.newPage();
@@ -39,89 +42,141 @@ const providerFailures:string[]=[];
 const mapWrites:string[]=[];
 let observingMap=false;
 const passed=(message:string)=>{evidence.push(message);console.log('PASS',message);};
-page.on('pageerror',error=>errors.push(error.message));
-page.on('console',message=>{ if(message.type()==='error')providerFailures.push(message.text()); });
+page.on('pageerror',error=>errors.push(error.stack || error.message));
 page.on('request',request=>{
   if(observingMap&&request.url().includes('/api/v1/')&&!['GET','OPTIONS'].includes(request.method()))
     mapWrites.push(`${request.method()} ${new URL(request.url()).pathname}`);
 });
 page.on('response',response=>{
   if(response.url().includes('/staff/map/reports?')&&response.status()===200)mapQueries.push(new URL(response.url()));
-  if(response.url().startsWith('https://demotiles.maplibre.org/')&&response.status()>=400)providerFailures.push(`${response.status()} ${response.url()}`);
-});
-page.on('requestfailed',request=>{
-  if(request.url().startsWith('https://demotiles.maplibre.org/'))providerFailures.push(`${request.failure()?.errorText} ${request.url()}`);
+  if(response.url().startsWith('https://tiles.example.test/')&&response.status()>=400)providerFailures.push(String(response.status()));
 });
 const width=()=>{
   const query=mapQueries.at(-1)?.searchParams;
   return query?Number(query.get('east'))-Number(query.get('west')):360;
 };
+const tile=await readFile(new URL('./fixtures/street-tile.png',import.meta.url));
+const localTile='https://tiles.example.test/**';
 try{
+  await page.route(localTile,route=>route.fulfill({contentType:'image/png',body:tile}));
+  // Fail if a test accidentally falls back to public tiles.
+  await page.route('https://maps.geoapify.com/**',route=>route.abort());
+  await page.route('https://tile.openstreetmap.org/**',route=>route.abort());
   await page.goto(web);
   await page.getByLabel('Email',{exact:true}).fill('staff@demo.aqours.test');
   await page.getByLabel('Password',{exact:true}).fill(fixturePassword);
   await page.getByRole('button',{name:'Sign in',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Overview',exact:true})).toBeVisible();
-  // Deterministic local raster fixture: never pan/zoom against public OSM in automation.
-  await page.route('https://tile.openstreetmap.org/**', async route => route.fulfill({ contentType:'image/png', body:await readFile(new URL('./fixtures/street-tile.png', import.meta.url)) }));
-  const style=page.waitForResponse(response=>response.url().startsWith('https://tile.openstreetmap.org/'),{timeout:30000});
+  const raster=page.waitForResponse(response=>response.url().startsWith('https://tiles.example.test/'),{timeout:30000});
   observingMap=true;
   await page.goto(`${web}/#/map?zoneId=${zone.id}`);
-  assert.equal((await style).status(),200);
-  await expect.poll(()=>mapQueries.some(url=>url.searchParams.get('west')!=='120.9'),{timeout:30000}).toBe(true);
-  await expect(page.locator('.maplibregl-canvas')).toBeVisible();
-  await expect(page.getByText('The basemap or map rendering is unavailable. Use the report list below; the report service can still be available.',{exact:true})).toHaveCount(0);
-  passed('Default street style loads a local raster fixture in real MapLibre/WebGL and requests viewport data');
-  await expect(page.getByText('2 mapped of 2 matching reports in the viewport · 0 unlocated reports across the selected filters', {exact:true})).toBeVisible();
-  await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
-  const initialBox=await page.locator('.maplibregl-canvas').boundingBox();
-  assert.ok(initialBox);
-  const clusteredWidth=width();
-  await page.locator('.maplibregl-canvas').click({position:{x:initialBox.width/2,y:initialBox.height/2}});
-  await expect.poll(width,{timeout:15000}).toBeLessThan(clusteredWidth*.75);
-  await expect(page.getByRole('heading',{name:'Report map',exact:true})).toBeVisible();
-  passed('Selecting a real two-report cluster expands its viewport instead of creating or merging incidents');
-  for(let step=0;step<7&&width()>=.005;step++){
-    const before=width();
-    await page.getByRole('button',{name:'Zoom in',exact:true}).click();
-    await expect.poll(width,{timeout:15000}).toBeLessThan(before*.75);
+  assert.equal((await raster).status(),200);
+  await expect.poll(()=>mapQueries.some(url=>url.searchParams.get('west')!=='120.9')).toBe(true);
+  await expect(page.locator('.leaflet-container')).toBeVisible();
+  await expect(page.locator('.leaflet-tile-loaded').first()).toBeVisible();
+  await expect(page.getByRole('alert').filter({hasText:/Street tiles/})).toHaveCount(0);
+  await expect(page.getByText('2 mapped of 2 matching reports in the viewport · 0 unlocated reports across the selected filters',{exact:true})).toBeVisible();
+  passed('Leaflet renders local raster tiles and requests actual bounded viewport data');
+
+  await expect(page.locator('.report-cluster')).toHaveCount(1);
+  await page.locator('.report-cluster').click();
+  await expect(page.locator('.report-marker')).toHaveCount(2);
+  const centers=await page.locator('.report-marker').evaluateAll(nodes=>nodes.map(node=>{const b=node.getBoundingClientRect();return [b.x,b.y];}));
+  assert.notDeepEqual(centers[0],centers[1]);
+  for (const fixture of fixtures) {
+    await page.locator(`.report-marker[title^="${fixture.reference}"]`).click();
+    await expect(page.locator('.leaflet-popup')).toHaveCount(1);
+    await expect(page.locator('.leaflet-popup').getByText(fixture.reference,{exact:true})).toBeVisible();
+    await expect(page.getByRole('region',{name:'Selected report',exact:true})).toContainText(fixture.reference);
+    await expect(page).toHaveURL(new RegExp(`selected=${fixture.id}`));
   }
-  assert.ok(width()<.01);
+  passed('A real overlapping-report cluster expands into distinct selectable markers');
+
+  const before=width();
+  await page.getByRole('button',{name:'Zoom in',exact:true}).click();
+  await expect.poll(width).toBeLessThan(before*.75);
   assert.ok(mapQueries.every(url=>url.searchParams.get('zoneId')===zone.id));
-  const current=await ok<Report>(customer,'GET',`/reports/${item.id}`);
-  assert.equal(current.version,item.version);
-  assert.equal(current.incidentId,item.incidentId);
-  assert.equal(current.priority,item.priority);
-  const second=await ok<Report>(customer,'GET',`/reports/${companion.id}`);
-  assert.equal(second.version,companion.version);
-  assert.equal(second.incidentId,companion.incidentId);
-  assert.equal(second.priority,companion.priority);
+  for (const [index,actor] of [customer,other].entries()) {
+    const current=await ok<Report>(actor,'GET',`/reports/${fixtures[index].id}`);
+    assert.equal(current.version,fixtures[index].version);
+    assert.equal(current.incidentId,fixtures[index].incidentId);
+    assert.equal(current.priority,fixtures[index].priority);
+  }
   assert.deepEqual(mapWrites,[]);
   passed('Zoom changes query bounds without changing report priority, version or incident association');
+
   await expect(page.getByRole('link',{name:'OpenStreetMap',exact:true})).toBeVisible();
-  for (const name of ['Reports','Service zones','Incident areas','Advisory areas']) {
+  await expect(page.locator('.leaflet-control-scale')).toContainText(/m|km/);
+  for (const [name,color] of [['Service zones','#64748b'],['Incident areas','#0f766e'],['Advisory areas','#b45309']]) {
     const control=page.getByLabel('Map layers',{exact:true}).getByRole('checkbox',{name,exact:true});
-    await control.uncheck(); await expect(control).not.toBeChecked(); await control.check();
+    await control.uncheck(); await expect(page.locator(`path[stroke="${color}"]`)).toHaveCount(0);
+    await control.check();
   }
-  passed('Independent layer controls preserve viewport data and visible attribution');
+  const reportLayer=page.getByLabel('Map layers',{exact:true}).getByRole('checkbox',{name:'Reports',exact:true});
+  await reportLayer.uncheck(); await expect(page.locator('.report-marker,.report-cluster')).toHaveCount(0); await reportLayer.check();
+  await expect(page.locator('path[stroke="#64748b"]').first()).toBeVisible();
+  passed('Independent Leaflet layer controls preserve visible attribution and metric scale');
+
+  const row=page.getByRole('row').filter({has:page.getByRole('link',{name:item.reference,exact:true})});
+  await row.getByRole('button',{name:`Select ${item.reference} on map`,exact:true}).click();
+  await expect(page.locator('.leaflet-popup')).toHaveCount(1);
+  await expect(page.locator('.leaflet-popup').getByText(item.reference,{exact:true})).toBeVisible();
+  await expect(page.locator('.leaflet-popup').getByText('Fictional map center',{exact:true})).toBeVisible();
+  await page.locator('.leaflet-popup').getByRole('button',{name:'Open report',exact:true}).click();
+  await expect(page.getByRole('heading',{name:item.reference,exact:true})).toBeVisible();
+  await page.getByRole('link',{name:'Back to inbox',exact:true}).click();
+  await expect(page.getByRole('region',{name:'Selected report',exact:true})).toContainText(item.reference);
+  passed('List and persisted-point selection open the correct authorized report and retain return context');
+
+  await page.setViewportSize({width:390,height:844});
+  await page.getByRole('button',{name:'List',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Report list',exact:true})).toBeVisible();
+  await expect(page.locator('.leaflet-container')).toBeHidden();
+  await page.getByRole('button',{name:'Map',exact:true}).click();
+  await expect(page.locator('.leaflet-container')).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Report list',exact:true})).toBeHidden();
+  const dimensions=await page.locator('.leaflet-container').boundingBox();
+  assert.ok(dimensions&&dimensions.width>250&&dimensions.width<391);
+  await page.screenshot({path:path.join(output,'web-map-mobile.png'),fullPage:true});
+  passed('Narrow screens switch between usable list and resized map views');
+
+  await page.setViewportSize({width:1440,height:1000});
+  await page.unroute(localTile);
+  await page.route(localTile,route=>route.abort('failed'));
+  await page.reload();
+  await expect(page.getByRole('alert').filter({hasText:'Street tiles could not load'})).toBeVisible();
+  await expect(page.getByRole('link',{name:item.reference,exact:true})).toBeVisible();
+  await page.unroute(localTile);
+  await page.route(localTile,route=>route.fulfill({contentType:'image/png',body:tile}));
+  const recovery=page.waitForResponse(response=>response.url().startsWith('https://tiles.example.test/'));
+  await page.getByRole('button',{name:'Retry basemap',exact:true}).click();
+  assert.equal((await recovery).status(),200);
+  await expect(page.getByRole('alert').filter({hasText:'Street tiles could not load'})).toHaveCount(0);
+  await expect(page.locator('.leaflet-tile-loaded').first()).toBeVisible();
+  passed('Raster failures keep the report list usable and recover through an explicit basemap retry');
   await page.screenshot({path:path.join(output,'web-map-rendered.png'),fullPage:true});
-  const box=await page.locator('.maplibregl-canvas').boundingBox();
-  assert.ok(box);
-  await page.locator('.maplibregl-canvas').click({position:{x:box.width/2,y:box.height/2}});
-  const reference=new RegExp(`^(?:${item.reference}|${companion.reference})$`);
-  await expect(page.locator('.maplibregl-popup').getByText(reference)).toBeVisible();
-  await expect(page.locator('.maplibregl-popup').getByText('Fictional map center',{exact:true})).toBeVisible();
-  await expect(page.locator('.maplibregl-popup')).toHaveCount(1);
-  await page.getByRole('button',{name:'Open report',exact:true}).click();
-  await expect(page.getByRole('heading',{name:reference})).toBeVisible();
-  passed('Rendered point at the persisted longitude/latitude opens its authorized report');
+  for (const viewportWidth of [1440,768,390]) {
+    await page.goto(`${web}/#/map?zoneId=${zone.id}&view=map`);
+    await expect(page.locator('.leaflet-container')).toBeVisible();
+    await page.setViewportSize({width:viewportWidth,height:900});
+    await page.evaluate(()=>{
+      document.querySelector<HTMLAnchorElement>('.leaflet-control-zoom-in')?.click();
+      window.location.hash='/reports';
+    });
+    await expect(page.getByRole('heading',{name:'Report inbox',exact:true})).toBeVisible();
+  }
+  await page.waitForTimeout(500);
   assert.deepEqual(errors,[]);
-  passed('No uncaught JavaScript exceptions during actual map rendering and selection');
+  passed('Rapid zoom, responsive resize and route exit tear down Leaflet without deferred callbacks');
+  assert.deepEqual(errors,[]);
+  assert.deepEqual(mapWrites,[]);
+  passed('No uncaught JavaScript exceptions or map-originated writes during Leaflet interaction');
 }catch(error){
   await page.screenshot({path:path.join(output,'web-map-render-failure.png'),fullPage:true});
   throw error;
 }finally{
   await writeFile(path.join(output,'browser-map-results.txt'),evidence.join('\n')+'\n');
   await writeFile(path.join(output,'browser-map-provider-errors.txt'),providerFailures.join('\n')+'\n');
+  await writeFile(path.join(output,'browser-map-runtime-errors.txt'),errors.join('\n')+'\n');
   await context.close();
 }

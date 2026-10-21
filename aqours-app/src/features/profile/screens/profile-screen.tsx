@@ -9,9 +9,9 @@ export default function Profile() {
   const { logout } = useSession();
   const profile = useResource<User>('/me');
   const connections = useResource<Connection[]>('/me/connections');
-  return <Screen title="Your profile">
+  return <Screen title="Profile">
     <ResourceState {...profile} />
-    {profile.data && <Section><Body>{profile.data.name}</Body><Body>{profile.data.email}</Body><Body>{profile.data.phone ?? 'No phone number on file'}</Body></Section>}
+    {profile.data && <Section title="Account"><Body>{profile.data.name}</Body><Body>{profile.data.email}</Body><Body>{profile.data.phone ?? 'No phone number on file'}</Body></Section>}
     <Section title="Service connections">
       <ResourceState {...connections} empty={connections.data?.length === 0 && 'No saved connection. Contact the supplier for provisioning.'} />
       {connections.data?.map((connection) => <View key={connection.id} style={styles.item}>
@@ -21,6 +21,6 @@ export default function Profile() {
       </View>)}
     </Section>
     <Body muted>The supplier maintains saved connection details. An alternate issue address only applies to that report.</Body>
-    <Button title="Sign out" onPress={() => void logout()} />
+    <Button title="Sign out" secondary onPress={() => void logout()} />
   </Screen>;
 }

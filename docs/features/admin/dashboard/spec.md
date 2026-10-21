@@ -76,3 +76,5 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 Review metrics unit/API tests and browser overview rendering. Broader production-load behavior is unmeasured; first-resolution history remains distinct from current reopened state.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
+
+Presentation update: [UI/UX design and navigation](../../../ui-ux.md) documents the shared components and revised customer/supplier workflows. Existing acceptance criteria and domain permissions remain unchanged.

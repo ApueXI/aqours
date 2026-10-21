@@ -14,9 +14,9 @@ export function MapLibrePreview({ latitude, longitude }: { latitude: number; lon
     <Map style={{ flex: 1 }} mapStyle={previewStyle} attribution onDidFailLoadingMap={() => setFailed(true)}>
       <Camera initialViewState={{ center: [longitude, latitude], zoom: 15 }} />
       <GeoJSONSource id="issue-location" data={{ type: 'Point', coordinates: [longitude, latitude] }}>
-        <Layer id="issue-location-point" type="circle" paint={{ 'circle-radius': 8, 'circle-color': '#9f2d22', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2 }} />
+        <Layer id="issue-location-point" type="circle" paint={{ 'circle-radius': 8, 'circle-color': '#0f766e', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2 }} />
       </GeoJSONSource>
     </Map>
-    <Text accessibilityRole="link" onPress={() => void Linking.openURL('https://www.openstreetmap.org/copyright')} style={{ fontSize: 12, color: '#332a22', backgroundColor: '#ffffff' }}>© OpenStreetMap contributors</Text>
+    <Text accessibilityRole="link" onPress={() => void Linking.openURL('https://www.openstreetmap.org/copyright')} style={{ fontSize: 12, color: '#16312f', backgroundColor: '#ffffff' }}>© OpenStreetMap contributors</Text>
   </View>;
 }

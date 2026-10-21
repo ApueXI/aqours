@@ -39,6 +39,8 @@ Home also offers [Open-Meteo weather](weather.md) for an owned saved connection 
 4. View saved connection information in profile. Customer editing or reassignment of supplier-maintained connection ownership/address is not specified; do not assume self-service changes.
 5. Refresh notices and notifications in the foreground. Show last-updated time and explicit loading/error/empty states; failure is not evidence that no incident or advisory exists.
 
+The [UI/UX guide](ui-ux.md) describes the current five-tab customer navigation, guided reporting and coordinated supplier inbox/map presentation.
+
 ## 4. Submit and follow a report
 
 1. Choose `outage`, `low_pressure`, `leak` or `water_quality`; enter description, time noticed and guided details.

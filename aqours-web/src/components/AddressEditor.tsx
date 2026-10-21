@@ -26,9 +26,9 @@ export function AddressEditor({ name, label, value, snapshot }: { name: string; 
   const [text, setText] = useState(value || '');
   const complete = parts.at(-1)?.level === 'barangay';
   const formatted = [streetDetails.trim(), ...[...parts].reverse().map(part => part.name), 'Philippines'].filter(Boolean).join(', ');
-  return <fieldset className="mb-[16px]">
+  return <fieldset className="address-editor">
     <legend>{label}</legend>
-    <div className="flex gap-[8px] mb-[12px]">
+    <div className="address-modes" role="group" aria-label="Address entry method">
       <button type="button" aria-pressed={!guided} onClick={() => { if (guided && complete) setText(formatted); setGuided(false); }}>Free-text address</button>
       <button type="button" aria-pressed={guided} onClick={() => setGuided(true)}>Choose Philippine address</button>
     </div>
@@ -36,7 +36,7 @@ export function AddressEditor({ name, label, value, snapshot }: { name: string; 
       {Array.from({ length: parts.length + (complete ? 0 : 1) }, (_, index) => <AddressLevel key={parts[index - 1]?.code || 'regions'}
         parent={parts[index - 1]} selected={parts[index]} onSelect={place => setParts([...parts.slice(0, index), ...(place ? [place] : [])])} />)}
       <label className="field"><span>Street, building, or landmark</span><input maxLength={1000} value={streetDetails} onChange={event => setStreetDetails(event.target.value)} /></label>
-      <p>{formatted}</p><input type="hidden" name={name} value={formatted} />
+      <p className="address-preview">{formatted}</p><input type="hidden" name={name} value={formatted} />
     </> : <label className="field"><span>Full address *</span><textarea aria-label={label} name={name} required maxLength={5000} value={text} onChange={event => setText(event.target.value)} /></label>}
     <input type="hidden" name={`${name}:guided`} value={String(guided)} />
     <input type="hidden" name={`${name}:structured`} value={JSON.stringify(guided && complete ? { barangayCode: parts.at(-1)!.code, streetDetails } : (!guided && snapshot && text === value ? { barangayCode: snapshot.barangayCode, streetDetails: snapshot.streetDetails } : null))} />

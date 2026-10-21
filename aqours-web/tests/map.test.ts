@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import type { Advisory, StaffIncident, Zone, Geometry } from '@aqours/contracts';
 import { areaFeatures } from '../src/features/map/utils/layers';
+import { basemapConfig } from '../src/features/map/utils/basemap';
+import { mapFilters, mapLocation } from '../src/features/map/utils/map-state';
 
 const polygon: Geometry = { type: 'Polygon', coordinates: [[[120.9, 14.5], [121, 14.5], [121, 14.6], [120.9, 14.5]]] };
 const advisory = (fields: Partial<Advisory>): Advisory => ({
@@ -9,6 +11,34 @@ const advisory = (fields: Partial<Advisory>): Advisory => ({
   zoneIds: [], connectionIds: [], geometry: polygon, startsAt: null, endsAt: null,
   state: 'draft', publishedAt: null, liftedAt: null, liftReason: null, version: 1, demo: true,
   updatedAt: '2026-01-01T00:00:00Z', ...fields,
+});
+
+test('Leaflet defaults require a public key, encode it, and retain mandatory Geoapify attribution with overrides', () => {
+  const missing = basemapConfig({});
+  assert.equal(missing.url, null);
+  assert.match(missing.notice!, /not configured/);
+  assert.match(basemapConfig({ legacyStyleUrl: 'https://example.test/style.json' }).notice!, /configure raster/);
+  const configured = basemapConfig({ apiKey: 'public browser/key', attribution: 'Additional source' });
+  assert.equal(configured.url, 'https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=public%20browser%2Fkey');
+  for (const name of ['Geoapify', 'OpenMapTiles', 'OpenStreetMap', 'Additional source']) assert.match(configured.attribution, new RegExp(name));
+  const custom = basemapConfig({ apiKey: 'unused', tileUrl: 'https://tiles.example.test/{z}/{x}/{y}.png', attribution: 'Custom provider' });
+  assert.equal(custom.url, 'https://tiles.example.test/{z}/{x}/{y}.png');
+  assert.match(custom.attribution, /OpenStreetMap/);
+  assert.match(custom.attribution, /Custom provider/);
+  assert.equal(custom.notice, null);
+  assert.match(basemapConfig({ tileUrl: 'https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=public' }).attribution, /OpenMapTiles/);
+});
+
+test('map URL state separates server filters from selection and preserves return context', () => {
+  const filters = mapFilters(new URLSearchParams('category=leak&status=received&zoneId=zone&ownerId=staff&priority=high&selected=private-id&view=map&unlocated=1'));
+  assert.deepEqual(filters, { category: 'leak', status: 'received', zoneId: 'zone', ownerId: 'staff', priority: 'high' });
+  const location = mapLocation(filters, { selected: 'report/id', view: 'map', unlocated: true });
+  const roundtrip = new URLSearchParams(location.split('?')[1]);
+  assert.equal(roundtrip.get('selected'), 'report/id');
+  assert.equal(roundtrip.get('view'), 'map');
+  assert.equal(roundtrip.get('unlocated'), '1');
+  assert.deepEqual(mapFilters(roundtrip), filters);
+  assert.equal(mapLocation({}, { view: 'list', unlocated: false }), '/map');
 });
 test('map areas use published snapshots, exclude drafts, and preserve explicit quality restrictions after end time', () => {
   const zones = [{ name: 'Demo zone', boundary: polygon, demo: true }] as Zone[];

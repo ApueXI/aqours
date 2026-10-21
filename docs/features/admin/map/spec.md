@@ -8,7 +8,7 @@
 
 ## WHAT
 
-- Show authorized staff/admin where reported issues are located using MapLibre GL JS in the React supplier application.
+- Show authorized staff/admin where reported issues are located using direct Leaflet 1.9.4 in the React supplier application.
 - Combine filtered report markers/display clusters, explicit service zones, and published affected-area polygons.
 - Link selected records to the [report inbox](../report/spec.md) and [incident detail](../incident/spec.md).
 - Support triage and navigation without claiming that visual proximity proves a shared outage or service boundary.
@@ -65,7 +65,7 @@
 
 ### Implemented behavior and modules
 
-`aqours-web/src/features/map/screens/MapPage.tsx`, `map/MapCanvas.tsx` and `map/layers.ts` implement MapLibre points/clusters, filters, zone/published shapes and an accessible report list/failure fallback.
+`aqours-web/src/features/map/` implements direct Leaflet points/markercluster, URL-backed filters, zone/published shapes, coordinated report selection and an accessible report list/failure fallback. Geoapify OSM Bright raster tiles use a separate public browser key; [map configuration](../../../location-and-maps.md) documents attribution and migration from web MapLibre settings.
 
 `aqours-api/src/routes/analytics.ts` implements staff-only numeric viewport queries using generated numeric coordinate columns and parameterized filters. Bounds must be ordered and cannot cross the antimeridian. The response has a result cap/truncation count and unlocated count; unlocated records remain reviewable in the inbox. GeoJSON points use longitude then latitude. Layers and clusters never establish network topology or water safety.
 
@@ -73,7 +73,7 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 
 ### Verification and limits
 
-Five actual production MapLibre checks cover live demonstration style, cluster expansion/zoom without writes and authorized point selection; recovery checks cover combined filters/unlocated/API failures. Native NM14 confirms the same persisted GPS point/5m accuracy on preview and supplier canvas; NM16 verifies actual native map404 fallback. Live signed geocoded-point equality remains blocked on private Geoapify configuration.
+Historical first-release MapLibre checks retain their original source boundary. The UI/UX overhaul passes nine production Leaflet checks using intercepted raster tiles: overlap/spiderfy, record selection/return context, bounds/no writes, overlays/scale, narrow views, provider retry and rapid teardown. Recovery checks cover combined filters/unlocated/API failures. Native NM14 confirms the same persisted GPS point/5m accuracy on preview and supplier canvas; NM16 verifies actual native map404 fallback. Live signed geocoded-point equality remains blocked on private Geoapify configuration.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
 

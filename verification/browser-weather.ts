@@ -130,7 +130,9 @@ try {
   await search('Cebu');
   await page.getByRole('button', { name: 'Cebu City, Central Visayas, Philippines', exact: true }).click();
   await expect(weather.getByText('27°C', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Menu', exact: true }).click();
   await page.getByRole('link', { name: 'Reports', exact: true }).click();
+  await page.getByRole('button', { name: 'Menu', exact: true }).click();
   await page.getByRole('link', { name: 'Overview', exact: true }).click();
   await expect(weather.getByText('Select a city to check current weather and the next seven days.')).toBeVisible();
   passed('Staff can use weather; sign-out and leaving the dashboard clear its selection');

@@ -34,5 +34,10 @@ export function FilterBar({ values, onChange, statuses = reportStatuses, zones, 
     }));
     onChange(next);
   };
-  return <form className="filters flex items-end flex-wrap gap-[12px] p-[16px] mb-[20px] [border:1px_solid_#d3dce3] bg-[#fff] [&_.field]:[flex:1_1_155px] [&_.field]:max-w-[240px] [&_.field]:mb-[0] [&_button]:mb-[1px] [@media(max-width:_760px)]:p-[12px] [@media(max-width:_760px)]:gap-[10px] [@media(max-width:_760px)]:[&_.field]:[flex-basis:calc(50%_-_10px)] [@media(max-width:_760px)]:[&_.field]:max-w-none [@media(max-width:_760px)]:[&_.field]:min-w-[135px]" onSubmit={apply}><Fields fields={fields.map(field => ({ ...field, value: values[field.name] }))} /><button type="submit">Apply filters</button></form>;
+  return <form key={JSON.stringify(values)} className="filters" aria-label="Filter records" onSubmit={apply}>
+    <Fields fields={fields.map(field => ({ ...field, value: values[field.name], placeholder: 'All' }))} />
+    <div className="filter-actions"><button className="primary" type="submit">Apply filters</button>
+      {Object.values(values).some(Boolean) && <button type="button" onClick={() => onChange({})}>Clear filters</button>}
+    </div>
+  </form>;
 }

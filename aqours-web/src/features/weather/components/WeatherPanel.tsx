@@ -6,7 +6,7 @@ import { WeatherForecastView } from './WeatherForecastView';
 export function WeatherPanel() {
   const [location, setLocation] = useState<WeatherLocation>();
   const path = location ? `/weather?latitude=${location.latitude}&longitude=${location.longitude}` : null;
-  return <section aria-labelledby="weather-heading" className="mb-6">
+  return <section aria-labelledby="weather-heading" className="weather-panel">
     <h2 id="weather-heading">Weather</h2>
     <WeatherSearch onSelect={setLocation} />
     {!location && <p>Select a city to check current weather and the next seven days.</p>}
