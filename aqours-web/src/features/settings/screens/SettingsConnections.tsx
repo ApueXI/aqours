@@ -32,9 +32,9 @@ export function SettingsConnections() {
   const refs = useReferences();
   const connection = resource.data?.find(item => item.id === selected);
   const refresh = () => void resource.refresh();
-  return <><h2>Service connections</h2><p className="hint text-[#475569] text-[13px]">Saved-address corrections preserve existing report and inspection location snapshots. Unknown zones remain unconfirmed.</p>
+  return <><h2>Service connections</h2><p className="hint">Saved-address corrections preserve existing report and inspection location snapshots. Unknown zones remain unconfirmed.</p>
     <button onClick={refresh}>Refresh connections</button><ResourceState resource={resource}>{resource.data && <>
-      <div className="table-scroll w-full overflow-x-auto"><table><thead><tr><th>Reference</th><th>Address</th><th>Zone</th><th>Review</th><th>Action</th></tr></thead><tbody>
+      <div className="table-scroll"><table><thead><tr><th>Reference</th><th>Address</th><th>Zone</th><th>Review</th><th>Action</th></tr></thead><tbody>
         {resource.data.map(item => <tr key={item.id}><td>{item.reference}</td><td>{item.address}</td><td>{refs.zones.data?.find(zone => zone.id === item.zoneId)?.name || 'Unknown'}</td>
           <td>{item.zoneConfirmed ? 'Confirmed' : 'Review needed'}</td><td><button onClick={() => setSelected(item.id)}>Edit {item.reference}</button></td></tr>)}
       </tbody></table></div><Pagination offset={offset} total={resource.result?.page?.total ?? resource.data.length} onChange={value => { setOffset(value); setSelected(undefined); }} />

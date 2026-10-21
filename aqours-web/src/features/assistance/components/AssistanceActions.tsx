@@ -27,11 +27,12 @@ export function AssistanceActions({ d, users, refresh }: { d: AssistanceRequest;
     { name: 'nextSteps', label: 'Customer next steps', type: 'textarea', required: target === 'completed', omitEmpty: true },
   ];
   return <>
-    {targets.length > 0 && <section><h2>Update assistance</h2>
-      <label className="field flex flex-col gap-[6px] mb-[16px] max-w-[640px] [&_>_span:first-child]:font-[550]"><span>Next status</span><select aria-label="Next status" value={target} onChange={event => setTarget(event.target.value)}>
+    {targets.length > 0 && <section id="assistance-actions" tabIndex={-1}><h2>Update assistance</h2>
+      <p className="hint">Choose the next action for this request. Agreed appointments and service outcomes are shared with the customer.</p>
+      <label className="field"><span>Next status</span><select aria-label="Next status" value={target} onChange={event => setTarget(event.target.value)}>
         {targets.map(value => <option key={value} value={value}>{value === d.status ? 'Reschedule appointment' : label(value)}</option>)}
       </select></label>
-      {target === 'accepted' && d.type === 'water_support' && <p className="notice [border-left:3px_solid] [padding:10px_12px] [margin:12px_0] text-[#854d0e] bg-[#fffbeb] [border-color:#b45309]">Acceptance reserves the requested liters against current session stock. Full or cancelled sessions can be rejected by the server.</p>}
+      {target === 'accepted' && d.type === 'water_support' && <p className="notice">Acceptance reserves the requested liters against current session stock. Full or cancelled sessions can be rejected by the server.</p>}
       <ActionForm key={target} path={`/staff/assistance-requests/${d.id}/transition`} version={d.version} fields={fields}
         extra={{ status: target }} submit={target === d.status ? 'Record reschedule' : `Mark ${label(target).toLowerCase()}`} onDone={refresh} />
     </section>}

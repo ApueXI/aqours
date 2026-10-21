@@ -1,6 +1,8 @@
 # Aqours customer Android application
 
-Expo SDK 57 (`57.0.30`), React Native `0.86.3`, React `19.2.3`, TypeScript 6 and Expo Router. Native MapLibre `11.5.0` requires a rebuilt Android app; Expo Go cannot run this app. The existing Expo stack and npm lockfile are retained. iOS and customer web delivery are outside this release.
+Expo SDK 57 (`57.0.30`), React Native `0.86.3`, React `19.2.3`, TypeScript 6 and Expo Router. Native MapLibre `11.5.0` requires a rebuilt Android app. Expo Go uses a coordinates-only preview so reporting screens can open without MapLibre's native modules. The existing Expo stack and npm lockfile are retained. iOS and customer web delivery are outside this release.
+
+The [UI/UX guide](../docs/ui-ux.md) describes the shared teal components, five bottom tabs, four-stage report creation and explicit assistance review. Existing route URLs remain available; detail/create routes open above the tab navigator.
 
 ## Setup
 
@@ -35,6 +37,20 @@ export EXPO_PUBLIC_MAP_STYLE_URL='' # Use the street default
 `10.0.2.2` reaches the host from the standard Android emulator. For a physical phone use the development computer's reachable LAN address and permit the local API port. The phone's `localhost` refers to the phone. Production API URLs must use HTTPS; `app.config.ts` permits Android cleartext only when an explicitly supplied public API URL starts with `http://`. Change this configuration and rebuild when switching deployment environments.
 
 An empty/unset map style now selects the OpenStreetMap street basemap. Explicit public style settings still take precedence. For deployment choose an appropriately licensed native-compatible map provider, keep its required attribution visible, and restrict any public provider credential. Map rendering and Geoapify geocoding are independent. The private Geoapify key stays in Express. A missing or failed map does not prevent address-based reporting.
+
+## Run in Expo Go
+
+After setup above, use an Expo Go version compatible with SDK 57. From `aqours-app/`, start Metro and scan its QR code in Expo Go:
+
+```sh
+npm run start -- --go --clear
+```
+
+For a physical phone, supply `EXPO_PUBLIC_API_URL` with the development computer's reachable LAN address and keep the phone on a network that can reach it. The emulator-only `10.0.2.2` address will not reach your computer from a phone.
+
+New-report and report-detail screens show latitude/longitude in Expo Go. Saved-address reporting, coordinate confirmation and address-only entry remain available; Expo Go does not evaluate MapLibre or its native street-map setup. Interactive maps require an installed Aqours Android build. The runtime boundary uses SDK 57's [`isRunningInExpoGo()`](https://docs.expo.dev/versions/v57.0.0/sdk/expo/#isrunninginexpogo), keeping custom development and standalone builds on the native map path.
+
+If an older bundle reports missing `MLRNCameraModule` followed by route default-export warnings, restart with the command above. Both report routes already export their screen components; the failed native import caused those warnings. See the [verification ledger](../docs/verification.md#expo-go-map-fallback--21-october-2026) for automated checks and remaining device checks.
 
 ## Build and run Android
 
@@ -92,7 +108,7 @@ npm test
 npm run export:android
 ```
 
-Eighteen Node tests exercise bearer/envelope/error boundaries, multipart headers, stable report/photo retry intentions, account/version isolation, strict Manila date parsing, owned advisory-context matching and complete pagination/error handling beyond100records. Four regressions execute the installed Expo encoder and three execute the installed RN Android image-source branch. These helper tests supplement the actual [native checks](../docs/native-verification.md), rather than substitute for them. Mobile typecheck/lint and a rebuilt signed release APK pass. The initial offline SDK57 FileSystem install skipped the remote Directory check. A later online installed-Expo dependency check reports up-to-date; direct Directory metadata returns200 with no unsupported listed native dependencies. Five core/local packages are unlisted, so that metadata does not certify them. Actual native builds/runtime provide separate evidence. Live Geoapify still requires private operator configuration.
+Thirty Node helper/component tests exercise bearer/envelope/error boundaries, multipart headers, stable report/photo retry intentions, account/version isolation, strict Manila date parsing, owned advisory-context matching and complete pagination/error handling beyond100records. Four regressions execute the installed Expo encoder and three execute the installed RN Android image-source branch. Nine additional UI behavior checks cover authenticated tab routes, form Back/uncertain locking, wizard validation/draft/receipt behavior and all three reviewed assistance payloads. These helper tests supplement the actual [native checks](../docs/native-verification.md), rather than substitute for them. Mobile typecheck/lint and a rebuilt signed release APK pass. The initial offline SDK57 FileSystem install skipped the remote Directory check. A later online installed-Expo dependency check reports up-to-date; direct Directory metadata returns200 with no unsupported listed native dependencies. Five core/local packages are unlisted, so that metadata does not certify them. Actual native builds/runtime provide separate evidence. Live Geoapify still requires private operator configuration.
 
 All application modules live outside `src/app/`; that directory contains only Expo Router routes/layouts. Handwritten TypeScript/TSX files remain below 300 physical lines. Root documentation describes backend authorization, operations, provider setup, retention and demonstrated limitations.
 

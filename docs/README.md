@@ -2,6 +2,8 @@
 
 Updated **19 October 2026** against the first-release implementation of Water Supply Reporting and Customer Assistance brief **v0.4**. Express/PostgreSQL, the React supplier workspace and connected Expo customer workflows now exist. The earlier Expo-starter baseline is historical. Source implementation and full acceptance are distinct: [verification](verification.md) records executed evidence and gaps, and [traceability](traceability.md) maps the original requirements and criteria.
 
+[UI/UX design and navigation](ui-ux.md) describes the shared teal components, customer navigation/reporting and supplier map workspace.
+
 ## Reference documents
 
 | Document | Purpose |

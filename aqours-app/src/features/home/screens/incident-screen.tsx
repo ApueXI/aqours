@@ -3,10 +3,10 @@ import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Body, Button, Demo, ErrorNotice, Screen, Section, navigate } from '@/components/ui';
 import { ResourceState } from '@/components/resource-state';
+import { StatusLabel } from '@/components/status-label';
 import { IncidentUpdates } from '@/components/timeline';
 import { useResource } from '@/hooks/use-resource';
 import { useCommand } from '@/hooks/use-command';
-import { label } from '@/utils/time';
 
 export function IncidentScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -23,7 +23,7 @@ export function IncidentScreen() {
   return <Screen title="Published incident">
     <ResourceState {...incident} />
     {incident.data && <>
-      <Demo visible={incident.data.demo} /><Body>{incident.data.summary}</Body><Body>{label(incident.data.status)}</Body>
+      <Demo visible={incident.data.demo} /><StatusLabel value={incident.data.status} /><Body>{incident.data.summary}</Body>
       <IncidentUpdates updates={incident.data.updates} />
       <Section title="Is your connection affected?">
         <Body muted>This records your own affected report. Repeating this action reuses your existing report for this incident and connection.</Body>

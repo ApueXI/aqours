@@ -2,6 +2,7 @@ import type { Advisory, Connection } from '@aqours/contracts';
 import { useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
 import { Body, Demo, Screen, Section, styles } from '@/components/ui';
+import { StatusLabel } from '@/components/status-label';
 import { ResourceState } from '@/components/resource-state';
 import { useResource } from '@/hooks/use-resource';
 import { displayTime, label } from '@/utils/time';
@@ -16,7 +17,7 @@ export default function AdvisoryDetail() {
     {advisory.data && <>
       <Demo visible={advisory.data.demo} />
       <Section title={advisory.data.title}>
-        <Body>{label(advisory.data.kind)} · {label(advisory.data.state)}</Body><Body>{advisory.data.text}</Body>
+        <StatusLabel value={advisory.data.state} /><Body>{label(advisory.data.kind)}</Body><Body>{advisory.data.text}</Body>
         <Body muted>Source: {advisory.data.source}</Body><Body muted>Updated {displayTime(advisory.data.updatedAt)} · Revision {advisory.data.version}</Body>
         <Body muted>Published {displayTime(advisory.data.publishedAt)}</Body>
         <ResourceState {...connections} />

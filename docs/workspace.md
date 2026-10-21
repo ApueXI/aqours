@@ -39,6 +39,8 @@ Home also offers [Open-Meteo weather](weather.md) for an owned saved connection 
 4. View saved connection information in profile. Customer editing or reassignment of supplier-maintained connection ownership/address is not specified; do not assume self-service changes.
 5. Refresh notices and notifications in the foreground. Show last-updated time and explicit loading/error/empty states; failure is not evidence that no incident or advisory exists.
 
+The [UI/UX guide](ui-ux.md) describes the current five-tab customer navigation, guided reporting and coordinated supplier inbox/map presentation.
+
 ## 4. Submit and follow a report
 
 1. Choose `outage`, `low_pressure`, `leak` or `water_quality`; enter description, time noticed and guided details.
@@ -157,7 +159,7 @@ The root npm manifest coordinates contract build, typecheck, lint, API/web build
 | `aqours-app/` | Expo `start`, native `android`, `export:android`, `typecheck`, `lint`, `test`; EAS/build configuration is present |
 | Database | Compose PostgreSQL 18.6, project-local persistent data, Prisma migrations with verified legacy adoption, explicit development seed |
 
-The mobile `android` script runs `expo run:android`, which requires the native toolchain; Metro alone does not produce an APK. Expo 57 / React Native 0.86.3 / MapLibre React Native 11.5.0 are configured. Signed standalone dual-architecture APKs and actual KVM-backed Android29/36 workflows are recorded in the [native ledger](native-verification.md), with exact artifact boundaries. CNG/export/type checks remain distinct evidence. Refer to the current [verification ledger](verification.md) before claiming compatibility.
+The mobile `android` script runs `expo run:android`, which requires the native toolchain; Metro alone does not produce an APK. Expo 57 / React Native 0.86.3 / MapLibre React Native 11.5.0 are configured. For an SDK-compatible Expo Go, run `npm --prefix aqours-app run start -- --go --clear` and scan the QR code; report screens display coordinates because Expo Go lacks MapLibre's native modules. Interactive maps require an Aqours native build. Signed standalone dual-architecture APKs and actual KVM-backed Android29/36 workflows are recorded in the [native ledger](native-verification.md), with exact artifact boundaries. CNG/export/type checks remain distinct evidence. Refer to the current [verification ledger](verification.md) before claiming compatibility.
 
 All tool caches, generated outputs, native build work and temporary verification artifacts must remain project-local under the user-authorized setup. Do not repurpose HOME, change global settings, read secret files or install global tooling. Environment examples contain placeholders; database/Geoapify secrets remain on the API. A phone's localhost is the phone: configure a reachable development API address and keep published ports/access deliberate.
 

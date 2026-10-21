@@ -47,7 +47,7 @@ src/
 └── utils/                  # Explicit utilities for dynamic class names
 ```
 
-Tailwind 4 is integrated through Vite. Preserve class markers used by browser checks when changing utility classes. Keep dynamic utility strings explicit so the Tailwind scanner can discover them. MapLibre retains its vendor stylesheet. Native form defaults remain intact because Preflight is not imported.
+Tailwind 4 is integrated through Vite. Preserve class markers used by browser checks when changing utility classes. Keep dynamic utility strings explicit so the Tailwind scanner can discover them. Leaflet and markercluster retain their vendor stylesheets in the map feature. Native form defaults remain intact because Preflight is not imported.
 
 ## Customer app
 

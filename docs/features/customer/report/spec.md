@@ -98,3 +98,5 @@ Actual Android N6–7/N14/N16/N18–19/N31/N33 and NM1–17 cover receipt/histor
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
 
 Implementation update: [PSGC addresses and detailed maps](../../../location-and-maps.md) describes guided alternate addresses, text fallback, historical snapshots, and coordinate confirmation.
+
+Presentation update: [UI/UX design and navigation](../../../ui-ux.md) documents the shared components and revised customer/supplier workflows. Existing acceptance criteria and domain permissions remain unchanged.

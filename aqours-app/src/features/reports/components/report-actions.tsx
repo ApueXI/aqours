@@ -1,7 +1,7 @@
 import type { Message, Report, ReportDetail } from '@aqours/contracts';
 import { useState } from 'react';
 import { View } from 'react-native';
-import { Body, Button, ErrorNotice, Field, Section, styles } from '@/components/ui';
+import { Body, Button, ErrorNotice, Field, Section, colors, styles } from '@/components/ui';
 import { useCommand } from '@/hooks/use-command';
 import { displayTime } from '@/utils/time';
 import { PhotoPicker, PhotoUpload, type Photo } from './photos';
@@ -14,10 +14,11 @@ export function ReportMessages({ report, reload }: { report: ReportDetail; reloa
     const result = await message.execute(`/reports/${report.id}/messages`, { text: text.trim() });
     if (result) { setText(''); await reload(); }
   }
-  return <Section title="Messages">
-    {report.messages.length === 0 && <Body muted>No messages yet.</Body>}
-    {report.messages.map((item) => <View key={item.id} style={styles.item}>
-      <Body>{item.authorRole === 'customer' ? 'You' : 'Supplier'} · {displayTime(item.createdAt)}</Body><Body>{item.text}</Body>
+  return <Section title="Conversation with your supplier">
+    {report.messages.length === 0 && <Body muted>No messages yet. Ask a question or share an update about this report.</Body>}
+    {report.messages.map((item) => <View key={item.id} style={[styles.item, { padding: 12, borderLeftWidth: 2, borderLeftColor: item.authorRole === 'customer' ? colors.border : colors.action, backgroundColor: item.authorRole === 'customer' ? colors.background : colors.tint }]}>
+      <Body>{item.authorRole === 'customer' ? 'You' : 'Supplier'}</Body><Body>{item.text}</Body>
+      <Body muted>{displayTime(item.createdAt)}</Body>
     </View>)}
     <Field label="Message to the supplier" value={text} onChangeText={setText} multiline maxLength={5000} editable={!message.locked} />
     <ErrorNotice error={message.error} />

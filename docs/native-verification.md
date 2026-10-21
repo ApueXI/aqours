@@ -122,3 +122,22 @@ Actual checks on fictional Customer12 cover sign-in, PSGC NCR → City of Calooc
 A separately controlled saved connection at latitude14.6, longitude121.01 renders OSM roads/place/landmark labels, a red point, and visible copyright attribution in the installed app. One black tile remains visible in the captured native preview; this is bounded rendering evidence, not universal graphics compatibility. A second actual native report retains that saved point, the supplier GeoJSON returns `[121.01,14.6]`, and selecting its rendered supplier point opens the matching reference. The comparison exposed and fixed overlapping zone/report popups; the final WebGL regression includes an overlapping zone and passes. Chromium uses local raster fixtures for automated zoom/selection.
 
 Private project-local evidence is in `.local/psgc/native/`, including UI/screenshot captures, installed hash, canonical address readback and coordinate-equality result. Initial boot needed its System UI dialog cleared. The owned emulator/isolated ADB and verification services were stopped after checks. Live signed Geoapify candidates and successful GPS acquisition remain outside this checkpoint; earlier native ledgers retain their original artifact boundaries.
+
+
+## UI/UX overhaul — 21 October 2026
+
+The overhaul was verified on the owned KVM Android 29 x86_64 emulator 5566 with isolated ADB 5044, API 4007 and project-local PostgreSQL 55436/`aqours_ui_test`. Both ARM64/x86_64 release libraries compile offline with the existing SDK/JDK/Gradle toolchain. Physical ARM64, iOS, new live GPS acquisition and signed Geoapify candidates are not certified by these checks.
+
+Artifact A SHA256: `1b3f7dd474448332e913c6e92dd10d9c941cecf6426c49678d734b83f8e11603`. Actual installed checks cover:
+
+- Customer12 sign-in, all five tabs and SecureStore restoration after force-stop.
+- Four-stage reporting with a fictional alternate address; Android Back retains the problem draft, and returning through Location/Photos retains the selected address. The real system photo picker opens/cancels without losing the draft. This run selects no photo and does not claim a new successful upload.
+- Explicit Review/Confirm produces reference `AQ-FF0AE474-FD5`. Authenticated API readback finds exactly one matching report, the retained description/address, null coordinates/review flags and an unchanged saved connection.
+- Actual callback, inspection and 12.50-liter pickup Details→Review→Confirm flows. Callback Back returns to retained details. API readback finds one requested record of each type with the reviewed values and zero stock reserved before supplier acceptance. A separate fictional report-zone review establishes pickup eligibility without changing the saved connection's unknown zone.
+- A controlled persisted point at14.6/121.01 displays actual OpenStreetMap raster streets, a teal point and attribution in native MapLibre. This is a controlled-coordinate preview, not physical GPS/geocoding evidence.
+
+Artifact B is the final source APK, SHA256 `3f33bd1ceab1311d409e3ee091c86346058a4a6cfaab08206d7c19a0cc85566c`. It differs from A only in fitted tab-label rendering after1.3 text scale exposed a shortened Assistance label. Both artifacts pass APK v2 signature verification and independently matching installed/source hashes. B repeats actual five-tab navigation, full visible labels at 1.3 text scale, and saved-session restoration. The emulator's original text scale is restored. Reporting/assistance/map code is unchanged between these artifacts; the A workflow results retain that precise boundary. Final mobile typecheck/lint/all 30 helper/component tests pass.
+
+Ignored evidence and both test APKs are under `.local/ui-ux/`. Relevant evidence includes `native-wizard-final.log`, `native-{callback,inspection-final,water,final,label-final}.log`, report/assistance readback files, native XML/PNG captures, build/signature logs and installed hash files. These APKs embed the isolated test API address and are not deployment artifacts.
+
+Earlier automation failures tapped zero-size/keyboard-obscured fields or reused an existing deep-linked draft; corrected visible-control navigation completed the checks. No application check was weakened or failed attempt counted as passing. Live Geoapify tiles/geocoding and academic acceptance remain operator/external work; see [current verification](verification.md#uiux-overhaul--21-october-2026).

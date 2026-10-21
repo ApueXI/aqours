@@ -2,6 +2,32 @@
 
 Updated 21 October 2026. Source implements the connected first release; release acceptance is **IN PROGRESS**. A native APK build is verified separately from installed Android behavior. Live Geoapify and academic acceptance remain external. No skipped or unavailable check is counted as passed. [Traceability](traceability.md) maps all 84 requirements, 126 original feature criteria and DEMO-001 through DEMO-010 to implementation and the exact assertions/manual checks.
 
+## UI/UX overhaul — 21 October 2026
+
+The shared teal customer/supplier redesign is implemented on `feature/ui-ux-overhaul`; [UI/UX navigation](ui-ux.md) and [map configuration](location-and-maps.md) describe the changes. Current checks use isolated `aqours_ui_test` on PostgreSQL 55436, API 4007 and supplier 5177, with project-local artifacts under `.local/ui-ux/`. No ordinary database or private configuration was read or changed.
+
+- PASS: root typecheck/lint; API 28, web 20 and mobile 30 unit/helper tests; mobile Android Hermes export. Existing HTTP/PostgreSQL 59 checks pass with zero failures/skips.
+- PASS: nine supplier UX checks cover keyboard skip/focus/menu dismissal, filter reload/inbox-map retention, measured primary-action contrast and 44px height, all eight destinations at 1440/768/390px, narrow List/Map switching and no uncaught errors.
+- PASS: production supplier core 23 + maintenance 8 + operations 7 + recovery 15 + quality 7 = 60 connected workflows; guided addresses 4 and weather 8. The phone weather runner opens the new Menu before changing destinations, retaining its original assertions.
+- PASS: nine real Leaflet checks cover local raster rendering, independent overlapping owners, bounds/no writes, layer/scale controls, record popup/return context, narrow layout, tile retry and rapid zoom/resize/route teardown.
+- PASS: offline dual-architecture signed APK builds and actual Android 29 reporting/review, photo-picker cancel/return, draft Back retention, all three assistance submissions/readback, five tabs, SecureStore restoration and controlled native point preview. See [native artifact boundaries](native-verification.md#uiux-overhaul--21-october-2026). Physical ARM64 runtime and new live GPS/geocoding acquisition are not certified.
+- Live Geoapify tiles/geocoding require operator configuration. Automated map checks use an explicitly configured intercepted raster fixture and never claim live-provider success. Academic/physical-device acceptance remains external.
+
+Cycle 1 responsive route changes exposed a deferred Leaflet teardown exception. Cycle 2 guards callbacks/zoom teardown; cycle 3 makes selected-record popups independent of cluster reconciliation. Cycle 4 provides immediate URL-backed checkbox feedback, distinct section/action accessible names and fitted larger-text tab labels. Initial failed attempts remain failed evidence; only the final passing runs are counted. The user caps delivery at four total cycles; no external continuation runner is used.
+
+Owned emulator, isolated ADB, API/preview and PostgreSQL verification processes were stopped after acceptance; data, screenshots and logs remain project-local.
+
+## Expo Go map fallback — 21 October 2026
+
+The report map entry point now uses SDK 57's Expo Go check before loading the native renderer and street-map setup. Expo Go shows the supplied coordinates; Aqours native builds retain MapLibre. Existing route default exports, coordinate confirmation and reporting requests are unchanged. No dependency or migration was added.
+
+- PASS: mobile typecheck, lint and all 21 unit/helper tests, including three map regressions in `aqours-app/tests/map-preview.test.cjs`. The harness executes the actual preview/style modules with native views replaced: Expo Go never evaluates either native map module, Aqours builds preserve point/camera/attribution/request identification, and map failure/retry still works.
+- PASS: Android Hermes export bundles all 1,412 modules into `aqours-app/dist-android/`; this checks bundling rather than device execution.
+- PASS: repository TypeScript line limits/documentation links/criterion inventory and diff review.
+- NOT RUN: new-report/report-detail walkthrough in SDK-compatible Expo Go and an updated installed Aqours map smoke test. The isolated project-local ADB device list was empty; its owned server was stopped after inspection. No new APK or installed-runtime result is claimed. Earlier native APK evidence retains its original source boundary.
+
+Reproduce the Expo Go check using the [mobile launch instructions](../aqours-app/README.md#run-in-expo-go), sign in with an owned customer account, and open new-report and report-detail screens with coordinates. Expect the coordinates-only message without `MLRNCameraModule` or consequent default-export warnings. In a native build of the updated source, verify the same point, map attribution and retry after a failed map load.
+
 ## Open-Meteo weather — 21 October 2026
 
 Current conditions, seven-day forecasts and Philippine city search now work on customer Home and supplier Overview for all three existing roles. See [weather behavior and reproduction commands](weather.md). Tests used dedicated project-local PostgreSQL databases on port55434; ordinary databases and credentials were untouched. Owned API/web/emulator/ADB/PostgreSQL verification processes were stopped, preserving ignored evidence under `.local/weather/`.

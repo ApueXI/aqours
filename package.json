@@ -20,7 +20,8 @@
     "test:quality": "node --experimental-strip-types verification/browser-quality.ts",
     "test:migration": "node --experimental-strip-types verification/prisma-upgrade.ts",
     "test:weather": "TSX_DISABLE_CACHE=1 node --import ./aqours-api/node_modules/tsx/dist/loader.mjs --test --experimental-test-isolation=none verification/weather-http.ts",
-    "test:weather:browser": "TSX_DISABLE_CACHE=1 node --import ./aqours-api/node_modules/tsx/dist/loader.mjs verification/browser-weather.ts"
+    "test:weather:browser": "TSX_DISABLE_CACHE=1 node --import ./aqours-api/node_modules/tsx/dist/loader.mjs verification/browser-weather.ts",
+    "test:ux": "node --experimental-strip-types verification/browser-ux.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.0",

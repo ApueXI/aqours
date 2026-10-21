@@ -3,10 +3,12 @@ import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Body, Button, Demo, ErrorNotice, Field, Screen, Section, navigate } from '@/components/ui';
 import { ResourceState } from '@/components/resource-state';
+import { StatusLabel } from '@/components/status-label';
 import { Timeline } from '@/components/timeline';
 import { useCommand } from '@/hooks/use-command';
 import { useResource } from '@/hooks/use-resource';
 import { displayTime, label } from '@/utils/time';
+import { AssistanceSummary, assistanceNames } from '../components/assistance-summary';
 
 function Cancellation({ request, reload }: { request: AssistanceRequest; reload(): Promise<void> }) {
   const [reason, setReason] = useState('');
@@ -32,17 +34,17 @@ export function AssistanceDetail() {
   return <Screen title={request?.reference ?? 'Assistance detail'}>
     <ResourceState {...resource} />
     {request && <>
-      <Section title={`${label(request.type)} · ${label(request.status)}`}>
+      <Section title={assistanceNames[request.type]}>
+        <StatusLabel value={request.status} />
         <Body muted>Requested {displayTime(request.createdAt)}</Body>
         {request.status === 'requested' && <Body>Awaiting supplier review. An appointment or water allocation is not yet confirmed.</Body>}
         <Body>Agreed appointment: {displayTime(request.appointmentAt)}</Body>
         {request.details.preferredWindow && <Body>Requested window: {request.details.preferredWindow}</Body>}
-        {Object.entries(request.details).filter(([key, value]) => value && !['preferredWindow', 'sessionId'].includes(key)).map(([key, value]) =>
-          <Body key={key}>{key.replace(/([A-Z])/g, ' $1')}: {value}</Body>)}
         {request.reason && <Body>Supplier update: {request.reason}</Body>}
         {request.outcome && <Body>Outcome: {request.outcome}</Body>}
         {request.nextSteps && <Body>Next steps: {request.nextSteps}</Body>}
       </Section>
+      <AssistanceSummary details={request.details} />
       {request.session && <Section title="Pickup arrangements">
         <Demo visible={request.session.demo || request.session.site.demo} />
         <Body>{request.session.site.name}</Body><Body>{request.session.site.address}</Body>

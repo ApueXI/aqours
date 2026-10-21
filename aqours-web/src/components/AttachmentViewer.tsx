@@ -20,7 +20,7 @@ export function AttachmentViewer({ attachment }: { attachment: Attachment }) {
     } catch (problem) { setError(problem); }
     finally { setBusy(false); }
   };
-  return <article className="attachment [&_img]:block [&_img]:max-w-full [&_img]:max-h-[420px] [&_img]:[margin:12px_0] [&_img]:object-contain [padding:12px_0]"><p>{attachment.filename} · {(attachment.byteSize / 1024).toFixed(0)} KB</p>
+  return <article className="attachment"><p>{attachment.filename} · {(attachment.byteSize / 1024).toFixed(0)} KB</p>
     {url ? <><img src={url} alt={`Report attachment: ${attachment.filename}`} /><button type="button" onClick={() => setUrl(undefined)}>Close image</button></> :
       <button type="button" disabled={busy} onClick={() => void open()}>{busy ? 'Loading image…' : 'Open protected image'}</button>}
     <Failure error={error} />

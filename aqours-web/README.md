@@ -2,7 +2,7 @@
 
 Overview includes [Open-Meteo current weather and seven-day forecasts](../docs/weather.md) with Philippine city search, manual refresh, provider attribution and independent retry/stale states for staff and admins.
 
-React and TypeScript supplier workspace built with Vite. MapLibre GL JS renders operational report points, zoom-dependent clusters, service zones, and published incident/advisory polygons. The browser uses the live Express API; no production screen substitutes mock data or a simulated successful save.
+React and TypeScript supplier workspace built with Vite. Direct Leaflet 1.9.4 with markercluster renders operational report points, zoom-dependent clusters, service zones, and published incident/advisory polygons. The browser uses the live Express API; no production screen substitutes mock data or a simulated successful save.
 
 ## Local setup
 
@@ -22,12 +22,14 @@ Public build configuration is documented in [.env.example](.env.example). Supply
 | Variable | Default / meaning |
 | --- | --- |
 | `VITE_API_URL` | `http://localhost:4000/api/v1`; must include the versioned API base |
-| `VITE_MAP_STYLE_URL` | Empty/unset selects the OpenStreetMap street basemap; explicit public styles override it |
-| `VITE_MAP_ATTRIBUTION` | Optional additional attribution required by another style/tile provider |
+| `VITE_GEOAPIFY_MAPS_API_KEY` | Separate public tile-only browser key for Geoapify OSM Bright; required unless a raster override is provided |
+| `VITE_MAP_TILE_URL` | Optional alternate public raster template; replaces web style JSON configuration |
+| `VITE_MAP_ATTRIBUTION` | Provider credit for a custom raster template; Geoapify uses Geoapify/OpenStreetMap/OpenMapTiles attribution |
+| `AQOURS_NO_DOTENV` | Set to `1` for checks using explicit process configuration without loading local environment files |
 
-Map style/tile availability is independent of the API. A basemap failure displays an error while the report list remains available. The selected provider’s attribution is displayed in the map. Geoapify and database credentials belong to the API; never provide them through Vite variables.
+Map style/tile availability is independent of the API. A basemap failure displays an error while the report list remains available. The selected provider’s attribution is displayed in the map. Private Geoapify geocoding and database credentials belong to the API; the intentionally public tile key is a different credential.
 
-MapLibre GL JS 6 uses a separate ESM worker. `MapCanvas.tsx` imports it through Vite's `?worker&url` and calls `setWorkerUrl` before creating a map, following the [official Vite setup](https://maplibre.org/maplibre-gl-js/docs/#esm). The built worker is a same-origin asset; retain it when serving `dist/`. Allow the worker in any later Content Security Policy. No provider secret is embedded in this asset.
+Web `VITE_MAP_STYLE_URL` is retired. Migrate an old MapLibre style JSON to a raster `VITE_MAP_TILE_URL` plus attribution or configure the Geoapify browser key. No MapLibre worker asset is needed on web. The API's private geocoding key and signing secret remain separate and must never enter the browser. See [map configuration](../docs/location-and-maps.md).
 
 ## Implemented supplier workflows
 
@@ -67,19 +69,19 @@ npm --prefix aqours-web run build
 npm --prefix aqours-web run preview
 ```
 
-Preview defaults to port4173, so its origin must match API `WEB_ORIGIN`. To verify the production build with the existing development origin, stop the dev server and run `npm --prefix aqours-web run preview -- --port 5173 --host localhost`. Root `npm run test:browser` checks connected writes; `npm run test:operations` checks exact inbox/report/photo/incident forms; `npm run test:recovery` checks auth failures/throttling, stale/empty dashboards, map recovery/filters and immutable settings; `npm run test:maintenance` checks inspections, settings conflicts/retries, site/session maintenance and link corrections. `npm run test:map` verifies the real public demo style, rendered report selection, cluster expansion, viewport zoom and unchanged persisted reports. Allow at least a minute between login-heavy suites. Map checks require public demo resources to be reachable and never treat their failure as success.
+Preview defaults to port4173, so its origin must match API `WEB_ORIGIN`. To verify the production build with the existing development origin, stop the dev server and run `npm --prefix aqours-web run preview -- --port 5173 --host localhost`. Root `npm run test:browser` checks connected writes; `npm run test:operations` checks exact inbox/report/photo/incident forms; `npm run test:recovery` checks auth failures/throttling, stale/empty dashboards, map recovery/filters and immutable settings; `npm run test:maintenance` checks inspections, settings conflicts/retries, site/session maintenance and link corrections. `npm run test:map` verifies real Leaflet rendering using an intercepted raster fixture, report selection, cluster expansion, viewport zoom and unchanged persisted reports. Root `npm run test:ux` adds keyboard/focus, measured primary-action contrast and responsive navigation/page checks across eight destinations at desktop/tablet/phone widths. Allow at least a minute between login-heavy suites. Map checks use explicit raster test configuration; live Geoapify tile-key verification remains separate.
 
 The Node test runner loads TypeScript through `tsx` without its CLI IPC server or disk cache. The `--experimental-test-isolation=none` setting is available in Node22.13 and retains individual visible results under the verified Node26 environment. Root browser scripts explicitly enable TypeScript stripping for Node22 compatibility. Tests cover cookie/CSRF transport, frozen idempotent retries, definitive conflicts, session revocation, unreadable responses, filter encoding, exact decimal strings, null coordinates, Manila conversion, request transition boundaries, published map geometry, full pagination, and rejection of partial successful lookup results.
 
-The production build typechecks first. MapLibre is a lazy JavaScript chunk and currently exceeds Vite’s advisory 500 KB chunk warning; map loading does not block other sections. No native mobile map or Android verification is implied by this web build.
+The production build typechecks first. Leaflet is loaded by the map feature; no web MapLibre worker is shipped. No native mobile map or Android verification is implied by this web build.
 
 ## Source layout and limits
 
-- `src/api/`: cookie/CSRF HTTP transport, shared errors, filter encoding, and mutation intentions.
-- `src/hooks/`: session lifecycle, hash routes, cancellable resource-state sequencing, and complete paginated reference reads.
+- `src/services/`: cookie/CSRF HTTP transport, shared errors, filter encoding, and mutation intentions.
+- `src/hooks/`: URL-backed queue state, cancellable resources and complete paginated reference reads. `src/app/` owns hash routing; authentication hooks live under the auth feature.
 - `src/components/`: form fields and save/retry behavior, focused workflow controls, protected attachments, histories, and pagination.
-- `src/pages/`: distinct operational screens and settings sections.
-- `src/map/`: MapLibre GL JS lifecycle, clusters/layers, and published geometry projections.
+- `src/features/`: focused operational screens, feature components and settings sections.
+- `src/features/map/`: Leaflet lifecycle, clusters/layers and published geometry projections.
 - `tests/`: client behavior tests using Node’s built-in runner.
 
 Handwritten TypeScript/TSX files remain below the 250-line limit. Large inventories are paginated for display; complete reference selectors, map fallback lists, and pickup-reference lookup currently aggregate pages in memory. This is suited to the demonstration data size; large production deployments should add server-side lookup and reference-search endpoints. Optional polygon entry is validated GeoJSON text rather than a drawing editor. Map clusters are visual aids and never establish an incident association, service-zone confirmation, or water-safety conclusion.

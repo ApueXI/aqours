@@ -19,11 +19,20 @@ Both return the normal `{ data: [...] }` envelope. Entries have `code`, `name`, 
 
 ## Map detail and accuracy
 
-Without an explicit style override, both clients use OpenStreetMap standard raster tiles, showing provider-supplied roads, labels, and landmarks. Supplier maps add a metric scale, reset view, independent report/zone/incident/advisory visibility, and report popups with an explicit Open report action. Popups use text nodes for stored content. Existing viewport filters, truncation counts, clustering, and list fallback remain in place. Customer previews center the point without changing it when panned or zoomed.
+The supplier web uses direct Leaflet 1.9.4 with markercluster. Its default raster provider is Geoapify OSM Bright. The native customer preview retains MapLibre and its OpenStreetMap street default. Both render the stored report location without changing coordinates on pan/zoom. Supplier controls retain metric scale, reset view, independent report/zone/incident/advisory visibility and safe text-node popups. List navigation remains usable when the map provider fails.
 
-`VITE_MAP_STYLE_URL` and `EXPO_PUBLIC_MAP_STYLE_URL` take precedence. Leave them empty/unset to use the street default. `VITE_MAP_TILE_URL` and `EXPO_PUBLIC_MAP_TILE_URL` optionally replace its raster template. These are public settings; never put a private geocoding key in them. Custom providers need their own compatible attribution; supplier `VITE_MAP_ATTRIBUTION` adds provider credit, and native MapLibre's attribution control remains enabled.
+The customer preview entry point checks `isRunningInExpoGo()` before loading the separate native MapLibre renderer and street-map configuration. Expo Go displays the supplied coordinates; native builds retain interactive maps, attribution and retry. See [mobile launch instructions](../aqours-app/README.md#run-in-expo-go).
 
-The public standard tiles are a demo default subject to the [OpenStreetMap tile usage policy](https://operations.osmfoundation.org/policies/tiles/): visible attribution, normal HTTP caching, valid browser referrers and an identifiable native request header. The Android client identifies its OSM requests as Aqours. No offline download or bulk prefetch feature is offered. Automated WebGL tests intercept OSM requests with a local raster fixture rather than fetching public tiles while panning/zooming. Public service availability is best-effort; configure a suitable licensed provider before substantial deployment.
+### Supplier raster configuration
+
+- `VITE_GEOAPIFY_MAPS_API_KEY`: intentionally public, tile-only browser key for Geoapify OSM Bright. Configure it privately through the operator's build environment and restrict it to allowed website origins and provider quotas. It is separate from the API's private geocoding key.
+- `VITE_MAP_TILE_URL`: optional public raster URL template override. Alternate providers require the corresponding `VITE_MAP_ATTRIBUTION` credit.
+- `VITE_MAP_ATTRIBUTION`: provider attribution for a custom raster template. Geoapify maps display Geoapify, OpenStreetMap and OpenMapTiles attribution.
+- `VITE_MAP_STYLE_URL`: retired on web because Leaflet consumes raster tile templates, not MapLibre style JSON. Replace it with a compatible `VITE_MAP_TILE_URL` and attribution, or use the Geoapify browser tile key.
+
+Missing browser-key/template configuration and tile errors produce explicit basemap notices; authorized report markers/list data are separate from tile availability. There is no fabricated success or silent key reuse. Backend address lookup still uses `GEOAPIFY_API_KEY` and `GEOCODE_SIGNING_SECRET` on Express only. Never copy those private credentials into a `VITE_*` variable.
+
+Native `EXPO_PUBLIC_MAP_STYLE_URL` still takes precedence over `EXPO_PUBLIC_MAP_TILE_URL` and the default street style. Keep provider/source attribution visible. The OpenStreetMap demo default is subject to its [tile usage policy](https://operations.osmfoundation.org/policies/tiles/); no offline download/bulk prefetch is offered. Automated map tests use a local raster fixture and explicit test configuration rather than panning/zooming against public tile services.
 
 PSGC cannot establish a street-level point, a service-zone association, or a water-supply boundary. GPS and explicitly confirmed Geoapify candidates supply coordinates. Unlocated addresses remain unlocated and require review; changing an address does not silently relocate a report or assign a service zone. No administrative boundary dataset, routing, satellite imagery, or geocoder replacement is included.
 

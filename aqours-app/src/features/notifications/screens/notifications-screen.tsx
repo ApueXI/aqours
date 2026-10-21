@@ -6,6 +6,7 @@ import { Paging, ResourceState } from '@/components/resource-state';
 import { useSession } from '@/features/auth/hooks/session';
 import { useResource } from '@/hooks/use-resource';
 import { errorText } from '@/services/http-client';
+import { StatusLabel } from '@/components/status-label';
 import { displayTime } from '@/utils/time';
 
 const destinations = { report: '/reports/', incident: '/incidents/', advisory: '/advisories/', assistance: '/assistance/' };
@@ -31,14 +32,14 @@ export function NotificationsScreen() {
     finally { setBusy(null); }
   }
 
-  return <Screen title="Your updates">
-    <Body muted>Persisted updates refresh every 30 seconds while this screen is visible. Opening a record checks current access again.</Body>
+  return <Screen title="Updates">
+    <Body muted>Messages from your supplier and changes to your reports and requests appear here.</Body>
     <ResourceState {...resource} empty={resource.data?.length === 0 && 'No updates yet.'} />
     <ErrorNotice error={error} />
     {resource.data?.map((notification) => <View key={notification.id} style={styles.item}>
-      <Body>{notification.readAt ? 'Read' : 'Unread'} · {notification.title}</Body><Body>{notification.text}</Body>
+      <StatusLabel value={notification.readAt ? 'read' : 'unread'} /><Body>{notification.title}</Body><Body>{notification.text}</Body>
       <Body muted>{displayTime(notification.createdAt)}</Body>
-      <Button title={busy === notification.id ? 'Opening…' : 'Read update and open record'} secondary disabled={!!busy} onPress={() => void open(notification)} />
+      <Button title={busy === notification.id ? 'Opening…' : 'Open update'} secondary disabled={!!busy} onPress={() => void open(notification)} />
     </View>)}
     <Paging offset={offset} total={resource.page?.total} onChange={setOffset} />
     <Button title="Refresh updates" secondary onPress={() => void resource.reload()} />

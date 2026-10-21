@@ -27,9 +27,9 @@ export function SettingsAccounts() {
   const resource = useResource<User[]>(`/staff/settings/accounts?offset=${offset}`);
   const account = resource.data?.find(item => item.id === selected);
   const refresh = () => void resource.refresh();
-  return <><h2>Accounts</h2><p className="hint text-[#475569] text-[13px]">Role, password, and activation changes revoke this account’s existing sessions. Account history and owned records are preserved.</p>
+  return <><h2>Accounts</h2><p className="hint">Role, password, and activation changes revoke this account’s existing sessions. Account history and owned records are preserved.</p>
     <button onClick={refresh}>Refresh accounts</button><ResourceState resource={resource}>{resource.data && <>
-      <div className="table-scroll w-full overflow-x-auto"><table><thead><tr><th>Account</th><th>Email</th><th>Role</th><th>State</th><th>Action</th></tr></thead><tbody>
+      <div className="table-scroll"><table><thead><tr><th>Account</th><th>Email</th><th>Role</th><th>State</th><th>Action</th></tr></thead><tbody>
         {resource.data.map(user => <tr key={user.id}><td>{user.name}</td><td>{user.email}</td><td>{label(user.role)}</td><td>{user.active ? 'Active' : 'Inactive'}</td>
           <td><button onClick={() => setSelected(user.id)}>Edit {user.name}</button></td></tr>)}
       </tbody></table></div>{resource.data.length === 0 && <p>No accounts.</p>}

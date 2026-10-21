@@ -10,7 +10,7 @@ Related: [requirements](requirements.md), [schema](schema.md), [API contract](ap
 | --- | --- |
 | `aqours-api/src/` | Express 5 routes, role/ownership authorization, Zod input validation, sessions, publication, guidance, assistance, uploads and stock transactions |
 | `aqours-api/prisma/` | Prisma domain schema, legacy baseline and transactional normalization migration; original SQL remains in `migrations/` for baseline verification |
-| `aqours-web/src/` | React/Vite supplier login, overview, inbox/detail, MapLibre map, incidents, advisories, assistance, distribution and admin settings |
+| `aqours-web/src/` | React/Vite supplier login, overview, inbox/detail, Leaflet map, incidents, advisories, assistance, distribution and admin settings |
 | `aqours-app/src/app/` | Expo Router customer navigation and protected route composition |
 | `aqours-app/src/features/` | Focused home, report/location/photo, guidance, assistance and notification screens |
 | `aqours-contracts/src/` | Shared TypeScript public DTOs, common enums and response contracts; no database or credentials |
@@ -54,7 +54,7 @@ Saved service connections and report issue-location snapshots remain separate. O
 
 Report, service-connection and pickup-site coordinates are ordinary nullable `DOUBLE PRECISION` columns, with paired-null/range checks and a report viewport index. Map responses use `[longitude, latitude]`. Optional Polygon/MultiPolygon GeoJSON is validated for display; explicit zone/connection associations establish applicability. Map clusters never establish outages or supply connectivity. Staff viewport queries apply numeric bounds, filters, limits and truncation/unlocated counts. Antimeridian-spanning bounds are rejected.
 
-Web MapLibre is implemented in `aqours-web/src/features/map/`; native MapLibre preview is in `aqours-app/src/features/location/components/map-preview.native.tsx`. Lists/forms remain usable when basemaps fail. Geoapify, map rendering and style/tile provisioning are independent integrations. Actual native basemap/circle/picker/protected-image checks are recorded in the [native ledger](native-verification.md); controlled GPS/native-supplier coordinate equality passed; live Geoapify equality still requires private operator configuration.
+Direct Leaflet 1.9.4 with markercluster is implemented in `aqours-web/src/features/map/`. The native preview entry point `aqours-app/src/features/location/components/map-preview.native.tsx` uses Expo's `isRunningInExpoGo()` to show supplied coordinates in Expo Go. It loads the separate `maplibre-preview.native.tsx` renderer and its street-map configuration only in Aqours native builds; importing report routes in Expo Go therefore does not require MapLibre native modules. Lists/forms remain usable when basemaps fail. Geoapify, map rendering and style/tile provisioning are independent integrations. Actual native basemap/circle/picker/protected-image checks are recorded in the [native ledger](native-verification.md); controlled GPS/native-supplier coordinate equality passed; live Geoapify equality still requires private operator configuration.
 
 ## Publication and independent lifecycles
 
@@ -86,7 +86,7 @@ Weather components live under each client's `features/weather/` and mount indepe
 
 Both clients group screens, feature-only components, hooks and request operations under `features/<domain>/`. Shared UI, hooks, HTTP transport, configuration and utilities stay outside those feature folders. The web `app/` contains bootstrap, routing and navigation. Expo `app/` contains route wrappers and navigator layouts only. Native styles are retained.
 
-The supplier app uses Tailwind 4 through its Vite plugin. Utility classes replace application class selectors while original class markers remain available to browser checks. Shared element defaults and MapLibre overrides live in the Tailwind entry stylesheet; Preflight is deliberately omitted to preserve existing browser form defaults and appearance. Explicit utility mappings cover dynamic class names.
+The supplier app uses Tailwind 4 through its Vite plugin. Utility classes replace application class selectors while original class markers remain available to browser checks. Shared element defaults, design tokens and semantic component styles live in the Tailwind entry stylesheet; Preflight is deliberately omitted. Leaflet vendor and map-specific styles live with the map feature. See [UI/UX design](ui-ux.md) for navigation and workflow presentation.
 
 ## Location architecture
 

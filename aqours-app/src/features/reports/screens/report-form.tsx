@@ -1,12 +1,17 @@
-import { categories, type Category, type Connection, type LocationInput, type Report } from '@aqours/contracts';
-import { useState } from 'react';
-import { Body, Button, Choices, ErrorNotice, Field, Screen, Section, navigate } from '@/components/ui';
+import { categories, type Category, type Connection, type Report } from '@aqours/contracts';
+import { useReducer } from 'react';
+import { Text, View } from 'react-native';
+import { Body, Button, Choices, ErrorNotice, Field, Screen, Section, styles, navigate } from '@/components/ui';
+import { FormBack } from '@/components/form-back';
 import { ResourceState } from '@/components/resource-state';
 import { useCommand } from '@/hooks/use-command';
 import { useResource } from '@/hooks/use-resource';
 import { displayTime, localInputNow, parseManilaInput } from '@/utils/time';
 import { LocationPicker } from '@/features/location/components/location-picker';
-import { PhotoPicker, PhotoUpload, type Photo } from '../components/photos';
+import { PhotoPicker, PhotoUpload } from '../components/photos';
+import { ReportProgress } from '../components/report-progress';
+import { ReportReview } from '../components/report-review';
+import { createReportDraft, reportDraftReducer, reportStepError, reportSteps } from '../utils/report-draft';
 
 const prompts: Record<Category, string> = {
   outage: 'When did the supply stop? Is it continuous or intermittent?',
@@ -14,57 +19,76 @@ const prompts: Record<Category, string> = {
   leak: 'Where is the leak? Describe visible flow and any immediate access hazards.',
   water_quality: 'Describe the color, odor, or visible change without tasting the water.',
 };
+const categoryNames = { outage: 'No water', low_pressure: 'Low pressure', leak: 'Leak', water_quality: 'Water quality' };
 
 export function ReportForm() {
   const connections = useResource<Connection[]>('/me/connections');
-  const [selected, setSelected] = useState<string | null>(null);
-  const [category, setCategory] = useState<Category>('outage');
-  const [description, setDescription] = useState('');
-  const [guidedDetails, setGuidedDetails] = useState('');
-  const [noticed, setNoticed] = useState(localInputNow);
-  const [location, setLocation] = useState<LocationInput | null>(null);
-  const [locationReady, setLocationReady] = useState(true);
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [validation, setValidation] = useState<string | null>(null);
+  const [draft, dispatch] = useReducer(reportDraftReducer, localInputNow(), createReportDraft);
   const command = useCommand<Report>();
-  const connection = connections.data?.find((item) => item.id === selected) ?? connections.data?.[0];
+  const connection = draft.selected ? connections.data?.find((item) => item.id === draft.selected) : connections.data?.[0];
 
   async function submit() {
-    setValidation(null);
-    const noticedAt = parseManilaInput(noticed);
-    if (!connection || !description.trim() || !noticedAt || Date.parse(noticedAt) > Date.now() + 60000 || !locationReady) {
-      setValidation('Choose a connection, describe the problem, enter a valid time that is not in the future, and confirm the issue location.');
-      return;
+    for (const step of [0, 1]) {
+      const error = reportStepError(draft, step, !!connection, Date.now());
+      if (error) { dispatch({ type: 'error', message: error, step }); return; }
     }
     await command.execute('/reports', {
-      connectionId: connection.id, category, description: description.trim(), noticedAt,
-      ...(location ? { location } : {}), answers: { details: guidedDetails.trim() },
+      connectionId: connection!.id, category: draft.category, description: draft.description.trim(),
+      noticedAt: parseManilaInput(draft.noticed), ...(draft.location ? { location: draft.location } : {}),
+      answers: { details: draft.guidedDetails.trim() },
     });
   }
 
+
   if (command.result) return <Screen title="Report received">
-    <Body>Tracking reference: {command.result.reference}</Body>
-    <Body>Status: received</Body><Body>Submitted {displayTime(command.result.submittedAt)}</Body>
-    {command.result.locationReview && <Body muted>The supplier will review the issue location.</Body>}
-    <Body muted>Your report is saved. Upload your selected photos below; retrying a photo never submits the report again.</Body>
-    {photos.map((photo) => <PhotoUpload key={photo.uri} reportId={command.result!.id} photo={photo} />)}
+    <FormBack locked={command.locked} fallback="/reports" />
+    <Section title={command.result.reference}>
+      <Body>Your supplier has received this report.</Body>
+      <Body muted>Status: received · Submitted {displayTime(command.result.submittedAt)}</Body>
+      {command.result.locationReview && <Body muted>The supplier will review the issue location.</Body>}
+    </Section>
+    {!!draft.photos.length && <Body>Your report is saved. Upload your selected photos below. Each photo retries separately.</Body>}
+    {draft.photos.map((photo) => <PhotoUpload key={photo.uri} reportId={command.result!.id} photo={photo} />)}
     <Button title="Open report and guidance" onPress={() => navigate(`/reports/${command.result!.id}`)} />
   </Screen>;
 
-  return <Screen title="Report a problem">
-    <ResourceState {...connections} empty={connections.data?.length === 0 && 'A saved connection is required. Ask the supplier to provision it.'} />
-    {connections.data?.map((item) => <Button key={item.id} title={`${item.reference} · ${item.address}`} selected={item.id === connection?.id} secondary disabled={command.locked}
-      onPress={() => { setSelected(item.id); setLocation(null); setLocationReady(true); }} />)}
-    <Section title="Problem details">
-      <Choices values={categories} value={category} disabled={command.locked} onChange={(next) => { setCategory(next); setGuidedDetails(''); }} />
-      <Field label="Description" value={description} onChangeText={setDescription} multiline maxLength={5000} editable={!command.locked} />
-      <Field label={prompts[category]} value={guidedDetails} onChangeText={setGuidedDetails} multiline maxLength={2000} editable={!command.locked} />
-      <Field label="Time noticed (Asia/Manila, YYYY-MM-DD HH:mm)" value={noticed} onChangeText={setNoticed} editable={!command.locked} autoCapitalize="none" />
-    </Section>
-    {connection && <LocationPicker key={connection.id} connection={connection} value={location} onChange={setLocation} onReadyChange={setLocationReady} disabled={command.locked} />}
-    <PhotoPicker photos={photos} onChange={setPhotos} disabled={command.locked} />
-    <ErrorNotice error={validation ?? command.error} />
-    {command.uncertain && <Body>The result is unconfirmed. Keep this screen open and retry the same report with unchanged details.</Body>}
-    <Button title={command.busy ? 'Submitting…' : command.uncertain ? 'Retry same report' : 'Submit report'} disabled={command.busy || !connection} onPress={() => void submit()} />
+  return <Screen title="Report a water problem" scrollKey={draft.step}>
+    <FormBack previous={draft.step > 0 ? () => dispatch({ type: 'back' }) : undefined} locked={command.locked} fallback="/reports" />
+    <ReportProgress step={draft.step} />
+    {/* Keep location and picker subtrees mounted while moving between steps. */}
+    <View style={{ display: draft.step === 0 ? 'flex' : 'none', gap: 16 }}>
+      <Section title="What is happening?">
+        <Choices values={categories} labels={categoryNames} value={draft.category} disabled={command.locked}
+          onChange={value => dispatch({ type: 'category', value })} />
+        <Field label="Describe the problem" value={draft.description} onChangeText={description => dispatch({ type: 'edit', patch: { description } })}
+          hint="Include what changed and how it affects your water service." multiline maxLength={5000} editable={!command.locked} />
+        <Field label={prompts[draft.category]} value={draft.guidedDetails} onChangeText={guidedDetails => dispatch({ type: 'edit', patch: { guidedDetails } })}
+          multiline maxLength={2000} editable={!command.locked} />
+        <Field label="When did you notice it?" hint="Asia/Manila · YYYY-MM-DD HH:mm" value={draft.noticed}
+          onChangeText={noticed => dispatch({ type: 'edit', patch: { noticed } })} editable={!command.locked} autoCapitalize="none" />
+      </Section>
+    </View>
+    <View style={{ display: draft.step === 1 ? 'flex' : 'none', gap: 16 }}>
+      <Section title="Choose your connection">
+        <ResourceState {...connections} empty={connections.data?.length === 0 && 'A saved connection is required. Ask the supplier to provision it.'} />
+        {connections.data?.map((item) => <Button key={item.id} title={`${item.reference} · ${item.address}`} selected={item.id === connection?.id}
+          secondary disabled={command.locked} onPress={() => dispatch({ type: 'connection', id: item.id })} />)}
+      </Section>
+      {connection && draft.visited >= 1 && <LocationPicker key={connection.id} connection={connection} value={draft.location}
+        onChange={location => dispatch({ type: 'edit', patch: { location } })}
+        onReadyChange={locationReady => dispatch({ type: 'edit', patch: { locationReady } })} disabled={command.locked} />}
+    </View>
+    <View style={{ display: draft.step === 2 ? 'flex' : 'none' }}>
+      {draft.visited >= 2 && <PhotoPicker photos={draft.photos} onChange={photos => dispatch({ type: 'edit', patch: { photos } })} disabled={command.locked} />}
+    </View>
+    {draft.step === 3 && <ReportReview draft={draft} connection={connection} disabled={command.locked} edit={step => dispatch({ type: 'review', step })} />}
+    <ErrorNotice error={draft.error ?? command.error} />
+    {command.uncertain && <Body>The result is unconfirmed. Retry the same report with these unchanged details.</Body>}
+    {draft.step < 3 ? <Button title={`Continue to ${reportSteps[draft.step + 1].toLowerCase()}`} disabled={command.locked}
+      onPress={() => dispatch({ type: 'next', hasConnection: !!connection, now: Date.now() })} />
+      : <Button title={command.busy ? 'Submitting…' : command.uncertain ? 'Retry same report' : 'Confirm and submit report'}
+        disabled={command.busy || !connection} onPress={() => void submit()} />}
+    {draft.step > 0 && <Button title={`Back to ${reportSteps[draft.step - 1].toLowerCase()}`} secondary disabled={command.locked} onPress={() => dispatch({ type: 'back' })} />}
+    <Text style={styles.muted}>Your details stay in this draft while you move between steps. Submit only after reviewing them.</Text>
   </Screen>;
 }

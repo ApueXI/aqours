@@ -1,0 +1,60 @@
+.app-shell { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: 100vh; }
+.skip-link { position: absolute; left: 12px; top: -100px; background: #fff; padding: 12px; z-index: 1001; }
+.skip-link:focus { top: 12px; }
+.sidebar { border-right: 1px solid #d4dfe4; background: #fff; padding: 28px 16px 20px; display: flex; flex-direction: column; min-width: 0; position: sticky; top: 0; height: 100dvh; align-self: start; overflow-y: auto; }
+.sidebar-brand { padding: 0 12px; }
+.brand { color: #183d43; font-size: 26px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
+.brand svg { color: #0f766e; width: 26px; height: 30px; }
+.supplier-label { color: #526975; padding: 0 12px; margin-top: 2px; margin-bottom: 32px; font-size: 13px; }
+.navigation { display: flex; flex-direction: column; gap: 24px; }
+.nav-group-title { color: #647b86; font-size: 12px; font-weight: 600; margin: 0 12px 8px; }
+.nav-group { display: flex; flex-direction: column; gap: 4px; }
+.navigation a { display: flex; align-items: center; gap: 12px; color: #3b5460; text-decoration: none; padding: 10px 12px; border-radius: 5px; min-height: 44px; }
+.navigation a:hover { background: #f3f6f7; }
+.navigation a[aria-current] { background: #e6f3f0; color: #115e59; font-weight: 650; }
+.identity { margin-top: auto; padding: 28px 12px 0; display: flex; flex-direction: column; gap: 12px; }
+.identity > div { display: flex; flex-direction: column; gap: 2px; }
+.identity span { color: #526975; font-size: 13px; }
+.identity .error { margin: 0; }
+.workspace-frame { min-width: 0; }
+.workspace-bar { height: 60px; padding: 0 32px; border-bottom: 1px solid #d4dfe4; background: #fff; display: flex; align-items: center; justify-content: space-between; gap: 16px; color: #526975; font-size: 13px; }
+.workspace-bar span:first-child { color: #3b5460; font-weight: 550; }
+.workspace { padding: 32px; max-width: 1536px; width: 100%; margin: 0 auto; }
+.workspace > section, .workspace > div > section { padding: 24px; background: #fff; border: 1px solid #d4dfe4; border-radius: 8px; }
+.workspace > .filters, .workspace > .record-strip, .workspace > .detail-nav, .workspace > .queue-heading { padding: 16px; }
+.navigation-toggle { display: none; }
+.login, .session-loading { width: min(440px, calc(100% - 32px)); margin: 10vh auto; background: #fff; border: 1px solid #d4dfe4; padding: 36px; border-radius: 8px; }
+.login-brand { font-size: 27px; font-weight: 700; color: #115e59; margin-bottom: 32px; }
+.login h1, .session-loading h1 { font-size: 24px; margin-bottom: 8px; }
+.login form { margin-top: 28px; }
+.login form button { width: 100%; margin: 4px 0 20px; }
+.login .login-support { padding-top: 20px; margin-top: 12px; border-top: 1px solid #e0e7eb; }
+.password-control { position: relative; }
+.password-control input { padding-right: 120px; }
+.password-control button { position: absolute; right: 1px; bottom: 18px; border: 0; border-radius: 3px; background: transparent; color: #0f766e; font-size: 12px; width: auto !important; margin: 0 !important; padding: 4px 8px; min-height: 44px; }
+@media (min-width: 1600px) { .sidebar { padding-top: 32px; } }
+@media (max-width: 1100px) {
+  .app-shell { grid-template-columns: 216px minmax(0, 1fr); }
+  .workspace { padding: 24px; }
+  .workspace-bar { padding: 0 24px; }
+}
+@media (max-width: 760px) {
+  .app-shell { display: block; }
+  .sidebar { padding: 12px 16px; border-right: 0; border-bottom: 1px solid #d4dfe4; position: static; height: auto; overflow-y: visible; }
+  .sidebar-brand { display: flex; justify-content: space-between; align-items: center; padding: 0; }
+  .brand { font-size: 22px; gap: 6px; }
+  .brand svg { width: 23px; height: 26px; }
+  .supplier-label { margin: 0; padding: 0; font-size: 12px; }
+  .navigation-toggle { display: block; }
+  .navigation { display: none; padding: 20px 0 12px; gap: 16px; }
+  .navigation.is-open { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .identity { padding: 12px 0 0; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 8px 16px; }
+  .identity > div { flex: 1; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 4px 12px; }
+  .identity button { padding: 7px 12px; }
+  .identity .error { flex-basis: 100%; }
+  .workspace-bar { height: 42px; padding: 0 16px; }
+  .workspace-bar span:last-child { display: none; }
+  .workspace { padding: 24px 16px; }
+  .workspace > section, .workspace > div > section { padding: 16px; }
+  .login, .session-loading { padding: 24px; margin: 6vh auto; }
+}

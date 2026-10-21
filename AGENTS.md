@@ -2,7 +2,7 @@
 
 ## Project and stack
 
-Aqours is a water supply reporting and customer assistance system connecting a water supplier with its customers. Customers report outages, low pressure, leaks, and water-quality concerns. The supplier views reports and affected areas on a MapLibre map, manages incidents, and provides updates.
+Aqours is a water supply reporting and customer assistance system connecting a water supplier with its customers. Customers report outages, low pressure, leaks, and water-quality concerns. The supplier views reports and affected areas on a Leaflet map, manages incidents, and provides updates. Native customer map previews use the existing MapLibre integration.
 
 Use TypeScript for application code in all three projects:
 

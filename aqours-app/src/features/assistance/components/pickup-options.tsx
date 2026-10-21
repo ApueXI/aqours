@@ -7,7 +7,7 @@ import { useResource } from '@/hooks/use-resource';
 import { displayTime, label } from '@/utils/time';
 
 export function PickupOptions({ reportId, selected, onChange, onCallback, disabled }: {
-  reportId: string; selected: string | null; onChange(id: string): void; onCallback(): void; disabled: boolean;
+  reportId: string; selected: string | null; onChange(id: string, session: PickupSession): void; onCallback(): void; disabled: boolean;
 }) {
   const [offset, setOffset] = useState(0);
   const sessions = useResource<PickupSession[]>(`/pickup-sessions?reportId=${encodeURIComponent(reportId)}&limit=30&offset=${offset}`);
@@ -21,7 +21,7 @@ export function PickupOptions({ reportId, selected, onChange, onCallback, disabl
       <Body>{label(session.status)} · {label(session.availability)} · {session.remainingLiters} L currently remaining</Body>
       <Body>{session.site.instructions}</Body><Body>{session.instructions}</Body>
       <Button title={selected === session.id ? 'Selected session' : 'Select this session'} secondary selected={selected === session.id}
-        disabled={disabled || session.availability !== 'available' || session.status !== 'open'} onPress={() => onChange(session.id)} />
+        disabled={disabled || session.availability !== 'available' || session.status !== 'open'} onPress={() => onChange(session.id, session)} />
     </View>)}
     <Paging offset={offset} total={sessions.page?.total} onChange={setOffset} />
     <Button title="Request callback/support instead" secondary disabled={disabled} onPress={onCallback} />
