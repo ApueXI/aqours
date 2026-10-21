@@ -20,6 +20,8 @@ npm start
 
 `migrate` deploys the checked-in Prisma migration history. Existing databases must first run `migrate:adopt` after stopping writers and backing up; see the adoption guide below. Repeated deploy/seed commands preserve state. Keep both applied migration histories unchanged. The demo seed requires `SEED_DEMO=1`, rejects production and nonempty unseeded databases, runs atomically, and preserves existing records on repeated runs. Startup never migrates, seeds, resets or clears data. `createApp()` in `src/app.ts` supports HTTP integration tests. `/health` confirms HTTP process health; it does not claim database readiness. Default API port is 4000 and exact browser origin is `http://localhost:5173`. Configuration names/defaults are in `.env.example`; placeholder values are not working credentials. `TSX_DISABLE_CACHE=1` prevents development transform caches outside this project.
 
+Fresh fixtures use canonical Laguna PSGC addresses and synthetic local geometry. Existing v1 fixtures require the explicit guarded `SEED_DEMO=1 npm run seed:upgrade-laguna` command with database configuration supplied. See [upgrade safeguards and setup](../docs/setup.md#upgrading-original-demo-locations-to-laguna); normal seeding never upgrades stored locations. Admin Overview and customer Home retain the existing seven-day [Open-Meteo forecasts](../docs/weather.md).
+
 ## Fictional demonstration logins
 
 Every listed account uses the fixture password **`DemoWater2026!`**, exclusively for synthetic local demonstration data. Admin and staff sign in through the supplier web client; customers through the mobile client. There is no public signup.

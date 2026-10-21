@@ -2,10 +2,21 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { chromium, expect } from '@playwright/test';
-import { normalizeForecast } from '../aqours-api/src/services/weather/normalize.ts';
+import { mock } from 'node:test';
+import type { Server } from 'node:http';
+import { createApp } from '../aqours-api/src/app.ts';
+import { disconnect } from '../aqours-api/src/config/database.ts';
 import { weatherFixture } from '../aqours-api/test/weather-fixture.ts';
 import { fixturePassword } from './harness.ts';
 
+assert.ok(process.env.DATABASE_URL && new URL(process.env.DATABASE_URL).pathname.endsWith('_test'), 'Supply a seeded isolated database ending _test');
+assert.ok(process.env.AQOURS_TEST_API, 'Supply a free API port matching the supplier client configuration');
+const api = new URL(process.env.AQOURS_TEST_API);
+const originalFetch = globalThis.fetch;
+let server: Server;
+// Advance only server wall time to exercise real ten-minute cache expiry without waiting.
+mock.timers.enable({ apis: ['Date'], now: Date.now() });
+const expireForecast = () => mock.timers.tick(600_001);
 const output = path.resolve('.local/weather/browser');
 const temporary = path.resolve('.cache/tmp/weather');
 await mkdir(output, { recursive: true });
@@ -24,26 +35,33 @@ let failForecast = false;
 let failSearch = false;
 let delayForecast = false;
 const cities = [
-  { id: 1, name: 'Manila', area: 'Metro Manila', country: 'Philippines', latitude: 14.6, longitude: 121 },
-  { id: 2, name: 'Cebu City', area: 'Central Visayas', country: 'Philippines', latitude: 10.3, longitude: 123.9 },
+  { id: 1, name: 'Calamba', admin1: 'Laguna', country: 'Philippines', country_code: 'PH', latitude: 14.1679, longitude: 121.1951 },
+  { id: 2, name: 'Los Baños', admin1: 'Laguna', country: 'Philippines', country_code: 'PH', latitude: 14.1674, longitude: 121.2433 },
+  { id: 3, name: 'Santa Rosa', admin1: 'Laguna', country: 'Philippines', country_code: 'PH', latitude: 14.2946, longitude: 121.1054 },
 ];
-await page.route('**/api/v1/weather**', async route => {
-  const url = new URL(route.request().url());
-  if (url.pathname.endsWith('/locations')) {
-    const q = url.searchParams.get('q')!;
-    if (failSearch) return route.fulfill({ status: 503, json: { error: { code: 'provider_unavailable', message: 'Weather city search unavailable.' } } });
-    return route.fulfill({ json: { data: q === 'NoMatch' ? [] : cities } });
+// Only external Open-Meteo responses are replaced; Chromium calls the real API.
+globalThis.fetch = async (input, options) => {
+  const url = new URL(String(input));
+  if (!['api.open-meteo.com', 'geocoding-api.open-meteo.com'].includes(url.hostname)) return originalFetch(input, options);
+  if (url.hostname.startsWith('geocoding')) {
+    if (failSearch) return new Response('Unavailable', { status: 503 });
+    return Response.json({ results: url.searchParams.get('name') === 'NoMatch' ? [] : cities });
   }
-  if (delayForecast && url.searchParams.get('latitude') === '14.6')
+  if (delayForecast && url.searchParams.get('latitude') === '14.1679')
     await new Promise(resolve => setTimeout(resolve, 900));
-  if (failForecast) return route.fulfill({ status: 503, json: { error: { code: 'provider_unavailable', message: 'Weather provider unavailable.' } } });
-  const forecast = normalizeForecast(weatherFixture(), Number(url.searchParams.get('latitude')), Number(url.searchParams.get('longitude')));
-  if (url.searchParams.get('latitude') === '10.3') {
-    forecast.current.temperature = 27;
-    forecast.current.weatherCode = 1234;
-    forecast.daily[0]!.rainProbability = null;
+  if (failForecast) return new Response('Unavailable', { status: 503 });
+  const forecast = weatherFixture();
+  if (url.searchParams.get('latitude') === '14.1674') {
+    forecast.current.temperature_2m = 27;
+    forecast.current.weather_code = 1234;
+    // Model a provider omitting a daily measurement; normalization must retain unavailable.
+    Object.assign(forecast.daily, { precipitation_probability_max: [null, 30, 60, 10, 80, 90, 0] });
   }
-  return route.fulfill({ json: { data: forecast } });
+  return Response.json(forecast);
+};
+await new Promise<void>((resolve, reject) => {
+  server = createApp().listen(Number(api.port), '127.0.0.1', () => resolve());
+  server.once('error', reject);
 });
 
 async function signIn(email: string) {
@@ -66,8 +84,8 @@ try {
   await expect(weather.getByText('Select a city to check current weather and the next seven days.')).toBeVisible();
   passed('Admin dashboard keeps weather independent from operational metrics');
 
-  await search('Manila');
-  await page.getByRole('button', { name: 'Manila, Metro Manila, Philippines', exact: true }).click();
+  await search('Calamba');
+  await page.getByRole('button', { name: 'Calamba, Laguna, Philippines', exact: true }).click();
   await expect(weather.getByText('30°C', { exact: true })).toBeVisible();
   const forecast = page.getByRole('region', { name: 'Seven-day weather forecast' });
   await expect(forecast.locator('tbody tr')).toHaveCount(7);
@@ -76,6 +94,7 @@ try {
   await expect(weather.getByRole('link', { name: 'Weather data by Open-Meteo' })).toHaveAttribute('href', 'https://open-meteo.com/');
   passed('City selection renders current measurements, seven Manila dates, zero rainfall and attribution');
 
+  expireForecast();
   failForecast = true;
   await weather.getByRole('button', { name: 'Refresh weather', exact: true }).click();
   await expect(weather.getByText(/Stale results/)).toBeVisible();
@@ -89,28 +108,30 @@ try {
   await search('NoMatch');
   await expect(weather.getByText('No matching cities. Try another city name.')).toBeVisible();
   failSearch = true;
-  await search('Manila');
-  await expect(weather.getByText('Weather city search unavailable.')).toBeVisible();
+  await search('Santa Rosa');
+  await expect(weather.getByText('Weather is temporarily unavailable. Try again shortly.')).toBeVisible();
   failSearch = false;
   await weather.getByRole('button', { name: 'Retry loading', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Cebu City, Central Visayas, Philippines', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Los Baños, Laguna, Philippines', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Santa Rosa, Laguna, Philippines', exact: true })).toBeVisible();
   await page.getByLabel('City in the Philippines').fill('Changed');
   await expect(page.getByRole('list', { name: 'Weather city results' })).toHaveCount(0);
   passed('Empty and failed searches recover; editing the query hides obsolete candidates');
 
-  await search('Cebu');
-  await page.getByRole('button', { name: 'Cebu City, Central Visayas, Philippines', exact: true }).click();
+  await search('Los Baños');
+  await page.getByRole('button', { name: 'Los Baños, Laguna, Philippines', exact: true }).click();
   await expect(weather.getByText('27°C', { exact: true })).toBeVisible();
   await expect(weather.getByText(/Conditions unavailable/)).toBeVisible();
   await expect(forecast.locator('tbody tr').first().getByText('Unavailable', { exact: true })).toBeVisible();
   await expect(weather.getByText('30°C', { exact: true })).toHaveCount(0);
   passed('Switching cities clears old weather; missing values and unknown conditions stay unavailable');
 
+  expireForecast();
   delayForecast = true;
-  await search('Manila');
-  await page.getByRole('button', { name: 'Manila, Metro Manila, Philippines', exact: true }).click();
-  await search('Cebu');
-  await page.getByRole('button', { name: 'Cebu City, Central Visayas, Philippines', exact: true }).click();
+  await search('Calamba');
+  await page.getByRole('button', { name: 'Calamba, Laguna, Philippines', exact: true }).click();
+  await search('Los Baños');
+  await page.getByRole('button', { name: 'Los Baños, Laguna, Philippines', exact: true }).click();
   await expect(weather.getByText('27°C', { exact: true })).toBeVisible();
   await page.waitForTimeout(1100);
   await expect(weather.getByText('30°C', { exact: true })).toHaveCount(0);
@@ -127,8 +148,8 @@ try {
   await signIn('staff@demo.aqours.test');
   await expect(weather.getByText('Select a city to check current weather and the next seven days.')).toBeVisible();
   await expect(weather.getByText('27°C', { exact: true })).toHaveCount(0);
-  await search('Cebu');
-  await page.getByRole('button', { name: 'Cebu City, Central Visayas, Philippines', exact: true }).click();
+  await search('Los Baños');
+  await page.getByRole('button', { name: 'Los Baños, Laguna, Philippines', exact: true }).click();
   await expect(weather.getByText('27°C', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Menu', exact: true }).click();
   await page.getByRole('link', { name: 'Reports', exact: true }).click();
@@ -140,4 +161,8 @@ try {
 } finally {
   await writeFile(path.join(output, 'results.txt'), evidence.join('\n') + '\n');
   await context.close();
+  globalThis.fetch = originalFetch;
+  mock.timers.reset();
+  await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+  await disconnect();
 }

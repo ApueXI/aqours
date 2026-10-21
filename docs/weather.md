@@ -5,9 +5,11 @@ Added 21 October 2026. Customer Home and supplier Overview show current conditio
 ## Choosing a location
 
 - Customer Home initially selects the first saved connection with coordinates, or the first connection when none has coordinates. Every saved connection is selectable; missing coordinates prompt for city search.
-- Supplier Overview initially prompts for a city. Both clients search Philippine places through the separate [Open-Meteo geocoding service](https://open-meteo.com/en/docs/geocoding-api), with up to five labeled city/administrative-area results and explicit selection.
+- Supplier Overview initially prompts for a city. Admins and staff can select Calamba, Los Baños or Santa Rosa for the Laguna demonstration. Both clients search Philippine places through the separate [Open-Meteo geocoding service](https://open-meteo.com/en/docs/geocoding-api), with up to five labeled city/administrative-area results and explicit selection.
 - Weather search is independent of Geoapify and PSGC reporting. It does not confirm/update an address, service zone or report location, and needs no GPS permission.
 - Selection lasts while the dashboard is mounted and clears on sign-out/account change. Switching locations clears old forecast content; late responses cannot replace the newer selection.
+
+Fresh Laguna seeds and the explicit [v1 fixture upgrade](setup.md#upgrading-original-demo-locations-to-laguna) make customer weather use the selected saved Laguna point automatically. Customer12 retains no coordinates and uses city search. The admin still explicitly selects a weather city; nationwide weather search remains available. PSGC names/codes and weather geocoding are separate sources.
 
 ## Display and refresh
 
@@ -52,11 +54,12 @@ npm run test:weather
 
 The HTTP runner intercepts only Open-Meteo calls. Authentication, database reads, ownership, validation, HTTP errors and caching execute against the real API/database. It adds a fictional connection for the missing-coordinate case, then supplies that fixture with reviewed coordinates so later test consumers retain usable connection context.
 
-Start the normal API and supplier client against an isolated dataset, configure `VITE_API_URL` and `WEB_ORIGIN` with matching hostnames, then run:
+Build/start the supplier client with `VITE_API_URL` pointing to the free test API port, and supply the matching `WEB_ORIGIN`, then run:
 
 ```sh
-AQOURS_TEST_API=http://localhost:4005/api/v1 \
-AQOURS_TEST_WEB=http://localhost:5175 npm run test:weather:browser
+DATABASE_URL='postgresql://<user>@127.0.0.1:<port>/aqours_weather_test' \
+WEB_ORIGIN=http://127.0.0.1:5175 AQOURS_TEST_API=http://127.0.0.1:4005/api/v1 \
+AQOURS_TEST_WEB=http://127.0.0.1:5175 npm run test:weather:browser
 ```
 
-Browser checks use real login/metrics and controlled weather responses for rendering, failures, retries, missing values, obsolete responses, narrow layout, staff access and selection clearing. They do not certify provider uptime. Actual live-provider and installed Android evidence is recorded separately in [verification](verification.md) and the [native ledger](native-verification.md).
+Browser checks require `DATABASE_URL` for a seeded isolated `_test` database and a free `AQOURS_TEST_API` port matching the supplier bundle. The runner starts/stops its own API; do not start another API on that port. It uses real login, metrics and weather HTTP/database handling, controls only external Open-Meteo responses, and advances server wall time to exercise cache expiry without a ten-minute wait. Laguna city cases cover rendering, failures, retries, missing values, obsolete responses, narrow layout, staff access and selection clearing. They do not certify provider uptime. Actual live-provider and installed Android evidence is recorded separately in [verification](verification.md) and the [native ledger](native-verification.md).

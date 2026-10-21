@@ -10,6 +10,7 @@ import { MapCanvas, type Bounds } from '../components/MapCanvas';
 import { MapReportList } from '../components/MapReportList';
 import { areaFeatures } from '../utils/layers';
 import { mapFilters, mapLocation } from '../utils/map-state';
+import { defaultMapBounds } from '../utils/default-view';
 import { detailLink } from '../../../app/navigation';
 
 export function MapPage({ params }: { params: URLSearchParams }) {
@@ -19,7 +20,7 @@ export function MapPage({ params }: { params: URLSearchParams }) {
   const [unlocated, setUnlocated] = useState(urlUnlocated);
   useEffect(() => setUnlocated(urlUnlocated), [urlUnlocated]);
   const view = params.get('view') === 'map' ? 'map' : 'list';
-  const [bounds, setBounds] = useState<Bounds>({ west: 120.9, south: 14.5, east: 121.1, north: 14.7 });
+  const [bounds, setBounds] = useState<Bounds>(defaultMapBounds);
   const [offset, setOffset] = useState(0);
   const [focusKey, setFocusKey] = useState(0);
   const summary = useRef<HTMLElement>(null);

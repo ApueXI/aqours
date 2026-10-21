@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { scryptSync, timingSafeEqual } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { fixturePassword } from './harness.ts';
+import { verifyLagunaSeed } from './seed-laguna.ts';
 
 const database = process.env.AQOURS_TEST_DATABASE_URL ?? 'postgresql://cred@127.0.0.1:55432/aqours_test';
 assert.ok(new URL(database).pathname.endsWith('_test'), 'Use an isolated seeded database ending _test');
@@ -21,6 +22,8 @@ async function fixture(kind: string, value: number): Promise<RecordRow> {
 
 try {
   await db.connect();
+  await verifyLagunaSeed(db);
+  passed('All original connections, sites and reports have canonical Laguna PSGC addresses and coherent location snapshots');
   const supplier = await fixture('supplier', 1);
   assert.equal(supplier.data.demo, true);
   const salts = new Set<string>();

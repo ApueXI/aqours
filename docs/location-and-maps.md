@@ -19,7 +19,7 @@ Both return the normal `{ data: [...] }` envelope. Entries have `code`, `name`, 
 
 ## Map detail and accuracy
 
-The supplier web uses direct Leaflet 1.9.4 with markercluster. Its default raster provider is Geoapify OSM Bright. The native customer preview retains MapLibre and its OpenStreetMap street default. Both render the stored report location without changing coordinates on pan/zoom. Supplier controls retain metric scale, reset view, independent report/zone/incident/advisory visibility and safe text-node popups. List navigation remains usable when the map provider fails.
+The supplier web uses direct Leaflet 1.9.4 with markercluster. Its initial and reset views cover the representative Laguna fixtures. Its default raster provider is Geoapify OSM Bright. The native customer preview retains MapLibre and its OpenStreetMap street default. Both render the stored report location without changing coordinates on pan/zoom. Supplier controls retain metric scale, reset view, independent report/zone/incident/advisory visibility and safe text-node popups. List navigation remains usable when the map provider fails.
 
 The customer preview entry point checks `isRunningInExpoGo()` before loading the separate native MapLibre renderer and street-map configuration. Expo Go displays the supplied coordinates; native builds retain interactive maps, attribution and retry. See [mobile launch instructions](../aqours-app/README.md#run-in-expo-go).
 
@@ -43,3 +43,11 @@ The API reads the region index and its referenced files relative to the project 
 To update the snapshot, replace the index and referenced region files together, update the catalog version, inspect hierarchy changes and provenance, and run the catalog/API/client checks. Do not rewrite old snapshots or guess mappings from duplicate names. The integrity test currently expects 18 regions, 82 provinces, 149 cities, 1,493 municipalities, 14 sub-municipalities, and 42,010 barangays.
 
 Deploy Prisma migration `202610200002_psgc_addresses` before starting the updated API. It adds nullable JSONB columns to service connections, reports, and pickup sites without backfilling or changing their existing strings/coordinates. The database URL and any provider keys remain private operator configuration. Live Geoapify verification still requires configured operator credentials.
+
+## Laguna demonstration fixtures
+
+New seeds use three canonical barangays: Bagong Kalsada (`0403405001`, City of Calamba), Batong Malake (`0403411004`, Los Baños), and Balibago (`0403428002`, City of Santa Rosa). Their ancestry includes Laguna (`0403400000`) and Region IV-A CALABARZON (`0400000000`). Names/codes come only from the bundled PSGC snapshot; nationwide runtime address selection is unchanged.
+
+Representative point centers are approximately `(14.1679,121.1951)`, `(14.1674,121.2433)` and `(14.2946,121.1054)`. Locality checks used [Bagong Kalsada](https://mapcarta.com/36439088), [Batong Malake](https://mapcarta.com/32291410) and [Balibago](https://www.philatlas.com/luzon/r04a/laguna/santa-rosa/balibago.html). Household points use tiny synthetic offsets and each demonstration zone is a rectangle within 0.001 degrees of its center. These are approximate demonstration geometry, not surveyed homes, barangay outlines or real supplier coverage. Customer12 retains null coordinates and no confirmed zone despite its canonical address.
+
+The [explicit v1 upgrade](setup.md#upgrading-original-demo-locations-to-laguna) can correct original demo report snapshots while preserving user-created reports and immutable history. This administrative exception does not change normal historical-address behavior. Saved coordinates also supply the customer's [weather forecast](weather.md); PSGC codes alone never provide weather coordinates.

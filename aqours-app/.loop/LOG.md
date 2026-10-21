@@ -1,9 +1,12 @@
-# Customer Android log
+# Laguna execution log
 
-2026-10-18: Initialized coordinated implementation state after verified baseline discovery.
+## Cycle1 — 2026-10-22
+Reconciled clean tree/no partial execution, read current instructions, docs and existing integration. Archived unrelated completed loop state. Initialized approved criteria and bounded worker ownership.
 
-## 2026-10-19 — integration and real native build
+## Cycle2 — integration and verification
+Fresh PostgreSQL18.6 seed/PSGC assertions pass. Authentic v1 seeded from original commit; upgrade refusal/rollback/preservation/repeat tests pass. Weather HTTP3 and Chromium8 pass using real auth/database and controlled external responses. Independent review finds no actionable upgrade defect. Corrected seed verification to join JSON snapshots from actual domain tables; legacy view omits them. Supplier default viewport was still Metro Manila, changed to cover Laguna using existing styling. Current APK matches prior source hash; native session/address success, weather capture in progress.
 
-Lead corrected optional water notes, report-zone pickup options, guided details/advisory CTAs and full Home pagination. Ten helper tests/type/lint pass. Managed native worker produced real successful debug/release dual-architecture MapLibre APKs, then hit a usage limit; lead reconciled ownership and inspected signatures/manifests/bundles. Android36 framework watchdog repeatedly restarted the software guest and broke installation. Trying supported Android29 without altering APK target or host settings; no runtime pass inferred.
+## Cycle3 — final acceptance
+Concurrent upgrade and all unaffected-table fingerprints pass on a newly seeded authentic v1 database. All59HTTP regression tests pass. Browser totals20 (8 controlled weather,9Leaflet,3Laguna/live). Actual Android saved-point and address-only city forecast cases pass all seven days against live Open-Meteo; account switch clears previous forecast. Docs reconciled; final check review/shutdown/commit pending. A test assertion initially used top-level weather coordinates; corrected to contract.location and repeated successfully. No application weather defect found.
 
-Native worker resumed and observed Android29 nondebuggable package/version, resumed MainActivity and the actual native login form. Guest-only density/animation adjustments corrected transient rendering but could not stabilize SystemUI/watchdog failures; zygote/system_server and app processes were replaced/terminated. All diagnostics finished and ownership released. Lead reviewed evidence and stopped the owned guest. No authentication, SecureStore, GPS, photo or native map interaction passed; a reliable device/accelerated target remains the next prerequisite.
+Final type/lint and all358 application TS file limits/docs checks pass. API/web builds and85 unit/helper tests pass. All owned test services/emulator/ADB stopped; ordinary environment unchanged. Required feature commit is next.

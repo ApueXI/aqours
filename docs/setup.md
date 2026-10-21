@@ -62,6 +62,18 @@ docker compose up -d --force-recreate db
 
 Do not use `down -v` as a routine restart. A persistent volume is separate from a backup.
 
+## Upgrading original demo locations to Laguna
+
+Fresh seeding writes `aqours-demo-laguna-v2` with canonical Laguna PSGC addresses. Existing `aqours-demo-v1` databases are preserved by ordinary seed repeats. To deliberately move their original mutable demo fixtures, stop API writers and back up the database first, then run:
+
+```sh
+(cd aqours-api && SEED_DEMO=1 TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/seed-upgrade-laguna.ts)
+```
+
+With configuration already supplied through the process environment, `SEED_DEMO=1 npm --prefix aqours-api run seed:upgrade-laguna` is equivalent. Production and missing opt-in are refused. The command takes the seed advisory lock and bounded table locks, checks every original fixture identity/geographic signature, and writes in one transaction. Missing/ambiguous/edited fixture locations abort before changes with a record/field conflict. Do not overwrite reviewed locations to force an upgrade; use a separate fresh demo database if those fixtures have been maintained.
+
+The upgrade changes original connections, reports, zones, pickup sites, inspection addresses and incident area labels. Existing operational states, timestamps, credentials, stock and unrelated records remain intact. Original report locations change only through this explicit fixture correction; ordinary connection edits still preserve report snapshots. Published history is immutable: four corrected incident publications are appended, with audit events and no notification replay. Earlier publications retain their old labels. The v1 marker remains and v2 is recorded atomically; repeated upgrades and upgrades against fresh v2 seeds are no-ops. No schema migration or new dependency is needed.
+
 ## Provider setup without blocking reporting
 
 Create a Geoapify project/key manually through the [Geoapify dashboard](https://myprojects.geoapify.com/) when you want live typed-address lookup. Review its quotas/terms and restrict the server key appropriately to the server environment. Put it only in API `GEOAPIFY_API_KEY`; generate a separate random `GEOCODE_SIGNING_SECRET` yourself. `GEOAPIFY_BIAS`/`GEOAPIFY_FILTER` select a configurable service region; the fictional demonstration uses Philippine country bias/filter. Upstream requests time out and return real candidates with confidence and signed 15-minute confirmation tokens. A candidate is an address suggestion, not a reviewed water-supply zone.
@@ -117,7 +129,7 @@ npm run test:seed
 
 The browser runners use locally installed `/usr/bin/chromium` and write profiles/screenshots/results only under `.local/`. Set `AQOURS_TEST_WEB` for another local supplier URL; configure the API origin consistently. They do not install a browser globally. Logins are rate limited; run login-heavy suites serially and allow at least a minute between suites. Tests retain existing records and add fictional fixtures rather than silently clearing the seed. Final evidence and all unexecuted checks are recorded in [verification](verification.md) and [traceability](traceability.md).
 
-`npm run test:seed` reads only the original fictional fixtures in the isolated `_test` database and checks all fourteen salted credentials/roles, twelve connection owners, three zones/two sites, report contexts and exact available/full/cancelled stock. It prints no credentials or hashes. Run it before deliberately altering original fixture accounts/stock; stale session dates or intentional fixture maintenance may cause it to fail. Create a separate fresh isolated seed when needed; never reset unrelated records to force a pass.
+`npm run test:seed` reads only the original fictional fixtures in the isolated `_test` database and checks canonical Laguna snapshots/formatting and inherited report locations, all fourteen salted credentials/roles, twelve connection owners, three zones/two sites, report contexts and exact available/full/cancelled stock. PSGC snapshots are read from domain tables because the legacy inspection view omits those newer columns. It prints no credentials or hashes. Run it before deliberately altering original fixture accounts/stock; stale session dates or intentional fixture maintenance may cause it to fail. Create a separate fresh isolated seed when needed; never reset unrelated records to force a pass.
 
 ## Configuration reference
 
@@ -182,3 +194,9 @@ The refactor Android smoke test used the existing project-local SDK/JDK/Gradle c
 ## PSGC and street maps
 
 Deploy the additive PSGC migration and include the sibling `psgc-address-data/data/` directory with the API. Guided addresses need no provider key. Supplier Geoapify tiles require the separate public browser tile key or an explicit raster override. Native `EXPO_PUBLIC_MAP_TILE_URL` overrides its street template unless a native style URL is set. See [configuration, provenance, and update instructions](location-and-maps.md). Browser checks include `npm run test:addresses`; run login-heavy suites serially with the documented throttle interval.
+
+### Laguna upgrade verification
+
+`npm run test:seed-upgrade` requires a **separate original v1-seeded** database ending `_test`, supplied through `DATABASE_URL`, with `SEED_DEMO=1`. It adds an unrelated historical report, tests modified/ambiguous fixture refusal and rollback via a temporary failure trigger, then races two concurrent upgrade calls, commits the fixture correction once and verifies complete repeat-run stability. It refuses a fresh v2 database. Never run this mutating verification on the ordinary demo database. Fresh-seed acceptance uses `AQOURS_TEST_DATABASE_URL` and `npm run test:seed` separately. See [verification evidence](verification.md).
+
+`npm run test:laguna:browser` reads an otherwise fresh Laguna seed through the supplier UI, checks eleven located reports/three clusters plus the unlocated scenario, and selects a report from each locality. Supply `AQOURS_TEST_API`/`AQOURS_TEST_WEB` matching the built web client and run it before suites that add map fixtures. Build with `VITE_MAP_TILE_URL=https://tiles.example.test/{z}/{x}/{y}.png` so raster bytes stay local to the test. Optional `AQOURS_LIVE_WEATHER=1` also checks actual Open-Meteo Calamba search/forecast availability; provider failure is a failed live check rather than a mock pass.

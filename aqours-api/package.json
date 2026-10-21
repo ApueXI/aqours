@@ -17,7 +17,8 @@
     "pretypecheck": "npm run generate",
     "prisma:validate": "XDG_CACHE_HOME=../.cache PRISMA_HIDE_UPDATE_MESSAGE=1 prisma validate",
     "migrate:adopt": "TSX_DISABLE_CACHE=1 node --import tsx src/scripts/adopt-baseline.ts",
-    "predev": "npm run generate"
+    "predev": "npm run generate",
+    "seed:upgrade-laguna": "TSX_DISABLE_CACHE=1 node --import tsx src/scripts/seed-upgrade-laguna.ts"
   },
   "dependencies": {
     "@aqours/contracts": "file:../aqours-contracts",

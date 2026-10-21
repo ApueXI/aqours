@@ -2,7 +2,7 @@
 
 Updated 19 October 2026. These are **reproducible walkthrough instructions**, not a claim that all ten scenarios have been executed on Android. The original scenario wording is reproduced below without changes. [Verification](verification.md) records actual API/browser/database/native results and unavailable checks; [traceability](traceability.md) maps every requirement and feature criterion to precise evidence. Follow [setup](setup.md), the [API contract](api.md) and [Android guide](../aqours-app/README.md) first.
 
-All people, addresses, water notices, restoration estimates and stock here are fictional. Do not use these instructions or sample notices as real public-health advice. There is one supplier and three application roles. Academic acceptance of rules/questionnaire/action cards is external; no AI is part of this demonstration.
+All people, street details, water notices, restoration estimates and stock here are fictional. Administrative place names follow the bundled Laguna PSGC hierarchy; service zones and household points remain synthetic. Do not use these instructions or sample notices as real public-health advice. There is one supplier and three application roles. Academic acceptance of rules/questionnaire/action cards is external; no AI is part of this demonstration.
 
 ## Prepare the demonstration
 
@@ -26,12 +26,18 @@ These are intentionally public **development fixture credentials**, defined by [
 
 | Customers | Saved zone | Connection references |
 | --- | --- | --- |
-| 01, 04, 07, 10 | Demo Riverside (`DEMO-1`) | `DEMO-CON-001`, `004`, `007`, `010` with the same `DEMO-CON-` prefix |
-| 02, 05, 08, 11 | Demo Hillcrest (`DEMO-2`) | `DEMO-CON-002`, `005`, `008`, `011` with the same prefix |
-| 03, 06, 09 | Demo Lakeside (`DEMO-3`) | `DEMO-CON-003`, `006`, `009` with the same prefix |
+| 01, 04, 07, 10 | Demo Calamba · Bagong Kalsada (`DEMO-1`) | `DEMO-CON-001`, `004`, `007`, `010` with the same `DEMO-CON-` prefix |
+| 02, 05, 08, 11 | Demo Los Baños · Batong Malake (`DEMO-2`) | `DEMO-CON-002`, `005`, `008`, `011` with the same prefix |
+| 03, 06, 09 | Demo Santa Rosa · Balibago (`DEMO-3`) | `DEMO-CON-003`, `006`, `009` with the same prefix |
 | 12 | Unknown/unconfirmed; no coordinates | `DEMO-CON-012`, address retained for review |
 
 There are four published synthetic category incidents, twelve starting reports (including unmatched and a previously resolved/still-affected report), one explicitly unlifted demonstration quality advisory, two pickup sites, and five assistance examples. Initial open-session stock is `1000.00` liters with `20.00` reserved (`980.00` remaining); the full session has `100.00` reserved from `100.00`; the third session is cancelled. These values change when the demo/tests mutate records. Verify current state rather than treating this table as live availability. Customer 01 has seeded accepted water support, Customer 02 a full-session reservation, Customer 03 a requested callback, Customer 04 a scheduled inspection and Customer 12 an unallocated water request requiring support follow-up.
+
+## Laguna locations and weather
+
+Fresh seeds use Laguna (`0403400000`) in Region IV-A CALABARZON (`0400000000`). Connections, their original reports and pickup sites store canonical PSGC snapshots with fictional street details. Customer12 has a Laguna address but deliberately retains no coordinates or confirmed zone. See [the explicit upgrade](setup.md#upgrading-original-demo-locations-to-laguna) for existing v1 demo databases; normal seed repeats never relocate stored records.
+
+On customer Home, the selected owned connection supplies weather coordinates automatically. Current conditions and seven forecast days appear below the city search. Customer12 instead searches for Calamba, Los Baños or Santa Rosa and selects the intended Laguna result. On supplier Overview, an admin selects a Laguna city through Weather search to view the same seven-day capability; staff also has access. Refresh, retry and stale labels are independent of service updates. Weather search remains nationwide and never changes PSGC addresses, zones or water-safety notices. See [weather](weather.md).
 
 ## Actions and state constraints
 

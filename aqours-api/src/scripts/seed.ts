@@ -3,11 +3,10 @@ import { create } from "../repositories/domain.repository.js";
 import { advisoryLock } from "../repositories/locks.repository.js";
 import { seedIdentities } from "./seed-identities.js";
 import { seedOperations } from "./seed-operations.js";
+import { seedVersion } from "./seed-locations.js";
+import { assertDemoSeedAllowed } from "./seed-safety.js";
 export async function seed() {
-  if (process.env.NODE_ENV === "production" || process.env.SEED_DEMO !== "1")
-    throw new Error(
-      "Demo seed requires SEED_DEMO=1 and a nonproduction environment",
-    );
+  assertDemoSeedAllowed();
   await transaction(async (db) => {
     await advisoryLock(db, "aqours-demo-seed");
     const rows = await db.seedMarker.findMany({ select: { id: true } });
@@ -22,7 +21,7 @@ export async function seed() {
     const identities = await seedIdentities(db);
     await seedOperations(db, identities);
     await create(db, "seed_marker", {
-      fixture: "aqours-demo-v1",
+      fixture: seedVersion,
       appliedAt: new Date().toISOString(),
       demo: true,
     });

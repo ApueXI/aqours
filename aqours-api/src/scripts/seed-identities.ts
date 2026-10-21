@@ -3,8 +3,9 @@ import type { DB } from "../config/database.js";
 import { create, type Doc } from "../repositories/domain.repository.js";
 import { setCredential } from "../repositories/security.repository.js";
 import { hashPassword } from "../utils/password.js";
-export const fixtureId = (n: number) =>
-  `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
+import { seedZone, seedConnectionLocation } from "./seed-locations.js";
+import { fixtureId } from "./seed-legacy-locations.js";
+export { fixtureId } from "./seed-legacy-locations.js";
 export async function seedIdentities(db: DB) {
   await create(
     db,
@@ -42,27 +43,13 @@ export async function seedIdentities(db: DB) {
   }
   const zones: Doc[] = [];
   for (let n = 0; n < 3; n++) {
-    const lon = 120.98 + n * 0.025,
-      lat = 14.57;
     zones.push(
       await create(
         db,
         "zone",
         {
           code: `DEMO-${n + 1}`,
-          name: ["Demo Riverside", "Demo Hillcrest", "Demo Lakeside"][n],
-          boundary: {
-            type: "Polygon",
-            coordinates: [
-              [
-                [lon, lat],
-                [lon + 0.02, lat],
-                [lon + 0.02, lat + 0.03],
-                [lon, lat + 0.03],
-                [lon, lat],
-              ],
-            ],
-          },
+          ...seedZone(n),
           active: true,
           demo: true,
         },
@@ -83,11 +70,9 @@ export async function seedIdentities(db: DB) {
         {
           customerId: customer.id,
           reference: `DEMO-CON-${String(n + 1).padStart(3, "0")}`,
-          address: `${n + 1} Fictional Demo Lane, ${zone.name}`,
+          ...seedConnectionLocation(n),
           zoneId: n === 11 ? null : zone.id,
           zoneConfirmed: n !== 11,
-          latitude: n === 11 ? null : 14.58 + n * 0.0005,
-          longitude: n === 11 ? null : 120.99 + (n % 3) * 0.025,
         },
         customer.id,
         null,

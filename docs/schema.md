@@ -16,7 +16,7 @@ Updated 20 October 2026 for the Prisma refactor. Source of truth: [Prisma schema
 | `CallbackDetails`, `InspectionDetails`, `WaterSupportDetails` | One-to-one type-specific details; selected pickup session is an explicit foreign key |
 | `PickupSite`, `PickupSession`, `StockSession`, `Allocation` | Pickup operations and exact reservation/collection ledger |
 | `ApprovedGuidance`, `GuidanceRule`, `GuidanceEvaluation`, `GuidanceChoice` | Immutable supplier configuration, explained evaluations/evidence and customer choices |
-| `SeedMarker` | Repeatable explicit fictional seed guard |
+| `SeedMarker` | Repeatable explicit fictional seed guard; v2 Laguna marker records fresh fixtures or the atomic v1 location correction |
 
 Domain models have UUID IDs, positive versions and separate storage creation/update timestamps. Workflow timestamps map to TIMESTAMPTZ columns. Incident, publication, advisory and pickup-session zone targeting use ordered junction rows; advisory connection targeting is also relational. Stored target positions preserve the existing source-signature ordering. JSONB remains for GeoJSON, immutable snapshots, questionnaire answers, evaluation cards/evidence, operation replay and audit metadata. Historical evaluations without evidence retain null rather than invented evidence.
 

@@ -5,7 +5,7 @@ import type { Connection, WeatherForecast, WeatherLocation } from '../aqours-con
 import { createApp } from '../aqours-api/src/app.ts';
 import { disconnect } from '../aqours-api/src/config/database.ts';
 import { weatherFixture } from '../aqours-api/test/weather-fixture.ts';
-import { actors, connection, key, ok, request } from './harness.ts';
+import { actors, connection, login, ok, request } from './harness.ts';
 
 // Dedicated database and port must be supplied; never run against ordinary data.
 assert.ok(process.env.DATABASE_URL, 'Supply an isolated seeded verification database');
@@ -23,7 +23,11 @@ before(async () => {
     upstream++;
     if (failure) return new Response('Temporarily unavailable', { status: 429 });
     return Response.json(url.hostname.startsWith('geocoding') ? { results: [{
-      id: 1, name: 'Manila', admin1: 'Metro Manila', country: 'Philippines', country_code: 'PH', latitude: 14.6, longitude: 121,
+      id: 1, name: 'Calamba', admin1: 'Laguna', country: 'Philippines', country_code: 'PH', latitude: 14.1679, longitude: 121.1951,
+    }, {
+      id: 2, name: 'Los Baños', admin1: 'Laguna', country: 'Philippines', country_code: 'PH', latitude: 14.1674, longitude: 121.2433,
+    }, {
+      id: 3, name: 'Santa Rosa', admin1: 'Laguna', country: 'Philippines', country_code: 'PH', latitude: 14.2946, longitude: 121.1054,
     }] } : weatherFixture());
   };
   await new Promise<void>((resolve, reject) => {
@@ -39,14 +43,15 @@ after(async () => {
 
 test('weather HTTP requires authentication and serves all three roles with normalized data', async () => {
   const count = upstream;
-  assert.equal((await request(null, 'GET', '/weather?latitude=14.6&longitude=121')).status, 401);
-  assert.equal((await request(null, 'GET', '/weather/locations?q=Manila')).status, 401);
+  assert.equal((await request(null, 'GET', '/weather?latitude=14.1679&longitude=121.1951')).status, 401);
+  assert.equal((await request(null, 'GET', '/weather/locations?q=Calamba')).status, 401);
   assert.equal(upstream, count);
   const users = await actors();
   for (const actor of [users.a, users.staff, users.admin]) {
-    const locations = await ok<WeatherLocation[]>(actor, 'GET', '/weather/locations?q=Manila');
-    assert.equal(locations[0]!.name, 'Manila');
-    const weather = await ok<WeatherForecast>(actor, 'GET', '/weather?latitude=14.6&longitude=121');
+    const locations = await ok<WeatherLocation[]>(actor, 'GET', '/weather/locations?q=Calamba');
+    assert.deepEqual(locations.map(city => city.name), ['Calamba', 'Los Baños', 'Santa Rosa']);
+    assert.ok(locations.every(city => city.area === 'Laguna'));
+    const weather = await ok<WeatherForecast>(actor, 'GET', '/weather?latitude=14.1679&longitude=121.1951');
     assert.equal(weather.daily.length, 7);
     assert.equal(weather.daily[0]!.date, '2026-10-21');
     assert.equal(weather.units.temperature, '°C');
@@ -61,23 +66,32 @@ test('weather HTTP checks connection ownership before even a warmed forecast cac
   const { a, b, staff, admin } = await actors();
   const owned = await connection(a);
   const before = await ok<Connection[]>(a, 'GET', '/me/connections');
-  await ok(a, 'GET', `/weather?connectionId=${owned.id}`);
+  assert.equal(owned.reference, 'DEMO-CON-001');
+  assert.ok(owned.latitude! > 14 && owned.latitude! < 14.5, 'Fresh customer01 connection is in Laguna');
+  assert.ok(owned.longitude! > 121.05 && owned.longitude! < 121.6);
+  const forecast = await ok<WeatherForecast>(a, 'GET', `/weather?connectionId=${owned.id}`);
+  assert.deepEqual(forecast.location, { latitude: owned.latitude, longitude: owned.longitude });
+  assert.equal(forecast.daily.length, 7);
   const count = upstream;
   assert.equal((await request(b, 'GET', `/weather?connectionId=${owned.id}`)).status, 404);
   assert.equal((await request(staff, 'GET', `/weather?connectionId=${owned.id}`)).status, 403);
   assert.equal((await request(admin, 'GET', `/weather?connectionId=${owned.id}`)).status, 403);
   assert.equal(upstream, count);
-  const unlocated = await ok<Connection>(admin, 'POST', '/staff/settings/connections', {
-    customerId: a.user.id, reference: `WEATHER-${key()}`, address: 'Fictional address without coordinates', zoneConfirmed: false,
-  });
-  assert.equal((await request(a, 'GET', `/weather?connectionId=${unlocated.id}`)).status, 422);
+  const unlocatedCustomer = await login('customer12@demo.aqours.test');
+  const unlocated = await connection(unlocatedCustomer);
+  assert.equal(unlocated.reference, 'DEMO-CON-012');
+  assert.equal(unlocated.latitude, null);
+  assert.equal(unlocated.longitude, null);
+  const missing = await request(unlocatedCustomer, 'GET', `/weather?connectionId=${unlocated.id}`);
+  assert.equal(missing.status, 422);
+  assert.equal(missing.body.error?.code, 'location_unavailable');
   assert.equal(upstream, count);
-  const after = await ok<Connection[]>(a, 'GET', '/me/connections');
-  assert.deepEqual(after.filter(item => item.id !== unlocated.id), before, 'Weather reads never alter saved locations');
-  await ok(admin, 'PATCH', `/staff/settings/connections/${unlocated.id}`, {
-    expectedVersion: unlocated.version, reason: 'Reviewed fictional test connection after the missing-coordinate check',
-    zoneId: owned.zoneId, zoneConfirmed: owned.zoneConfirmed, latitude: owned.latitude, longitude: owned.longitude,
-  });
+  const cities = await ok<WeatherLocation[]>(unlocatedCustomer, 'GET', '/weather/locations?q=Calamba');
+  const city = cities[0]!;
+  const searched = await ok<WeatherForecast>(unlocatedCustomer, 'GET', `/weather?latitude=${city.latitude}&longitude=${city.longitude}`);
+  assert.equal(searched.daily.length, 7, 'Customer without saved coordinates can use a searched city');
+  assert.deepEqual(await ok<Connection[]>(a, 'GET', '/me/connections'), before, 'Weather reads never alter saved locations');
+  assert.deepEqual(await connection(unlocatedCustomer), unlocated, 'City fallback never alters missing coordinates');
 });
 
 test('weather HTTP rejects invalid input before upstream and recovers from provider rate limiting', async () => {
@@ -86,7 +100,7 @@ test('weather HTTP rejects invalid input before upstream and recovers from provi
   for (const path of [
     '/weather', '/weather?latitude=91&longitude=0', '/weather?latitude=&longitude=0',
     '/weather?latitude=0&longitude=Infinity', '/weather?latitude=14&longitude=121&connectionId=bad',
-    '/weather/locations?q=x', '/weather/locations?q=Manila&url=http://localhost',
+    '/weather/locations?q=x', '/weather/locations?q=Calamba&url=http://localhost',
   ]) assert.equal((await request(a, 'GET', path)).status, 400);
   assert.equal(upstream, count);
   failure = true;
