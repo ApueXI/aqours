@@ -2,6 +2,17 @@
 
 Updated 21 October 2026. Source implements the connected first release; release acceptance is **IN PROGRESS**. A native APK build is verified separately from installed Android behavior. Live Geoapify and academic acceptance remain external. No skipped or unavailable check is counted as passed. [Traceability](traceability.md) maps all 84 requirements, 126 original feature criteria and DEMO-001 through DEMO-010 to implementation and the exact assertions/manual checks.
 
+## Expo Go map fallback — 21 October 2026
+
+The report map entry point now uses SDK 57's Expo Go check before loading the native renderer and street-map setup. Expo Go shows the supplied coordinates; Aqours native builds retain MapLibre. Existing route default exports, coordinate confirmation and reporting requests are unchanged. No dependency or migration was added.
+
+- PASS: mobile typecheck, lint and all 21 unit/helper tests, including three map regressions in `aqours-app/tests/map-preview.test.cjs`. The harness executes the actual preview/style modules with native views replaced: Expo Go never evaluates either native map module, Aqours builds preserve point/camera/attribution/request identification, and map failure/retry still works.
+- PASS: Android Hermes export bundles all 1,412 modules into `aqours-app/dist-android/`; this checks bundling rather than device execution.
+- PASS: repository TypeScript line limits/documentation links/criterion inventory and diff review.
+- NOT RUN: new-report/report-detail walkthrough in SDK-compatible Expo Go and an updated installed Aqours map smoke test. The isolated project-local ADB device list was empty; its owned server was stopped after inspection. No new APK or installed-runtime result is claimed. Earlier native APK evidence retains its original source boundary.
+
+Reproduce the Expo Go check using the [mobile launch instructions](../aqours-app/README.md#run-in-expo-go), sign in with an owned customer account, and open new-report and report-detail screens with coordinates. Expect the coordinates-only message without `MLRNCameraModule` or consequent default-export warnings. In a native build of the updated source, verify the same point, map attribution and retry after a failed map load.
+
 ## Open-Meteo weather — 21 October 2026
 
 Current conditions, seven-day forecasts and Philippine city search now work on customer Home and supplier Overview for all three existing roles. See [weather behavior and reproduction commands](weather.md). Tests used dedicated project-local PostgreSQL databases on port55434; ordinary databases and credentials were untouched. Owned API/web/emulator/ADB/PostgreSQL verification processes were stopped, preserving ignored evidence under `.local/weather/`.

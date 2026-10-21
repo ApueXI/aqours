@@ -1,6 +1,6 @@
 # Aqours customer Android application
 
-Expo SDK 57 (`57.0.30`), React Native `0.86.3`, React `19.2.3`, TypeScript 6 and Expo Router. Native MapLibre `11.5.0` requires a rebuilt Android app; Expo Go cannot run this app. The existing Expo stack and npm lockfile are retained. iOS and customer web delivery are outside this release.
+Expo SDK 57 (`57.0.30`), React Native `0.86.3`, React `19.2.3`, TypeScript 6 and Expo Router. Native MapLibre `11.5.0` requires a rebuilt Android app. Expo Go uses a coordinates-only preview so reporting screens can open without MapLibre's native modules. The existing Expo stack and npm lockfile are retained. iOS and customer web delivery are outside this release.
 
 ## Setup
 
@@ -35,6 +35,20 @@ export EXPO_PUBLIC_MAP_STYLE_URL='' # Use the street default
 `10.0.2.2` reaches the host from the standard Android emulator. For a physical phone use the development computer's reachable LAN address and permit the local API port. The phone's `localhost` refers to the phone. Production API URLs must use HTTPS; `app.config.ts` permits Android cleartext only when an explicitly supplied public API URL starts with `http://`. Change this configuration and rebuild when switching deployment environments.
 
 An empty/unset map style now selects the OpenStreetMap street basemap. Explicit public style settings still take precedence. For deployment choose an appropriately licensed native-compatible map provider, keep its required attribution visible, and restrict any public provider credential. Map rendering and Geoapify geocoding are independent. The private Geoapify key stays in Express. A missing or failed map does not prevent address-based reporting.
+
+## Run in Expo Go
+
+After setup above, use an Expo Go version compatible with SDK 57. From `aqours-app/`, start Metro and scan its QR code in Expo Go:
+
+```sh
+npm run start -- --go --clear
+```
+
+For a physical phone, supply `EXPO_PUBLIC_API_URL` with the development computer's reachable LAN address and keep the phone on a network that can reach it. The emulator-only `10.0.2.2` address will not reach your computer from a phone.
+
+New-report and report-detail screens show latitude/longitude in Expo Go. Saved-address reporting, coordinate confirmation and address-only entry remain available; Expo Go does not evaluate MapLibre or its native street-map setup. Interactive maps require an installed Aqours Android build. The runtime boundary uses SDK 57's [`isRunningInExpoGo()`](https://docs.expo.dev/versions/v57.0.0/sdk/expo/#isrunninginexpogo), keeping custom development and standalone builds on the native map path.
+
+If an older bundle reports missing `MLRNCameraModule` followed by route default-export warnings, restart with the command above. Both report routes already export their screen components; the failed native import caused those warnings. See the [verification ledger](../docs/verification.md#expo-go-map-fallback--21-october-2026) for automated checks and remaining device checks.
 
 ## Build and run Android
 
