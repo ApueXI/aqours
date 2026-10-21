@@ -154,10 +154,12 @@ The root npm manifest coordinates contract build, typecheck, lint, API/web build
 | Location | Implemented local tooling |
 | --- | --- |
 | Root | `npm run contracts`, `typecheck`, `lint`, `build`, `test:api`, `test:browser`, `check:repository` |
-| `aqours-api/` | `npm run dev`, `build`, `start`, `migrate`, `seed`, `typecheck`, `lint`, `test` |
+| `aqours-api/` | `npm run dev`, `build`, `migrate`, `migrate:adopt`, `seed`, `seed:upgrade-laguna`, `typecheck`, `lint`, `test`; `npm start` |
 | `aqours-web/` | Vite `dev`, `build`, `preview`, plus `typecheck`, `lint`, `test` |
 | `aqours-app/` | Expo `start`, native `android`, `export:android`, `typecheck`, `lint`, `test`; EAS/build configuration is present |
 | Database | Compose PostgreSQL 18.6, project-local persistent data, Prisma migrations with verified legacy adoption, explicit development seed |
+
+API runtime scripts (`dev`, `start`, migrations and seeds) automatically load optional `aqours-api/.env`; process environment values take precedence. Use `npm run dev` inside the API directory or `npm --prefix aqours-api run dev` from the root. Source changes restart development automatically; restart the command after changing `.env`. Production startup requires a build; database startup, migrations and seeds are separate actions. Tests/build tooling do not implicitly load secrets. See [setup](setup.md) for configuration and future deployment notes.
 
 The mobile `android` script runs `expo run:android`, which requires the native toolchain; Metro alone does not produce an APK. Expo 57 / React Native 0.86.3 / MapLibre React Native 11.5.0 are configured. For an SDK-compatible Expo Go, run `npm --prefix aqours-app run start -- --go --clear` and scan the QR code; report screens display coordinates because Expo Go lacks MapLibre's native modules. Interactive maps require an Aqours native build. Signed standalone dual-architecture APKs and actual KVM-backed Android29/36 workflows are recorded in the [native ledger](native-verification.md), with exact artifact boundaries. CNG/export/type checks remain distinct evidence. Refer to the current [verification ledger](verification.md) before claiming compatibility.
 

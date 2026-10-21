@@ -19,9 +19,9 @@ mkdir -p .local/container-postgres
 # After configuring your root .env, including its absolute project-local data path:
 docker compose up -d db
 # After configuring aqours-api/.env:
-(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/migrate.ts)
-(cd aqours-api && SEED_DEMO=1 TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/seed.ts)
-(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/server.ts)
+(cd aqours-api && npm run migrate)
+(cd aqours-api && SEED_DEMO=1 npm run seed)
+(cd aqours-api && npm run dev)
 ```
 
 In separate terminals:

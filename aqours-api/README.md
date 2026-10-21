@@ -2,7 +2,7 @@
 
 Authenticated [Open-Meteo weather endpoints](../docs/weather.md) serve current conditions, seven-day forecasts and Philippine city search for customers/staff/admin. Customer connection lookups enforce ownership; bounded process-local caching requires no migration, new dependency or demonstration API key.
 
-TypeScript Express API implementing [the shared v1 contract](../docs/api.md). Requires Node 22.13+ and PostgreSQL 18. Application configuration is read from the process environment; no `.env` file is loaded. Database and geocoding credentials stay on the server. Build the sibling `aqours-contracts` package first, then install with the existing npm lockfile. All commands below run in `aqours-api/`.
+TypeScript Express API implementing [the shared v1 contract](../docs/api.md). Requires Node 22.13+ and PostgreSQL 18. Runtime npm scripts automatically load the optional `aqours-api/.env`; existing process environment variables take precedence. Database and geocoding credentials stay on the server. Build the sibling `aqours-contracts` package first, then install with the existing npm lockfile. All commands below run in `aqours-api/`.
 
 ```sh
 npm ci --cache ../.cache/npm
@@ -10,13 +10,21 @@ npm run build
 npm run typecheck
 npm run lint
 npm test
-# Set DATABASE_URL to your designated development database first.
+# Configure .env privately and start PostgreSQL first; see setup below.
 npm run migrate
 SEED_DEMO=1 npm run seed
 npm run dev
 # Production/build execution:
 npm start
 ```
+
+## Environment loading and future deployment
+
+`dev`, `start`, `migrate`, `migrate:adopt`, `seed`, and `seed:upgrade-laguna` use Node's built-in `--env-file-if-exists=.env`. Run them here or from the repository root with `npm --prefix aqours-api run <script>` (`npm --prefix aqours-api start` for production startup). No extra environment flags or dotenv dependency are needed. Copy `.env.example` to `.env` once and replace its placeholders privately; see [setup](../docs/setup.md). The API uses its own file, separate from the root Compose `.env`.
+
+`npm run dev` generates Prisma and watches source changes. Restart the command after editing `.env`. `npm start` runs the compiled API and requires `npm run build` first. PostgreSQL must already be running; migrations and demo seeds remain explicit commands. Tests, builds, typecheck, Prisma generation and validation do not automatically load `.env`.
+
+For future deployment, supply secrets through the hosting environment and omit the local `.env`; a missing file is allowed. Externally supplied variables override matching file entries. Set `NODE_ENV=production`, use an HTTPS `WEB_ORIGIN`, and keep demo seeding disabled. Keep `.env` private and uncommitted; neither flags nor this file replace the existing configuration checks. Direct `node` invocations still require explicit environment configuration.
 
 `migrate` deploys the checked-in Prisma migration history. Existing databases must first run `migrate:adopt` after stopping writers and backing up; see the adoption guide below. Repeated deploy/seed commands preserve state. Keep both applied migration histories unchanged. The demo seed requires `SEED_DEMO=1`, rejects production and nonempty unseeded databases, runs atomically, and preserves existing records on repeated runs. Startup never migrates, seeds, resets or clears data. `createApp()` in `src/app.ts` supports HTTP integration tests. `/health` confirms HTTP process health; it does not claim database readiness. Default API port is 4000 and exact browser origin is `http://localhost:5173`. Configuration names/defaults are in `.env.example`; placeholder values are not working credentials. `TSX_DISABLE_CACHE=1` prevents development transform caches outside this project.
 

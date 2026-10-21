@@ -30,7 +30,11 @@ All `.env` and `.env.*` files except `.env.example` are ignored. Fill each place
 | `aqours-web/.env.example` | `VITE_API_URL`, public `VITE_GEOAPIFY_MAPS_API_KEY`, optional raster `VITE_MAP_TILE_URL` and `VITE_MAP_ATTRIBUTION`. All are public browser bundle configuration. |
 | `aqours-app/.env.example` | `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_MAP_STYLE_URL`. Both are public Android bundle configuration, including the native HTTP-development setting. |
 
-The API reads its process environment; it does not silently load `.env`. The `node --env-file=.env` commands below deliberately load the API's local file. Vite/Expo load their normal public environment files during development; `EXPO_NO_DOTENV=1` disables Expo dotenv when explicit shell/build variables are preferred. Never put database passwords, the Geoapify geocoding key or candidate-signing secrets in a `VITE_*`, `EXPO_PUBLIC_*`, Expo `extra`, style URL or client source field.
+The API's `dev`, `start`, `migrate`, `migrate:adopt`, `seed`, and `seed:upgrade-laguna` npm scripts automatically load optional `aqours-api/.env` using Node's built-in `--env-file-if-exists=.env`. Existing process environment variables override file values; a missing file is allowed when configuration is supplied externally. Run scripts inside `aqours-api/` or use `npm --prefix aqours-api run <script>` from the repository root. The root Compose `.env` is separate. Tests, builds, typecheck, Prisma generation and validation do not automatically load the API file; direct `node` invocations still need explicit configuration.
+
+For everyday development, use `npm run dev` inside `aqours-api/`; Prisma generation and source watching are automatic. Restart the command after changing `.env`. For future deployment, build with `npm run build`, supply secrets through the hosting environment, omit the local file, then use `npm start`. Set `NODE_ENV=production`, use an HTTPS `WEB_ORIGIN`, and keep demo seeding disabled. PostgreSQL must already be running; starting the API does not run migrations or seeds.
+
+Vite/Expo load their normal public environment files during development; `EXPO_NO_DOTENV=1` disables Expo dotenv when explicit shell/build variables are preferred. Never put database passwords, the Geoapify geocoding key or candidate-signing secrets in a `VITE_*`, `EXPO_PUBLIC_*`, Expo `extra`, style URL or client source field.
 
 ## PostgreSQL and attachments
 
@@ -45,9 +49,9 @@ docker compose ps
 Compose pins standard `postgres:18.6-alpine3.23`, publishes the configured port on `127.0.0.1`, checks readiness, and uses a private Compose network. PostgreSQL 18 stores data below the mounted `/var/lib/postgresql`; no PostGIS extension is used. A host API URL uses `127.0.0.1:<POSTGRES_PORT>`; if you separately containerize the API, its private database hostname is `db` and port is `5432`. Database configuration never belongs in either client.
 
 ```sh
-(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/migrate.ts)
-(cd aqours-api && SEED_DEMO=1 TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/seed.ts)
-(cd aqours-api && TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/server.ts)
+(cd aqours-api && npm run migrate)
+(cd aqours-api && SEED_DEMO=1 npm run seed)
+(cd aqours-api && npm run dev)
 ```
 
 Prisma migrations are versioned and transactional; repeated migration/seed commands preserve existing records. Existing databases must follow the adoption steps below before their first Prisma migration. The seed refuses production and nonempty unseeded databases. Reset requires deliberately creating a separate empty development database or explicitly removing your own demo database; there is no reset endpoint, startup reset, or automated destructive command. Keep original migration files unchanged after they are applied.
@@ -67,10 +71,10 @@ Do not use `down -v` as a routine restart. A persistent volume is separate from 
 Fresh seeding writes `aqours-demo-laguna-v2` with canonical Laguna PSGC addresses. Existing `aqours-demo-v1` databases are preserved by ordinary seed repeats. To deliberately move their original mutable demo fixtures, stop API writers and back up the database first, then run:
 
 ```sh
-(cd aqours-api && SEED_DEMO=1 TSX_DISABLE_CACHE=1 node --env-file=.env --import tsx src/scripts/seed-upgrade-laguna.ts)
+(cd aqours-api && SEED_DEMO=1 npm run seed:upgrade-laguna)
 ```
 
-With configuration already supplied through the process environment, `SEED_DEMO=1 npm --prefix aqours-api run seed:upgrade-laguna` is equivalent. Production and missing opt-in are refused. The command takes the seed advisory lock and bounded table locks, checks every original fixture identity/geographic signature, and writes in one transaction. Missing/ambiguous/edited fixture locations abort before changes with a record/field conflict. Do not overwrite reviewed locations to force an upgrade; use a separate fresh demo database if those fixtures have been maintained.
+From the repository root, `SEED_DEMO=1 npm --prefix aqours-api run seed:upgrade-laguna` is equivalent and loads the same optional API `.env`. Production and missing opt-in are refused. The command takes the seed advisory lock and bounded table locks, checks every original fixture identity/geographic signature, and writes in one transaction. Missing/ambiguous/edited fixture locations abort before changes with a record/field conflict. Do not overwrite reviewed locations to force an upgrade; use a separate fresh demo database if those fixtures have been maintained.
 
 The upgrade changes original connections, reports, zones, pickup sites, inspection addresses and incident area labels. Existing operational states, timestamps, credentials, stock and unrelated records remain intact. Original report locations change only through this explicit fixture correction; ordinary connection edits still preserve report snapshots. Published history is immutable: four corrected incident publications are appended, with audit events and no notification replay. Earlier publications retain their old labels. The v1 marker remains and v2 is recorded atomically; repeated upgrades and upgrades against fresh v2 seeds are no-ops. No schema migration or new dependency is needed.
 
@@ -172,11 +176,11 @@ Project `.npmrc` files keep ordinary npm caches under the invoking project direc
 
 ## Adopting Prisma on an existing database
 
-Stop API writers and take a verified database/attachment backup. Do not run the baseline SQL directly against existing tables. With the existing private database configuration supplied to the process:
+Stop API writers and take a verified database/attachment backup. Do not run the baseline SQL directly against existing tables. Configure the existing private database through API `.env` or the process environment:
 
 ```sh
-(cd aqours-api && node --env-file=.env --import tsx src/scripts/adopt-baseline.ts)
-(cd aqours-api && node --env-file=.env --import tsx src/scripts/migrate.ts)
+(cd aqours-api && npm run migrate:adopt)
+(cd aqours-api && npm run migrate)
 ```
 
 Adoption verifies all four legacy migration checksums and supported record types, then marks `0_legacy_baseline` applied in Prisma's ledger. Deployment transactionally creates and backfills domain tables, moves target arrays into junctions, separates assistance details, reattaches foreign keys and preserves database safeguards. IDs, timestamps, versions, sessions, password hashes, replay responses and attachment references remain preserved. Historical guidance without recorded evidence remains nullable. The original records remain in frozen `legacy_records`; `records` becomes a read-only inspection view. Future migrations belong in `aqours-api/prisma/migrations/`; preserve both applied migration histories.
