@@ -9,6 +9,7 @@ export const pickupSiteRepository = (db: DB) =>
     fields: {
       name: "s",
       address: "s",
+      structuredAddress: "j?",
       instructions: "s",
       latitude: "f?",
       longitude: "f?",

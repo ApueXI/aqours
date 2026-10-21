@@ -1,5 +1,9 @@
 # Requirement and acceptance traceability
 
+## Supplemental weather feature — 21 October 2026
+
+The original requirement/criterion/test-key inventory below is preserved. [Weather](weather.md) is an additional owner-approved feature, covered by six named weather cases in [normalization/cache tests](../aqours-api/test/weather.test.ts) and [provider tests](../aqours-api/test/weather-provider.test.ts), three real authenticated HTTP/PostgreSQL scenarios in [weather-http.ts](../verification/weather-http.ts), and eight Chromium scenarios in [browser-weather.ts](../verification/browser-weather.ts). Live provider and installed Android evidence is separately scoped in [verification](verification.md) and the [native ledger](native-verification.md).
+
 Updated 20 October 2026. This is an evidence map, not a blanket acceptance certificate. It preserves all **84 REQ identifiers**, **126 original feature acceptance identifiers** and **ten DEMO scenarios**. Their authoritative wording remains in [requirements](requirements.md) and the sixteen linked specifications. Original unchecked boxes remain unchanged.
 
 Source implementation, API assertions, browser interaction and actual Android behavior are separate evidence. The named tests below exist and are executable; their latest run/result belongs in [verification](verification.md), not this inventory. A reference proves only its actual assertions, not every phrase in the associated criterion. Client unit tests exercise helpers; typecheck/lint/build never certify individual UI criteria. The HTTP context and database error-redaction regressions are included in final verification; consult the run ledger for their outcomes.

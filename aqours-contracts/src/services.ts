@@ -15,7 +15,7 @@ export interface Allocation {
   id: string; requestId: string; sessionId: string; liters: string; reference: string;
   state: 'reserved' | 'collected' | 'released'; reservedAt: string; collectedAt: string | null; releasedAt: string | null;
 }
-export interface PickupSite { id: string; name: string; address: string; instructions: string; active: boolean; demo: boolean; latitude: number | null; longitude: number | null; version: number }
+export interface PickupSite { structuredAddress?: import('./addresses.js').AddressSnapshot | null; id: string; name: string; address: string; instructions: string; active: boolean; demo: boolean; latitude: number | null; longitude: number | null; version: number }
 export interface PickupSession {
   id: string; siteId: string; site: PickupSite; zoneIds: string[]; startsAt: string; endsAt: string;
   status: 'open' | 'closed' | 'cancelled'; instructions: string; totalLiters: string;

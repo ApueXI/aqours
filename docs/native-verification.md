@@ -1,6 +1,22 @@
 # Android verification evidence
 
-Updated 20 October 2026. These checks used the installed standalone Android application, the real Express API/PostgreSQL database and, for supplier actions, the production React application in Chromium. All people, addresses, notices, images and outcomes are fictional. This ledger supplements [verification](verification.md) and [traceability](traceability.md); an individual check proves only the behavior described.
+Updated 21 October 2026. These checks used the installed standalone Android application, the real Express API/PostgreSQL database and, for supplier actions, the production React application in Chromium. All people, addresses, notices, images and outcomes are fictional. This ledger supplements [verification](verification.md) and [traceability](traceability.md); an individual check proves only the behavior described.
+
+## Open-Meteo weather — 21 October 2026
+
+The weather release APK has SHA256 `d33812b2da6ba1952bd354e71275db96f46e987765182f93828616ac9cd03fb0`. Its v2 signature verifies; the installed Android29 x86_64 package independently matches that exact hash. Offline Gradle built ARM64/x86_64 with the existing project-local toolchain and caches (546 tasks). The retained test artifact is `.local/weather/app-release-d33812b2da6b.apk`; its public API is `http://10.0.2.2:4005/api/v1`, requiring an API on host port4005. It is a local demonstration artifact, not a deployment configuration.
+
+Actual installed checks used emulator5564, isolatedADB5042, the real API and dedicated PostgreSQL dataset, and live Open-Meteo:
+
+- Customer01 signed in and loaded weather for the saved connection: conditions, feels-like/actual temperature, humidity, precipitation and wind, with distinct model/retrieval times in Manila.
+- Scrolling through the forecast showed all seven dates, October21–27, low/high values, precipitation totals/probabilities and linked provider attribution; supplier advisories remained below the independent weather section.
+- Philippine city search returned disambiguated Cebu results; selecting Cebu City replaced the saved-location label and measurements with that city's live forecast.
+- Stopping the owned API then refreshing retained Cebu weather with an explicit last-loaded/stale message and Retry. Restarting the API and retrying restored current data and cleared the error.
+- Profile sign-out and Customer12 sign-in cleared the former customer's city and forecast. The connection with null coordinates showed the city-search fallback without a GPS prompt.
+- A live Manila search for Customer12 encountered a transient provider failure, showed an honest retry state and then returned real candidates on retry. Selecting Manila displayed its current/seven-day forecast.
+- Authenticated readback confirmed Customer12's saved coordinates remained null after city weather selection.
+
+Evidence: `.local/weather/native/{saved-weather,forecast-middle,forecast-end,cebu-weather,offline-weather,recovered-weather,home,unlocated-weather,city-search-retry,unlocated-city-weather}.{xml,png}` and `.local/weather/artifact.json`. Input automation initially targeted a partly clipped field and exited Home; bringing the field fully onscreen completed the same real flow. The owned emulator, isolated ADB, API/web and project-local PostgreSQL verification services were stopped after checks. This checkpoint covers Android29 x86_64 only; compiled ARM64 and other Android versions have no new weather runtime claim. Earlier native evidence retains its original scope.
 
 ## Artifacts and test targets
 
@@ -96,3 +112,13 @@ Actual checks on emulator5560/isolatedADB5040:
 - An owned report retains its GPS snapshot/accuracy and shows the native public map style, attribution and persisted-point circle. Initial SwiftShader/Vulkan rendering produced blank frames and `std::bad_alloc` log entries. A retry with `-feature -Vulkan` rendered the style and circle; allocation errors also remain in that retry's log. No graphics compatibility fix or universal device claim is inferred from that bounded positive render.
 
 Evidence: `.local/refactor/native/{home,reports,report-detail,guidance,scrolled,assistance,notifications,profile,restored-home,map-configured,map-gles,protected-photo-final}.{xml,png}`, final APK hash/signature files, and native build/emulator logs. The first input automation attempt targeted an obscured field; corrected keyboard handling completed the real login. No source test hook or success fixture was introduced. Emulator startup follows [Android's documented Vulkan-disable option](https://developer.android.com/studio/run/emulator-troubleshooting). Owned emulator/ADB and temporary API/web processes are stopped after verification; databases/backups/evidence remain project-local. Live signed Geoapify, physical ARM64 runtime and academic acceptance remain unverified.
+
+## PSGC and street-map native check — 20 October 2026
+
+The locally signed ARM64/x86_64 release APK has SHA256 `44eb4c947b8c8c8e2f63aa134dafaa03179f2b75a2975fd65b3b5cc770e81197`. APK Signature Scheme v2 verification passes, and the installed Android29 emulator package matches that exact hash. Existing project-local SDK/JDK/Gradle caches were used offline; no native library or dependency was added.
+
+Actual checks on fictional Customer12 cover sign-in, PSGC NCR → City of Caloocan → Barangay1 selection, street details, address-only selection, and successful report submission. API readback confirms canonical ancestry/code/street snapshot, null coordinates, and location/service-zone review flags. Denying GPS retains the selected address. Granting foreground permission then returns the emulator's `LocationServices.API` unavailable error; acquisition is not counted as passing. Unconfigured live Geoapify also fails explicitly while retaining the address.
+
+A separately controlled saved connection at latitude14.6, longitude121.01 renders OSM roads/place/landmark labels, a red point, and visible copyright attribution in the installed app. One black tile remains visible in the captured native preview; this is bounded rendering evidence, not universal graphics compatibility. A second actual native report retains that saved point, the supplier GeoJSON returns `[121.01,14.6]`, and selecting its rendered supplier point opens the matching reference. The comparison exposed and fixed overlapping zone/report popups; the final WebGL regression includes an overlapping zone and passes. Chromium uses local raster fixtures for automated zoom/selection.
+
+Private project-local evidence is in `.local/psgc/native/`, including UI/screenshot captures, installed hash, canonical address readback and coordinate-equality result. Initial boot needed its System UI dialog cleared. The owned emulator/isolated ADB and verification services were stopped after checks. Live signed Geoapify candidates and successful GPS acquisition remain outside this checkpoint; earlier native ledgers retain their original artifact boundaries.

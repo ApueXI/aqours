@@ -37,7 +37,7 @@ export default function App() {
       <div className="identity mt-auto [padding:32px_12px_0] flex flex-col gap-[6px] [&_span]:text-[#475569] [&_button]:mt-[8px] [@media(max-width:_760px)]:[padding:16px_0_0] [@media(max-width:_760px)]:flex-row [@media(max-width:_760px)]:items-center [@media(max-width:_760px)]:gap-[12px] [@media(max-width:_760px)]:flex-wrap [@media(max-width:_760px)]:[&_button]:[margin:0_0_0_auto] [@media(max-width:_760px)]:[&_.error]:basis-[100%]"><strong>{user.name}</strong><span>{label(user.role)}</span><button disabled={loggingOut} onClick={() => void logout()}>{loggingOut ? 'Signing out…' : 'Sign out'}</button><Failure error={logoutError} /></div>
     </aside>
     <main id="main" tabIndex={-1} className="workspace [padding:28px_32px] max-w-[1560px] w-full [&_>_section]:p-[20px] [&_>_section]:bg-[#fff] [&_>_section]:[border:1px_solid_#d3dce3] [&_>_section]:[border-radius:5px] [&_>_div_>_section]:p-[20px] [&_>_div_>_section]:bg-[#fff] [&_>_div_>_section]:[border:1px_solid_#d3dce3] [&_>_div_>_section]:[border-radius:5px] [@media(min-width:_1600px)]:[margin:0_auto] [@media(max-width:_1100px)]:[padding:24px_20px] [@media(max-width:_760px)]:[padding:24px_16px] [@media(max-width:_760px)]:[&_>_section]:p-[16px] [@media(max-width:_760px)]:[&_>_div_>_section]:p-[16px]" key={route.section}>
-      {route.section === 'overview' && <Overview />}
+      {route.section === 'overview' && <Overview key={user.id} />}
       {route.section === 'reports' && (route.id ? <ReportDetail id={route.id} returnTo={route.params.get('returnTo')} /> : <Reports params={route.params} />)}
       {route.section === 'map' && <MapPage params={route.params} />}
       {route.section === 'incidents' && (route.id ? <IncidentDetail id={route.id} /> : <Incidents />)}

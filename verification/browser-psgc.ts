@@ -1,0 +1,81 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { chromium, expect } from '@playwright/test';
+import { fixturePassword, key, login, ok } from './harness.ts';
+import type { Connection, PickupSite } from '../aqours-contracts/src/index.ts';
+
+const output = path.resolve('.local/psgc');
+await mkdir(output, { recursive: true });
+const temporary = path.resolve('.cache/tmp');
+await mkdir(temporary, { recursive: true });
+const admin = await login('admin@demo.aqours.test', 'web');
+const context = await chromium.launchPersistentContext(path.join(output, 'browser-profile'), {
+  executablePath: '/usr/bin/chromium', headless: true, viewport: { width: 1280, height: 950 },
+  env: { ...process.env, TMPDIR: temporary }, args: ['--no-sandbox'],
+});
+const page = await context.newPage();
+const evidence: string[] = [];
+const errors: string[] = [];
+page.on('pageerror', error => errors.push(error.message));
+const passed = (message: string) => { evidence.push(message); console.log('PASS', message); };
+const web = process.env.AQOURS_TEST_WEB || 'http://localhost:5173';
+try {
+  await context.clearCookies();
+  await page.goto(web);
+  await page.getByLabel('Email', { exact: true }).fill('admin@demo.aqours.test');
+  await page.getByLabel('Password', { exact: true }).fill(fixturePassword);
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
+  await page.goto(`${web}/#/settings`);
+  await page.getByRole('button', { name: 'Connections', exact: true }).click();
+  await page.getByText('Create service connection', { exact: true }).click();
+  const create = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create connection', exact: true }) });
+  await create.getByRole('button', { name: 'Choose Philippine address', exact: true }).click();
+  await create.getByLabel('Region', { exact: true }).selectOption('1300000000');
+  const ncr = create.getByLabel('Place within National Capital Region (NCR)', { exact: true });
+  await ncr.selectOption('1380100000');
+  await create.getByLabel('Place within City of Caloocan', { exact: true }).selectOption('1380100001');
+  await create.getByLabel('Street, building, or landmark', { exact: true }).fill('Fictional browser street');
+  await expect(create.getByText('Fictional browser street, Barangay 1, City of Caloocan, National Capital Region (NCR), Philippines', { exact: true })).toBeVisible();
+  passed('Guided address follows direct NCR city/barangay hierarchy and composes canonical labels');
+  await ncr.selectOption('1380200000');
+  await expect(create.getByLabel('Place within City of Caloocan', { exact: true })).toHaveCount(0);
+  const hidden = create.locator('input[name="address:structured"]');
+  await expect(hidden).toHaveValue('null');
+  passed('Changing a city clears the obsolete barangay and blocks incomplete guided submission');
+  await ncr.selectOption('1380100000');
+  await create.getByLabel('Place within City of Caloocan', { exact: true }).selectOption('1380100001');
+  const customer = create.getByLabel('Customer', { exact: true });
+  const customerId = await customer.locator('option').nth(1).getAttribute('value');
+  assert.ok(customerId); await customer.selectOption(customerId);
+  const reference = `BROWSER-PSGC-${key()}`;
+  await create.getByLabel('Connection reference', { exact: true }).fill(reference);
+  const saved = page.waitForResponse(response => response.request().method() === 'POST' && response.url().endsWith('/staff/settings/connections'));
+  await create.getByRole('button', { name: 'Create connection', exact: true }).click();
+  const response = await saved; assert.equal(response.status(), 200);
+  const connection = (await response.json()).data as Connection;
+  assert.equal(connection.structuredAddress?.barangayCode, '1380100001');
+  assert.equal(connection.latitude, null);
+  const persisted = await ok<Connection[]>(admin, 'GET', '/staff/settings/connections?limit=100');
+  assert.ok(persisted.some(item => item.id === connection.id));
+  passed('Supplier creates and persists a structured connection without inventing coordinates');
+  await page.goto(`${web}/#/distribution`);
+  const summary = page.locator('summary').filter({ hasText: /^Create pickup site$/ });
+  await summary.click();
+  const siteForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create pickup site', exact: true }) });
+  await siteForm.getByLabel('Pickup site name', { exact: true }).fill(`Fictional browser site ${key()}`);
+  await siteForm.getByLabel('Full address', { exact: true }).fill('Fictional text-only pickup address');
+  await siteForm.getByLabel('Site instructions', { exact: true }).fill('Demo browser fixture');
+  const siteSaved = page.waitForResponse(response => response.request().method() === 'POST' && response.url().endsWith('/staff/pickup-sites'));
+  await siteForm.getByRole('button', { name: 'Create pickup site', exact: true }).click();
+  const siteResponse = await siteSaved; assert.equal(siteResponse.status(), 200);
+  const site = (await siteResponse.json()).data as PickupSite;
+  assert.equal(site.structuredAddress, null); assert.equal(site.address, 'Fictional text-only pickup address');
+  passed('Pickup site free-text fallback remains usable and retains its exact address');
+  assert.deepEqual(errors, []);
+  await page.screenshot({ path: path.join(output, 'addresses.png'), fullPage: true });
+} finally {
+  await writeFile(path.join(output, 'browser-address-results.txt'), evidence.join('\n') + '\n');
+  await context.close();
+}

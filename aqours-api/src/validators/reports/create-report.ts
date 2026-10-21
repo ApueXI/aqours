@@ -1,8 +1,10 @@
+import { structuredAddress } from "../structured-address.js";
 import { z } from "zod";
 import { category, id, instant, text } from "../common.js";
 const location = z
   .object({
     address: text,
+    structuredAddress,
     source: z.enum(["saved_address", "geocoded_address", "gps"]),
     latitude: z.number().nullable().optional(),
     longitude: z.number().nullable().optional(),

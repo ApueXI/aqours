@@ -1,3 +1,5 @@
+import type { StructuredAddressInput } from "@aqours/contracts";
+import { addressSnapshot, formatAddress } from "./psgc-catalog.service.js";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { config } from "../../config/environment.js";
 import { fail } from "../../utils/errors.js";
@@ -5,6 +7,7 @@ export function signCandidate(
   address: string,
   latitude: number,
   longitude: number,
+  structuredAddress?: StructuredAddressInput | null,
 ) {
   if (!config.geocodeSecret)
     fail(
@@ -17,6 +20,9 @@ export function signCandidate(
       address,
       latitude,
       longitude,
+      structuredAddress: structuredAddress
+        ? addressContext(structuredAddress)
+        : null,
       expires: Date.now() + 900000,
     }),
   ).toString("base64url");
@@ -48,11 +54,29 @@ export function verifyCandidate(location: Record<string, any>) {
     value.expires < Date.now() ||
     value.address !== location.address ||
     value.latitude !== location.latitude ||
-    value.longitude !== location.longitude
+    value.longitude !== location.longitude ||
+    JSON.stringify(value.structuredAddress ?? null) !==
+      JSON.stringify(
+        location.structuredAddress
+          ? addressContext(location.structuredAddress)
+          : null,
+      )
   )
     fail(400, "Candidate expired or location changed");
 }
-export async function geocode(address: string) {
+function addressContext(input: StructuredAddressInput) {
+  const snapshot = addressSnapshot(input);
+  return {
+    barangayCode: snapshot.barangayCode,
+    streetDetails: snapshot.streetDetails,
+  };
+}
+export async function geocode(
+  address: string,
+  structuredAddress?: StructuredAddressInput | null,
+) {
+  if (structuredAddress)
+    address = formatAddress(addressSnapshot(structuredAddress));
   if (!config.geocodeKey || !config.geocodeSecret)
     fail(
       503,
@@ -94,7 +118,12 @@ export async function geocode(address: string) {
         longitude: v.lon,
         confidence:
           typeof v.rank?.confidence === "number" ? v.rank.confidence : null,
-        candidateToken: signCandidate(v.formatted, v.lat, v.lon),
+        candidateToken: signCandidate(
+          v.formatted,
+          v.lat,
+          v.lon,
+          structuredAddress,
+        ),
       }));
   } catch {
     fail(

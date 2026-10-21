@@ -1,5 +1,7 @@
 # Aqours API
 
+Authenticated [Open-Meteo weather endpoints](../docs/weather.md) serve current conditions, seven-day forecasts and Philippine city search for customers/staff/admin. Customer connection lookups enforce ownership; bounded process-local caching requires no migration, new dependency or demonstration API key.
+
 TypeScript Express API implementing [the shared v1 contract](../docs/api.md). Requires Node 22.13+ and PostgreSQL 18. Application configuration is read from the process environment; no `.env` file is loaded. Database and geocoding credentials stay on the server. Build the sibling `aqours-contracts` package first, then install with the existing npm lockfile. All commands below run in `aqours-api/`.
 
 ```sh

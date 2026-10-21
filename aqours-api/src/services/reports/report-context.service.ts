@@ -1,3 +1,4 @@
+import { addressFields } from "../location/psgc-catalog.service.js";
 import type { DB } from "../../config/database.js";
 import {
   all,
@@ -49,7 +50,17 @@ export async function reportCreate(
     noticedAt: input.noticedAt,
     submittedAt: now(),
     status: "received",
-    address: location?.address ?? connection.address,
+    ...(location
+      ? addressFields(location)
+      : {
+          address: connection.address,
+          structuredAddress: connection.structuredAddress ?? null,
+        }),
+    ...(location?.source === "geocoded_address" &&
+    location.confirmed &&
+    location.latitude != null
+      ? { address: location.address }
+      : {}),
     locationSource: location?.source ?? "saved_address",
     latitude: location ? (location.latitude ?? null) : connection.latitude,
     longitude: location ? (location.longitude ?? null) : connection.longitude,

@@ -13,6 +13,8 @@ Updated **19 October 2026** against the first-release implementation of Water Su
 
 Additional execution references: [API contract](api.md), [setup and backup/restore](setup.md), [demo](demo.md), [verification](verification.md), and [traceability](traceability.md).
 
+[Weather](weather.md) documents the 21 October addition: Open-Meteo current conditions, seven-day forecasts, saved customer locations and Philippine city search for all three roles.
+
 Use these together: requirements define the behavior, architecture defines boundaries, schema describes persistence status/design, and workspace traces the target workflows. [PROGRESS.md](../PROGRESS.md) records completed repository work and verification.
 
 ## Role summaries
@@ -63,3 +65,5 @@ Keep detailed feature behavior in its spec and shared invariants in the referenc
 Follow [root guidance](../AGENTS.md) and [mobile guidance](../aqours-app/AGENTS.md) for future changes. Keep synthetic notices/availability clearly labeled, preserve independent report/incident/advisory/assistance outcomes and update affected documentation with source and verification changes. Exact deadline, deployment destination and demonstration geography remain configurable.
 
 - [Directory navigation](directory-structure.md): API layers, Prisma models and client feature folders.
+
+- [Locations and maps](location-and-maps.md): PSGC catalog, guided addresses, snapshots, street basemaps, and provider settings.

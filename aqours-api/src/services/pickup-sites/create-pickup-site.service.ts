@@ -1,3 +1,4 @@
+import { addressFields } from "../location/psgc-catalog.service.js";
 import type { DB } from "../../config/database.js";
 import { create, event } from "../../repositories/domain.repository.js";
 import type { CommandContext } from "../../types/command-context.js";
@@ -8,6 +9,7 @@ export async function createPickupSite(db: DB, req: CommandContext) {
   coordinates(input);
   const doc = await create(db, "site", {
     ...input,
+    ...addressFields(input),
     latitude: input.latitude ?? null,
     longitude: input.longitude ?? null,
     active: input.active ?? true,

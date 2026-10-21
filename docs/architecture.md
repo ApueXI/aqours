@@ -28,6 +28,7 @@ flowchart LR
     API -->|Prisma Client and transactions| DB[(PostgreSQL)]
     API -->|Authorized image operations| Files[Private project-local attachments]
     API -->|Private key and signed candidates| Geoapify[Geoapify geocoding]
+    API -->|Coordinates / city search| Weather[Open-Meteo weather and city search]
     Customer -->|Configured public style| Tiles[Map tiles]
     Supplier -->|Configured public style| Tiles
     GPS[Optional foreground GPS] --> Customer
@@ -81,6 +82,14 @@ Native MapLibre 11.5.0 is pinned with Expo 57 / React Native 0.86.3 configuratio
 
 ## Client organization and styling
 
+Weather components live under each client's `features/weather/` and mount independently on Home/Overview. Express weather routes/controllers/services validate Open-Meteo data behind existing authentication, enforce customer connection ownership, and use bounded process-local caches. There is no weather persistence or domain automation. See [weather behavior and provider boundaries](weather.md).
+
 Both clients group screens, feature-only components, hooks and request operations under `features/<domain>/`. Shared UI, hooks, HTTP transport, configuration and utilities stay outside those feature folders. The web `app/` contains bootstrap, routing and navigation. Expo `app/` contains route wrappers and navigator layouts only. Native styles are retained.
 
 The supplier app uses Tailwind 4 through its Vite plugin. Utility classes replace application class selectors while original class markers remain available to browser checks. Shared element defaults and MapLibre overrides live in the Tailwind entry stylesheet; Preflight is deliberately omitted to preserve existing browser form defaults and appearance. Explicit utility mappings cover dynamic class names.
+
+## Location architecture
+
+The authenticated API loads the sibling bundled PSGC region index and caches its hierarchy. Both clients request catalog entries without bundling all barangays. Administrative selections provide names/codes; coordinate and service-zone confirmation remain separate.
+
+See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.

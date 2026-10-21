@@ -5,8 +5,11 @@ import { ResourceState } from '@/components/resource-state';
 import { useAllResources, useResource } from '@/hooks/use-resource';
 import { displayTime, label } from '@/utils/time';
 import { AdvisoryContext } from '../components/advisory-context';
+import { WeatherSection } from '@/features/weather/components/weather-section';
+import { useSession } from '@/features/auth/hooks/session';
 
 export function HomeScreen() {
+  const { user } = useSession();
   const connections = useResource<Connection[]>('/me/connections');
   const notices = useAllResources<Advisory>('/advisories', true);
   const reports = useAllResources<Report>('/reports', true);
@@ -20,6 +23,7 @@ export function HomeScreen() {
         {!connection.zoneConfirmed && <Body muted>Service zone is unconfirmed. Notices may be incomplete; contact support for clarification.</Body>}
       </View>)}
     </Section>
+    <WeatherSection key={user?.id} connections={connections.error ? null : connections.data} />
     <Section title="Applicable advisories">
       <ResourceState {...notices} empty={notices.data?.length === 0 && 'No matching published advisories. This does not establish water safety or normal supply.'} />
       {notices.data?.map((notice) => <View key={notice.id} style={styles.item}>

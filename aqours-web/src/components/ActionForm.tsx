@@ -1,16 +1,23 @@
+import { AddressEditor } from './AddressEditor';
+import type { AddressSnapshot } from '@aqours/contracts';
 import { styleClasses } from '../utils/style-classes';
 import { useState, type FormEvent, type ReactNode } from 'react';
 import { createIntent, errorText, RequestError, sendIntent, type Intent } from '../services/http-client';
 
 export type Option = { value: string; label: string };
 export type Field = {
-  name: string; label: string; type?: 'text' | 'textarea' | 'select' | 'multi' | 'datetime-local' | 'number' | 'email' | 'password' | 'checkbox' | 'json';
+  name: string; label: string; type?: 'address' | 'text' | 'textarea' | 'select' | 'multi' | 'datetime-local' | 'number' | 'email' | 'password' | 'checkbox' | 'json';
   required?: boolean; value?: string | number | boolean | string[] | null; options?: Option[];
-  hint?: string; min?: number; max?: number; step?: string; nullable?: boolean; omitEmpty?: boolean;
+  snapshot?: AddressSnapshot | null; hint?: string; min?: number; max?: number; step?: string; nullable?: boolean; omitEmpty?: boolean;
 };
 export function readFields(fields: Field[], data: FormData): Record<string, unknown> {
   return Object.fromEntries(fields.flatMap(field => {
     const value = String(data.get(field.name) ?? '');
+    if (field.type === 'address') {
+      const structured = JSON.parse(String(data.get(`${field.name}:structured`) || 'null'));
+      if (data.get(`${field.name}:guided`) === 'true' && !structured) throw new Error('Complete the PSGC address');
+      return [[field.name, value], ['structuredAddress', structured]];
+    }
     if (!value && field.omitEmpty) return [];
     if (field.type === 'checkbox') return [[field.name, data.has(field.name)]];
     if (field.type === 'multi') return [[field.name, data.getAll(field.name).map(String)]];
@@ -27,6 +34,7 @@ function localTime(value: Field['value']) {
 }
 export function Fields({ fields }: { fields: Field[] }) {
   return <>{fields.map(field => {
+    if (field.type === 'address') return <AddressEditor key={field.name} name={field.name} label={field.label} value={String(field.value || '')} snapshot={field.snapshot} />;
     const id = field.name;
     const base = { name: id, required: field.required, 'aria-label': field.label };
     let control: ReactNode;
@@ -78,7 +86,7 @@ export function ActionForm({ path, method = 'POST', fields, submit, version, ext
         ...(version === undefined ? {} : { expectedVersion: version }) };
       if (preview) { setDraft(body); return; }
       const next = createIntent(path, method, body); setIntent(next); void send(next);
-    } catch { setError(new RequestError(400, 'validation', 'Check the form. Geometry must be valid JSON and dates must be valid Manila times.')); }
+    } catch { setError(new RequestError(400, 'validation', 'Check the form. Complete guided addresses, use valid geometry JSON, and enter valid Manila times.')); }
   };
   return <form className="action-form mt-[16px] max-w-[720px] [&_fieldset_>_button]:mt-[4px]" onSubmit={start}>
     <fieldset disabled={pending || Boolean(intent) || Boolean(draft)}><Fields fields={fields} />{children}

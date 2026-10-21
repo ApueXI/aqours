@@ -18,6 +18,10 @@ Requirement identifiers and the ten DEMO scenarios remain stable; the 126 featur
 | REQ-SCOPE-04 | Use sample customer records and fictional people, accounts, service zones, incidents, notices, restoration estimates, and availability. Visibly label synthetic incidents, notices, and seeded water availability as demonstration data. Do not present fictional safety notices as real public advice. |
 | REQ-SCOPE-05 | **Adopted first-release default:** the first release serves one supplier, seeded customer accounts, and supplier staff/admin accounts. A one-week demonstration schedule is an assumption, not a confirmed deadline. |
 
+## Weather addition — 21 October 2026
+
+The owner approved current conditions plus seven daily forecasts on customer Home and supplier Overview, available to customer/staff/admin. Customers start at a saved connection and both clients offer Philippine city search. Weather is informational, independently retryable, attributed to Open-Meteo, and preserves backend connection ownership and existing water-advisory lifecycles. This supplemental feature does not renumber the original brief's requirements or acceptance inventory. See [weather behavior, contract and verification](weather.md).
+
 ## Domain vocabulary
 
 | Term | Meaning and boundary |
@@ -245,3 +249,7 @@ These ten scenarios retain their original required scope. API/database, actual s
 | Working title, demonstration geography, deployment destination, exact deadline | Configurable planning details; the supplied one-week sequence is conditional, not a committed schedule. Do not reopen the confirmed Android, location, or assistance choices. |
 
 Application source, environment examples, Compose, migrations/seeds, contracts and setup/demo/build guidance now exist. The user authorized necessary project-local dependencies for this implementation. Release completion still requires the evidence and outstanding checks recorded in [verification](verification.md), including the Android deliverable; do not infer completion from this requirement inventory.
+
+## Map and address implementation
+
+See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.

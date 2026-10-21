@@ -12,6 +12,8 @@ Success: `{data: T, page?: {offset,limit,total}, asOf?: string}`. Lists return `
 
 ## Customer and shared reads
 
+Authenticated current weather, seven-day forecasts and Philippine city search are available to all existing roles. See [weather endpoints, DTOs and errors](weather.md#api-contract). Customer connection-ID lookups enforce ownership before accessing cached forecasts.
+
 | Method/path | Body/query | Response `data` / authorization |
 | --- | --- | --- |
 | GET /zones | — | Active Zone[] (customer-safe boundaries, no households) |
@@ -115,3 +117,7 @@ Assistance requested→accepted→scheduled→in_progress→completed. Accepted�
 Liters are decimal strings with at most two fractional digits, maximum 1,000,000,000.00. Store NUMERIC(14,2), use SQL exact arithmetic for authority. Every stock mutation locks session, then request, then allocation; non-water request mutations lock request. Idempotency locks precede domain locks. Reserve at acceptance, collection transfers reserved→collected, release reserved→released, never delete ledger rows. All publication/transition notifications are direct inserts in the same PostgreSQL transaction, unique recipient+event key.
 
 Quality advisories remain active irrespective of startsAt/endsAt until explicit lift, including on the supplier map; scheduled/general notices respect effective dates. Current guidance is evaluated on demand with a source signature including report version, incident/publication revisions, advisory versions/lift state, rule version, zone/connection context and report-eligible stock versions. Private immutable evidence also contains the `aqours-rules-1` engine discriminator; evaluations made with a different discriminator become stale. Historical GET marks current=false after changes. Clients must hide old cards during failed refresh and show support fallback. Synthetic safety content is a demonstration fixture and never real public guidance.
+
+## PSGC address contract
+
+See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.

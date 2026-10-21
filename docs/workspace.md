@@ -31,6 +31,8 @@ Password recovery, MFA and public registration are not implicitly added to the d
 
 ## 3. Customer home and service location
 
+Home also offers [Open-Meteo weather](weather.md) for an owned saved connection or a selected Philippine city. Supplier Overview supports the same city search. Weather requests have their own loading/error/refresh state and do not change report locations, service zones or advisories.
+
 1. After sign-in, load the customer's profile, saved connection/address, current applicable published notices and open reports.
 2. Match notices through explicit reviewed service-zone/connection associations. An applicable area advisory can reach a customer who has never submitted a report.
 3. Present a report shortcut and owned report details. Keep published incident areas separate from other households' private coordinates.
@@ -180,3 +182,7 @@ The ten [DEMO scenarios](requirements.md#acceptance-scenarios) remain the integr
 ## Source navigation
 
 See [directory navigation](directory-structure.md) for API layers and feature-based client folders. Prisma generates backend-only database types; shared public DTOs remain in `aqours-contracts`. Tailwind applies only to the supplier web, preserving native mobile styles. Existing-database adoption is explicit and must precede the first Prisma deployment.
+
+## Guided addresses and detailed maps
+
+See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.

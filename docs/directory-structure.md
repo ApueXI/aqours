@@ -69,3 +69,7 @@ src/
 Mobile keeps React Native styling. Do not introduce non-route modules into `app/`. Platform variants such as `map-preview.native.tsx` stay beside their fallback. Create optional folders only when they contain a real responsibility; clients do not need HTTP controllers, database repositories or Prisma types.
 
 Shared public contracts remain in `aqours-contracts`. See [architecture](architecture.md), [schema](schema.md), [setup](setup.md) and [verification](verification.md).
+
+## Location modules
+
+See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.

@@ -48,6 +48,10 @@ Status: **implemented first-release behavior; acceptance evidence remains qualif
 
 ## HOW
 
+### Weather addition — 21 October 2026
+
+Home includes current conditions and seven-day forecasts for an owned saved connection, initially preferring the first connection with coordinates. Customers can switch connections or search/select a Philippine city; missing coordinates retain city search without requesting GPS. Weather has independent loading/retry/stale states, Manila timestamps and provider attribution. Selection is temporary and account-scoped, and the API checks ownership before cached weather access. See [weather behavior and checks](../../../weather.md).
+
 ### Implemented behavior and modules
 
 `aqours-app/src/features/home/screens/home-screen.tsx` composes saved connections, applicable advisories, published incidents, open reports and report navigation.

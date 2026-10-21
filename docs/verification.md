@@ -1,6 +1,36 @@
 # First-release verification
 
-Updated 20 October 2026. Source implements the connected first release; release acceptance is **IN PROGRESS**. A native APK build is verified separately from installed Android behavior. Live Geoapify and academic acceptance remain external. No skipped or unavailable check is counted as passed. [Traceability](traceability.md) maps all 84 requirements, 126 original feature criteria and DEMO-001 through DEMO-010 to implementation and the exact assertions/manual checks.
+Updated 21 October 2026. Source implements the connected first release; release acceptance is **IN PROGRESS**. A native APK build is verified separately from installed Android behavior. Live Geoapify and academic acceptance remain external. No skipped or unavailable check is counted as passed. [Traceability](traceability.md) maps all 84 requirements, 126 original feature criteria and DEMO-001 through DEMO-010 to implementation and the exact assertions/manual checks.
+
+## Open-Meteo weather — 21 October 2026
+
+Current conditions, seven-day forecasts and Philippine city search now work on customer Home and supplier Overview for all three existing roles. See [weather behavior and reproduction commands](weather.md). Tests used dedicated project-local PostgreSQL databases on port55434; ordinary databases and credentials were untouched. Owned API/web/emulator/ADB/PostgreSQL verification processes were stopped, preserving ignored evidence under `.local/weather/`.
+
+| Check | Result / evidence |
+| --- | --- |
+| Types, lint, API/web builds, repository limits and documentation links | PASS; `final-{types,lint,build}.log`, `npm run check:repository` and `git diff --check` |
+| Component unit/helper tests | PASS: API28, web16, mobile18 =62; includes six new weather tests; `{api,web,mobile}-unit-final.log` |
+| Weather HTTP/PostgreSQL | PASS: three deterministic scenarios, real cookie/bearer sessions and ownership, all roles, missing coordinates, input rejection, shared cache and provider-limit recovery; `weather-http-final.log`; guarded `aqours_weather_http_test` |
+| Existing HTTP/PostgreSQL regression | PASS:59, zero failures/skips; fresh `aqours_weather_regression_test`, SQL fault checks target the same database; `api-regression-final.log` |
+| Weather Chromium | PASS: eight scenarios covering current/seven-day display, attribution, stale retry, empty/failed searches, missing values, late responses, narrow weather section and account/dashboard clearing; `browser-final.log` |
+| Existing supplier Chromium | PASS:23 workflow/navigation checks, zero uncaught exceptions; `browser-regression-verified.log` |
+| Live Open-Meteo | PASS: authenticated Manila city search and seven-day forecast, plus actual Android saved-coordinate/Cebu City/Manila weather; a transient native city-search failure correctly showed retry and recovered |
+| Android release and runtime | PASS: offline ARM64/x86_64 release build, verified v2 signature, Android29 installation and independent installed/source hash equality; `android-build.log`, `artifact.json` and [scoped native results](native-verification.md#open-meteo-weather--21-october-2026) |
+
+Weather adds no dependency or migration. Native weather checks cover Android29 x86_64; physical ARM64/other Android versions were not newly exercised. Public Open-Meteo availability is external; these results do not certify uptime or commercial deployment. Existing live Geoapify and academic acceptance gaps retain their prior status.
+
+## Detailed maps and PSGC addresses — 20 October 2026
+
+Verification used separate `aqours_psgc_test` and cloned `aqours_psgc_upgrade_test` databases, local test APIs, and the supplier development server. Ordinary databases were not migrated. Evidence remains project-local under `.local/psgc/`; automated map screenshots use a local raster fixture rather than real public OSM tiles.
+
+- All application type checks and lint pass; Express and supplier production builds pass. Vite retains its existing large-bundle advisory.
+- API22 + web16 + mobile18 = 56 unit/helper tests pass, including catalog counts/hierarchy/duplicate names, leading-zero codes, incomplete selection guards, canonical geocoding context, and signed selection invalidation.
+- All59 HTTP/PostgreSQL scenarios pass with zero failures/skips, including authenticated catalog access, nullable legacy addresses, saved report snapshots, text corrections, role checks, and map projections.
+- Supplier23 workflow, seven maintenance, four PSGC address, and six real WebGL map checks pass. Map checks verify the default raster source, clustering, zoom/query invariants, independent layer controls, attribution, and report popup/open behavior, including precedence over overlapping zone shapes. Browser connection/pickup workflows retain free-text fallback.
+- A populated additive upgrade preserves fingerprints for45 connections,327 reports, and69 pickup sites: IDs, versions, address strings, and coordinates remain identical. All legacy snapshot fields remain null. Fresh deployment also applies all three migrations successfully.
+- Signed ARM64/x86_64 release APK builds and installs on the owned Android29 emulator. Native sign-in, NCR/city/barangay selection, street details, GPS denial fallback, explicit unconfigured-provider failure, and an actual PSGC address-only report submission pass. API readback verifies canonical snapshot, null coordinates, and location-review flags. A controlled saved-point preview renders detailed streets/marker/attribution, and actual supplier point selection opens the matching native report with identical persisted coordinates; one captured native tile remains black. Permission-granted GPS acquisition is unverified in this run: the emulator returns `LocationServices.API` unavailable. Live Geoapify remains unconfigured and is not counted as passing.
+
+The initial native boot needed its System UI dialog cleared. An early HTTP fixture exceeded the intentional login throttle; final tests reuse sessions and pass without changing rate limits. Earlier map checks picked up a local demo-style override; final checks explicitly select the new street default without editing secret/local environment files. See [location configuration](location-and-maps.md) for retained style-override precedence.
 
 ## Prisma and Tailwind refactor — 20 October 2026
 

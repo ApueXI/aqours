@@ -10,6 +10,7 @@ export const serviceConnectionRepository = (db: DB) =>
       customerId: "u",
       reference: "s",
       address: "s",
+      structuredAddress: "j?",
       zoneId: "u?",
       zoneConfirmed: "b",
       latitude: "f?",

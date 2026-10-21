@@ -91,3 +91,5 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 Review assistance/admin, advisory/guidance and security API tests plus browser settings rendering. Connection edits update matching on subsequent reads and invalidate guidance signatures; they do not fan out retrospective notice notifications. Academic approval and approval of any real supplier safety wording remain external; this release uses fictional demonstration content.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
+
+Implementation update: [PSGC addresses and detailed maps](../../../location-and-maps.md) documents guided supplier-managed addresses, free-text fallback, snapshots, and deployment settings.

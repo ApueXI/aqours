@@ -1,5 +1,7 @@
 # Aqours supplier web
 
+Overview includes [Open-Meteo current weather and seven-day forecasts](../docs/weather.md) with Philippine city search, manual refresh, provider attribution and independent retry/stale states for staff and admins.
+
 React and TypeScript supplier workspace built with Vite. MapLibre GL JS renders operational report points, zoom-dependent clusters, service zones, and published incident/advisory polygons. The browser uses the live Express API; no production screen substitutes mock data or a simulated successful save.
 
 ## Local setup
@@ -20,7 +22,7 @@ Public build configuration is documented in [.env.example](.env.example). Supply
 | Variable | Default / meaning |
 | --- | --- |
 | `VITE_API_URL` | `http://localhost:4000/api/v1`; must include the versioned API base |
-| `VITE_MAP_STYLE_URL` | `https://demotiles.maplibre.org/style.json`; public demonstration basemap, no API key required |
+| `VITE_MAP_STYLE_URL` | Empty/unset selects the OpenStreetMap street basemap; explicit public styles override it |
 | `VITE_MAP_ATTRIBUTION` | Optional additional attribution required by another style/tile provider |
 
 Map style/tile availability is independent of the API. A basemap failure displays an error while the report list remains available. The selected provider’s attribution is displayed in the map. Geoapify and database credentials belong to the API; never provide them through Vite variables.
@@ -81,3 +83,5 @@ The production build typechecks first. MapLibre is a lazy JavaScript chunk and c
 - `tests/`: client behavior tests using Node’s built-in runner.
 
 Handwritten TypeScript/TSX files remain below the 250-line limit. Large inventories are paginated for display; complete reference selectors, map fallback lists, and pickup-reference lookup currently aggregate pages in memory. This is suited to the demonstration data size; large production deployments should add server-side lookup and reference-search endpoints. Optional polygon entry is validated GeoJSON text rather than a drawing editor. Map clusters are visual aids and never establish an incident association, service-zone confirmation, or water-safety conclusion.
+
+Guided service-connection and pickup-site addresses use the authenticated bundled PSGC catalog with searchable cascading selectors and free-text fallback. See [locations and maps](../docs/location-and-maps.md) for snapshots, deployment, provider settings, and verification. `VITE_MAP_TILE_URL` optionally changes the default raster template.
