@@ -1,0 +1,16 @@
+[
+  {
+    "sourceCode": "043428",
+    "sourceName": "City of Santa Rosa",
+    "canonicalCode": "0403428000",
+    "referenceUrl": "https://unosd.un.org/sites/default/files/day_3_session_11_hon._mr._arcillas_santa_rosa_philippines.pdf",
+    "reason": "The upstream postal-point mean (14.2413, 121.365) is roughly 28 km east of the Santa Rosa demonstration locality. Its city-level representativeness is questionable; no replacement coordinate is inferred."
+  },
+  {
+    "sourceCode": "133900",
+    "sourceName": "City of Manila",
+    "canonicalCode": "1380600000",
+    "referenceUrl": "https://ungegn.un.org/dashboard/cities/details?id=108",
+    "reason": "The upstream postal-point mean (14.606358, 121.031683), averaged from 343 points, is substantially east of Manila. Its city-level representativeness is questionable; districts are not substituted and no replacement coordinate is inferred."
+  }
+]

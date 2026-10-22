@@ -1,6 +1,6 @@
 # Aqours supplier web
 
-The dedicated Weather page (`/#/weather`) includes [Open-Meteo current weather and seven-day forecasts](../docs/weather.md) with Philippine city search, manual refresh, provider attribution and independent retry/stale states for staff and admins. Open it through desktop or mobile supplier navigation; Overview contains operational metrics and queues.
+The dedicated Weather page (`/#/weather`) includes [Open-Meteo current weather and seven-day forecasts](../docs/weather.md) with a nationwide PSGC locality map and synchronized searchable Region/Province/City-Municipality selectors, manual refresh, attribution and independent retry/stale states for staff/admin. It starts in Laguna without a forecast; unavailable points show a message and no marker. Tile failures preserve selectors/forecast. Open it through desktop or mobile supplier navigation; Overview contains operational metrics and queues.
 
 React and TypeScript supplier workspace built with Vite. Direct Leaflet 1.9.4 with markercluster renders operational report points, zoom-dependent clusters, service zones, and published incident/advisory polygons. The browser uses the live Express API; no production screen substitutes mock data or a simulated successful save.
 
@@ -39,7 +39,7 @@ Web `VITE_MAP_STYLE_URL` is retired. Migrate an old MapLibre style JSON to a ras
 | `/#/reports` | Paginated category/status/period/zone/owner/priority inbox, location review flags, and map navigation |
 | `/#/reports/:id` | Customer and connection context, independent issue-address snapshot, protected photo retrieval, acknowledgment/clarification, owner/priority/reason/status/reviewed closure, explicit issue-zone confirmation, suggested incident links and corrections, separate internal notes, and history |
 | `/#/map` | Viewport queries, category/status/date/zone filters, category-colored markers with a labeled legend, neutral expandable clusters, zone/published area layers, explicit result-cap and unlocated counts, and a paginated list with an unlocated-only view |
-| `/#/weather` | Current conditions, seven-day forecasts, Philippine city search, manual refresh and retry/stale states; temporary selection clears on page exit or account change |
+| `/#/weather` | Nationwide PSGC map/searchable hierarchy, current/seven-day forecasts, manual refresh and retry/stale states; temporary selection clears on page exit or account change |
 | `/#/incidents` and `/:id` | Create/edit, owner/status, affected zones and area, unknown or explicit restoration estimate, affected-customer estimate and basis separate from report/connection totals, links/history/notes, and explicit customer publication preview |
 | `/#/advisories` and `/:id` | Read drafts/publications/revisions; admins create drafts, select approved guidance, preview and publish/revise, or explicitly lift with a reason. Three quality restriction kinds remain distinct; lifting is independent of incident resolution and end dates |
 | `/#/assistance` and `/:id` | Filtered paginated callback/inspection/water queue; type-specific details, owner acceptance, appointments and reasoned rescheduling, immediate-support reasons, progress, outcomes/next steps, notes/history, session/allocation details, and dedicated collection confirmation |

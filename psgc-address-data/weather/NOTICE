@@ -1,0 +1,34 @@
+ph-geo — data attribution
+=========================
+
+The bundled coordinate dataset (data/coords.json) is derived from the GeoNames
+Philippines postal-code dump:
+
+  https://download.geonames.org/export/zip/PH.zip
+
+GeoNames data is licensed under the Creative Commons Attribution 4.0 License
+(CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+
+  © GeoNames — https://www.geonames.org
+
+Each city/municipality coordinate is a representative point computed as the mean
+of the GeoNames postal-code points that map to that PSGC city/municipality (the
+ZIP → cityMunCode join is reused from @ph-dev-utils/postal; names/provinces/
+regions are joined from the PSA Q4 2024 PSGC via @ph-dev-utils/core). These are
+approximate centroids for distance/proximity use — NOT official PSA centroids or
+survey-grade coordinates. The transform is reproducible from scripts/build-data.mjs
+over scripts/geonames-PH.txt.
+
+Aqours retention and adaptation
+==============================
+
+The notice above is retained from ph-geo revision
+06f38a00f8b9ac03f8bd6a3693893b8c449ac466. Aqours retains its exact coords.json as
+source-coordinates.json, joins it conservatively to the bundled Q2 2026 canonical
+PSGC hierarchy, and records matched/null coordinates plus coverage. See README.md
+and build-coordinates.ts for the adaptation, source pins, hash and limitations.
+No endorsement by GeoNames, PSA, or upstream contributors is implied.
+
+Upstream software licenses are retained in LICENSE-ph-geo.md and
+LICENSE-ph-dev-utils.md. These MIT software notices do not replace GeoNames'
+CC BY 4.0 data attribution or the license for the separate canonical PSGC source.

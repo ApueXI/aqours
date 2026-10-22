@@ -1,0 +1,36 @@
+{
+  "coordinateSource": {
+    "repository": "https://github.com/kon2raya24/ph-geo",
+    "revision": "06f38a00f8b9ac03f8bd6a3693893b8c449ac466",
+    "file": "data/coords.json",
+    "retainedAs": "source-coordinates.json",
+    "sha256": "7167015df9dc02f060e13e022b8be5c3be3e0f05c288e8988cf71161bf7968ea",
+    "license": "CC-BY-4.0",
+    "attribution": "GeoNames"
+  },
+  "ancestrySource": {
+    "repository": "https://github.com/kon2raya24/ph-dev-utils",
+    "revision": "0dd17a33fba02110edb55d85d1e0382d3c9a6ea2",
+    "license": "MIT",
+    "files": [
+      {
+        "file": "data/provinces.json",
+        "retainedAs": "source-provinces.json",
+        "sha256": "50f78b7845f0761af9bd4203507b1adb723e02f889076e48e53068a41a19667b"
+      },
+      {
+        "file": "data/regions.json",
+        "retainedAs": "source-regions.json",
+        "sha256": "8fbf594eefc0507c56b6deaf505a248267229be43d5003a577da069b0df2ee36"
+      }
+    ]
+  },
+  "canonicalDataset": "PSGC-2Q-2026",
+  "qualityExclusions": {
+    "file": "source-exclusions.json",
+    "count": 2,
+    "sha256": "d9d73fa4b6f5293429e2d9cc6fc1294e9b63b0925f12737d4f48c01ee3238c1e"
+  },
+  "mapping": "Unique normalized locality name within explicitly reviewed source-province-to-canonical-province ancestry; NCR regional match and explicit Cotabato City exception.",
+  "limitations": "Approximate GeoNames postal-point means, not official centroids, administrative boundaries, or water-service coverage. Unmatched and quality-excluded localities retain null coordinates."
+}

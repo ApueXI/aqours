@@ -1,6 +1,6 @@
 # Supplier admin domain
 
-Admins also have [current weather, seven-day forecasts and Philippine city search](../weather.md) on the dedicated Weather page (`/#/weather`). Weather is informational and does not publish an advisory or change incident state.
+Admins also have [current weather, seven-day forecasts and nationwide PSGC map/hierarchy selection](../weather.md) on the dedicated Weather page (`/#/weather`). Weather is informational and does not publish an advisory or change incident state.
 
 Status: **implemented first-release capabilities**, updated 19 October 2026; acceptance evidence and remaining gaps are in [verification](../verification.md) and [traceability](../traceability.md). Product source: brief v0.4 and [requirements](../requirements.md).
 

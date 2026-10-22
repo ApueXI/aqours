@@ -12,7 +12,7 @@ Success: `{data: T, page?: {offset,limit,total}, asOf?: string}`. Lists return `
 
 ## Customer and shared reads
 
-Authenticated current weather, seven-day forecasts and Philippine city search are available to all existing roles. See [weather endpoints, DTOs and errors](weather.md#api-contract). Customer connection-ID lookups enforce ownership before accessing cached forecasts.
+Authenticated current weather, seven-day forecasts and Philippine city search are available to all existing roles. See [weather endpoints, DTOs and errors](weather.md#api-contract). Customer connection-ID lookups enforce ownership before accessing cached forecasts. Staff/admin additionally use `GET /weather/psgc-locations` (no query parameters) and exclusive `GET /weather?psgcCode=<ten-digit-city-or-municipality-code>`. The backend resolves the representative point from the bundled catalog; customers receive 403 for these supplier modes. Unknown codes return 400 and missing coordinates return 422/`location_unavailable` without provider access. Existing city-search, coordinate and customer connection contracts remain available.
 
 | Method/path | Body/query | Response `data` / authorization |
 | --- | --- | --- |

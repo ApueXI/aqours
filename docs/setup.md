@@ -197,7 +197,7 @@ The refactor Android smoke test used the existing project-local SDK/JDK/Gradle c
 
 ## PSGC and street maps
 
-Deploy the additive PSGC migration and include the sibling `psgc-address-data/data/` directory with the API. Guided addresses need no provider key. Supplier Geoapify tiles require the separate public browser tile key or an explicit raster override. Native `EXPO_PUBLIC_MAP_TILE_URL` overrides its street template unless a native style URL is set. See [configuration, provenance, and update instructions](location-and-maps.md). Browser checks include `npm run test:addresses`; run login-heavy suites serially with the documented throttle interval.
+Deploy the additive PSGC migration and include the sibling `psgc-address-data/data/` directory with the API. Supplier PSGC Weather also requires `psgc-address-data/weather/` (coordinate mapping plus retained attribution/provenance); that addition needs no migration or provider key. Guided addresses need no provider key. Supplier Geoapify tiles require the separate public browser tile key or an explicit raster override. Native `EXPO_PUBLIC_MAP_TILE_URL` overrides its street template unless a native style URL is set. See [configuration, provenance, and update instructions](location-and-maps.md). Browser checks include `npm run test:addresses`; run login-heavy suites serially with the documented throttle interval.
 
 ### Laguna upgrade verification
 

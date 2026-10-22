@@ -82,7 +82,7 @@ Native MapLibre 11.5.0 is pinned with Expo 57 / React Native 0.86.3 configuratio
 
 ## Client organization and styling
 
-Weather components live under each client's `features/weather/` and mount on customer Home and the dedicated supplier `/#/weather` page. Supplier Overview no longer mounts weather. Express weather routes/controllers/services validate Open-Meteo data behind existing authentication, enforce customer connection ownership, and use bounded process-local caches. General city/customer weather has no persistent selection or domain automation. Distribution monitoring adds persistent site forecasts and independently evaluated reservation-stock/temperature warnings with a durable background queue; see [distribution monitoring](distribution-monitoring.md).
+Weather components live under each client's `features/weather/` and mount on customer Home and the dedicated supplier `/#/weather` page. Supplier Overview no longer mounts weather. Express weather routes/controllers/services validate Open-Meteo data behind existing authentication, enforce customer connection ownership, and use bounded process-local caches. Supplier Weather requests a staff/admin-only canonical locality catalog, renders Leaflet clusters and searchable hierarchy controls, then sends only a canonical `psgcCode`; Express resolves a reviewed representative point before forecast cache/provider access. The separate bundled `psgc-address-data/weather/` mapping preserves null gaps and never modifies saved address/report/pickup coordinates. Customer city/connection modes are retained. General Weather has no persistent selection or domain automation. Distribution monitoring adds persistent site forecasts and independently evaluated reservation-stock/temperature warnings with a durable background queue; see [distribution monitoring](distribution-monitoring.md).
 
 Both clients group screens, feature-only components, hooks and request operations under `features/<domain>/`. Shared UI, hooks, HTTP transport, configuration and utilities stay outside those feature folders. The web `app/` contains bootstrap, routing and navigation. Expo `app/` contains route wrappers and navigator layouts only. Native styles are retained.
 
@@ -90,6 +90,6 @@ The supplier app uses Tailwind 4 through its Vite plugin. Utility classes replac
 
 ## Location architecture
 
-The authenticated API loads the sibling bundled PSGC region index and caches its hierarchy. Both clients request catalog entries without bundling all barangays. Administrative selections provide names/codes; coordinate and service-zone confirmation remain separate.
+The authenticated API loads the sibling bundled PSGC region index and caches its hierarchy. Both clients request catalog entries without bundling all barangays. Administrative address selections provide names/codes; coordinate and service-zone confirmation remain separate. Supplier Weather adds a separate city/municipality representative-point join with pinned GeoNames/ph-geo provenance, explicit historical ancestry crosswalk and null unmatched entries; it does not geocode addresses or correct the inherited canonical tree.
 
 See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.

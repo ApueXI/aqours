@@ -1,3 +1,15 @@
+import type { PsgcPart } from './addresses.js';
+
+/** Canonical administrative locality; coordinates are approximate postal means. */
+export interface WeatherPsgcLocation {
+  code: string;
+  name: string;
+  level: 'city' | 'municipality';
+  ancestry: PsgcPart[];
+  latitude: number | null;
+  longitude: number | null;
+}
+
 export interface WeatherLocation {
   id: number;
   name: string;

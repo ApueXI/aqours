@@ -35,12 +35,10 @@ try {
   await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
   if (process.env.AQOURS_LIVE_WEATHER === '1') {
     await page.getByRole('link', { name: 'Weather', exact: true }).click();
-    await page.getByLabel('City in the Philippines', { exact: true }).fill('Calamba');
-    await page.getByRole('button', { name: 'Search weather cities', exact: true }).click();
-    const candidate = page.getByRole('button', { name: /Calamba, Calabarzon, Philippines/i }).first();
-    await expect(candidate).toBeVisible({ timeout: 15000 });
+    await page.getByRole('combobox', { name: 'Region', exact: true }).selectOption('0400000000');
+    await page.getByRole('combobox', { name: 'Province', exact: true }).selectOption('0403400000');
     const fetched = page.waitForResponse(response => response.url().includes('/weather?') && response.status() === 200);
-    await candidate.click();
+    await page.getByRole('combobox', { name: 'City / Municipality', exact: true }).selectOption('0403405000');
     const weather = (await (await fetched).json()).data as WeatherForecast;
     assert.equal(weather.daily.length, 7);
     assert.ok(weather.location.latitude > 14 && weather.location.latitude < 14.4);

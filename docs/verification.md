@@ -2,6 +2,30 @@
 
 Updated 22 October 2026. Source implements the connected first release; release acceptance is **IN PROGRESS**. A native APK build is verified separately from installed Android behavior. Live Geoapify and academic acceptance remain external. No skipped or unavailable check is counted as passed. [Traceability](traceability.md) maps all 84 requirements, 126 original feature criteria and DEMO-001 through DEMO-010 to implementation and the exact assertions/manual checks.
 
+## Nationwide supplier PSGC Weather — 22 October 2026
+
+Implemented and verified on `feature/psgc-weather-map` using two of five allowed cycles. Cycle 2 fixes keyboard marker activation and responsive popup defects found in independent review. Staff/admin select canonical localities through searchable hierarchy controls and a nationwide Leaflet map, then request weather by canonical code. The [weather guide](weather.md) records the workflow/API; [dataset provenance](../psgc-address-data/weather/README.md) records pins, hashes, licenses, conservative identity/ancestry joins and approximate postal-mean limitations. The 1,642-locality catalog has 1,553 points and 89 unavailable entries, including two explicit quality exclusions; remaining points are not independently spatially verified.
+
+Evidence is project-local under `.local/psgc-weather/evidence/`. Tester used synthetic PostgreSQL on 55436, API 4026 and production supplier preview 5186, leaving ordinary databases untouched.
+
+| Check | Observed result / evidence |
+| --- | --- |
+| Builds, types and lint | PASS: root checks in cycle 1; affected web build/typecheck/lint rerun in cycle 2. See `build.log`, `typecheck.log`, `lint.log`, and `web-*-cycle2.log`. Existing >500 kB web chunk warning remains non-fatal. |
+| Unit/helpers | PASS: API 44 + web 28 + mobile 30 = 102 unique tests; affected 28 web tests rerun in cycle 2. See component unit logs and `web-unit-cycle2.log`. |
+| Dataset integrity/reproduction | PASS: two tests, zero skips; `data.log`. All three retained source files match exact pinned upstream bytes over actual network retrieval; `source-upstream.log`. |
+| Weather HTTP/PostgreSQL | PASS: five scenarios, zero skips; supplier authorization, canonical identities, exclusive modes and rejection before provider access; `weather-http.log`. |
+| Retained HTTP/PostgreSQL | PASS: 61 root entries comprise 59 retained HTTP scenarios plus the same two dataset tests above; `api-regression.log`. Combined with weather, this is 64 actual HTTP scenarios, without double-counting dataset tests. |
+| Technical Weather Chromium | PASS: 15 groups in cycle 2, zero page errors; hierarchy/map/recovery/account scenarios plus Enter/Space exact canonical selection and desktop-to-phone popup/close bounds. Use `weather-browser-cycle2.log`; cycle 1's 13-group log remains historical. |
+| Retained browser regression | PASS: map 10, UX 9 and Laguna 2 groups; `browser-map.log`, `browser-ux.log`, `browser-laguna.log`. Together with Weather 15, 36 groups pass. Affected UX layout rerun also passes in cycle 2. |
+| Repository/documentation | PASS in cycle 1: 397 TypeScript files within limits, 84 requirements/126 criteria/10 demo mappings and 729 local links across 41 documents. Final post-review documentation checks pass. |
+| Verification TypeScript, Prisma and whitespace | PASS; verification TypeScript updated after regression polling changes; `prisma.log` and check evidence. |
+| Live forecast smoke | PASS: authenticated Calamba `GET /weather?psgcCode=0403405000` returns 200, current conditions and seven daily entries in `Asia/Manila` at source point `(14.2117,121.1653)`; `live-weather-result.json`. |
+| Independent rendered UI review | PASS after cycle 2: Enter/Space each select the canonical locality, synchronize hierarchy/forecast and retain marker focus; initial 390 px and desktop-to-phone popups fit their map with full title and reachable close control. Actual 1280/768/390 px layouts pass with zero runtime errors/open findings. Evidence: `.local/psgc-weather/ui-review/cycle2-review.json` and fixed screenshots; earlier findings remain recorded in `cycle1-review.json`. |
+
+Cycle 2 changes only three weather web files: canonical Enter/Space activation with focus restoration, map-relative popup geometry, resize updates and long-name wrapping. Unchanged API/data evidence remains valid. Weather HTTP/browser suites control external Open-Meteo responses and raster tiles while using actual authentication/API/database/UI behavior. The separate live Calamba smoke and upstream byte comparison do not establish provider uptime. No new native runtime result is claimed. Customer mobile and Distribution source, dependencies, schema and saved coordinates are unchanged.
+
+Independent UI and all required technical checks pass. Owned verification services are stopped and data/artifacts retained (`service-shutdown.log`): ports 4026–4029 and 5186 are closed, the isolated container exited, and ordinary `aqours-db-1` remains running untouched. Final post-review documentation/content/repository/whitespace checks pass; the scoped feature commit remains pending. Historical results below retain their original revision boundaries.
+
 ## Report category colors and supplier Weather page — 22 October 2026
 
 Supplier report markers now show category colors with a labeled legend, accessible category names, neutral counted clusters and independent priority text. Weather moved from Overview to `/#/weather` in desktop/mobile navigation. No API, schema, dependency or customer mobile change is included.

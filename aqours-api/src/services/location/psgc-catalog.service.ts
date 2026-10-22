@@ -71,6 +71,14 @@ export function children(parentCode: string): PsgcPlace[] {
   if (!entry) fail(400, "Unknown PSGC parent code");
   return entry.children.map((code) => data.get(code)!.place);
 }
+export function localities(): { place: PsgcPlace; ancestry: PsgcPart[] }[] {
+  return [...catalog().values()]
+    .filter(({ place }) => place.level === "city" || place.level === "municipality")
+    .map(({ place, ancestry }) => ({
+      place: { ...place },
+      ancestry: ancestry.map((part) => ({ ...part })),
+    }));
+}
 export function addressSnapshot(
   input: StructuredAddressInput,
 ): AddressSnapshot {

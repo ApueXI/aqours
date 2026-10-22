@@ -58,7 +58,7 @@ Backup includes the database, private attachments, Prisma schema/migrations/conf
 
 ## Weather storage
 
-General customer/city weather uses bounded process-local caches and in-memory city selection. Distribution monitoring adds persistent site forecast snapshots, versioned configurations, warning/history records, work claims/revisions and supplier display settings; see [distribution monitoring](distribution-monitoring.md). Saved coordinates are read with ownership authorization and never updated by weather requests. See [weather storage and API boundaries](weather.md).
+General customer/city weather and supplier PSGC weather use bounded process-local forecast caches and in-memory client selection. Supplier canonical locality metadata and nullable representative coordinates are bundled reference files under `psgc-address-data/`, not database entities; this Weather map adds no schema migration or location-selection history. Distribution monitoring adds persistent site forecast snapshots, versioned configurations, warning/history records, work claims/revisions and supplier display settings; see [distribution monitoring](distribution-monitoring.md). Saved coordinates are read with ownership authorization and never updated by weather requests. See [weather storage and API boundaries](weather.md).
 
 ## Structured address snapshots
 
