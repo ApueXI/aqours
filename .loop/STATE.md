@@ -1,29 +1,46 @@
-# Laguna execution state
+# Distribution execution state
 
-COMPLETE — 2026-10-22; cycle3/5. All acceptance criteria verified; implementation commit408968e succeeded. Branch feature/laguna-psgc-seeds, clean baseline7aa94c2. Prior goal archived at archive/pre-laguna-2026-10-22.
+VERIFIED_COMMIT_PENDING — 2026-10-22; cycle 3/5. Branch `feature/distribution-early-warnings`; clean starting revision `70c15e8`. Prior completed state is preserved in `archive/pre-distribution-2026-10-22/`.
 
-## Ownership and integration
+## Ownership and reconciliation
 
-Lead owns integration, verification/docs and shared state. API worker /root/laguna_seed requested gpt-6.1-sol/high for conservative fixture recognition and transactional upgrade; completed, changes reviewed/integrated. Weather worker /root/laguna_weather requested gpt-6.1-sol/medium for focused deterministic verification; completed, changes reviewed/integrated, then independently reviewed upgrade with no actionable defect. Effective settings unexposed; spawn metadata reports names/status only. Managed list confirms both workers completed. No further agents or external runner.
+All three managed workers are completed and no longer editing, confirmed with `collaboration.list_agents`. Lead now owns final documentation, review and commits. Requested settings for each worker were `gpt-6.1-sol` / high with fresh context; the tool exposes task identity/status, not effective model settings. No fallback or external continuation runner was used.
 
-Lead handled map default viewport as tightly coupled integration correction: old Metro Manila camera excluded new seed locations. Applied uncodixfy while preserving existing UI. Exact canonical centers/provenance are in docs/location-and-maps.md and seed-locations.ts. Legacy records view omits newer PSGC JSON; acceptance reads actual domain columns instead. Ordinary database/private .env untouched; explicit v1 upgrade remains an operator command.
+- `/root/distribution_api` owned API implementation/tests/README, excluding shared state. Strong coding/high effort was selected for authorization, persistence, transactions and scheduling. Implementation and integration corrections are complete.
+- `/root/distribution_web` owned supplier UI/tests/README. Strong coding/high effort was selected for the connected Distribution/map workflow. Final history-date and failed-tile fixes are complete.
+- `/root/distribution_verify` owned eight new HTTP/PostgreSQL verification files. Strong coding/high effort was selected for real concurrency, restart and mutation-race coverage. All 19 groups pass; suite services stopped.
+- Lead owned shared contracts, cross-component integration, the browser acceptance harness, populated migration preservation, retained regression checks, docs and loop state. Direct work established shared boundaries and independently verified the integrated workers' result.
+
+## Decisions and final implementation
+
+Existing weather/provider normalization, site/session inventory, Leaflet and notification storage are reused. Supplier deployment remains singleton and ambiguous configuration fails closed. Current reservable liters sum eligible open/unexpired sessions, including future sessions; no physical stock or depletion relationship is inferred. Monitoring requires explicit per-site setup. Temperature/supply checks are independent and warning history is immutable.
+
+Persistent forecasts/jobs use hourly refresh, bounded retry, global three-request concurrency, work revisions and expiring claims. Healthy evaluation runs within five seconds; periodic sweeps handle time changes. Six additive models leave existing records intact. No dependency or mobile source change.
+
+Monitoring/Sessions/Sites/Warning history retain existing maintenance, exact stock, cancellation/collection and reservation lookup. Seven-date Manila state, point-temperature overlay and three configured Geoapify basemaps remain independent. Past/all warning dates use a separate `warningDate` filter. Tile failures preserve markers/list and an explicit retry notice. Regional interpolation, Satellite/Terrain and multi-supplier tenancy remain outside the approved first release.
 
 ## Acceptance evidence
 
-| ID | Result/evidence |
-| --- | --- |
-| AC-001 | PASS fresh seed4 groups; canonical12connections/12reports/2sites; `.local/laguna/evidence/fresh-seed.log` |
-| AC-002 | PASS API synthetic geometry tests plus actual seeded Leaflet11reports/3clusters/unlocated customer12, distinct selections/reset; laguna-browser.log |
-| AC-003 | PASS authentic baselinev1, all unaffected table fingerprints, original immutable events/publications/timestamps, unrelated report; upgrade-final.log |
-| AC-004 | PASS production/opt-in/conflict/late-marker failure rollback; concurrent one-upgrade/one-no-op, full repeat fingerprint; upgrade-final.log |
-| AC-005 | PASS credentials/ownership/exact-stock fresh seed; API35+web20+mobile30 tests,59HTTP scenarios |
-| AC-006 | PASS eight deterministic browser weather checks plus live Open-Meteo Calamba seven-day admin Overview; weather-browser.log/laguna-browser.log |
-| AC-007 | PASS weather HTTP3 plus actual Android29/KVM saved Laguna point, all7days; customer12null coords/unconfirmed zone/city fallback/all7days; native screenshots/XML |
-| AC-008 | PASS weather auth/cache/ownership/failure/retry/obsolete responses, account clearing on Android, eight browser checks |
-| AC-009 | PASS docs/progress reconciled, all final types/lint/builds/repository/diff checks pass; implementation commit408968e succeeded |
+Evidence directory: `.local/distribution/evidence/`. Durable narrative and commands: [verification](../docs/verification.md#distribution-monitoring--22-october-2026), [setup](../docs/setup.md#distribution-monitoring-deployment-and-checks), [monitoring](../docs/distribution-monitoring.md).
 
-API/web builds passed. Current installed Android APK hash3f33bd1ceab1311d409e3ee091c86346058a4a6cfaab08206d7c19a0cc85566c matches retained source APK; customer code unchanged, no rebuild. Evidence root `.local/laguna/evidence/`, with existing map/weather artifact directories additionally retained. Native extra-device, private Geoapify and academic acceptance remain outside this task's verified boundary.
+| Criterion | Status | Evidence |
+| --- | --- | --- |
+| AC-001 forecasts | PASS | API units and 19 integration groups include provider failures/null data/cache/cooldown/coordinate invalidation/fresh-process persistence; live compiled scheduler persisted both demo sites |
+| AC-002 exact supply | PASS | Decimal boundaries and real reserve/release/collect/session eligibility; retained stock races/rollback; browser exact 25.50-liter edit |
+| AC-003 configuration/scope | PASS | HTTP role/singleton/ownership/version/validation; browser site setup and admin-only temperature bands |
+| AC-004 warning lifecycle | PASS | HTTP independent/combined/dedup/evidence revision/immutable history and activation races; browser selected-date and past/all-date history |
+| AC-005 durable scheduler | PASS | Actual scheduler, multiple instances/global leases, restart recovery, bounded delay and shutdown in real PostgreSQL tests |
+| AC-006 notifications | PASS | Owned read/list and consolidated lifecycle persistence checks; browser read state |
+| AC-007 Distribution UX | PASS | 12 new browser groups plus retained maintenance 8/address 4/UX 9; all four tabs at 1440/768/390px; screenshots visually reviewed |
+| AC-008 Leaflet | PASS | Actual marker click/popup, status colors, filters, inactive/unlocated sites, list/map switch and failed tiles/retry |
+| AC-009 independent map state | PASS | Seven dates, URL/reload, styles/viewport/markers/overlay toggle and numeric site temperatures verified in production build |
+| AC-010 compatibility | PASS | 100 unit/helper tests (42 API + 28 web + 30 unchanged mobile); 59 retained HTTP checks; types/lint, API/web builds, verification types, Prisma validation |
+| AC-011 docs/migration/commit | COMMIT_PENDING | Relevant docs/READMEs/progress updated; 36 old physical application-table fingerprints preserved; final repository/diff review and feature commit remain |
 
-## Resources and next action
+No tests were skipped or requirements weakened. Full raw Prisma diff reports only the preexisting ignored legacy `schema_migrations` ledger missing from the old baseline; excluding that unchanged model yields no operational schema difference. Production web build retains the existing nonblocking large-chunk advisory. Live private Geoapify and native runtime were not retested for this API/web feature.
 
-Owned PostgreSQL55438, API4007/regression4010, preview5179, emulator5568/ADB5046 are stopped. Project-local data/evidence retained; ordinary services/data untouched. Final types/lint, API/web builds and358 application TypeScript limits/docs links/diff checks pass; all criteria verified with implementation commit408968e. No required implementation work remains. Exact next action: none; operator may run the documented explicit upgrade against an original v1 demo database after backing it up/stopping writers. This final completion checkpoint changes only loop/progress documentation.
+## Resource state and exact next action
+
+Owned preview/API/scheduler/browser processes and PostgreSQL 55440 are stopped. Isolated data/evidence remain project-local. Ordinary databases and private environment values were untouched. Final integrated browser run and verification TypeScript passed after every source change; only documentation/state changed afterward.
+
+Next: run `python3 -B scripts/check_repository.py` and `git diff --check`, inspect the final staged diff, then commit all feature changes. After the feature commit succeeds, record its hash and COMPLETE status in loop/progress and commit that checkpoint. Stop within the current third delivery cycle.

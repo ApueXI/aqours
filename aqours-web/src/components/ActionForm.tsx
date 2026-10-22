@@ -64,8 +64,9 @@ type Props = {
   path: string; method?: 'POST' | 'PATCH'; fields: Field[]; submit: string; version?: number;
   extra?: Record<string, unknown>; onDone: () => void; children?: ReactNode;
   preview?: (body: Record<string, unknown>) => ReactNode;
+  validate?: (body: Record<string, unknown>) => string | undefined;
 };
-export function ActionForm({ path, method = 'POST', fields, submit, version, extra, onDone, children, preview }: Props) {
+export function ActionForm({ path, method = 'POST', fields, submit, version, extra, onDone, children, preview, validate }: Props) {
   const [intent, setIntent] = useState<Intent>();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<unknown>();
@@ -91,9 +92,11 @@ export function ActionForm({ path, method = 'POST', fields, submit, version, ext
     try {
       const body = { ...readFields(fields, new FormData(event.currentTarget)), ...extra,
         ...(version === undefined ? {} : { expectedVersion: version }) };
+      const invalid = validate?.(body);
+      if (invalid) throw new RequestError(400, 'validation', invalid);
       if (preview) { setDraft(body); return; }
       const next = createIntent(path, method, body); setIntent(next); void send(next);
-    } catch { setError(new RequestError(400, 'validation', 'Check the form. Complete guided addresses, use valid geometry JSON, and enter valid Manila times.')); }
+    } catch (problem) { setError(problem instanceof RequestError ? problem : new RequestError(400, 'validation', 'Check the form. Complete guided addresses, use valid geometry JSON, and enter valid Manila times.')); }
   };
   return <form className="action-form" aria-busy={pending} onSubmit={start}>
     <fieldset disabled={pending || Boolean(intent) || Boolean(draft)}><Fields fields={fields} />{children}

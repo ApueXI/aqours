@@ -39,7 +39,7 @@ export default function App() {
       {route.section === 'incidents' && (route.id ? <IncidentDetail id={route.id} /> : <Incidents />)}
       {route.section === 'advisories' && <Advisories id={route.id} user={user} />}
       {route.section === 'assistance' && (route.id ? <AssistanceDetail id={route.id} returnTo={route.params.get('returnTo')} /> : <Assistance params={route.params} />)}
-      {route.section === 'distribution' && <Distribution />}
+      {route.section === 'distribution' && <Distribution key={user.id} params={route.params} user={user} />}
       {route.section === 'settings' && <Settings user={user} params={route.params} />}
       {!sections.includes(route.section) && <><h1>Page not found</h1><a href="#/overview">Return to overview</a></>}
   </WorkspaceShell>;

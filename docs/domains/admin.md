@@ -38,3 +38,5 @@ Admin also has the operational capabilities summarized for [supplier staff](staf
 - No commerce order/payment administration, home delivery, multiple suppliers or fleet management is included. Public registration and its approval process are not specified.
 
 See [workspace workflows](../workspace.md), [architecture](../architecture.md), [schema](../schema.md) and the [documentation index](../README.md). Primary requirement groups: `REQ-ACCESS-*`, `REQ-UI-S*`, `REQ-NOTICE-*`, `REQ-METRIC-*`, `REQ-OPS-*`, `REQ-DEMO-*` and rule maintenance in adopted `REQ-DECISION-*`.
+
+Distribution includes [pickup-site forecasts and early warnings](../distribution-monitoring.md). Staff/admin can configure site thresholds; admins additionally maintain temperature-display bands. Warning history and owned supplier notifications remain separate from customer notices and official advisories.

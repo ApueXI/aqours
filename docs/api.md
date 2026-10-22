@@ -121,3 +121,23 @@ Quality advisories remain active irrespective of startsAt/endsAt until explicit 
 ## PSGC address contract
 
 See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.
+
+
+## Distribution monitoring
+
+Staff/admin monitoring endpoints reuse cookie/bearer authentication, record validation, response envelopes and operation-key handling. The single-supplier configuration must resolve unambiguously. Customer access is denied. See [monitoring behavior](distribution-monitoring.md) and [monitoring DTOs](../aqours-contracts/src/monitoring.ts).
+
+| Method/path | Input | Response |
+| --- | --- | --- |
+| GET /staff/distribution/monitoring | — | MonitoringOverview: supplier, Manila dates, all site forecasts/current supply/configuration/day evaluations/active warnings, temperature bands |
+| GET /staff/pickup-sites/:id/forecast | Site UUID | SiteForecast with status, retained forecast, last attempt/success, next refresh and error |
+| POST /staff/pickup-sites/:id/forecast/refresh | `{}` | `{queued:boolean}`; respects cache/cooldown and never promises an upstream refresh already completed |
+| PATCH /staff/pickup-sites/:id/monitoring | `{expectedVersion,enabled,warningTemperature,criticalTemperature,lowSupplyLiters,criticalSupplyLiters,capacityLiters,reason}` | SiteMonitoringConfig; expectedVersion0 for initial setup; capacity nullable; liter fields exact decimal strings |
+| GET /staff/distribution/warnings | Optional siteId, date, state, offset, limit | Paginated MonitoringWarning[]; state active/resolved/expired/suspended |
+| GET /staff/distribution/warnings/:id | Warning UUID | `{warning,history}` with immutable evidence revisions |
+| GET /staff/distribution/temperature-bands | — | `{version,boundaries}`; four ordered Celsius boundaries |
+| PATCH /staff/distribution/temperature-bands | `{expectedVersion,boundaries,reason}` | TemperatureBands; admin only, expectedVersion0 initially |
+| GET /staff/distribution/notifications | Pagination | Current actor's supplier monitoring notifications only |
+| POST /staff/distribution/notifications/:id/read | `{}` | Owned SupplierMonitoringNotification, retained read timestamp |
+
+Writes require an operation key; versioned edits reject stale state. Missing records return404, invalid inputs400, denied roles403 and ambiguous supplier configuration503. Forecast provider failures are represented in SiteForecast freshness/error metadata while current supply remains separately readable. A read enqueues missing/due site forecasts but does not hold an inventory transaction across a provider request. Existing city/customer weather endpoints retain their earlier contract.

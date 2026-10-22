@@ -35,6 +35,10 @@ Report marker colors identify categories: red for No water, blue for Leak, amber
 
 [Locations and maps](location-and-maps.md) documents Geoapify tiles, public browser-key configuration, required attribution and web map migration. No database migration is required for this overhaul.
 
+## Distribution monitoring
+
+Distribution opens Monitoring, with URL-backed Sessions, Sites and Warning history tabs. Reservation lookup remains available throughout. Site selection, forecast date, status/search, narrow List/Map view, basemap and temperature visibility persist in the URL. Warning history has a separate `warningDate` filter for past dates or all history. Sessions use compact rows and selected editing while retaining existing save/retry/cancellation behavior. Monitoring pairs a site list and Leaflet map with selected details, separate current-stock/forecast timestamps and explicit unavailable states. See [distribution behavior](distribution-monitoring.md).
+
 ## Delivery and evidence
 
 The user limited loop-engineer to four total implementation/verification/correction cycles. Root `.loop/` records the active cycle, assignments, acceptance criteria and evidence. [Verification](verification.md) records current executed checks and remaining native/provider limitations; earlier native/browser evidence applies only to its original artifact.

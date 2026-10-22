@@ -1,4 +1,5 @@
 import express from "express";
+import { monitoringRoutes } from "./routes/monitoring.js";
 import { securityHeadersAndRateLimit } from "./middleware/security.js";
 import { advisoryRoutes } from "./routes/advisories.js";
 import { analyticsRoutes } from "./routes/analytics.js";
@@ -29,6 +30,7 @@ export function createApp() {
   analyticsRoutes(app);
   attachmentRoutes(app);
   weatherRoutes(app);
+  monitoringRoutes(app);
   app.use((_req, _res, next) => {
     try {
       fail(404, "Endpoint not found", "not_found");

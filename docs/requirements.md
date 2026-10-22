@@ -24,6 +24,10 @@ The owner approved current conditions plus seven daily forecasts on customer Hom
 
 Supplier map presentation was also revised on 22 October 2026: report-category colors are red for No water, blue for Leak, amber for Low pressure and purple for Water quality, explained through a labeled legend and marker/popup text. Priority remains text rather than determining marker color. Clusters use neutral gray counts; existing area layers and customer previews retain their presentation.
 
+## Pickup-site monitoring addition — 22 October 2026
+
+The owner approved a monitoring-first Distribution workspace integrating existing pickup coordinates, Open-Meteo forecasts and configurable independent temperature/reservation-stock thresholds. Preserve existing operations and ownership; retain single-supplier scope. Generate deduplicated warnings/history and supplier notifications through durable scheduled evaluation. Supply is remaining stock in open/unexpired sessions, including future sessions, never a physical inventory or depletion forecast. Configure thresholds per site before enabling. Maps use Streets/Light/Dark and site-level temperature circles/labels with a shared seven-day timeline; regional interpolation is deferred. See [distribution monitoring](distribution-monitoring.md). Original requirement/criterion identifiers remain unchanged.
+
 ## Domain vocabulary
 
 | Term | Meaning and boundary |

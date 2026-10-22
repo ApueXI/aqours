@@ -19,6 +19,8 @@ Additional execution references: [API contract](api.md), [setup and backup/resto
 
 Use these together: requirements define the behavior, architecture defines boundaries, schema describes persistence status/design, and workspace traces the target workflows. [PROGRESS.md](../PROGRESS.md) records completed repository work and verification.
 
+[Distribution monitoring](distribution-monitoring.md) documents pickup-site forecasts, reservation-stock warnings, scheduled evaluation, monitoring/map navigation and the seven-day temperature timeline.
+
 ## Role summaries
 
 | Role | Summary |

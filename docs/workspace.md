@@ -183,6 +183,10 @@ Compose recreation must retain accounts/reports using the same persistent volume
 
 The ten [DEMO scenarios](requirements.md#acceptance-scenarios) remain the integrated acceptance target. API/database, supplier browser and installed Android checks have separately scoped evidence in the native and verification ledgers, including secure-storage lifecycle, GPS denial/controlled acquisition, photo picker/protected decoding, real native map failure and all three fulfillment paths. Live signed typed-address lookup still requires private Geoapify configuration. Academic approval and approved real supplier/public-health content cannot be established by technical tests. Deployment destination and exact demonstration deadline remain configurable.
 
+## Distribution monitoring workflow
+
+Open Distribution → Monitoring to review existing pickup sites, current reservable stock and seven-day forecasts. Select a site, configure its temperature/supply thresholds, then enable monitoring. Use the shared forecast timeline for future heat and current-stock comparisons. Sessions, Sites and Warning history have separate tabs; reservation lookup remains accessible. Existing stock acceptance/collection permissions and transactions remain authoritative. See [monitoring setup and limits](distribution-monitoring.md).
+
 ## Source navigation
 
 See [directory navigation](directory-structure.md) for API layers and feature-based client folders. Prisma generates backend-only database types; shared public DTOs remain in `aqours-contracts`. Tailwind applies only to the supplier web, preserving native mobile styles. Existing-database adoption is explicit and must precede the first Prisma deployment.

@@ -60,7 +60,7 @@ try {
   const persisted = await ok<Connection[]>(admin, 'GET', '/staff/settings/connections?limit=100');
   assert.ok(persisted.some(item => item.id === connection.id));
   passed('Supplier creates and persists a structured connection without inventing coordinates');
-  await page.goto(`${web}/#/distribution`);
+  await page.goto(`${web}/#/distribution?tab=sites`);
   const summary = page.locator('summary').filter({ hasText: /^Create pickup site$/ });
   await summary.click();
   const siteForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create pickup site', exact: true }) });

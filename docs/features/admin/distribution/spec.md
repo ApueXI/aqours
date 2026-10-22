@@ -107,6 +107,10 @@
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 
+### Site weather and early warnings — 22 October 2026
+
+The monitoring-first Distribution workspace reuses the site/session/stock workflows above. Site thresholds compare seven-day forecast maxima and current reservable liters independently, with durable warnings, history and supplier notifications. Timeline/map/style controls never modify stock or predict depletion. Existing sites start unconfigured. See [monitoring specification and limits](../../../distribution-monitoring.md) and its verification evidence.
+
 ### Verification and limits
 
 Real PostgreSQL tests verify concurrent stock approvals/cancellation/collection, rollback, exact decimals and repeats. Actual supplier forms maintain sites/sessions and collect the native N13 request:12.50 liters, stable reference, remaining137.50 of150.00 after collection. N32/N35 separately verify native no-session fallback and disabled full/cancelled choices. No real-world availability is certified.

@@ -1,14 +1,9 @@
-# Laguna execution log
+# Distribution delivery log
 
-## Cycle1 — 2026-10-22
-Reconciled clean tree/no partial execution, read current instructions, docs and existing integration. Archived unrelated completed loop state. Initialized approved criteria and bounded worker ownership.
+2026-10-22 — Cycle1/5 started. Inspected clean branch/docs/current implementation and archived prior completed goal. User decisions and acceptance recorded; ready to establish contracts.
 
-## Cycle2 — integration and verification
-Fresh PostgreSQL18.6 seed/PSGC assertions pass. Authentic v1 seeded from original commit; upgrade refusal/rollback/preservation/repeat tests pass. Weather HTTP3 and Chromium8 pass using real auth/database and controlled external responses. Independent review finds no actionable upgrade defect. Corrected seed verification to join JSON snapshots from actual domain tables; legacy view omits them. Supplier default viewport was still Metro Manila, changed to cover Laguna using existing styling. Current APK matches prior source hash; native session/address success, weather capture in progress.
+2026-10-22 — Cycle1 complete; cycle2/5 starts. Shared interface, complete backend/web implementation and focused checks present. Corrected warning evidence freshness, supplier controller boundaries and coordinate lock ordering during review. API39/web27unit checks pass; initial populated additive migration preserves36tables. Final frozen migration will be reverified before acceptance.
 
-## Cycle3 — final acceptance
-Concurrent upgrade and all unaffected-table fingerprints pass on a newly seeded authentic v1 database. All59HTTP regression tests pass. Browser totals20 (8 controlled weather,9Leaflet,3Laguna/live). Actual Android saved-point and address-only city forecast cases pass all seven days against live Open-Meteo; account switch clears previous forecast. Docs reconciled; final check review/shutdown/commit pending. A test assertion initially used top-level weather coordinates; corrected to contract.location and repeated successfully. No application weather defect found.
+2026-10-22 — Cycle2 acceptance review complete; cycle3/5 starts final verification. New19HTTP/old59HTTP plus99unit/helper tests/types/lint pass. Browser map/date/config/history behaviors pass; selected-session/responsive checks remain. Fixed accessible names; adjusted tests for browser tilecache, combined label and separate hidden creation form. No required behavior dropped.
 
-Final type/lint and all358 application TS file limits/docs checks pass. API/web builds and85 unit/helper tests pass. All owned test services/emulator/ADB stopped; ordinary environment unchanged. Required feature commit is next.
-
-COMPLETE: feature commit408968e succeeded; clean tree confirmed before this completion-only checkpoint. Final API build against integrated source passes. All workers completed, all owned services stopped, no pending required checks. Three of five allowed cycles used; no fourth cycle/runner.
+2026-10-22 — Cycle3 integrated verification passes: 100 unit/helper, 19 new + 59 retained HTTP and 12 new + 21 retained Chromium checks. Browser findings corrected independent history dates, overlay hash synchronization, accessible names and failed-tile notice lifecycle. Populated additive upgrade preserves 36 old application-table fingerprints; operational schema has no drift. Compiled API/scheduler persists live seven-day forecasts for two demo sites. Screenshots visually reviewed; all workers completed and owned services stopped. Documentation/progress reconciled; feature commit is the remaining acceptance action.

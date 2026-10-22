@@ -82,7 +82,7 @@ Native MapLibre 11.5.0 is pinned with Expo 57 / React Native 0.86.3 configuratio
 
 ## Client organization and styling
 
-Weather components live under each client's `features/weather/` and mount on customer Home and the dedicated supplier `/#/weather` page. Supplier Overview no longer mounts weather. Express weather routes/controllers/services validate Open-Meteo data behind existing authentication, enforce customer connection ownership, and use bounded process-local caches. There is no weather persistence or domain automation. See [weather behavior and provider boundaries](weather.md).
+Weather components live under each client's `features/weather/` and mount on customer Home and the dedicated supplier `/#/weather` page. Supplier Overview no longer mounts weather. Express weather routes/controllers/services validate Open-Meteo data behind existing authentication, enforce customer connection ownership, and use bounded process-local caches. General city/customer weather has no persistent selection or domain automation. Distribution monitoring adds persistent site forecasts and independently evaluated reservation-stock/temperature warnings with a durable background queue; see [distribution monitoring](distribution-monitoring.md).
 
 Both clients group screens, feature-only components, hooks and request operations under `features/<domain>/`. Shared UI, hooks, HTTP transport, configuration and utilities stay outside those feature folders. The web `app/` contains bootstrap, routing and navigation. Expo `app/` contains route wrappers and navigator layouts only. Native styles are retained.
 

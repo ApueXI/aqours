@@ -33,6 +33,10 @@ Exactly one forecast location mode is accepted. Unknown/mixed parameters, invali
 
 `WeatherLocation` contains provider ID, name, nullable administrative area, country and coordinates. `WeatherForecast` contains requested coordinates, `timezone`, `fetchedAt`, `units`, `attribution`, `current` and seven `daily` entries. Measurement fields are nullable. Current `time` is an ISO UTC instant; daily `date` is a Manila-local `YYYY-MM-DD`. Shared types/display helpers are in [weather.ts](../aqours-contracts/src/weather.ts).
 
+## Pickup-site monitoring
+
+Supplier Distribution reuses this provider/normalizer for existing pickup coordinates, with a persistent forecast cache, scheduled refresh and independent temperature/reservation-stock warnings. The general Weather page remains available for city searches. See [distribution monitoring](distribution-monitoring.md) for stock meaning, threshold setup, freshness, timeline and map layers.
+
 ## Provider and storage
 
 Express calls fixed HTTPS endpoints `api.open-meteo.com/v1/forecast` and `geocoding-api.open-meteo.com/v1/search`. Forecast requests use current/daily variables, seven days, metric units, Unix timestamps and `Asia/Manila`. The API validates units, timestamps and measurements. Saved addresses, names and connection/account identifiers are never sent to Open-Meteo; forecasts send coordinates and city search sends search text.

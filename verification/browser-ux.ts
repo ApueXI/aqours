@@ -18,6 +18,7 @@ const readTile = await readFile(new URL('./fixtures/street-tile.png', import.met
 await page.route('https://tiles.example.test/**', route => route.fulfill({
   contentType: 'image/png', body: readTile,
 }));
+await page.route('https://maps.geoapify.com/**', route => route.fulfill({ contentType: 'image/png', body: readTile }));
 page.setDefaultTimeout(15000);
 const evidence: string[] = [], errors: string[] = [];
 const passed = (message: string) => { evidence.push(message); console.log('PASS', message); };
