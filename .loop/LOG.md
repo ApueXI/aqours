@@ -81,3 +81,9 @@
 - Lead accepted final Tester checks: 729 local links across 41 documents, 397 TypeScript files and requirements inventory, documentation/source content and whitespace PASS. All AC-001 through AC-009 accepted; no open product/technical finding. Verifiers quiescent and owned services stopped.
 - Corrected the cycle1-review.json evidence-path typo and documented the generator command with `--experimental-strip-types`, matching the actual passing reproduction test and Node 22.13 minimum. No new scope, links or implementation cycle.
 - Updated final verification/progress/state to remove stale pending-check claims. AC-010 and overall IN_PROGRESS remain until successful scoped feature commit. Next: lead approval, Implementer commit, then scribe records confirmed commit and COMPLETE.
+
+## 2026-10-22 — Feature complete
+
+- Lead confirmed feature commit `e0512acd689fb4bf291b1fd4892e49f713a8f4eb` (`Add PSGC locality weather map for suppliers`) on `feature/psgc-weather-map`, all 58 approved feature paths committed and working tree clean. All acceptance criteria PASS; two of five cycles used, owned services stopped and verifiers quiescent.
+- Implementer encountered a usage limit before staging; the user said “continue” and the same dedicated identity resumed. No replacement, model substitution or additional implementation cycle. Effective settings remain unexposed.
+- Final edits only persist this completion checkpoint; no feature work or further checks remain. Same Implementer will commit the four documentation files after lead review.

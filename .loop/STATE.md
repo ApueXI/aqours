@@ -1,7 +1,7 @@
 # PSGC Weather execution state
 
-Status: IN_PROGRESS
-Updated: 2026-10-22 — final cycle 2 acceptance review before commit
+Status: COMPLETE
+Updated: 2026-10-22 — final completion checkpoint
 Goal: [GOAL.md](GOAL.md)
 Cycle budget: maximum five implementation/review cycles; two of five cycles used; cycle 2 independent review PASS resolves cycle 1 findings. A cycle is bounded implementation followed by integrated technical/UI review; subsequent fixes consume the next cycle. Bootstrap/documentation-only scheduling waves do not consume additional cycles.
 
@@ -46,7 +46,7 @@ Actual capacity: four active slots including lead. Observed: `/root/ui_reviewer`
 | AC-007 | PASS | Scoped source review and technical summary: no dependency/migration/mobile/Distribution change, no ordinary database modification, 397 TypeScript files within limits; retained raw source/reference files and project-local artifacts. |
 | AC-008 | PASS | 102 unit/helper tests; two dataset integrity/reproduction tests; 64 actual HTTP scenarios; 36 Chromium groups including affected UX rerun; root and affected web build/type/lint, verification TypeScript, Prisma, repository checks pass. |
 | AC-009 | PASS | Relevant docs/provenance/progress reconciled to actual source and evidence, source/content review and 729 local links across 41 docs pass. Final post-review links/content/repository/whitespace repeat PASS; no unsupported behavior claim. |
-| AC-010 | NOT_RUN | Branch correct; successful feature commit pending; final docs checks PASS, owned services stopped and verifiers quiescent. |
+| AC-010 | PASS | Feature commit `e0512acd689fb4bf291b1fd4892e49f713a8f4eb` confirmed by lead on `feature/psgc-weather-map`; all 58 approved feature paths committed, clean working tree confirmed, verifiers quiescent and owned services stopped. |
 
 Evidence directory: `.local/psgc-weather/evidence/`. Cycle 1 logs: `build.log`, `typecheck.log`, `lint.log`, `api-unit.log`, `web-unit.log`, `mobile-unit.log`, `data.log`, `weather-http.log`, `api-regression.log`, `source-upstream.log`, `docs-links.log`, `browser-map.log`, `browser-ux.log`, `browser-laguna.log`. Cycle 2 uses explicit `web-*-cycle2.log` and `weather-browser-cycle2.log` (15 groups), not the historical 13-group Weather log. Browser screenshots remain under `evidence/browser/`. Only passing final runs count; prior harness attempts are retained. HTTP/browser providers and tiles are controlled. Separate `live-weather-result.json` records authenticated Calamba 200/current/seven days in Manila at `(14.2117,121.1653)`; no uptime guarantee. The 61-entry root run includes the same two dataset tests plus 59 HTTP scenarios; weather adds five HTTP cases, giving 64 actual HTTP scenarios. Existing web chunk warning is non-fatal.
 
@@ -68,11 +68,11 @@ Lead directed explicit exclusion of Santa Rosa, Laguna source `043428` `(14.2413
 
 ## Documentation still required
 
-Drafted dataset README/NOTICE/licenses and data/API portions of weather, API, locations, setup and schema docs. Updated README/docs index, weather, API, architecture, locations, setup/workspace, requirements/schema, supplier roles/feature guide, supplier README, ui-ux and the final verification ledger. Root progress checkpoint added; 73-line baseline remains below 150-line archival limit after additions. Remaining: successful scoped feature commit. Keep existing customer weather contracts accurate. Record only actual verification and archive root progress if it exceeds 150 physical lines.
+Drafted dataset README/NOTICE/licenses and data/API portions of weather, API, locations, setup and schema docs. Updated README/docs index, weather, API, architecture, locations, setup/workspace, requirements/schema, supplier roles/feature guide, supplier README, ui-ux and the final verification ledger. Root progress checkpoint added; 73-line baseline remains below 150-line archival limit after additions. Feature commit `e0512acd689fb4bf291b1fd4892e49f713a8f4eb` confirmed; no remaining feature work. Keep existing customer weather contracts accurate. Record only actual verification and archive root progress if it exceeds 150 physical lines.
 
 ## Exact next action
 
-Final Tester docs/content/repository/whitespace checks PASS; owned services are stopped with data retained. Lead authorizes Implementer scoped commit. Scribe will record successful commit before COMPLETE. No COMPLETE before successful re-review/checks, shutdown, commit and worker quiescence.
+None — feature complete; all acceptance criteria verified and feature commit confirmed.
 
 ## Platform availability event
 
@@ -88,4 +88,8 @@ Only `weather-markers.ts`, `WeatherLocalityMap.tsx` and `weather.css` changed. E
 
 ## Final cycle 2 acceptance checkpoint
 
-Lead accepted independent `/root/ui_reviewer` PASS in `.local/psgc-weather/ui-review/cycle2-review.json`: both findings resolved, exact Enter/Space selection with focus, phone popup title/bounds/close hit target on initial and resized views, usable desktop/tablet/mobile layout, zero runtime errors/open findings. Tester final UX rerun and verification TypeScript also PASS. All 36 browser groups and unchanged API/data evidence are accepted. AC-001 through AC-009 PASS; AC-010 remains pending scoped commit; verifiers are quiescent. Tester confirmed owned services stopped: verification container exited, ports 4026–4029 and 5186 closed, ordinary `aqours-db-1` remains running untouched. Evidence `service-shutdown.log`; data/artifacts retained. Ordinary database remains untouched. `technical-summary.json` has been updated with final review/shutdown evidence.
+Lead accepted independent `/root/ui_reviewer` PASS in `.local/psgc-weather/ui-review/cycle2-review.json`: both findings resolved, exact Enter/Space selection with focus, phone popup title/bounds/close hit target on initial and resized views, usable desktop/tablet/mobile layout, zero runtime errors/open findings. Tester final UX rerun and verification TypeScript also PASS. All 36 browser groups and unchanged API/data evidence are accepted. AC-001 through AC-009 PASS; AC-010 PASS: feature commit `e0512acd689fb4bf291b1fd4892e49f713a8f4eb` confirmed; verifiers are quiescent. Tester confirmed owned services stopped: verification container exited, ports 4026–4029 and 5186 closed, ordinary `aqours-db-1` remains running untouched. Evidence `service-shutdown.log`; data/artifacts retained. Ordinary database remains untouched. `technical-summary.json` has been updated with final review/shutdown evidence.
+
+## Confirmed completion
+
+All acceptance criteria PASS. Feature commit `e0512acd689fb4bf291b1fd4892e49f713a8f4eb` succeeded on `feature/psgc-weather-map`; lead confirmed all 58 approved feature paths and a clean working tree. Two of five cycles used. All four dedicated workers are finished/quiescent except the already authorized docs-only checkpoint persistence; effective settings remain unexposed. Owned services stopped, data/evidence retained, ordinary database untouched. No further feature action.

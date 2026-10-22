@@ -24,7 +24,7 @@ Evidence is project-local under `.local/psgc-weather/evidence/`. Tester used syn
 
 Cycle 2 changes only three weather web files: canonical Enter/Space activation with focus restoration, map-relative popup geometry, resize updates and long-name wrapping. Unchanged API/data evidence remains valid. Weather HTTP/browser suites control external Open-Meteo responses and raster tiles while using actual authentication/API/database/UI behavior. The separate live Calamba smoke and upstream byte comparison do not establish provider uptime. No new native runtime result is claimed. Customer mobile and Distribution source, dependencies, schema and saved coordinates are unchanged.
 
-Independent UI and all required technical checks pass. Owned verification services are stopped and data/artifacts retained (`service-shutdown.log`): ports 4026–4029 and 5186 are closed, the isolated container exited, and ordinary `aqours-db-1` remains running untouched. Final post-review documentation/content/repository/whitespace checks pass; the scoped feature commit remains pending. Historical results below retain their original revision boundaries.
+Independent UI and all required technical checks pass. Owned verification services are stopped and data/artifacts retained (`service-shutdown.log`): ports 4026–4029 and 5186 are closed, the isolated container exited, and ordinary `aqours-db-1` remains running untouched. Final post-review documentation/content/repository/whitespace checks pass; feature commit `e0512acd689fb4bf291b1fd4892e49f713a8f4eb` is confirmed on `feature/psgc-weather-map`. Historical results below retain their original revision boundaries.
 
 ## Report category colors and supplier Weather page — 22 October 2026
 
