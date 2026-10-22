@@ -64,11 +64,11 @@ await new Promise<void>((resolve, reject) => {
   server.once('error', reject);
 });
 
-async function signIn(email: string) {
+async function signIn(email: string, destination = 'Overview') {
   await page.getByLabel('Email', { exact: true }).fill(email);
   await page.getByLabel('Password', { exact: true }).fill(fixturePassword);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: destination, exact: true })).toBeVisible();
 }
 async function search(query: string) {
   await page.getByLabel('City in the Philippines', { exact: true }).fill(query);
@@ -79,10 +79,21 @@ try {
   await page.goto(web);
   await signIn('admin@demo.aqours.test');
   const weather = page.getByRole('region', { name: 'Weather', exact: true });
-  await expect(weather).toBeVisible();
+  await expect(weather).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Reports and incidents', exact: true })).toBeVisible();
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Weather', exact: true }).click();
+  await expect(page).toHaveURL(/#\/weather$/);
+  await expect(page.getByRole('heading', { name: 'Weather', exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Weather', exact: true })).toHaveAttribute('aria-current', 'page');
   await expect(weather.getByText('Select a city to check current weather and the next seven days.')).toBeVisible();
-  passed('Admin dashboard keeps weather independent from operational metrics');
+  await page.goBack();
+  await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
+  await expect(weather).toHaveCount(0);
+  await page.goForward();
+  await expect(weather).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Weather', exact: true })).toBeVisible();
+  passed('Admin navigation, direct loading and browser history open Weather separately from Overview');
 
   await search('Calamba');
   await page.getByRole('button', { name: 'Calamba, Laguna, Philippines', exact: true }).click();
@@ -99,11 +110,11 @@ try {
   await weather.getByRole('button', { name: 'Refresh weather', exact: true }).click();
   await expect(weather.getByText(/Stale results/)).toBeVisible();
   await expect(weather.getByText('30°C', { exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Reports and incidents', exact: true })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
   failForecast = false;
   await weather.getByRole('button', { name: 'Retry loading', exact: true }).click();
   await expect(weather.getByText(/Stale results/)).toHaveCount(0);
-  passed('Provider failure retains labeled stale weather and working metrics; retry recovers');
+  passed('Provider failure retains labeled stale weather and usable navigation; retry recovers');
 
   await search('NoMatch');
   await expect(weather.getByText('No matching cities. Try another city name.')).toBeVisible();
@@ -145,7 +156,15 @@ try {
   passed('Weather remains usable at a narrow viewport without overflowing its section');
 
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
-  await signIn('staff@demo.aqours.test');
+  await expect(weather).toHaveCount(0);
+  await signIn('staff@demo.aqours.test', 'Weather');
+  await expect(weather.getByText('Select a city to check current weather and the next seven days.')).toBeVisible();
+  await page.getByRole('button', { name: 'Menu', exact: true }).click();
+  await page.getByRole('link', { name: 'Overview', exact: true }).click();
+  await expect(weather).toHaveCount(0);
+  await page.getByRole('button', { name: 'Menu', exact: true }).click();
+  await page.getByRole('link', { name: 'Weather', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Menu', exact: true })).toHaveAttribute('aria-expanded', 'false');
   await expect(weather.getByText('Select a city to check current weather and the next seven days.')).toBeVisible();
   await expect(weather.getByText('27°C', { exact: true })).toHaveCount(0);
   await search('Los Baños');
@@ -154,9 +173,9 @@ try {
   await page.getByRole('button', { name: 'Menu', exact: true }).click();
   await page.getByRole('link', { name: 'Reports', exact: true }).click();
   await page.getByRole('button', { name: 'Menu', exact: true }).click();
-  await page.getByRole('link', { name: 'Overview', exact: true }).click();
+  await page.getByRole('link', { name: 'Weather', exact: true }).click();
   await expect(weather.getByText('Select a city to check current weather and the next seven days.')).toBeVisible();
-  passed('Staff can use weather; sign-out and leaving the dashboard clear its selection');
+  passed('Staff mobile navigation opens Weather; sign-out and leaving the page clear its selection');
   assert.deepEqual(errors, []);
 } finally {
   await writeFile(path.join(output, 'results.txt'), evidence.join('\n') + '\n');

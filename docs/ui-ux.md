@@ -27,7 +27,11 @@ An uncertain submission locks its original operation and details for retry. Draf
 
 Operational navigation groups report review, service updates and assistance/distribution work, with role-appropriate settings. Inbox filters are URL-backed. Report detail separates customer messages from internal notes, operational review and history.
 
+Weather has its own `/#/weather` destination in Service operations for staff/admin, available in desktop and mobile navigation. Overview focuses on service metrics and queues. The Weather page retains Philippine city search, current conditions, seven-day forecasts and independent refresh/retry; selection clears when leaving the page or changing accounts.
+
 The map workspace coordinates a report list, selected report and Leaflet view. Wide layouts place the list beside the map; narrow layouts offer explicit List/Map views. Unlocated reports remain accessible. Changing map zoom or selection never changes report priority, association or saved location. Cluster counts cannot establish shared incidents, water-supply topology or safety.
+
+Report marker colors identify categories: red for No water, blue for Leak, amber for Low pressure and purple for Water quality. A labeled swatch legend and marker/popup category text explain the colors. Priority stays visible as text; gray clusters show counts until expanded. Area-layer colors remain independent of report categories.
 
 [Locations and maps](location-and-maps.md) documents Geoapify tiles, public browser-key configuration, required attribution and web map migration. No database migration is required for this overhaul.
 

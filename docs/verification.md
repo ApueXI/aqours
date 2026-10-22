@@ -1,6 +1,18 @@
 # First-release verification
 
-Updated 21 October 2026. Source implements the connected first release; release acceptance is **IN PROGRESS**. A native APK build is verified separately from installed Android behavior. Live Geoapify and academic acceptance remain external. No skipped or unavailable check is counted as passed. [Traceability](traceability.md) maps all 84 requirements, 126 original feature criteria and DEMO-001 through DEMO-010 to implementation and the exact assertions/manual checks.
+Updated 22 October 2026. Source implements the connected first release; release acceptance is **IN PROGRESS**. A native APK build is verified separately from installed Android behavior. Live Geoapify and academic acceptance remain external. No skipped or unavailable check is counted as passed. [Traceability](traceability.md) maps all 84 requirements, 126 original feature criteria and DEMO-001 through DEMO-010 to implementation and the exact assertions/manual checks.
+
+## Report category colors and supplier Weather page — 22 October 2026
+
+Supplier report markers now show category colors with a labeled legend, accessible category names, neutral counted clusters and independent priority text. Weather moved from Overview to `/#/weather` in desktop/mobile navigation. No API, schema, dependency or customer mobile change is included.
+
+- PASS: supplier typecheck, lint, production build and all 20 unit tests; verification TypeScript and repository file-limit/documentation checks.
+- PASS: ten real Leaflet browser checks cover all four category colors and matching legend, accessible marker labels/popups, priority changes without color changes, selected-record refresh, overlap expansion, viewport queries/no map writes, independent layers, return navigation, narrow views, tile retry and teardown.
+- PASS: eight Weather browser scenarios cover staff/admin navigation, direct loading, browser history, absence from Overview, seven forecast rows/attribution, stale/search recovery, missing values, delayed-response isolation, narrow layout and selection clearing on page exit/account change.
+- PASS: nine supplier UX checks include all nine destinations at 1440/768/390px, keyboard navigation, focus, contrast and filter persistence; two existing Laguna browser checks retain localities, eleven seeded points, three clusters, selection and reset.
+- Tests use fresh project-local PostgreSQL on port 55439 (`aqours_map_weather_test`), API 4019 and production supplier preview 5189. Raster bytes and external weather responses are controlled fixtures; these runs do not certify live provider availability. Native behavior was not retested because mobile source is unchanged.
+
+Browser screenshots were visually reviewed. Only final passing runs are counted. Owned API/preview/PostgreSQL verification services were stopped; retained evidence is under `.local/map-weather/`, with browser-runner outputs also in their existing ignored locations.
 
 ## UI/UX overhaul — 21 October 2026
 

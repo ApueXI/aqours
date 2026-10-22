@@ -35,7 +35,7 @@ npm run android
 
 Supplier web: `http://localhost:5173`. API: `http://localhost:4000/api/v1`. Android emulator API: `http://10.0.2.2:4000/api/v1`; phones need the development computer's LAN address. Native MapLibre requires a development/native build and does not run in Expo Go.
 
-The demo uses canonical Laguna PSGC addresses with fictional street details and synthetic service geometry. Existing demo databases can use the [explicit location upgrade](docs/setup.md#upgrading-original-demo-locations-to-laguna). Admin Overview and customer Home show current conditions and seven-day [Open-Meteo forecasts](docs/weather.md).
+The demo uses canonical Laguna PSGC addresses with fictional street details and synthetic service geometry. Existing demo databases can use the [explicit location upgrade](docs/setup.md#upgrading-original-demo-locations-to-laguna). The dedicated supplier Weather page and customer Home show current conditions and seven-day [Open-Meteo forecasts](docs/weather.md). Supplier report maps identify No water in red, Leak in blue, Low pressure in amber and Water quality in purple, with a labeled legend.
 
 The fictional seed provides `admin@demo.aqours.test`, `staff@demo.aqours.test`, and `customer01@demo.aqours.test` through `customer12@demo.aqours.test`. The fixture password is `DemoWater2026!`; it is exclusively for the development seed. Staff/admin use the supplier app and customers use Android. Starting the API never resets data or automatically runs the seed.
 

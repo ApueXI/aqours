@@ -14,8 +14,9 @@ import { AssistanceDetail } from '../features/assistance/screens/AssistanceDetai
 import { Distribution } from '../features/distribution/screens/Distribution';
 import { Settings } from '../features/settings/screens/Settings';
 import { MapPage } from '../features/map/screens/MapPage';
+import { WeatherPage } from '../features/weather/screens/WeatherPage';
 
-const sections = ['overview', 'reports', 'map', 'incidents', 'advisories', 'assistance', 'distribution', 'settings'];
+const sections = ['overview', 'reports', 'map', 'incidents', 'advisories', 'assistance', 'distribution', 'weather', 'settings'];
 export default function App() {
   const session = useSession();
   const route = useRoute();
@@ -34,6 +35,7 @@ export default function App() {
       {route.section === 'overview' && <Overview key={user.id} params={route.params} />}
       {route.section === 'reports' && (route.id ? <ReportDetail id={route.id} returnTo={route.params.get('returnTo')} /> : <Reports params={route.params} />)}
       {route.section === 'map' && <MapPage params={route.params} />}
+      {route.section === 'weather' && <WeatherPage key={user.id} />}
       {route.section === 'incidents' && (route.id ? <IncidentDetail id={route.id} /> : <Incidents />)}
       {route.section === 'advisories' && <Advisories id={route.id} user={user} />}
       {route.section === 'assistance' && (route.id ? <AssistanceDetail id={route.id} returnTo={route.params.get('returnTo')} /> : <Assistance params={route.params} />)}

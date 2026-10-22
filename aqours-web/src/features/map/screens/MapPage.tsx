@@ -8,6 +8,8 @@ import { FilterBar } from '../../../components/Filters';
 import { label, PageTitle, ResourceState } from '../../../components/Status';
 import { MapCanvas, type Bounds } from '../components/MapCanvas';
 import { MapReportList } from '../components/MapReportList';
+import { MapLegend } from '../components/MapLegend';
+import { reportCategories } from '../utils/report-categories';
 import { areaFeatures } from '../utils/layers';
 import { mapFilters, mapLocation } from '../utils/map-state';
 import { defaultMapBounds } from '../utils/default-view';
@@ -60,9 +62,9 @@ export function MapPage({ params }: { params: URLSearchParams }) {
         onUnlocated={value => { setUnlocated(value); navigate({ unlocated: value }); setOffset(0); }} onOffset={setOffset} onSelect={select} />
       <section className="map-map-panel" aria-label="Map and selected report">
         <MapCanvas reports={reports.data} areas={areas} selected={selected} focusKey={focusKey} onBounds={setBounds} onSelect={select} onOpen={open} />
-        <p className="map-legend">Normal: teal · High priority: amber · Urgent: red. Service zones: gray · Published incident areas: teal · Official advisory areas: amber.</p>
+        <MapLegend />
         {selected ? <section ref={summary} tabIndex={-1} className="map-selection" aria-label="Selected report">
-          <h2>{selected.reference}</h2><p>{label(selected.category)} · {label(selected.status)} · {label(selected.priority)} priority</p>
+          <h2>{selected.reference}</h2><p>{reportCategories[selected.category].label} · {label(selected.status)} · {label(selected.priority)} priority</p>
           <p>{selected.address}</p><p>{selected.latitude === null || selected.longitude === null ? 'No coordinates. Review the recorded address in report details.' : 'Selected report location'}{selected.locationReview ? ' · Location review needed' : ''}</p>
           <div className="map-selection-actions"><a href={detailLink('reports', selected.id, returnTo)}>Open full report</a><button type="button" onClick={() => navigate({ selected: undefined })}>Clear selection</button></div>
         </section> : <p className="map-selection">Select a report from the list or a map marker to review its location and status.</p>}

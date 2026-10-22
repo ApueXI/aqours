@@ -23,6 +23,8 @@ The supplier web uses direct Leaflet 1.9.4 with markercluster. Its initial and r
 
 The customer preview entry point checks `isRunningInExpoGo()` before loading the separate native MapLibre renderer and street-map configuration. Expo Go displays the supplied coordinates; native builds retain interactive maps, attribution and retry. See [mobile launch instructions](../aqours-app/README.md#run-in-expo-go).
 
+Supplier report markers use issue-category colors: No water (`outage`) red `#dc2626`, Leak blue `#2563eb`, Low pressure amber `#b45309`, and Water quality purple `#7c3aed`. The visible legend pairs swatches with category names; marker accessibility labels and popups name the category. Priority remains explicit text in selected-report details and popups and does not determine marker color. Clusters are neutral gray with counts; expanding them reveals the individual category colors. Service-zone and published incident/advisory area colors remain independent. Native customer previews retain their existing presentation.
+
 ### Supplier raster configuration
 
 - `VITE_GEOAPIFY_MAPS_API_KEY`: intentionally public, tile-only browser key for Geoapify OSM Bright. Configure it privately through the operator's build environment and restrict it to allowed website origins and provider quotas. It is separate from the API's private geocoding key.

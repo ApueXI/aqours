@@ -14,6 +14,10 @@
 .map-selection p { margin: 8px 0; }
 .map-selection-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
 .map-legend { color: #475569; font-size: 13px; margin: 12px 0 16px; line-height: 1.6; }
+.map-legend p { margin: 4px 0; }
+.map-category-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 0; margin: 0 0 8px; list-style: none; }
+.map-category-legend li { display: flex; align-items: center; gap: 8px; }
+.map-legend-swatch { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
 .map-layer-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; background: white; border: 1px solid #d3dce3; border-bottom: 0; padding: 8px 12px; border-radius: 8px 8px 0 0; }
 .map-layer-toolbar label { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 13px; cursor: pointer; }
 .map-layer-toolbar input { accent-color: #0f766e; }
@@ -26,10 +30,8 @@
 .leaflet-control-attribution { max-width: 100%; font-size: 11px; }
 .leaflet-control-attribution a { min-height: auto; }
 .report-marker { display: grid !important; place-items: center; background: transparent; }
-.report-marker span { display: block; width: 17px; height: 17px; border: 2px solid white; border-radius: 50%; background: #0f766e; box-shadow: 0 1px 3px #0004; }
-.report-marker-high span { background: #b45309; }
-.report-marker-urgent span { background: #be123c; }
-.report-cluster { display: grid !important; place-items: center; border: 2px solid white; border-radius: 50%; background: #0f766e; color: white; font-weight: 700; box-shadow: 0 1px 3px #0003; }
+.report-marker span { display: block; width: 17px; height: 17px; border: 2px solid white; border-radius: 50%; box-shadow: 0 1px 3px #0004; }
+.report-cluster { display: grid !important; place-items: center; border: 2px solid white; border-radius: 50%; background: #475569; color: white; font-weight: 700; box-shadow: 0 1px 3px #0003; }
 .report-marker:focus-visible, .report-cluster:focus-visible { outline: 3px solid #115e59; outline-offset: 2px; }
 .map-provider-notice { margin: 0; border-radius: 0; }
 .map-provider-notice p { margin: 0 0 8px; }

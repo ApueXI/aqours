@@ -1,13 +1,13 @@
 # Weather
 
-Added 21 October 2026. Customer Home and supplier Overview show current conditions and a seven-day forecast from [Open-Meteo](https://open-meteo.com/en/docs). Customers, staff and admins can use the authenticated weather endpoints. Weather is informational context; it does not create incidents, publish advisories, establish water safety or change assistance/guidance decisions.
+Added 21 October 2026; supplier navigation updated 22 October 2026. Customer Home and the supplier Weather page (`/#/weather`) show current conditions and a seven-day forecast from [Open-Meteo](https://open-meteo.com/en/docs). Staff/admin open Weather through desktop or mobile navigation; forecasts are no longer embedded in supplier Overview. Customers, staff and admins can use the authenticated weather endpoints. Weather is informational context; it does not create incidents, publish advisories, establish water safety or change assistance/guidance decisions.
 
 ## Choosing a location
 
 - Customer Home initially selects the first saved connection with coordinates, or the first connection when none has coordinates. Every saved connection is selectable; missing coordinates prompt for city search.
-- Supplier Overview initially prompts for a city. Admins and staff can select Calamba, Los Baños or Santa Rosa for the Laguna demonstration. Both clients search Philippine places through the separate [Open-Meteo geocoding service](https://open-meteo.com/en/docs/geocoding-api), with up to five labeled city/administrative-area results and explicit selection.
+- Supplier Weather initially prompts for a city. Admins and staff can select Calamba, Los Baños or Santa Rosa for the Laguna demonstration. Both clients search Philippine places through the separate [Open-Meteo geocoding service](https://open-meteo.com/en/docs/geocoding-api), with up to five labeled city/administrative-area results and explicit selection.
 - Weather search is independent of Geoapify and PSGC reporting. It does not confirm/update an address, service zone or report location, and needs no GPS permission.
-- Selection lasts while the dashboard is mounted and clears on sign-out/account change. Switching locations clears old forecast content; late responses cannot replace the newer selection.
+- Selection stays in component memory and clears on unmount or account change. Supplier selection therefore clears when leaving the Weather page, signing out or reloading. Switching locations clears old forecast content; late responses cannot replace the newer selection.
 
 Fresh Laguna seeds and the explicit [v1 fixture upgrade](setup.md#upgrading-original-demo-locations-to-laguna) make customer weather use the selected saved Laguna point automatically. Customer12 retains no coordinates and uses city search. The admin still explicitly selects a weather city; nationwide weather search remains available. PSGC names/codes and weather geocoding are separate sources.
 
@@ -17,7 +17,7 @@ Current weather includes conditions, temperature, feels-like temperature, humidi
 
 Values use Celsius, millimeters, km/h and percentages. Event timestamps and daily dates use `Asia/Manila`. Current conditions are model estimates. Weather time and API retrieval time are displayed separately, with linked Open-Meteo attribution and GeoNames search credit. Supplier advisories retain their own lifecycle and display.
 
-Weather fetches on dashboard/forecast entry and manual refresh; Android also refetches when Home returns to focus or the app enters the foreground. Weather does not use the 30-second water-service polling interval. Refresh respects the backend cache. Failed refresh retains previously loaded data for that same location with an explicit stale label and retry. Initial failures show an error/retry. Loading or failure remains independent of water-service data and supplier metrics.
+Weather fetches when a forecast location is selected and on manual refresh; customer Home also fetches for its initial saved connection. Android refetches when Home returns to focus or the app enters the foreground. Weather does not use the 30-second water-service polling interval. Refresh respects the backend cache. Failed refresh retains previously loaded data for that same location with an explicit stale label and retry. Initial failures show an error/retry. Loading or failure remains independent of water-service data and supplier metrics.
 
 ## API contract
 

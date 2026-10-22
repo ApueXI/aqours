@@ -10,7 +10,7 @@ Related: [requirements](requirements.md), [schema](schema.md), [API contract](ap
 | --- | --- |
 | `aqours-api/src/` | Express 5 routes, role/ownership authorization, Zod input validation, sessions, publication, guidance, assistance, uploads and stock transactions |
 | `aqours-api/prisma/` | Prisma domain schema, legacy baseline and transactional normalization migration; original SQL remains in `migrations/` for baseline verification |
-| `aqours-web/src/` | React/Vite supplier login, overview, inbox/detail, Leaflet map, incidents, advisories, assistance, distribution and admin settings |
+| `aqours-web/src/` | React/Vite supplier login, overview, inbox/detail, Leaflet map, incidents, advisories, assistance, distribution, Weather page and admin settings |
 | `aqours-app/src/app/` | Expo Router customer navigation and protected route composition |
 | `aqours-app/src/features/` | Focused home, report/location/photo, guidance, assistance and notification screens |
 | `aqours-contracts/src/` | Shared TypeScript public DTOs, common enums and response contracts; no database or credentials |
@@ -82,7 +82,7 @@ Native MapLibre 11.5.0 is pinned with Expo 57 / React Native 0.86.3 configuratio
 
 ## Client organization and styling
 
-Weather components live under each client's `features/weather/` and mount independently on Home/Overview. Express weather routes/controllers/services validate Open-Meteo data behind existing authentication, enforce customer connection ownership, and use bounded process-local caches. There is no weather persistence or domain automation. See [weather behavior and provider boundaries](weather.md).
+Weather components live under each client's `features/weather/` and mount on customer Home and the dedicated supplier `/#/weather` page. Supplier Overview no longer mounts weather. Express weather routes/controllers/services validate Open-Meteo data behind existing authentication, enforce customer connection ownership, and use bounded process-local caches. There is no weather persistence or domain automation. See [weather behavior and provider boundaries](weather.md).
 
 Both clients group screens, feature-only components, hooks and request operations under `features/<domain>/`. Shared UI, hooks, HTTP transport, configuration and utilities stay outside those feature folders. The web `app/` contains bootstrap, routing and navigation. Expo `app/` contains route wrappers and navigator layouts only. Native styles are retained.
 

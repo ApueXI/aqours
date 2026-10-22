@@ -31,7 +31,7 @@ Password recovery, MFA and public registration are not implicitly added to the d
 
 ## 3. Customer home and service location
 
-Home also offers [Open-Meteo weather](weather.md) for an owned saved connection or a selected Philippine city. Supplier Overview supports the same city search. Weather requests have their own loading/error/refresh state and do not change report locations, service zones or advisories.
+Home also offers [Open-Meteo weather](weather.md) for an owned saved connection or a selected Philippine city. The dedicated supplier Weather page (`/#/weather`) supports the same city search through desktop/mobile navigation. Weather requests have their own loading/error/refresh state and do not change report locations, service zones or advisories.
 
 1. After sign-in, load the customer's profile, saved connection/address, current applicable published notices and open reports.
 2. Match notices through explicit reviewed service-zone/connection associations. An applicable area advisory can reach a customer who has never submitted a report.

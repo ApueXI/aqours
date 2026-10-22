@@ -1,6 +1,6 @@
 # Supplier staff domain
 
-Staff also have [current weather, seven-day forecasts and Philippine city search](../weather.md) on Overview, using the same authenticated weather access as admins.
+Staff also have [current weather, seven-day forecasts and Philippine city search](../weather.md) on the dedicated Weather page (`/#/weather`), using the same authenticated weather access as admins.
 
 Status: **implemented first-release capabilities**, updated 19 October 2026; acceptance evidence and remaining gaps are in [verification](../verification.md) and [traceability](../traceability.md). Product source: brief v0.4 and [requirements](../requirements.md).
 

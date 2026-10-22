@@ -9,7 +9,7 @@ export function WeatherForecastView({ path, location }: { path: string; location
   const current = forecast?.current;
   return <div aria-live="polite">
     <div className="flex items-center flex-wrap gap-3 mt-4">
-      <h3 className="mr-auto">{location}</h3>
+      <h2 className="mr-auto">{location}</h2>
       <button type="button" disabled={resource.loading} onClick={() => void resource.refresh()}>Refresh weather</button>
     </div>
     <ResourceState resource={resource}>

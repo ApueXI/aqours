@@ -68,7 +68,7 @@ try {
   const routes = [
     ['overview', 'Overview'], ['reports', 'Report inbox'], ['map', 'Report map'],
     ['incidents', 'Incidents'], ['advisories', 'Official advisories'],
-    ['assistance', 'Assistance queue'], ['distribution', 'Water distribution'], ['settings', 'Settings and audit'],
+    ['assistance', 'Assistance queue'], ['distribution', 'Water distribution'], ['weather', 'Weather'], ['settings', 'Settings and audit'],
   ];
   for (const width of [1440, 768, 390]) {
     await page.setViewportSize({ width, height: 1000 });

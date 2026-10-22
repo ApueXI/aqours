@@ -34,6 +34,7 @@ try {
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
   if (process.env.AQOURS_LIVE_WEATHER === '1') {
+    await page.getByRole('link', { name: 'Weather', exact: true }).click();
     await page.getByLabel('City in the Philippines', { exact: true }).fill('Calamba');
     await page.getByRole('button', { name: 'Search weather cities', exact: true }).click();
     const candidate = page.getByRole('button', { name: /Calamba, Calabarzon, Philippines/i }).first();

@@ -4,7 +4,6 @@ import { useResource } from '../../../hooks/useResource';
 import { useQueueFilters } from '../../../hooks/useQueueFilters';
 import { FilterBar } from '../../../components/Filters';
 import { date, label, PageTitle, ResourceState } from '../../../components/Status';
-import { WeatherPanel } from '../../weather/components/WeatherPanel';
 import { OperationalQueues } from '../components/OperationalQueues';
 
 function duration(seconds: number | null) {
@@ -42,6 +41,5 @@ export function Overview({ params }: { params: URLSearchParams }) {
         <p className="hint">Active incidents have a status other than resolved. Unresolved reports are received, under review, or in progress. Counts can include clearly labeled demonstration records; inspect the source record before using them operationally.</p>
       </section>
     </>}</ResourceState>
-    <WeatherPanel />
   </>;
 }

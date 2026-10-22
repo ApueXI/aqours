@@ -20,7 +20,9 @@ Requirement identifiers and the ten DEMO scenarios remain stable; the 126 featur
 
 ## Weather addition — 21 October 2026
 
-The owner approved current conditions plus seven daily forecasts on customer Home and supplier Overview, available to customer/staff/admin. Customers start at a saved connection and both clients offer Philippine city search. Weather is informational, independently retryable, attributed to Open-Meteo, and preserves backend connection ownership and existing water-advisory lifecycles. This supplemental feature does not renumber the original brief's requirements or acceptance inventory. See [weather behavior, contract and verification](weather.md).
+The owner approved current conditions plus seven daily forecasts on customer Home and, as revised on 22 October 2026, a dedicated supplier Weather page (`/#/weather`) instead of embedding forecasts in Overview. Weather remains available to customer/staff/admin. Customers start at a saved connection and both clients offer Philippine city search. Weather is informational, independently retryable, attributed to Open-Meteo, and preserves backend connection ownership and existing water-advisory lifecycles. This supplemental feature does not renumber the original brief's requirements or acceptance inventory. See [weather behavior, contract and verification](weather.md).
+
+Supplier map presentation was also revised on 22 October 2026: report-category colors are red for No water, blue for Leak, amber for Low pressure and purple for Water quality, explained through a labeled legend and marker/popup text. Priority remains text rather than determining marker color. Clusters use neutral gray counts; existing area layers and customer previews retain their presentation.
 
 ## Domain vocabulary
 
