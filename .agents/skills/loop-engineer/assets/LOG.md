@@ -11,4 +11,6 @@ Link: [Goal](GOAL.md) · [Current state](STATE.md)
 - Documentation updated or still pending:
 - Exact next action:
 
+Each entry identifies the reporting role and task, the actual evidence artifact and revision, lead-approved decisions, and one exact next action. Documentation/scribe alone writes this shared log. Never record secrets or claim unrun checks passed.
+
 Replace this example with concise factual entries. Never record secrets or claim unrun checks passed.

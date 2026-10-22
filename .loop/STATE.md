@@ -1,46 +1,47 @@
-# Distribution execution state
+# Four-role skill update state
 
-COMPLETE — 2026-10-22; cycle 3/5. Feature commit `73e6fa9` succeeded on `feature/distribution-early-warnings`; clean starting revision `70c15e8`. Prior completed state is preserved in `archive/pre-distribution-2026-10-22/`.
+**Status:** IN_PROGRESS — 2026-10-22. Feature branch `feature/loop-engineer-four-roles` confirmed. Prior completed distribution goal archived at `archive/pre-loop-engineer-four-roles-2026-10-22/` (GOAL, STATE, LOG, INTERFACES). This goal remains active until final checks and feature commit are confirmed.
 
-## Ownership and reconciliation
+## Verified starting facts
 
-All three managed workers are completed and no longer editing, confirmed with `collaboration.list_agents`. Lead completed integration, documentation, review and the feature commit. Requested settings for each worker were `gpt-6.1-sol` / high with fresh context; the tool exposes task identity/status, not effective model settings. No fallback or external continuation runner was used.
+- Root `PROGRESS.md`, root `AGENTS.md`, `README.md`, Loop Engineer `SKILL.md`, references `state.md`, `documentation.md`, `runner.md`, templates, and skill-creator guidance were reviewed.
+- Existing runner behavior/schema/locks/cancellation and explicit invocation policy are to be preserved.
+- No runner session or live managed-agent behavioral test has been run for this update.
+- Current source changes are on `feature/loop-engineer-four-roles`; initial branch worktree was clean when checked.
 
-- `/root/distribution_api` owned API implementation/tests/README, excluding shared state. Strong coding/high effort was selected for authorization, persistence, transactions and scheduling. Implementation and integration corrections are complete.
-- `/root/distribution_web` owned supplier UI/tests/README. Strong coding/high effort was selected for the connected Distribution/map workflow. Final history-date and failed-tile fixes are complete.
-- `/root/distribution_verify` owned eight new HTTP/PostgreSQL verification files. Strong coding/high effort was selected for real concurrency, restart and mutation-race coverage. All 19 groups pass; suite services stopped.
-- Lead owned shared contracts, cross-component integration, the browser acceptance harness, populated migration preservation, retained regression checks, docs and loop state. Direct work established shared boundaries and independently verified the integrated workers' result.
+## Ownership and tasks
 
-## Decisions and final implementation
+| Task | Owner | Owned paths | Dependency/status |
+| --- | --- | --- | --- |
+| Skill instructions, invocation metadata, runner implementation | `/root/implementer` | `.agents/skills/loop-engineer/SKILL.md`, `agents/openai.yaml`, `scripts/continue_loop.py` | Production edits frozen/reported complete; lead has not confirmed commit; do not edit |
+| Documentation, templates, shared loop records | `/root/documentation` | `references/state.md`, `references/documentation.md`, `references/runner.md`; `assets/GOAL.md`, `assets/STATE.md`, `assets/LOG.md`; root `PROGRESS.md`; `.loop/` | In progress; assigned skill files updated; final reconciliation pending |
+| Tests and check execution/evidence | `/root/tester` | `references/validation.md`, `scripts/test_continue_loop.py`, designated local evidence | Assigned checks PASS and final content review complete; evidence under `.local/loop-engineer-four-roles/` |
+| Rendered UI/UX skill review | `/root/ui_ux_tester` | Review/report only; no production fixes | Finished/released; read-only reasoned N/A because changed paths are skill/docs/runner prompt and `.loop`, with no app interface change; no rendered test or automation claimed |
+| Coordination, decisions, acceptance review | `/root` lead | Shared coordination/review; no dedicated production takeover | Active |
 
-Existing weather/provider normalization, site/session inventory, Leaflet and notification storage are reused. Supplier deployment remains singleton and ambiguous configuration fails closed. Current reservable liters sum eligible open/unexpired sessions, including future sessions; no physical stock or depletion relationship is inferred. Monitoring requires explicit per-site setup. Temperature/supply checks are independent and warning history is immutable.
+Exactly four dedicated worker roles are authorized. No descendants, additional, or replacement agents without USER permission, even with lead approval or new capacity. Requested settings: Implementer `gpt-6.1-sol`/medium for skill implementation; Documentation `gpt-6-luna`/medium for focused references and templates; Tester `gpt-6.1-sol`/high for cross-surface policy review/checks; UI/UX Tester `gpt-6.1-sol`/high for rendered review. These are task requests, not confirmed effective settings; the tool has not exposed actual effective settings. Role-specific escalation policy is in the references.
 
-Persistent forecasts/jobs use hourly refresh, bounded retry, global three-request concurrency, work revisions and expiring claims. Healthy evaluation runs within five seconds; periodic sweeps handle time changes. Six additive models leave existing records intact. No dependency or mobile source change.
+## Decisions
 
-Monitoring/Sessions/Sites/Warning history retain existing maintenance, exact stock, cancellation/collection and reservation lookup. Seven-date Manila state, point-temperature overlay and three configured Geoapify basemaps remain independent. Past/all warning dates use a separate `warningDate` filter. Tile failures preserve markers/list and an explicit retry notice. Regional interpolation, Satellite/Terrain and multi-supplier tenancy remain outside the approved first release.
+- Final UI and checks happen after production freeze. Tester remains engaged through actual final check execution. Scribe then reconciles docs/state; lead reviews evidence. All workers must be quiescent before handoff or completion.
+- Documentation supports recovery after compaction but cannot prevent compaction or guarantee no hallucination. Resume must reload and reconcile actual files/evidence.
+- No API/application docs or code are in scope. No credentials or `.env` values are to be inspected.
 
-## Acceptance evidence
+## Verification
 
-Evidence directory: `.local/distribution/evidence/`. Durable narrative and commands: [verification](../docs/verification.md#distribution-monitoring--22-october-2026), [setup](../docs/setup.md#distribution-monitoring-deployment-and-checks), [monitoring](../docs/distribution-monitoring.md).
+- AC-001 PASS: Tester content/policy review; 32 decision scenarios aligned with zero live behavioral scenarios. `.local/loop-engineer-four-roles/scenario-review.json`.
+- AC-002 PASS: Cross-surface content review; assigned references/templates aligned. `git diff --check` PASS; `.local/loop-engineer-four-roles/checks.json`.
+- AC-003 PASS: Capacity, ownership, and fallback wording reviewed across skill and references; included in 32-scenario review. `.local/loop-engineer-four-roles/scenario-review.json`.
+- AC-004 PASS: Model defaults/escalations and requested-vs-observed wording reviewed; invocation policy and dependencies unchanged. `.local/loop-engineer-four-roles/checks.json`.
+- AC-005 PASS: Current goal/state/log and role/path roster populated; all four prior active records preserved byte-identically in archive. `.local/loop-engineer-four-roles/archive-integrity.json`.
+- AC-006 PASS: Resume/compaction wording reviewed against actual reload and reconciliation; no guarantee claim. `.local/loop-engineer-four-roles/scenario-review.json`.
+- AC-007 PASS: Freeze/verification/reconciliation sequence reviewed; Tester remained active through checks. UI/UX Tester reasoned N/A due no product UI changes; no rendered test claimed. `.local/loop-engineer-four-roles/scenario-review.json`.
+- AC-008 PASS: 9 local links, 3 Python syntax checks, runner AST outside returned prompt unchanged, helper/tests/schema byte-identical, `git diff --check`, and 24 isolated runner tests PASS. `.local/loop-engineer-four-roles/checks.json`, `isolated-runner-tests.log`, `local-links.json`.
+- AC-009 IN_PROGRESS: Prior archive verified and active `INTERFACES.md` removed. Feature commit is NOT_CONFIRMED; lead must confirm successful commit before this criterion can pass.
+- Tester results: PASS for assigned checks and scenario review; no live behavioral scenario executed. Evidence is under `.local/loop-engineer-four-roles/`.
+- UI/UX review: reasoned N/A after `/root/ui_ux_tester` read-only review; no application UI changed, so no rendered test or automation was applicable. UI/UX role confirms actual UI reviews require rendered screenshot/browser/device evidence and relevant skills; unavailable required UI tools remain blocked, not N/A. Requested model `gpt-6.1-sol`/high fresh context; effective settings unexposed.
+- Commit: NOT_CONFIRMED; implementation owner/lead confirmation pending.
 
-| Criterion | Status | Evidence |
-| --- | --- | --- |
-| AC-001 forecasts | PASS | API units and 19 integration groups include provider failures/null data/cache/cooldown/coordinate invalidation/fresh-process persistence; live compiled scheduler persisted both demo sites |
-| AC-002 exact supply | PASS | Decimal boundaries and real reserve/release/collect/session eligibility; retained stock races/rollback; browser exact 25.50-liter edit |
-| AC-003 configuration/scope | PASS | HTTP role/singleton/ownership/version/validation; browser site setup and admin-only temperature bands |
-| AC-004 warning lifecycle | PASS | HTTP independent/combined/dedup/evidence revision/immutable history and activation races; browser selected-date and past/all-date history |
-| AC-005 durable scheduler | PASS | Actual scheduler, multiple instances/global leases, restart recovery, bounded delay and shutdown in real PostgreSQL tests |
-| AC-006 notifications | PASS | Owned read/list and consolidated lifecycle persistence checks; browser read state |
-| AC-007 Distribution UX | PASS | 12 new browser groups plus retained maintenance 8/address 4/UX 9; all four tabs at 1440/768/390px; screenshots visually reviewed |
-| AC-008 Leaflet | PASS | Actual marker click/popup, status colors, filters, inactive/unlocated sites, list/map switch and failed tiles/retry |
-| AC-009 independent map state | PASS | Seven dates, URL/reload, styles/viewport/markers/overlay toggle and numeric site temperatures verified in production build |
-| AC-010 compatibility | PASS | 100 unit/helper tests (42 API + 28 web + 30 unchanged mobile); 59 retained HTTP checks; types/lint, API/web builds, verification types, Prisma validation |
-| AC-011 docs/migration/commit | PASS | Relevant docs/READMEs/progress updated; 36 old physical application-table fingerprints preserved; repository/staged diff review passed; feature commit 73e6fa9 succeeded |
+## Exact next action
 
-No tests were skipped or requirements weakened. Full raw Prisma diff reports only the preexisting ignored legacy `schema_migrations` ledger missing from the old baseline; excluding that unchanged model yields no operational schema difference. Production web build retains the existing nonblocking large-chunk advisory. Live private Geoapify and native runtime were not retested for this API/web feature.
-
-## Resource state and exact next action
-
-Owned preview/API/scheduler/browser processes and PostgreSQL 55440 are stopped. Isolated data/evidence remain project-local. Ordinary databases and private environment values were untouched. Final integrated browser run and verification TypeScript passed after every source change; only documentation/state changed afterward.
-
-No required implementation work remains. Repository/link/line checks and staged diff review passed before feature commit `73e6fa9`. Commit this completion checkpoint, verify a clean feature branch, then stop. Operator deployment is documented separately; the ordinary database was intentionally not migrated.
+After Tester reviews final documentation/status content, obtain lead confirmation of the feature commit, then mark AC-009 and goal status only if the commit succeeded.

@@ -1,4 +1,4 @@
 interface:
   display_name: "Loop Engineer"
-  short_description: "Orchestrate workers through verified acceptance"
-  default_prompt: "Use $loop-engineer as lead/orchestrator for the supplied goal, delegate substantial implementation to one or more managed workers with task-appropriate models and reasoning effort, and integrate and verify every acceptance criterion."
+  short_description: "Coordinate four roles through verified acceptance"
+  default_prompt: "Use $loop-engineer with the main Codex solely coordinating Implementer, Documentation/scribe, Tester and UI/UX Tester; apply the approved role/model policy, capacity waves and evidence-based acceptance."

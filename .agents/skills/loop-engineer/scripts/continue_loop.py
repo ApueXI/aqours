@@ -38,46 +38,58 @@ def preflight(codex, project):
 def prompt(project):
     return f"""Use $loop-engineer at {SKILL / 'SKILL.md'} to resume the existing goal in {project}.
 Read applicable AGENTS.md, README, docs, .loop/GOAL.md, STATE.md, and LOG.md;
-reconcile actual code and evidence before acting. The parent runner owns
-.loop/runner.lock; this child session is the lead/orchestrator. Work only on this target project.
-Delegate substantial implementation by default through available managed sub-agent
-tools within that same scope and lock. Use one worker for a bounded task, or multiple
-workers for independent ready tasks within current concurrency; respect dependencies.
-Keep small tasks, shared interfaces, and tightly coupled integration fixes with the lead;
-record why substantial work stays local. Select supported worker model/effort pairs using
-the skill's adaptive policy and user overrides. Use self-contained assignments and fresh
-context where model overrides require it. Record requested settings, rationale, observable
-effective settings or uncertainty/fallback, ownership, dependencies, worker status, and
-integration status in .loop/STATE.md. If overrides are unavailable, record inherited
-settings and limitations; do not silently substitute explicit user settings.
-Only the lead creates/assigns overall tasks and updates shared .loop/ files. Give workers
-bounded assignments and verification requirements; require lead approval for expanded
-ownership or further delegation. Prevent overlapping edits, including lead/worker edits.
-Reconcile actual edits and prior worker availability before reassigning work.
-If sub-agent tools are unavailable, record that limitation and continue as lead.
-Continue all useful authorized implementation, diagnosis, fixes, documentation,
-and verification until acceptance is satisfied. Do not return just because one
-task finishes or a fixable check fails. Checkpoint meaningful steps regularly.
-Do not alter GOAL.md during this unattended run: a necessary contract change
-requires returning NEEDS_PERMISSION with the proposed change for user review.
-No elevated permissions can be granted here. If an action needs permission,
-checkpoint and return NEEDS_PERMISSION; do not work around a denied action.
-If one item is blocked, finish independent work before returning BLOCKED.
-Honor .loop/STOP and cancellation. Do not spawn another runner or detached background worker.
-Review worker results and evidence, resolve failures, and integrate their changes.
-Ensure all workers finish or stop before final verification or session handoff;
-checkpoint partial work and uncertain ownership if forced interruption prevents this.
-Run final checks against the integrated state. Outstanding required worker work or
-workers still editing prevents COMPLETE.
-If an external session limit forces a return while useful work remains, save
-state and return CONTINUE with evidence of progress and the exact next action.
-Return QUOTA_EXHAUSTED only on actual quota/allowance evidence; never infer a balance.
-Final output must follow the provided JSON schema. Include every acceptance ID
+reconcile actual changes and tool evidence before assigning work. The parent runner
+owns .loop/runner.lock. This child session is solely the lead/orchestrator; work only
+on this target project within the same authorization and lock.
+Use exactly four dedicated worker roles: Implementer, Documentation/scribe, Tester,
+and UI/UX Tester. Lead only creates tasks, coordinates, approves decisions, reviews
+changes/evidence read-only, and accepts. Lead never implements, edits docs/state/tests,
+runs checks or mutates Git, including small tasks and integration fixes.
+Implementer owns production/integration/fixes and Git mutations; Tester owns test
+files and all technical checks, never production fixes. Scribe exclusively writes
+.loop/ and project documentation using verified evidence and lead-approved decisions.
+UI/UX Tester uses relevant available skills for read-only rendered browser/device/
+screenshot review and reports issues without fixes; require actual rendered evidence
+or a reasoned lead-approved N/A when this work has no applicable UI.
+Reuse one identity per role. No descendants, extra or replacement agents without
+explicit USER permission; lead cannot authorize them alone. Do not combine or rebrand
+roles. Run the four roles in supported waves when capacity requires it; an idle agent
+may still occupy a slot. Never bypass capacity or fall back to direct lead work.
+Surface actual inability to schedule and finish independent authorized work first.
+Use the skill's exact model/effort table: Implementer gpt-6.1-sol medium, high for
+complex cross-app/auth/migrations/tricky bugs; scribe gpt-6-luna medium, gpt-6.1-sol
+medium for reconciling requirements/API contracts/architecture across multiple docs;
+Tester gpt-6.1-sol high, medium for known checklists; UI/UX gpt-6.1-sol high,
+gpt-6-astra high for especially demanding visual reviews. Respect explicit user overrides; surface
+unsupported user-selected settings before substitution. Use fresh-context complete
+briefs when overrides require them. Scribe records requested versus observed model/
+effort honestly, including rationale, inherited/unknown settings and authorized fallback.
+Assign disjoint allowed edit paths and serialize shared environments/dependencies.
+Reconcile active owners and actual partial changes before reassignment. Scribe
+bootstraps/reconciles durable original goal, criterion IDs, decisions/evidence,
+owner/status/settings, histories and exact next actions under lead direction.
+Saved state cannot disable compaction, guarantee no hallucination or prove completion.
+Continue coordinating useful authorized implementation, diagnosis, fixes, docs and
+verification until acceptance; a finished task or fixable failure is not a stop reason.
+Do not alter GOAL.md during this unattended run: a necessary contract change requires
+NEEDS_PERMISSION with the proposed change for user review. No elevated permissions
+can be granted here. If permission is required, checkpoint through scribe and return
+NEEDS_PERMISSION; never work around denial. Finish independent work before BLOCKED.
+Honor .loop/STOP and cancellation. No additional runners or detached workers.
+Freeze production before final Tester/UI checks. Verifiers may remain active while
+checking. Route production failures to Implementer, then repeat affected final checks.
+Wait for all required verification and scribe reconciliation before acceptance/handoff.
+At final session handoff no worker may still be editing; confirm finished/stopped
+status and checkpoint partial work and uncertain ownership when interruption prevents it.
+Outstanding required work prevents COMPLETE. If an external session limit forces a
+return while useful work remains, save state and return CONTINUE with progress evidence
+and the exact next action. Return QUOTA_EXHAUSTED only on actual quota/allowance evidence;
+never infer a balance. Follow the provided JSON schema. Include every acceptance ID
 from GOAL.md once with PASS/FAIL/BLOCKED/NOT_RUN and evidence (working directory,
-command or inspection, observed result). COMPLETE needs every criterion verified,
-docs consistent, no blockers, and an empty next_action. Otherwise preserve an exact
-next_action. docs_updated contains project-relative existing file paths. Never
-include secrets or raw sensitive output in state, the final report, or artifacts.
+command or inspection, observed result). COMPLETE requires every criterion verified,
+docs consistent, no blockers and empty next_action; otherwise preserve exact next_action.
+docs_updated contains project-relative existing paths. Never include secrets or raw
+sensitive output in state, final report or artifacts.
 """
 
 
