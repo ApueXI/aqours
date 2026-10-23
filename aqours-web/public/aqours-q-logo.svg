@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1254" height="1254" viewBox="0 0 1254 1254" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">Aqours Q water logo</title>
+<desc id="desc">Teal letter Q enclosing a water droplet, with flowing wave bands that form the Q tail. Transparent background.</desc>
+<defs>
+ <linearGradient id="ring" x1="263" y1="312" x2="994" y2="877" gradientUnits="userSpaceOnUse"><stop stop-color="#229e99"/><stop offset=".48" stop-color="#0f766e"/><stop offset="1" stop-color="#00675f"/></linearGradient>
+ <linearGradient id="shine" x1="296" y1="290" x2="644" y2="564" gradientUnits="userSpaceOnUse"><stop stop-color="#55ccc5"/><stop offset="1" stop-color="#159a93"/></linearGradient>
+ <linearGradient id="wave" x1="340" y1="816" x2="1034" y2="1050" gradientUnits="userSpaceOnUse"><stop stop-color="#1caaa3"/><stop offset=".53" stop-color="#0f766e"/><stop offset="1" stop-color="#00766d"/></linearGradient>
+ <linearGradient id="waveDeep" x1="340" y1="917" x2="904" y2="1105" gradientUnits="userSpaceOnUse"><stop stop-color="#0d8c84"/><stop offset="1" stop-color="#035d59"/></linearGradient>
+ <linearGradient id="drop" x1="549" y1="522" x2="732" y2="748" gradientUnits="userSpaceOnUse"><stop stop-color="#22a9a4"/><stop offset="1" stop-color="#056a66"/></linearGradient>
+</defs>
+<!-- Circular body of letter Q with transparent center -->
+<path fill="url(#ring)" fill-rule="evenodd" d="M620 204 C852 204 1030 392 1030 625 C1030 741 989 828 915 904 L832 789 C885 727 903 675 903 604 C903 461 777 355 623 355 C468 355 368 479 368 612 C368 692 419 756 530 784 L415 850 C288 826 201 737 201 617 C201 388 389 204 620 204 Z"/>
+<!-- Highlight along the upper-left arc -->
+<path fill="url(#shine)" d="M213 571 C251 358 412 255 614 254 C664 254 705 259 736 268 C580 268 487 301 393 396 C316 471 256 534 213 571 Z"/>
+<path fill="#37b5af" opacity=".8" d="M214 684 C252 786 330 819 449 814 C382 860 303 864 245 809 C227 773 217 728 214 684 Z"/>
+<!-- Bottom lower-flow wave -->
+<path fill="url(#waveDeep)" d="M287 884 C379 959 470 962 578 917 C697 865 797 873 879 953 C929 1001 963 1033 1015 1039 C936 1070 882 1034 819 1005 C728 963 664 979 577 1018 C445 1078 335 1026 287 884 Z"/>
+<!-- Main Q tail / crest -->
+<path fill="url(#wave)" d="M205 741 C275 836 358 870 464 835 C549 808 595 759 679 758 C775 757 839 812 909 904 C983 1003 1033 1016 1145 989 C1099 1045 1009 1064 935 1034 C843 997 813 884 720 866 C640 848 601 890 503 916 C378 947 256 876 205 741 Z"/>
+<!-- Crest highlight -->
+<path fill="#46bdb6" d="M223 790 C301 861 382 882 487 842 C576 809 611 762 682 762 C774 760 836 820 899 907 C820 827 749 794 674 798 C591 801 543 864 446 876 C337 893 267 852 223 790 Z"/>
+<!-- Droplet -->
+<path fill="url(#drop)" d="M624 494 C602 562 524 610 524 669 C524 719 566 757 619 757 C675 757 717 717 717 670 C717 616 649 559 624 494 Z"/>
+<path fill="#2bb4ac" opacity=".75" d="M624 510 C613 574 571 597 571 654 C571 691 591 717 619 725 C649 699 661 669 654 629 C649 593 634 549 624 510 Z"/>
+<path fill="#a3e8e3" d="M599 574 C570 615 546 650 547 682 C548 709 565 731 590 733 C566 709 569 670 577 633 C584 601 593 584 599 574 Z"/>
+</svg>

@@ -1,5 +1,7 @@
 # Aqours supplier web
 
+The supplier favicon, sidebar brand, sign-in screen and session-loading screen use the Q mark in `public/aqours-q-logo.svg`. The canonical artwork is in the repository root `public/` directory; keep the Vite public copy synchronized when updating the logo.
+
 The dedicated Weather page (`/#/weather`) includes [Open-Meteo current weather and seven-day forecasts](../docs/weather.md) with a nationwide PSGC locality map and synchronized searchable Region/Province/City-Municipality selectors, manual refresh, attribution and independent retry/stale states for staff/admin. It starts in Laguna without a forecast; unavailable points show a message and no marker. Tile failures preserve selectors/forecast. Open it through desktop or mobile supplier navigation; Overview contains operational metrics and queues.
 
 React and TypeScript supplier workspace built with Vite. Direct Leaflet 1.9.4 with markercluster renders operational report points, zoom-dependent clusters, service zones, and published incident/advisory polygons. The browser uses the live Express API; no production screen substitutes mock data or a simulated successful save.

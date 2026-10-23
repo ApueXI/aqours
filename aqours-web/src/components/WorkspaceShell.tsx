@@ -3,6 +3,7 @@ import { FiGrid, FiInbox, FiMessageSquare, FiMap, FiAlertTriangle, FiVolume2, Fi
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { User } from '@aqours/contracts';
 import { NotificationAccess } from './NotificationAccess';
+import { Brand } from './Brand';
 import { Failure, label } from './Status';
 
 const groups = [
@@ -47,7 +48,7 @@ export function WorkspaceShell({ user, section, recordId, loggingOut, logoutErro
   return <div className="app-shell">
     <a className="skip-link" href="#main" onClick={event => { event.preventDefault(); main.current?.focus(); }}>Skip to content</a>
     <aside className="sidebar">
-      <div className="sidebar-brand"><a className="brand" href="#/overview"><NavIcon section="distribution" />Aqours</a>
+      <div className="sidebar-brand"><a className="brand" href="#/overview"><Brand /></a>
         <button ref={menuButton} className="navigation-toggle" type="button" aria-expanded={menuOpen} aria-controls="supplier-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <FiX aria-hidden="true" /> : <FiMenu aria-hidden="true" />}{menuOpen ? 'Close menu' : 'Menu'}</button>
       </div>
       <p className="supplier-label">Supplier workspace</p>

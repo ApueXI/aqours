@@ -3,6 +3,7 @@ import { useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useKeyboardVisible } from '@/hooks/use-keyboard-visible';
+import { Brand } from '@/components/brand';
 
 export const colors = {
   background: '#f7f8f8', surface: '#ffffff', text: '#20312f', muted: '#56625f',
@@ -52,10 +53,10 @@ export function Screen({ title, children, navigation = true, scrollKey, scrollab
         onContentSizeChange={() => {
           if (previousKey.current !== scrollKey) { previousKey.current = scrollKey; scroll.current?.scrollTo({ y: 0, animated: false }); }
         }}>
-        <Text accessibilityRole="header" style={styles.title}>{title}</Text>
+        {title === 'Aqours' ? <Brand /> : <Text accessibilityRole="header" style={styles.title}>{title}</Text>}
         {children}
       </ScrollView> : <View style={[styles.content, { flex: 1, padding: compact ? 12 : 16, paddingBottom: compact ? 12 : 16, gap: compact ? 8 : 12 }]}>
-        <Text accessibilityRole="header" style={[styles.title, compact && { fontSize: 16, lineHeight: 22 }]}>{title}</Text>{children}
+        {title === 'Aqours' ? <Brand /> : <Text accessibilityRole="header" style={[styles.title, compact && { fontSize: 16, lineHeight: 22 }]}>{title}</Text>}{children}
       </View>}
     </KeyboardAvoidingView>
     </View>

@@ -4,6 +4,10 @@ Expo SDK 57 (`57.0.30`), React Native `0.86.3`, React `19.2.3`, TypeScript 6 and
 
 The [UI/UX guide](../docs/ui-ux.md) describes the shared teal components, five bottom tabs, four-stage report creation and explicit assistance review. Existing route URLs remain available; detail/create routes open above the tab navigator.
 
+## Aqours branding
+
+The launcher icon and Android splash use the supplied `public/aqours.png` artwork, copied to `assets/images/aqours.png` for Expo bundling. Android adaptive foreground/monochrome and the Expo web favicon use the Q mark from `public/aqours-q-logo.svg`, copied to `assets/images/aqours-q-logo.svg`. In-app brand lockups render that SVG with the already-installed `expo-image` package. Update both bundled copies when replacing the root brand assets; no extra image package is required.
+
 ## Setup
 
 Build the local public contracts package from the repository root before installing:

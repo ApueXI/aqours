@@ -4,7 +4,8 @@
 .sidebar { border-right: 1px solid #d4dfe4; background: #fff; padding: 28px 16px 20px; display: flex; flex-direction: column; min-width: 0; position: sticky; top: 0; height: 100dvh; align-self: start; overflow-y: auto; }
 .sidebar-brand { padding: 0 12px; }
 .brand { color: #183d43; font-size: 26px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
-.brand svg { color: #0f766e; width: 26px; height: 30px; }
+.brand-lockup { display: inline-flex; align-items: center; gap: 10px; }
+.brand-lockup img { display: block; width: 36px; height: 36px; object-fit: contain; }
 .supplier-label { color: #526975; padding: 0 12px; margin-top: 2px; margin-bottom: 32px; font-size: 13px; }
 .navigation { display: flex; flex-direction: column; gap: 24px; }
 .nav-group-title { color: #647b86; font-size: 12px; font-weight: 600; margin: 0 12px 8px; }
@@ -25,6 +26,7 @@
 .navigation-toggle { display: none; }
 .login, .session-loading { width: min(440px, calc(100% - 32px)); margin: 10vh auto; background: #fff; border: 1px solid #d4dfe4; padding: 36px; border-radius: 8px; }
 .login-brand { font-size: 27px; font-weight: 700; color: #115e59; margin-bottom: 32px; }
+.login-brand .brand-lockup img { width: 56px; height: 56px; }
 .login h1, .session-loading h1 { font-size: 24px; margin-bottom: 8px; }
 .login form { margin-top: 28px; }
 .login form button { width: 100%; margin: 4px 0 20px; }
@@ -43,7 +45,8 @@
   .sidebar { padding: 12px 16px; border-right: 0; border-bottom: 1px solid #d4dfe4; position: static; height: auto; overflow-y: visible; }
   .sidebar-brand { display: flex; justify-content: space-between; align-items: center; padding: 0; }
   .brand { font-size: 22px; gap: 6px; }
-  .brand svg { width: 23px; height: 26px; }
+  .brand-lockup { gap: 6px; }
+  .brand-lockup img { width: 30px; height: 30px; }
   .supplier-label { margin: 0; padding: 0; font-size: 12px; }
   .navigation-toggle { display: block; }
   .navigation { display: none; padding: 20px 0 12px; gap: 16px; }

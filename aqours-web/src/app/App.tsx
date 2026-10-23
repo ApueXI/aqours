@@ -18,6 +18,7 @@ import { WeatherPage } from '../features/weather/screens/WeatherPage';
 
 import { Messages } from '../features/messages/screens/Messages';
 import { Notifications } from '../features/notifications/screens/Notifications';
+import { Brand } from '../components/Brand';
 
 const sections = ['overview', 'reports', 'messages', 'notifications', 'map', 'incidents', 'advisories', 'assistance', 'distribution', 'weather', 'settings'];
 export default function App() {
@@ -25,7 +26,7 @@ export default function App() {
   const route = useRoute();
   const [logoutError, setLogoutError] = useState<unknown>();
   const [loggingOut, setLoggingOut] = useState(false);
-  if (session.loading) return <main className="session-loading"><div className="login-brand">Aqours</div><h1>Supplier workspace</h1><p role="status">Checking supplier session…</p></main>;
+  if (session.loading) return <main className="session-loading"><div className="login-brand"><Brand /></div><h1>Supplier workspace</h1><p role="status">Checking supplier session…</p></main>;
   if (!session.user) return <Login login={session.login} error={session.error} ended={session.ended} restore={() => void session.restore()} />;
   const user = session.user;
   const logout = async () => {

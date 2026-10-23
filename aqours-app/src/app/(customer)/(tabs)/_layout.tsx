@@ -3,6 +3,7 @@ import { SymbolView } from 'expo-symbols';
 import { Platform, Text, useWindowDimensions } from 'react-native';
 import { NotificationAccess } from '@/features/notifications/components/notification-access';
 import { colors } from '@/components/ui';
+import { Brand } from '@/components/brand';
 
 const destinations = [
   { name: 'index', title: 'Home', ios: 'house', android: 'home' },
@@ -17,7 +18,7 @@ export default function CustomerTabs() {
   const symbolSize = Platform.OS === 'android' ? 23 / fontScale : 23;
   return <Tabs screenOptions={{
     headerRight: () => <NotificationAccess />,
-    headerTitle: 'Aqours', headerTitleAlign: 'left', headerShadowVisible: false,
+    headerTitle: () => <Brand />, headerTitleAlign: 'left', headerShadowVisible: false,
     headerStyle: { backgroundColor: colors.surface }, headerTintColor: colors.text,
     tabBarActiveTintColor: colors.action, tabBarInactiveTintColor: colors.muted,
     tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },

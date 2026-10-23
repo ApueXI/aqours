@@ -2,6 +2,7 @@ import { NotificationAccess } from '@/features/notifications/components/notifica
 import { Redirect, Stack, type Href } from 'expo-router';
 import { useSession } from '@/features/auth/hooks/session';
 import { Loading, Screen, colors } from '@/components/ui';
+import { Brand } from '@/components/brand';
 
 export const unstable_settings = { initialRouteName: '(tabs)' };
 
@@ -9,7 +10,7 @@ export default function CustomerLayout() {
   const { user, loading } = useSession();
   if (loading) return <Screen title="Aqours" navigation={false}><Loading text="Checking your session…" /></Screen>;
   if (!user) return <Redirect href={'/login' as Href} />;
-  return <Stack key={user.id} screenOptions={{ headerRight: () => <NotificationAccess />, headerTitle: 'Aqours', headerShadowVisible: false,
+  return <Stack key={user.id} screenOptions={{ headerRight: () => <NotificationAccess />, headerTitle: () => <Brand />, headerShadowVisible: false,
     headerStyle: { backgroundColor: colors.surface }, headerTintColor: colors.action,
     contentStyle: { backgroundColor: colors.background } }}>
     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
