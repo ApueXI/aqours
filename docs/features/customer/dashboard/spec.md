@@ -71,3 +71,7 @@ The original acceptance checkboxes are intentionally preserved as an acceptance 
 ## Workflow update — 23 October 2026
 
 See [account, notification, conversation and customer workflow corrections](../../../workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.
+
+## Advisory discovery and incident history — 23 October 2026
+
+Home includes current/upcoming targeted service notices. Service updates offers past/lifted advisory history and resolved incident history. Published incidents are not filtered by customer distance; private reports remain owner-only. See [follow-up behavior](../../../workflow-feedback.md#advisory-guidance-and-app-follow-up--23-october-2026) for scope and verification.

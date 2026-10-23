@@ -101,3 +101,5 @@ The reference-led client refinement adds a customer nested `/reports/[id]/` rout
 ## Workflow update — 23 October 2026
 
 See [account, notification, conversation and customer workflow corrections](workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.
+
+Customer advisory discovery now requests the existing history-inclusive collection and classifies current/upcoming/past/lifted notices in the client; default API applicability and guidance evaluation remain unchanged. Service updates can include resolved published incidents. The `/profile` route is labeled Account settings under Settings. Supplier guidance is consolidated into one workspace with existing separate versioned records. See [follow-up details](workflow-feedback.md#advisory-guidance-and-app-follow-up--23-october-2026).

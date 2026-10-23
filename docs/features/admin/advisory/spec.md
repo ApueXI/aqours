@@ -93,3 +93,7 @@ The original acceptance checkboxes are intentionally preserved as an acceptance 
 ## Reference-led presentation — 22 October 2026
 
 Customer notice and Revision history views separate the notice from revisions. Admin draft editing/revision is disclosed separately; publish/lift actions retain deliberate preview/confirmation and explicit reasons. Staff sees publication-permission context. Lifting remains independent from incident/report outcomes and dates. See [UI/UX](../../../ui-ux.md) for executed rendered verification and limits.
+
+## Audience and date help — 23 October 2026
+
+The editor explains zone/individual-connection audience matching and optional Manila service-window dates. Publication remains explicit; dates never lift quality restrictions. See [follow-up behavior](../../../workflow-feedback.md#advisory-guidance-and-app-follow-up--23-october-2026) for scope and verification.

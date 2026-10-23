@@ -27,7 +27,7 @@ Authenticated current weather, seven-day forecasts and Philippine city search ar
 | GET /incidents | pagination | PublishedIncident[]; published snapshots only |
 | GET /incidents/:id | — | PublishedIncident; no private reports/notes |
 | POST /incidents/:id/affected | `{connectionId}` | Owned Report; dedupe customer+connection+incident independent of operation key |
-| GET /advisories | `includeLifted=true` optional, pagination | Applicable published Advisory[] through confirmed connection/zone targets; default current |
+| GET /advisories | `includeLifted=true` optional, pagination | Targeted Advisory[] through explicit owned connections or confirmed owned zones; default current. `includeLifted=true` includes upcoming/past published and lifted notices, excludes drafts |
 | GET /advisories/:id | — | Applicable published/lifted Advisory history; never drafts |
 | POST /locations/geocode | `{address}` | GeocodeCandidate[] with signed expiring confirmation token; server Geoapify key; upstream failures 503 with address fallback |
 | GET /pickup-sessions | optional `reportId`, pagination | Eligible PickupSession[], including full/cancelled examples; report must be owned and options use its reviewed zone. Without reportId, options use confirmed owned connection zones. No private allocation data |

@@ -9,7 +9,7 @@ const destinations = [
   { name: 'reports', title: 'Reports', ios: 'doc.text', android: 'description' },
   { name: 'messages', title: 'Messages', ios: 'bubble.left', android: 'chat' },
   { name: 'weather', title: 'Weather', ios: 'cloud.sun', android: 'cloud' },
-  { name: 'profile', title: 'Profile', ios: 'person.crop.circle', android: 'account_circle' },
+  { name: 'profile', title: 'Settings', ios: 'person.crop.circle', android: 'account_circle' },
 ] as const;
 
 export default function CustomerTabs() {

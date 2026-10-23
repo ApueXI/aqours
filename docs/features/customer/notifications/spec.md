@@ -67,3 +67,7 @@ The original acceptance checkboxes are intentionally preserved as an acceptance 
 ## Workflow update — 23 October 2026
 
 See [account, notification, conversation and customer workflow corrections](../../../workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.
+
+## Refresh placement — 23 October 2026
+
+Updates places Refresh updates above its entries and disables it while loading. Refresh retains the selected notification page. See [follow-up behavior](../../../workflow-feedback.md#advisory-guidance-and-app-follow-up--23-october-2026) for scope and verification.

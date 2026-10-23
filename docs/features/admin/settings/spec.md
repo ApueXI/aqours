@@ -101,3 +101,7 @@ Accounts/connections search only the current server page; account, connection an
 ## Workflow update — 23 October 2026
 
 See [account, notification, conversation and customer workflow corrections](../../../workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.
+
+## Combined guidance workspace — 23 October 2026
+
+The Guidance tab presents one Customer guidance section with one refresh and task-based Advisory instructions / Recommended next steps controls. Existing independent immutable records, admin writes and read-only staff access remain enforced. See [follow-up behavior](../../../workflow-feedback.md#advisory-guidance-and-app-follow-up--23-october-2026) for scope and verification.

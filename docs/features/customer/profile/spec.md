@@ -56,3 +56,7 @@ The original acceptance checkboxes are intentionally preserved as an acceptance 
 ## Password changes — 23 October 2026
 
 Profile now provides a current-password-verified change form with repeated new-password validation, at least 12 characters, explicit confirmation and exact uncertain retry. Other sessions are revoked; the current session remains valid. Forgotten passwords require supplier-assisted identity verification and an administrative reset. See [workflow details](../../../workflow-feedback.md).
+
+## Account settings navigation — 23 October 2026
+
+The tab is now Settings, opening Account settings at the unchanged `/profile` route; Home also provides a shortcut. Identity, current-password-verified password changes, supplier-maintained connections and sign-out remain the available controls. See [follow-up behavior](../../../workflow-feedback.md#advisory-guidance-and-app-follow-up--23-october-2026) for scope and verification.

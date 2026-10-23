@@ -8,8 +8,8 @@ test('customer tab navigator presents five named destinations and keeps public r
   const runtime = screenRuntime('app/(customer)/(tabs)/_layout.tsx');
   const tree = runtime.render('default');
   const screens = nodes(tree, 'TabScreen');
-  assert.deepEqual(screens.filter(item => item.props.options.href !== null).map(item => item.props.options.title), ['Home', 'Reports', 'Messages', 'Weather', 'Profile']);
-  assert.deepEqual(screens.filter(item => item.props.options.href !== null).map(item => item.props.options.tabBarAccessibilityLabel), ['Home tab', 'Reports tab', 'Messages tab', 'Weather tab', 'Profile tab']);
+  assert.deepEqual(screens.filter(item => item.props.options.href !== null).map(item => item.props.options.title), ['Home', 'Reports', 'Messages', 'Weather', 'Settings']);
+  assert.deepEqual(screens.filter(item => item.props.options.href !== null).map(item => item.props.options.tabBarAccessibilityLabel), ['Home tab', 'Reports tab', 'Messages tab', 'Weather tab', 'Settings tab']);
   const routeRoot = path.join(__dirname, '../src/app/(customer)');
   const urls = fs.readdirSync(routeRoot, { recursive: true }).filter(file => file.endsWith('.tsx') && !file.endsWith('_layout.tsx'))
     .map(file => '/' + file.replaceAll(path.sep, '/').split('/').filter(segment => !segment.startsWith('(')).join('/').replace(/\.tsx$/, '').replace(/(^|\/)index$/, ''));

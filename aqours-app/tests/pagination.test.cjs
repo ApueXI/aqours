@@ -29,3 +29,16 @@ test('failed or incomplete later pages never become a partial successful home li
   }, '/advisories'), /incomplete information/);
   await assert.rejects(fetchAllPages(async () => ({ data: null }), '/incidents'), /could not be verified/);
 });
+
+test('advisory discovery retains the history audience query across every page', async () => {
+  const calls = [];
+  const result = await fetchAllPages(async request => {
+    const query = new URL(request, 'https://example.invalid').searchParams;
+    calls.push(query);
+    const offset = Number(query.get('offset'));
+    return { data: [offset], page: { offset, limit: 1, total: 2 } };
+  }, '/advisories?includeLifted=true');
+  assert.deepEqual(result.data, [0, 1]);
+  assert.equal(calls.length, 2);
+  for (const query of calls) assert.equal(query.get('includeLifted'), 'true');
+});
