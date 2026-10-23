@@ -29,8 +29,8 @@ try {
   await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
   await page.goto(`${web}/#/settings`);
   await page.getByRole('button', { name: 'Connections', exact: true }).click();
-  await page.getByText('Create service connection', { exact: true }).click();
-  const create = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create connection', exact: true }) });
+  await page.getByRole('button', { name: 'Create service connection', exact: true }).click();
+  const create = page.getByRole('dialog');
   await create.getByRole('button', { name: 'Choose Philippine address', exact: true }).click();
   await create.getByLabel('Region', { exact: true }).selectOption('1300000000');
   const ncr = create.getByLabel('Place within National Capital Region (NCR)', { exact: true });
@@ -61,9 +61,8 @@ try {
   assert.ok(persisted.some(item => item.id === connection.id));
   passed('Supplier creates and persists a structured connection without inventing coordinates');
   await page.goto(`${web}/#/distribution?tab=sites`);
-  const summary = page.locator('summary').filter({ hasText: /^Create pickup site$/ });
-  await summary.click();
-  const siteForm = page.locator('form').filter({ has: page.getByRole('button', { name: 'Create pickup site', exact: true }) });
+  await page.getByRole('button', { name: 'Create pickup site', exact: true }).click();
+  const siteForm = page.getByRole('dialog');
   await siteForm.getByLabel('Pickup site name', { exact: true }).fill(`Fictional browser site ${key()}`);
   await siteForm.getByLabel('Full address', { exact: true }).fill('Fictional text-only pickup address');
   await siteForm.getByLabel('Site instructions', { exact: true }).fill('Demo browser fixture');

@@ -33,10 +33,11 @@ export function ReportDetail({ id, returnTo }: { id: string; returnTo?: string |
         </div>
         <div>
           <ResourceState resource={refs.users} /><ResourceState resource={refs.zones} />
-          <div key={d.version}>
-          <ReportReview d={d} users={refs.users.data || []} zones={refs.zones.data || []} refresh={refresh} />
+          <div>
+          <ReportReview d={d} users={refs.users.data || []} zones={refs.zones.data || []}
+            referencesLoading={refs.users.loading || refs.zones.loading || refs.users.data === undefined || refs.zones.data === undefined} refresh={refresh} />
           <ResourceState resource={incidents} />
-          <ReportAssociation d={d} incidents={incidents.data || []} refresh={refresh} />
+          <ReportAssociation d={d} incidents={incidents.data || []} incidentsLoading={incidents.loading || incidents.data === undefined} refresh={refresh} />
           </div>
           <Notes id="report-notes" path={`/staff/reports/${id}/notes`} notes={d.notes} refresh={refresh} />
         </div>

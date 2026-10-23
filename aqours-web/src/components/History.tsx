@@ -1,6 +1,7 @@
 import type { Note, TimelineEvent } from '@aqours/contracts';
 import { date, label } from './Status';
 import { ActionForm } from './ActionForm';
+import { FormDialog } from './FormDialog';
 
 export function History({ events = [], id }: { events?: TimelineEvent[]; id?: string }) {
   return <section id={id} tabIndex={id ? -1 : undefined}><h2>History</h2>{events.length === 0 ? <p>No history yet.</p> : <ol className="history">
@@ -16,7 +17,7 @@ export function Notes({ path, notes = [], refresh, id }: { path: string; notes?:
   return <section id={id} tabIndex={id ? -1 : undefined}><h2>Internal notes</h2><p className="hint">Visible to supplier staff only.</p>
     {notes.length === 0 && <p>No internal notes.</p>}
     {notes.map(note => <article className="entry" key={note.id}><p>{note.text}</p><span>{date(note.createdAt)}</span></article>)}
-    <ActionForm path={path} fields={[{ name: 'text', label: 'Internal note', type: 'textarea', required: true }]}
-      submit="Add internal note" onDone={refresh} />
+    <FormDialog title="Add internal note" triggerLabel="Add internal note"><ActionForm path={path} fields={[{ name: 'text', label: 'Internal note', type: 'textarea', required: true }]}
+      submit="Add internal note" onDone={refresh} /></FormDialog>
   </section>;
 }

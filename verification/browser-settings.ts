@@ -4,7 +4,7 @@ import type {ApprovedGuidance, Connection, Guidance, Report, RuleVersion, Timeli
 import {fixturePassword, key, login, ok, type Actor} from './harness.ts';
 
 type Passed = (message: string) => void;
-const section = (page: Page, title: string) => page.locator('section').filter({has: page.getByRole('heading', {name: title, exact: true})}).last();
+const section = (page: Page, _title: string) => page.getByRole('dialog');
 async function submit<T>(page: Page, scope: Locator, name: string, endpoint: string, method = 'POST'): Promise<T> {
   const [response] = await Promise.all([
     page.waitForResponse(r => new URL(r.url()).pathname.endsWith(endpoint) && r.request().method() === method),
@@ -32,6 +32,24 @@ export async function accountConnectionFlows(page: Page, web: string, admin: Act
   await page.goto(`${web}/#/settings`);
   await expect(page.getByRole('heading', {name: 'Accounts', exact: true})).toBeVisible();
   await expect(page.getByText('Loading…', {exact: true})).toHaveCount(0);
+  const createTrigger = page.getByRole('button', {name: 'Create account', exact: true});
+  await createTrigger.click();
+  let modal = page.getByRole('dialog');
+  await expect(modal).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(modal).toHaveCount(0);
+  await expect(createTrigger).toBeFocused();
+  await createTrigger.click();
+  modal = page.getByRole('dialog');
+  await modal.getByLabel('Name', {exact: true}).fill('Fictional discarded modal draft');
+  page.once('dialog', prompt => { void prompt.dismiss(); });
+  await modal.getByRole('button', {name: 'Close', exact: true}).click();
+  await expect(modal).toBeVisible();
+  await expect(modal.getByLabel('Name', {exact: true})).toHaveValue('Fictional discarded modal draft');
+  page.once('dialog', prompt => { void prompt.accept(); });
+  await modal.getByRole('button', {name: 'Close', exact: true}).click();
+  await expect(modal).toHaveCount(0);
+  passed('BR-SET-00 Modal Escape restores trigger focus and changed drafts require explicit discard confirmation');
   await findEdit(page, `Edit ${name}`);
   const edit = section(page, `Edit ${name}`), revised = `${name} maintained`;
   await edit.getByLabel('Name', {exact: true}).fill(revised);
@@ -44,8 +62,8 @@ export async function accountConnectionFlows(page: Page, web: string, admin: Act
   passed('BR-SET-01 Browser account maintenance persists safe fictional identity fields');
   const customer = await login(user.email);
   await page.getByRole('button', {name: 'Connections', exact: true}).click();
-  await page.locator('summary').filter({hasText: /^Create service connection$/}).click();
-  const create = page.locator('details').filter({has: page.locator('summary').filter({hasText: /^Create service connection$/})});
+  await page.getByRole('button', {name: 'Create service connection', exact: true}).click();
+  const create = page.getByRole('dialog');
   await expect(create.getByLabel('Customer', {exact: true}).locator(`option[value="${user.id}"]`)).toHaveCount(1);
   await create.getByLabel('Customer', {exact: true}).selectOption(user.id);
   const reference = `RECOVERY-${suffix}`;
@@ -88,8 +106,8 @@ export async function versionFlows(page: Page, web: string, admin: Actor, custom
     await page.goto(`${web}/#/settings`);
     await page.getByRole('button', {name: 'Guidance', exact: true}).click();
     await expect(page.getByText('Loading…', {exact: true})).toHaveCount(0);
-    await page.locator('summary').filter({hasText: /^Create and activate rule version$/}).click();
-    const rules = page.locator('details').filter({has: page.locator('summary').filter({hasText: /^Create and activate rule version$/})});
+    await page.getByRole('button', {name: 'Create and activate rule version', exact: true}).click();
+    const rules = page.getByRole('dialog');
     const label = ` Fictional browser version ${key()}`;
     await rules.getByLabel('Callback recommendation explanation', {exact: true}).fill(original.contactText + label);
     ruleChanged = true;
@@ -105,8 +123,8 @@ export async function versionFlows(page: Page, web: string, admin: Actor, custom
     assert.equal(fresh.ruleVersion, revised.version); assert.equal(fresh.current, true);
     assert.ok(fresh.cards.some(c => c.reason.includes(label.trim())));
     passed('BR-SET-03 Browser rule activation preserves history and invalidates prior API recommendations');
-    await page.locator('summary').filter({hasText: /^Add approved guidance version$/}).click();
-    const guidance = page.locator('details').filter({has: page.locator('summary').filter({hasText: /^Add approved guidance version$/})});
+    await page.getByRole('button', {name: 'Add approved guidance version', exact: true}).click();
+    const guidance = page.getByRole('dialog');
     await guidance.getByLabel('Guidance type', {exact: true}).selectOption(prior.kind);
     await guidance.getByLabel('Approved instructions', {exact: true}).fill(prior.text + label);
     await guidance.getByLabel('Approved source / reference', {exact: true}).fill(`Fictional browser verification; ${prior.source}`);

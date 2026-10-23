@@ -2,6 +2,7 @@ import { AddressEditor } from './AddressEditor';
 import { PasswordInput } from './PasswordInput';
 import type { AddressSnapshot } from '@aqours/contracts';
 import { styleClasses } from '../utils/style-classes';
+import { useFormDialog } from './FormDialog';
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { createIntent, errorText, RequestError, sendIntent, type Intent } from '../services/http-client';
 
@@ -75,21 +76,24 @@ export function ActionForm({ path, method = 'POST', fields, submit, version, ext
   const [error, setError] = useState<unknown>();
   const [saved, setSaved] = useState(false);
   const [draft, setDraft] = useState<Record<string, unknown>>();
+  const modal = useFormDialog();
   const feedback = useRef<HTMLParagraphElement>(null);
   const previewRegion = useRef<HTMLElement>(null);
   const form = useRef<HTMLFormElement>(null);
   useEffect(() => { if (error) feedback.current?.focus(); }, [error]);
   useEffect(() => { if (draft) previewRegion.current?.focus(); }, [draft]);
   const send = async (action: Intent) => {
-    setPending(true); setError(undefined); setSaved(false);
+    setPending(true); modal?.setBusy(true); setError(undefined); setSaved(false);
     try {
       await sendIntent(action);
       if (resetOnSuccess) form.current?.reset();
-      setIntent(undefined); setDraft(undefined); setSaved(true); onDone();
+      setIntent(undefined); setDraft(undefined); setSaved(true); onDone(); modal?.saved();
     } catch (problem) {
       setError(problem);
       // Keep the exact key and body after uncertain transport/server failure.
-      if (problem instanceof RequestError && problem.status >= 400 && problem.status < 500) setIntent(undefined);
+      const retryable = !(problem instanceof RequestError && problem.status >= 400 && problem.status < 500);
+      if (!retryable) setIntent(undefined);
+      modal?.setBusy(retryable);
     } finally { setPending(false); }
   };
   const start = (event: FormEvent<HTMLFormElement>) => {

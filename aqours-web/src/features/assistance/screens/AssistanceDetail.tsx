@@ -14,7 +14,7 @@ export function AssistanceDetail({ id, returnTo }: { id: string; returnTo?: stri
   const report = useResource<ReportDetail>(d ? `/staff/reports/${d.reportId}` : null);
   const refresh = () => void resource.refresh();
   return <><PageTitle title={d?.reference || 'Assistance detail'}><a href={returnLink(returnTo, 'assistance')}>Back to queue</a><button onClick={refresh}>Refresh current record</button></PageTitle>
-    <ResourceState resource={resource}>{d && <div key={d.version}>
+    <ResourceState resource={resource}>{d && <div>
       <div className="record-strip"><StatusLabel value={d.status} /><p>{label(d.type)}</p><p>Requested {date(d.createdAt)}</p></div>
       <p className="notice">{d.status === 'requested' ? 'Awaiting supplier review. Accepting confirms ownership and checks availability; no appointment or allocation is confirmed yet.' : d.nextSteps || (d.appointmentAt ? `Agreed appointment: ${date(d.appointmentAt)}` : 'Review the latest outcome and request history before making a further change.')}</p>
       <DetailNavigation items={[
@@ -41,7 +41,8 @@ export function AssistanceDetail({ id, returnTo }: { id: string; returnTo?: stri
         {d.allocation ? <p>Pickup reference: <strong>{d.allocation.reference}</strong> · {d.allocation.liters} L · {label(d.allocation.state)}</p> : <p>No liters reserved. The request has not been accepted.</p>}
       </section>}
       <History id="assistance-history" events={d.timeline} />
-      </div><div><ResourceState resource={refs.users} /><AssistanceActions d={d} users={refs.users.data || []} refresh={refresh} />
+      </div><div><ResourceState resource={refs.users} /><AssistanceActions d={d} users={refs.users.data || []}
+        usersLoading={refs.users.loading || refs.users.data === undefined} refresh={refresh} />
       <Notes id="assistance-notes" path={`/staff/assistance-requests/${id}/notes`} notes={d.notes} refresh={refresh} /></div></div>
     </div>}</ResourceState>
   </>;

@@ -41,10 +41,12 @@ try{
   await expect(page.getByRole('article').getByText(clarification,{exact:true})).toBeVisible();
   assert.ok((await ok<ReportDetail>(actor,'GET',`/reports/${item.id}`)).messages.some(m=>m.text===clarification));
   passed('Staff clarification persists and appears in customer-owned report');
-  await page.getByLabel('Status',{exact:true}).selectOption('under_review');
-  await page.getByLabel('Priority',{exact:true}).selectOption('urgent');
-  await page.getByLabel('Review / priority / closure reason',{exact:true}).fill('Fictional isolated hazard reviewed by supplier');
-  await page.getByRole('button',{name:'Save review',exact:true}).click();
+  await page.getByRole('button',{name:'Review report',exact:true}).click();
+  const review=page.getByRole('dialog');
+  await review.getByLabel('Status',{exact:true}).selectOption('under_review');
+  await review.getByLabel('Priority',{exact:true}).selectOption('urgent');
+  await review.getByLabel('Review / priority / closure reason',{exact:true}).fill('Fictional isolated hazard reviewed by supplier');
+  await review.getByRole('button',{name:'Save review',exact:true}).click();
   await expect.poll(async()=>(await ok<ReportDetail>(actor,'GET',`/reports/${item.id}`)).status).toBe('under_review');
   passed('Review form sends versioned priority/status command successfully');
   await page.screenshot({path:path.join(output,'web-report.png'),fullPage:true});

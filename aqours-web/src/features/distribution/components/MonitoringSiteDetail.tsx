@@ -31,6 +31,6 @@ export function MonitoringSiteDetail({ item, day, refresh }: { item: MonitoredSi
     <p className="preserve">{item.site.instructions}</p>
     {forecast && <p className="hint">Forecast: <a href={forecast.attribution.url} target="_blank" rel="noreferrer">{forecast.attribution.name}</a>. Site forecast points only; no regional interpolation.</p>}
     <ActionForm path={`/staff/pickup-sites/${item.site.id}/forecast/refresh`} fields={[]} submit="Queue site forecast refresh" onDone={refresh} />
-    <details><summary>Configure monitoring for {item.site.name}</summary><MonitoringConfigForm item={item} refresh={refresh} /></details>
+    <MonitoringConfigForm item={item} refresh={refresh} />
   </section>;
 }

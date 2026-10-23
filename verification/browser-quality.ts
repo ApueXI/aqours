@@ -85,12 +85,14 @@ try {
   await submit(page, 'Send to customer', `/staff/reports/${item.id}/messages`);
   await expect(page.getByRole('article').getByText(message, {exact: true})).toBeVisible();
   const reason = 'Fictional urgent isolated quality concern: review reported hazard; no contamination/drinkability conclusion.';
-  await page.getByLabel('Status', {exact: true}).selectOption('under_review');
-  await page.getByLabel('Assigned owner', {exact: true}).selectOption(staff.user.id);
-  await page.getByLabel('Priority', {exact: true}).selectOption('urgent');
-  const reasonField = page.getByLabel('Review / priority / closure reason', {exact: true});
+  await page.getByRole('button', {name: 'Review report', exact: true}).click();
+  const review = page.getByRole('dialog');
+  await review.getByLabel('Status', {exact: true}).selectOption('under_review');
+  await review.getByLabel('Assigned owner', {exact: true}).selectOption(staff.user.id);
+  await review.getByLabel('Priority', {exact: true}).selectOption('urgent');
+  const reasonField = review.getByLabel('Review / priority / closure reason', {exact: true});
   await expect(reasonField).toHaveAttribute('required', '');
-  await page.getByRole('button', {name: 'Save review', exact: true}).click();
+  await review.getByRole('button', {name: 'Save review', exact: true}).click();
   assert.equal(await reasonField.evaluate((node: HTMLTextAreaElement) => node.validity.valueMissing), true);
   assert.equal((await ok<Report>(customer, 'GET', `/reports/${item.id}`)).priority, 'normal');
   await reasonField.fill(reason);
@@ -117,8 +119,14 @@ try {
   passed('BQ4 Customer-safe quality detail/timeline retain acknowledgement and attachment without invented location or automatic resolution');
 
   const privateNote = `Fictional internal quality review only ${key()}`;
-  await page.getByLabel('Internal note', {exact: true}).fill(privateNote);
-  await submit(page, 'Add internal note', `/staff/reports/${item.id}/notes`);
+  await page.getByRole('button', {name: 'Add internal note', exact: true}).click();
+  const note = page.getByRole('dialog');
+  await note.getByLabel('Internal note', {exact: true}).fill(privateNote);
+  const [noteResponse] = await Promise.all([
+    page.waitForResponse(r => new URL(r.url()).pathname.endsWith(`/staff/reports/${item.id}/notes`) && r.request().method() === 'POST'),
+    note.getByRole('button', {name: 'Add internal note', exact: true}).click(),
+  ]);
+  assert.equal(noteResponse.status(), 200);
   await expect(page.getByRole('article').getByText(privateNote, {exact: true})).toBeVisible();
   assert.ok(!JSON.stringify(await ok(customer, 'GET', `/reports/${item.id}`)).includes(privateNote));
   const assistanceBefore = await ok<AssistanceRequest[]>(customer, 'GET', '/assistance-requests?limit=100');

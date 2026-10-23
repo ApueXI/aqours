@@ -54,11 +54,13 @@ async function reviewUnlocated(page: Page, a: Actor, staff: Actor, item: Report,
   await submit(page, page, 'Send to customer', `/staff/reports/${item.id}/messages`);
   await expect(page.getByRole('article').getByText(message, {exact: true})).toBeVisible();
   const reason = 'Fictional severe isolated leak requires urgent review without fabricated location';
-  await page.getByLabel('Status', {exact: true}).selectOption('under_review');
-  await page.getByLabel('Assigned owner', {exact: true}).selectOption(staff.user.id);
-  await page.getByLabel('Priority', {exact: true}).selectOption('urgent');
-  await page.getByLabel('Review / priority / closure reason', {exact: true}).fill(reason);
-  await submit(page, page, 'Save review', `/staff/reports/${item.id}`, 'PATCH');
+  await page.getByRole('button', {name: 'Review report', exact: true}).click();
+  const review = page.getByRole('dialog');
+  await review.getByLabel('Status', {exact: true}).selectOption('under_review');
+  await review.getByLabel('Assigned owner', {exact: true}).selectOption(staff.user.id);
+  await review.getByLabel('Priority', {exact: true}).selectOption('urgent');
+  await review.getByLabel('Review / priority / closure reason', {exact: true}).fill(reason);
+  await submit(page, review, 'Save review', `/staff/reports/${item.id}`, 'PATCH');
   const owned = await ok<ReportDetail>(a, 'GET', `/reports/${item.id}`);
   assert.equal(owned.ownerId, staff.user.id); assert.equal(owned.priority, 'urgent'); assert.equal(owned.priorityReason, reason);
   assert.equal(owned.status, 'under_review'); assert.ok(owned.firstRespondedAt);
@@ -111,8 +113,8 @@ async function incidentOperations(page: Page, staff: Actor, a: Actor, b: Actor, 
   const zone = (await ok<Zone[]>(staff, 'GET', '/staff/zones')).find(z => z.active)!;
   const summary = `Fictional operations incident ${key()}`;
   await page.goto(`${web}/#/incidents`);
-  await page.locator('summary').filter({hasText: /^Create incident$/}).click();
-  const create = page.locator('details').filter({has: page.locator('summary').filter({hasText: /^Create incident$/})});
+  await page.getByRole('button', {name: 'New incident', exact: true}).click();
+  const create = page.getByRole('dialog');
   await create.getByLabel('Category', {exact: true}).selectOption('leak');
   await create.getByLabel('Incident summary', {exact: true}).fill(summary);
   await create.getByLabel('Explicit affected zones', {exact: true}).selectOption(zone.id);
@@ -128,8 +130,8 @@ async function incidentOperations(page: Page, staff: Actor, a: Actor, b: Actor, 
   const created = await ok<StaffIncident>(staff, 'GET', `/staff/incidents/${incident.id}`);
   assert.ok(created.timeline?.some(e => e.action === 'created' && e.actorId === staff.user.id && e.toStatus === 'investigating' && e.createdAt));
   passed('Staff browser creates a real demo incident with reviewed zone, unknown restoration and persisted creation history');
-  await page.locator('summary').filter({hasText: /^Edit incident \/ workflow status$/}).click();
-  const edit = page.locator('details').filter({has: page.locator('summary').filter({hasText: /^Edit incident \/ workflow status$/})});
+  await page.getByRole('button', {name: 'Edit incident / workflow status', exact: true}).click();
+  const edit = page.getByRole('dialog');
   const reason = 'Fictional staff confirmation after operational assessment';
   await edit.getByLabel('Owner', {exact: true}).selectOption(staff.user.id);
   await edit.getByLabel('Status', {exact: true}).selectOption('confirmed');
@@ -151,9 +153,11 @@ async function incidentOperations(page: Page, staff: Actor, a: Actor, b: Actor, 
   passed('Staff browser edits incident status/owner/estimate with reason/time history while restoration remains explicitly unknown');
   for (const item of [first, second]) {
     await page.goto(`${web}/#/reports/${item.id}`);
-    await page.getByLabel('Incident (choose none to unlink)', {exact: true}).selectOption(incident.id);
-    await page.getByLabel('Reason for link / correction', {exact: true}).fill(`Fictional deliberate association ${item.reference}`);
-    await submit(page, page, 'Confirm association', `/staff/reports/${item.id}/link`);
+    await page.getByRole('button', {name: 'Manage incident association', exact: true}).click();
+    const association = page.getByRole('dialog');
+    await association.getByLabel('Incident (choose none to unlink)', {exact: true}).selectOption(incident.id);
+    await association.getByLabel('Reason for link / correction', {exact: true}).fill(`Fictional deliberate association ${item.reference}`);
+    await submit(page, association, 'Confirm association', `/staff/reports/${item.id}/link`);
     await expect(page.getByRole('link', {name: 'Open currently linked incident', exact: true})).toHaveAttribute('href', `#/incidents/${incident.id}`);
   }
   let current = await ok<StaffIncident>(staff, 'GET', `/staff/incidents/${incident.id}`);
@@ -161,10 +165,12 @@ async function incidentOperations(page: Page, staff: Actor, a: Actor, b: Actor, 
   await page.goto(`${web}/#/incidents/${incident.id}`);
   for (const item of [first, second]) await expect(page.getByRole('link', {name: item.reference, exact: true})).toBeVisible();
   await page.goto(`${web}/#/reports/${first.id}`);
-  await page.getByLabel('Incident (choose none to unlink)', {exact: true}).selectOption('');
+  await page.getByRole('button', {name: 'Manage incident association', exact: true}).click();
+  const association = page.getByRole('dialog');
+  await association.getByLabel('Incident (choose none to unlink)', {exact: true}).selectOption('');
   const reasonUnlink = 'Fictional separate issue review requires deliberate unlink';
-  await page.getByLabel('Reason for link / correction', {exact: true}).fill(reasonUnlink);
-  await submit(page, page, 'Confirm association', `/staff/reports/${first.id}/link`);
+  await association.getByLabel('Reason for link / correction', {exact: true}).fill(reasonUnlink);
+  await submit(page, association, 'Confirm association', `/staff/reports/${first.id}/link`);
   await expect(page.getByText('This report is not linked to an incident.', {exact: true})).toBeVisible();
   for (const [actor, item] of [[a, first], [b, second]] as const) {
     const owned = await ok<ReportDetail>(actor, 'GET', `/reports/${item.id}`);

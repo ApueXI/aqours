@@ -3,6 +3,7 @@ import type { AssistanceRequest, User } from '@aqours/contracts';
 import { ActionForm, type Field } from '../../../components/ActionForm';
 import { ownerOptions } from '../../../components/Filters';
 import { label } from '../../../components/Status';
+import { FormDialog } from '../../../components/FormDialog';
 
 export function transitionTargets(d: AssistanceRequest): string[] {
   const targets: Record<string, string[]> = {
@@ -13,7 +14,9 @@ export function transitionTargets(d: AssistanceRequest): string[] {
   };
   return (targets[d.status] || []).filter(status => status !== 'completed' || d.type !== 'water_support');
 }
-export function AssistanceActions({ d, users, refresh }: { d: AssistanceRequest; users: User[]; refresh: () => void }) {
+export function AssistanceActions({ d, users, usersLoading, refresh }: {
+  d: AssistanceRequest; users: User[]; usersLoading: boolean; refresh: () => void;
+}) {
   const targets = transitionTargets(d);
   const [target, setTarget] = useState(targets[0] || '');
   const reasonRequired = ['cancelled', 'unavailable'].includes(target) ||
@@ -27,22 +30,21 @@ export function AssistanceActions({ d, users, refresh }: { d: AssistanceRequest;
     { name: 'nextSteps', label: 'Customer next steps', type: 'textarea', required: target === 'completed', omitEmpty: true },
   ];
   return <>
-    {targets.length > 0 && <section id="assistance-actions" tabIndex={-1}><h2>Update assistance</h2>
-      <p className="hint">Choose the next action for this request. Agreed appointments and service outcomes are shared with the customer.</p>
+    {targets.length > 0 && <div id="assistance-actions" tabIndex={-1}><FormDialog title="Update assistance" triggerLabel="Update assistance" triggerDisabled={usersLoading}><p className="hint">Choose the next action for this request. Agreed appointments and service outcomes are shared with the customer.</p>
       <label className="field"><span>Next status</span><select aria-label="Next status" value={target} onChange={event => setTarget(event.target.value)}>
         {targets.map(value => <option key={value} value={value}>{value === d.status ? 'Reschedule appointment' : label(value)}</option>)}
       </select></label>
       {target === 'accepted' && d.type === 'water_support' && <p className="notice">Acceptance reserves the requested liters against current session stock. Full or cancelled sessions can be rejected by the server.</p>}
       <ActionForm key={target} path={`/staff/assistance-requests/${d.id}/transition`} version={d.version} fields={fields}
         extra={{ status: target }} submit={target === d.status ? 'Record reschedule' : `Mark ${label(target).toLowerCase()}`} onDone={refresh} />
-    </section>}
-    {d.type === 'water_support' && d.allocation?.state === 'reserved' && ['accepted', 'scheduled', 'in_progress'].includes(d.status) && <section>
-      <h2>Confirm water collection</h2><p>Verify pickup reference <strong>{d.allocation.reference}</strong> with the customer. Reserved quantity: {d.allocation.liters} liters.</p>
+    </FormDialog></div>}
+    {d.type === 'water_support' && d.allocation?.state === 'reserved' && ['accepted', 'scheduled', 'in_progress'].includes(d.status) && <FormDialog title="Confirm water collection" triggerLabel="Confirm water collection">
+      <p>Verify pickup reference <strong>{d.allocation.reference}</strong> with the customer. Reserved quantity: {d.allocation.liters} liters.</p>
       <ActionForm path={`/staff/water-allocations/${d.allocation.id}/collect`} version={d.version} submit="Record collection" onDone={refresh} fields={[
         { name: 'reason', label: 'Immediate collection reason', type: 'textarea', required: d.status === 'accepted', omitEmpty: true },
         { name: 'outcome', label: 'Collection outcome', type: 'textarea', required: true },
         { name: 'nextSteps', label: 'Customer next steps', type: 'textarea', required: true },
       ]} preview={body => <><h3>Confirm collection of {d.allocation?.liters} liters</h3><p>Pickup reference: {d.allocation?.reference}</p><p>{String(body.outcome)}</p><p>{String(body.nextSteps)}</p><p>This records one collection and completes this assistance request.</p></>} />
-    </section>}
+    </FormDialog>}
   </>;
 }
