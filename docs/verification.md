@@ -272,3 +272,13 @@ The documented large-text secondary Details recovery path hides the keyboard bef
 The retained verification APK embeds isolated emulator API 4036. It is not a production deployment artifact; rebuild with the intended public API configuration before deployment. Final documentation/lifecycle/commit acceptance is complete.
 
 Final acceptance evidence: `evidence/docs-final-acceptance.json` records content review, 13 verified current primary-source references, local links/409 TypeScript file limits, whitespace, 83 progress-log physical lines (no archive needed), three byte-identical predecessor records and unchanged final 74-file source aggregate. `evidence/service-shutdown-final.json` confirms ports 4036, 4037, 4038, 5196, 8096, 55446, 5056, 5580 and 5581 closed, verification container stopped and data/evidence retained. Ordinary PostgreSQL retains the same start time. Dedicated workers are finished/quiescent outside the bounded final documentation-checkpoint/commit waves. No further feature work remains; this completion checkpoint receives a separate documentation-only commit without a circular self-hash.
+
+
+## Older-CPU photo processing — 23 October 2026
+
+Reproduced exit 132/SIGILL when importing native Sharp on the local Pentium T4500, which lacks SSE4.2. Explicit Sharp WebAssembly loading failed with `Wasm SIMD unsupported`; trying Node SSSE3 Wasm code generation also exited 132. With operator approval, removed Sharp/Wasm and pinned Jimp 1.6.0. No special CPU/runtime/install flags remain. New uploads accept still JPEG/PNG only; existing stored WebP downloads retain their previous path.
+
+- API typecheck, lint, production build and all 49 tests pass, including five new image groups: actual JPEG/PNG decode/reencode, EXIF orientation/metadata stripping, PNG text stripping/animation rejection, malformed/unsupported/oversized bytes, and dimensions checked before decoding.
+- Customer app typecheck, lint and all 35 helper tests pass. The picker format validation/help text now matches JPEG/PNG. No APK rebuild or native picker interaction was run for this change.
+- Actual source and compiled servers started on temporary port 4099, returned healthy `/health` responses and shut down cleanly on this CPU. Both used a dummy unreachable database; monitoring failure messages were expected. Owned smoke processes stopped. No ordinary database or private configuration was inspected or changed; full authenticated upload/PostgreSQL integration was not rerun.
+- API lockfile/install dry-run, repository line limits/local documentation checks and whitespace review pass. The dry-run verifies lockfile consistency; it is not a clean reinstall. Large-photo throughput and concurrent image processing were not benchmarked.

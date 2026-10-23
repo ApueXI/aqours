@@ -22,7 +22,7 @@ Authenticated current weather, seven-day forecasts and Philippine city search ar
 | GET /reports/:id | — | Owned ReportDetail; published incident fields only |
 | POST /reports/:id/messages | `{text}` | Message; owner or staff; staff message sets first-response event |
 | POST /reports/:id/still-affected | `{expectedVersion,reason}` | Report; only resolved report returns under_review |
-| POST /reports/:id/attachments | multipart `file`, max 5 MiB JPEG/PNG/WebP | Attachment; magic/content and decode validation; protected bytes |
+| POST /reports/:id/attachments | multipart `file`, max 5 MiB JPEG/PNG | Attachment; magic/content and decode validation; protected bytes |
 | GET /attachments/:id | — | Image bytes, private/no-store; report ownership/staff; no public storage paths |
 | GET /incidents | pagination | PublishedIncident[]; published snapshots only |
 | GET /incidents/:id | — | PublishedIncident; no private reports/notes |
