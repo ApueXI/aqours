@@ -98,3 +98,7 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 Reports/incidents HTTP tests verify exact publication deduplication, immutable/private snapshots, independent links and still-affected behavior. Actual supplier incident forms and native N7/N10/N16–19 verify published timeline/notification receipt, unknown/restored history, independent quality notices, individual follow-up and repeated affected assertions. See the native ledger for scoped artifact boundaries.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
+
+## Reference-led presentation — 22 October 2026
+
+Customer preview, Publish update and History views separate the latest immutable customer snapshot and linked reports from publication composition/history. Workflow edits are disclosed separately beside context/private notes. No update means the preview explicitly says no customer notice has been published. Editing/status changes do not publish; incident resolution still does not lift advisories. See [UI/UX](../../../ui-ux.md) for current acceptance status.

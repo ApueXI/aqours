@@ -13,7 +13,7 @@ test('customer tab navigator presents five named destinations and keeps public r
   const routeRoot = path.join(__dirname, '../src/app/(customer)');
   const urls = fs.readdirSync(routeRoot, { recursive: true }).filter(file => file.endsWith('.tsx') && !file.endsWith('_layout.tsx'))
     .map(file => '/' + file.replaceAll(path.sep, '/').split('/').filter(segment => !segment.startsWith('(')).join('/').replace(/\.tsx$/, '').replace(/(^|\/)index$/, ''));
-  for (const url of ['/', '/reports', '/reports/new', '/reports/[id]', '/reports/[id]/guidance', '/assistance', '/assistance/new', '/assistance/[id]', '/notifications', '/profile', '/advisories/[id]', '/incidents/[id]']) {
+  for (const url of ['/', '/reports', '/reports/new', '/reports/[id]', '/reports/[id]/messages', '/reports/[id]/guidance', '/assistance', '/assistance/new', '/assistance/[id]', '/notifications', '/profile', '/advisories/[id]', '/incidents/[id]']) {
     assert.ok(urls.includes(url), `Existing public route ${url} remains available`);
   }
 });
@@ -55,4 +55,25 @@ test('native and header back return to the previous form step, while uncertain c
   assert.equal(runtime.nativeBack(), false);
   tree.props.options.headerLeft().props.onPress();
   assert.equal(routed, 1);
+});
+
+
+test('all five Android tab glyphs fit their native boxes at large text while labels remain readable and scalable', () => {
+  for (const fontScale of [1, 1.3]) {
+    const runtime = screenRuntime('app/(customer)/(tabs)/_layout.tsx', {
+      'react-native': { Text: 'Text', Platform: { OS: 'android' },
+        useWindowDimensions: () => ({ width: 412, height: 732, scale: 2.625, fontScale }) },
+    });
+    const tree = runtime.render('default');
+    assert.ok(tree.props.screenOptions.tabBarItemStyle.minHeight >= 48);
+    for (const screen of nodes(tree, 'TabScreen')) {
+      const icon = screen.props.options.tabBarIcon({ color: '#147d77' });
+      assert.ok(icon.props.size * fontScale <= icon.props.style.height + 0.01,
+        `${screen.props.options.title} glyph must not be clipped by its native box at scale ${fontScale}`);
+      const label = screen.props.options.tabBarLabel({ color: '#147d77' });
+      assert.equal(label.props.children, screen.props.options.title);
+      assert.notEqual(label.props.allowFontScaling, false, 'tab captions retain the customer text-scale setting');
+      assert.ok(screen.props.options.tabBarAccessibilityLabel.includes(screen.props.options.title));
+    }
+  }
 });

@@ -1,22 +1,30 @@
-import type { ReportDetail } from '@aqours/contracts';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, type Href } from 'expo-router';
+import { View } from 'react-native';
 import { Body, Button, Screen, Section, navigate } from '@/components/ui';
 import { StatusLabel } from '@/components/status-label';
 import { ResourceState } from '@/components/resource-state';
 import { IncidentUpdates, Timeline } from '@/components/timeline';
-import { useResource } from '@/hooks/use-resource';
 import { displayTime, label } from '@/utils/time';
 import { MapPreview } from '@/features/location/components/map-preview';
 import { ProtectedPhoto } from '../components/photos';
-import { AddReportPhotos, ReportMessages, StillAffected } from '../components/report-actions';
+import { AddReportPhotos, StillAffected } from '../components/report-actions';
+import { useReportWorkspace } from '../hooks/report-workspace';
+import { ReportConversation } from '../components/report-conversation';
+import { useKeyboardVisible } from '@/hooks/use-keyboard-visible';
 
-export function ReportDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const resource = useResource<ReportDetail>(`/reports/${id}`);
+export function ReportDetailScreen({ messages = false }: { messages?: boolean }) {
+  const { id, view } = useLocalSearchParams<{ id: string; view?: string }>();
+  const { resource } = useReportWorkspace();
   const report = resource.data;
-  return <Screen title={report?.reference ?? 'Report detail'}>
-    <ResourceState {...resource} />
-    {report && <>
+  const active = messages ? 'messages' : view === 'history' ? 'history' : 'summary';
+  const composing = useKeyboardVisible(messages);
+  return <Screen title={report?.reference ?? 'Report detail'} scrollable={!messages || !report}>
+    {!composing && <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{['summary', 'messages', 'history'].map(tab => <Button key={tab} title={label(tab)} secondary selected={active === tab}
+      onPress={() => router.replace((tab === 'messages' ? `/reports/${id}/messages` : `/reports/${id}${tab === 'history' ? '?view=history' : ''}`) as Href)} />)}</View>}
+    {(!messages || !report) && <ResourceState {...resource} />}
+    {messages && report && <ReportConversation />}
+    {active === 'history' && report && <Timeline events={report.timeline} />}
+    {report && active === 'summary' && <>
       <Section title={label(report.category)}>
         <StatusLabel value={report.status} /><Body>{report.description}</Body>
         {report.guidedDetails && <Body>{report.guidedDetails}</Body>}
@@ -27,12 +35,11 @@ export function ReportDetailScreen() {
       <Button title="Review guidance and options" onPress={() => navigate(`/reports/${id}/guidance`)} />
       <Button title="Request assistance" secondary onPress={() => navigate(`/assistance/new?reportId=${id}`)} />
       {report.status === 'resolved' && <StillAffected report={report} reload={resource.reload} />}
-      <ReportMessages report={report} reload={resource.reload} />
+      <Button title={`Messages with your supplier · ${report.messages.length}`} secondary onPress={() => navigate(`/reports/${id}/messages`)} />
       {report.incident && <>
         <Button title={`Linked incident: ${report.incident.summary}`} secondary onPress={() => navigate(`/incidents/${report.incident!.id}`)} />
         <IncidentUpdates updates={report.incident.updates} />
       </>}
-      <Timeline events={report.timeline} />
       <Section title="Reported location">
         <Body>{report.address}</Body>
         <Body muted>{label(report.locationSource)} · {report.locationReview ? 'Location requires supplier review' : 'Location recorded'}</Body>

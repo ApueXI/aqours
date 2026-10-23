@@ -14,6 +14,10 @@ page.on('pageerror', error => errors.push(error.message));
 page.on('request', request => {
   if (request.url().includes('/weather?')) forecastRequests.push(new URL(request.url()));
   if (request.url().startsWith('https://tiles.example.test/')) tileZooms.push(Number(new URL(request.url()).pathname.split('/')[1]));
+  if (request.url().startsWith('https://maps.geoapify.com/')) {
+    const zoom = new URL(request.url()).pathname.match(/\/tile\/[^/]+\/(\d+)\//)?.[1];
+    if (zoom !== undefined) tileZooms.push(Number(zoom));
+  }
 });
 const passed = (message: string) => { evidence.push(message); console.log('PASS', message); };
 const weather = page.getByRole('region', { name: 'Weather', exact: true });
@@ -245,6 +249,7 @@ try {
   }
   passed('PSGC10 Tablet and phone layouts retain hierarchy/map/seven-day forecast without page overflow');
 
+  await page.getByRole('button', { name: 'Menu', exact: true }).click();
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
   await expect(weather).toHaveCount(0); await signIn('staff@demo.aqours.test', 'Weather');
   await expect(region).toHaveValue(''); await expect(forecast).toHaveCount(0);

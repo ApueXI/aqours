@@ -1,6 +1,6 @@
 import { categories, type Category, type Report } from '@aqours/contracts';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Body, Button, Choices, Screen, navigate, styles } from '@/components/ui';
 import { StatusLabel } from '@/components/status-label';
 import { Paging, ResourceState } from '@/components/resource-state';
@@ -11,9 +11,11 @@ export function ReportList() {
   const [offset, setOffset] = useState(0);
   const [category, setCategory] = useState<Category | 'all'>('all');
   const reports = useResource<Report[]>(`/reports?offset=${offset}&limit=30${category === 'all' ? '' : `&category=${category}`}`);
-  return <Screen title="Your reports">
+  return <Screen title="Your reports" tabbed>
     <Button title="Report a water problem" onPress={() => navigate('/reports/new')} />
+    <ScrollView horizontal showsHorizontalScrollIndicator contentContainerStyle={{ paddingBottom: 8 }}>
     <Choices values={['all', ...categories]} value={category} onChange={(value) => { setCategory(value); setOffset(0); }} />
+    </ScrollView>
     <ResourceState {...reports} empty={reports.data?.length === 0 && 'No reports match this view.'} />
     {reports.data?.map((report) => <View key={report.id} style={styles.item}>
       <StatusLabel value={report.status} /><Body>{report.reference} · {label(report.category)}</Body>

@@ -70,3 +70,7 @@ Satellite/Terrain styles, geographic sampling grids, regional interpolation, phy
 ## API and verification
 
 Shared monitoring DTOs live in [monitoring.ts](../aqours-contracts/src/monitoring.ts); [API documentation](api.md) records endpoints. See [schema](schema.md), [setup](setup.md), and [verification](verification.md) for migration, scheduler configuration, test commands and executed evidence. Source presence alone does not certify a provider or deployment.
+
+## Reference-led presentation — 22 October 2026
+
+The Sites tab now searches the loaded pickup-site list and opens one selected site editor with separate “Edit pickup site” and monitoring-configuration disclosures; creation remains separate. Session/stock rows and warning history use readable narrow-screen labels. Monitoring cards display distinct stock-observed and forecast-success timestamps; supplier monitoring notifications show Manila date groups and read/unread labels. These changes do not recalculate server warnings, alter reservations or merge stock timestamps with forecast freshness. Current acceptance is tracked in [UI/UX](ui-ux.md).

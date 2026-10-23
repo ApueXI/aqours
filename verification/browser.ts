@@ -35,6 +35,7 @@ try{
   await page.goto(`${web}/#/reports/${item.id}`);
   await expect(page.getByRole('heading',{name:item.reference,exact:true})).toBeVisible();
   const clarification='Please clarify the fictional browser-report location.';
+  await page.getByRole('navigation', {name: 'Report views'}).getByRole('button', {name: /^Messages/}).click();
   await page.getByLabel('Customer-visible message',{exact:true}).fill(clarification);
   await page.getByRole('button',{name:'Send to customer',exact:true}).click();
   await expect(page.getByRole('article').getByText(clarification,{exact:true})).toBeVisible();
@@ -59,7 +60,7 @@ try{
   await page.route('https://demotiles.maplibre.org/**',route=>route.abort());
   await page.goto(`${web}/#/map`);
   await expect(page.getByRole('heading',{name:'Report map',exact:true})).toBeVisible();
-  await expect(page.getByRole('heading',{name:'Report list',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:/^Report list(?: · \d+)?$/})).toBeVisible();
   await expect(page.locator('tbody tr').first()).toBeVisible();
   passed('Map tile failure leaves live report list and navigation usable');
   await page.screenshot({path:path.join(output,'web-map-fallback.png'),fullPage:true});
@@ -71,6 +72,7 @@ try{
   await expect(page.getByRole('heading',{name:'Report inbox',exact:true})).toBeVisible();
   await page.screenshot({path:path.join(output,'web-narrow.png'),fullPage:true});
   passed('Narrow viewport preserves navigation and report table access');
+  await page.getByRole('button',{name:'Menu',exact:true}).click();
   await page.getByRole('button',{name:'Sign out',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Supplier sign in',exact:true})).toBeVisible();
   await page.reload();

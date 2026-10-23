@@ -33,12 +33,12 @@ export default function App() {
   };
   return <WorkspaceShell user={user} section={route.section} recordId={route.id} loggingOut={loggingOut} logoutError={logoutError} logout={() => void logout()}>
       {route.section === 'overview' && <Overview key={user.id} params={route.params} />}
-      {route.section === 'reports' && (route.id ? <ReportDetail id={route.id} returnTo={route.params.get('returnTo')} /> : <Reports params={route.params} />)}
+      {route.section === 'reports' && (route.id ? <ReportDetail key={`${user.id}:${route.id}`} id={route.id} returnTo={route.params.get('returnTo')} /> : <Reports params={route.params} />)}
       {route.section === 'map' && <MapPage params={route.params} />}
       {route.section === 'weather' && <WeatherPage key={user.id} />}
-      {route.section === 'incidents' && (route.id ? <IncidentDetail id={route.id} /> : <Incidents />)}
+      {route.section === 'incidents' && (route.id ? <IncidentDetail key={`${user.id}:${route.id}`} id={route.id} /> : <Incidents />)}
       {route.section === 'advisories' && <Advisories id={route.id} user={user} />}
-      {route.section === 'assistance' && (route.id ? <AssistanceDetail id={route.id} returnTo={route.params.get('returnTo')} /> : <Assistance params={route.params} />)}
+      {route.section === 'assistance' && (route.id ? <AssistanceDetail key={`${user.id}:${route.id}`} id={route.id} returnTo={route.params.get('returnTo')} /> : <Assistance params={route.params} />)}
       {route.section === 'distribution' && <Distribution key={user.id} params={route.params} user={user} />}
       {route.section === 'settings' && <Settings user={user} params={route.params} />}
       {!sections.includes(route.section) && <><h1>Page not found</h1><a href="#/overview">Return to overview</a></>}

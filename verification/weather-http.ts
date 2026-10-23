@@ -67,7 +67,8 @@ test('weather HTTP requires authentication and serves all three roles with norma
 
 test('weather HTTP checks connection ownership before even a warmed forecast cache', async () => {
   const { a, b, staff, admin } = await actors();
-  const owned = await connection(a);
+  const owned = (await ok<Connection[]>(a, 'GET', '/me/connections')).find(item => item.reference === 'DEMO-CON-001');
+  assert.ok(owned, 'The explicitly seeded Laguna connection is required');
   const before = await ok<Connection[]>(a, 'GET', '/me/connections');
   assert.equal(owned.reference, 'DEMO-CON-001');
   assert.ok(owned.latitude! > 14 && owned.latitude! < 14.5, 'Fresh customer01 connection is in Laguna');

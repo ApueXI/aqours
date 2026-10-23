@@ -8,6 +8,7 @@ const ts = require('typescript');
 function screenRuntime(entry, overrides = {}) {
   let cursor = 0;
   const state = [];
+  const effects = [];
   const cache = new Map();
   let nativeBack;
   const router = { canGoBack: () => false, back: () => {}, replace: () => {}, push: () => {} };
@@ -24,17 +25,48 @@ function screenRuntime(entry, overrides = {}) {
       if (!(index in state)) state[index] = initialize ? initialize(initial) : initial;
       return [state[index], action => { state[index] = reducer(state[index], action); }];
     },
-    useCallback: callback => callback,
+    useCallback(callback, dependencies) {
+      const index = cursor++;
+      const previous = state[index];
+      if (!previous || dependencies.some((value, i) => value !== previous.dependencies[i])) {
+        state[index] = { value: callback, dependencies };
+      }
+      return state[index].value;
+    },
+    useMemo(factory, dependencies) {
+      const index = cursor++;
+      const previous = state[index];
+      if (!previous || dependencies.some((value, i) => value !== previous.dependencies[i])) {
+        state[index] = { value: factory(), dependencies };
+      }
+      return state[index].value;
+    },
+    useRef(initial) {
+      const index = cursor++;
+      if (!(index in state)) state[index] = { current: initial };
+      return state[index];
+    },
+    useEffect(effect, dependencies) {
+      const index = cursor++;
+      const previous = state[index];
+      if (!previous || !dependencies || dependencies.some((value, i) => value !== previous[i])) {
+        effects.push(effect);
+        state[index] = dependencies;
+      }
+    },
+    createContext: value => ({ Provider: 'ContextProvider', value }),
+    useContext: context => context.value,
   };
   const defaults = {
     react,
-    'react-native': { View: 'View', Text: 'Text', Pressable: 'Pressable', BackHandler: { addEventListener: (_event, handler) => { nativeBack = handler; return { remove() {} }; } } },
+    'react-native': { View: 'View', Text: 'Text', Pressable: 'Pressable', Platform: { OS: 'android' }, useWindowDimensions: () => ({ width: 412, height: 732, scale: 2.625, fontScale: 1 }), BackHandler: { addEventListener: (_event, handler) => { nativeBack = handler; return { remove() {} }; } } },
     'expo-router': { router, Stack: Object.assign('Stack', { Screen: 'StackScreen' }), Tabs: Object.assign('Tabs', { Screen: 'TabScreen' }),
       Redirect: 'Redirect', useFocusEffect: effect => effect(), useLocalSearchParams: () => ({ reportId: 'owned-report' }) },
     'expo-symbols': { SymbolView: 'SymbolView' },
     '@/components/ui': ui, './ui': ui,
     '@/components/form-back': { FormBack: 'FormBack' },
     '@/components/resource-state': { ResourceState: 'ResourceState' },
+    '@/hooks/use-keyboard-visible': { useKeyboardVisible: () => false },
     '@/features/auth/hooks/session': { useSession: () => ({ user: { id: 'customer-a', phone: '09990000001' } }) },
     '@/features/location/components/location-picker': { LocationPicker: 'LocationPicker' },
     '../components/photos': { PhotoPicker: 'PhotoPicker', PhotoUpload: 'PhotoUpload' },
@@ -65,7 +97,8 @@ function screenRuntime(entry, overrides = {}) {
     return module.exports;
   }
   const exports = load(path.resolve(__dirname, '../src', entry));
-  return { exports, router, state, nativeBack: () => nativeBack?.(), render(name, props) { cursor = 0; return exports[name](props); } };
+  return { exports, router, state, nativeBack: () => nativeBack?.(), flushEffects() { effects.splice(0).forEach(effect => effect()); },
+    render(name, props) { cursor = 0; return exports[name](props); } };
 }
 
 function nodes(tree, type) {
@@ -80,7 +113,7 @@ function nodes(tree, type) {
   return found;
 }
 function control(tree, type, name) {
-  const node = nodes(tree, type).find(item => item.props.title === name || item.props.label === name);
+  const node = nodes(tree, type).find(item => item.props.title === name || item.props.label === name || item.props.accessibilityLabel === name);
   if (!node) throw new Error(`Missing ${type}: ${name}`);
   return node.props;
 }

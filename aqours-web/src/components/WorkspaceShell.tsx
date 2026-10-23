@@ -55,15 +55,15 @@ export function WorkspaceShell({ user, section, recordId, loggingOut, logoutErro
       <p className="supplier-label">Supplier workspace</p>
       <nav id="supplier-navigation" aria-label="Main navigation" className={menuOpen ? 'navigation is-open' : 'navigation'}>
         {groups.map(group => <div className="nav-group" key={group.title}><p className="nav-group-title">{group.title}</p>
-          {group.sections.map(item => <a key={item} href={`#/${item}`} aria-current={section === item ? 'page' : undefined} onClick={() => setMenuOpen(false)}><NavIcon section={item} />{label(item)}</a>)}
+          {group.sections.map(item => <a key={item} href={`#/${item}`} aria-current={section === item ? 'page' : undefined} onClick={() => setMenuOpen(false)}><NavIcon section={item} />{titles[item] || label(item)}</a>)}
         </div>)}
       </nav>
-      <div className="identity"><div><strong>{user.name}</strong><span>{label(user.role)}</span></div>
+      <div className={menuOpen ? 'identity is-open' : 'identity'}><div><strong>{user.name}</strong><span>{label(user.role)}</span></div>
         <button disabled={loggingOut} onClick={logout}>{loggingOut ? 'Signing out…' : 'Sign out'}</button><Failure error={logoutError} />
       </div>
     </aside>
     <div className="workspace-frame">
-      <div className="workspace-bar"><span>{titles[section] || label(section)}{recordId ? ' / Detail' : ''}</span><span>Philippine time · Asia/Manila</span></div>
+      <div className="workspace-bar"><span>Service operations / {titles[section] || label(section)}{recordId ? ' / Detail' : ''}</span><span>Asia/Manila</span></div>
       <main id="main" ref={main} tabIndex={-1} className="workspace" key={section}>{children}</main>
     </div>
   </div>;

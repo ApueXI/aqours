@@ -19,11 +19,11 @@ export function Assistance({ params }: { params: URLSearchParams }) {
     <FilterBar values={filters} assistance statuses={assistanceStatuses} owners={refs.users.data} onChange={setFilters} />
     <ResourceState resource={resource}>{resource.data && <>
       <div className="queue-heading"><p>{resource.result?.page?.total ?? resource.data.length} assistance requests</p><a href="#/distribution">Find a pickup reservation</a></div>
-      {resource.data.length === 0 ? <EmptyState title="No requests match these filters."><p>Clear or adjust the filters to view other requests.</p></EmptyState> : <div className="table-scroll" tabIndex={0} role="region" aria-label="Assistance queue results"><table className="assistance-queue-table">
+      {resource.data.length === 0 ? <EmptyState title="No requests match these filters."><p>Clear or adjust the filters to view other requests.</p></EmptyState> : <div className="table-scroll responsive-table" tabIndex={0} role="region" aria-label="Assistance queue results"><table className="assistance-queue-table">
         <thead><tr><th>Request / report</th><th>Service</th><th>Status</th><th>Owner</th><th>Requested</th><th>Appointment / pickup</th></tr></thead>
         <tbody>{resource.data.map(item => <tr key={item.id}><td><a href={detailLink('assistance', item.id, `/assistance${query({ ...filters, ...(offset ? { offset } : {}) })}`)}>{item.reference}</a><div><a href={`#/reports/${item.reportId}`}>{reports.data?.find(report => report.id === item.reportId)?.reference || 'Linked report'}</a></div></td>
-          <td>{label(item.type)}</td><td><StatusLabel value={item.status} /></td><td>{refs.users.data?.find(user => user.id === item.ownerId)?.name || 'Unassigned'}</td>
-          <td>{date(item.createdAt)}</td><td>{date(item.appointmentAt)}{item.allocation && <div>Pickup: {item.allocation.reference}</div>}</td>
+          <td data-label="Service">{label(item.type)}</td><td data-label="Status"><StatusLabel value={item.status} /></td><td data-label="Owner">{refs.users.data?.find(user => user.id === item.ownerId)?.name || 'Unassigned'}</td>
+          <td data-label="Requested">{date(item.createdAt)}</td><td data-label="Appointment / pickup">{date(item.appointmentAt)}{item.allocation && <div>Pickup: {item.allocation.reference}</div>}</td>
         </tr>)}</tbody>
       </table></div>}
       <Pagination offset={offset} total={resource.result?.page?.total ?? resource.data.length} onChange={setOffset} />

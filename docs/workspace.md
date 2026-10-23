@@ -194,3 +194,7 @@ See [directory navigation](directory-structure.md) for API layers and feature-ba
 ## Guided addresses and detailed maps
 
 See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.
+
+## Reference-led presentation — 22 October 2026
+
+Customer report detail exposes Summary, Messages and History. Messages opens `/reports/:id/messages`; History retains the report path with `?view=history`. The nested account/report workspace retains an unsent message while switching these views, but it is not durable across leaving/unmounting the workspace or process termination. Confirmed sends clear the composer; uncertain sends retain the existing operation for same-message retry. Assistance now ends in an explicit “Request received” reference with tracking/return links, before any supplier appointment or stock confirmation. Supplier incident Customer preview/Publish update/History and advisory Customer notice/Revision history separate published snapshots from operational edit controls. Selected account/connection/zone/site editors replace simultaneous record forms; version checks remain in effect. See [UI/UX](ui-ux.md) for source-versus-verification status.

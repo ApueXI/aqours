@@ -8,6 +8,7 @@ import { useResource } from '@/hooks/use-resource';
 import { errorText } from '@/services/http-client';
 import { StatusLabel } from '@/components/status-label';
 import { displayTime } from '@/utils/time';
+const day = (value: string) => new Date(value).toLocaleDateString('en-PH', { timeZone: 'Asia/Manila', month: 'long', day: 'numeric', year: 'numeric' });
 
 const destinations = { report: '/reports/', incident: '/incidents/', advisory: '/advisories/', assistance: '/assistance/' };
 
@@ -32,15 +33,18 @@ export function NotificationsScreen() {
     finally { setBusy(null); }
   }
 
-  return <Screen title="Updates">
+  return <Screen title="Updates" tabbed>
     <Body muted>Messages from your supplier and changes to your reports and requests appear here.</Body>
     <ResourceState {...resource} empty={resource.data?.length === 0 && 'No updates yet.'} />
     <ErrorNotice error={error} />
-    {resource.data?.map((notification) => <View key={notification.id} style={styles.item}>
+    {resource.data && <Body muted>{resource.data.filter(item => !item.readAt).length} unread on this page · Opening an update marks it read.</Body>}
+    {resource.data?.map((notification, index, all) => <View key={notification.id} style={{ gap: 8 }}>
+      {(index === 0 || day(all[index - 1].createdAt) !== day(notification.createdAt)) && <Body muted>{day(notification.createdAt)}</Body>}
+      <View style={[styles.item, !notification.readAt && { paddingLeft: 12, borderLeftWidth: 3, borderLeftColor: '#0f766e' }]}>
       <StatusLabel value={notification.readAt ? 'read' : 'unread'} /><Body>{notification.title}</Body><Body>{notification.text}</Body>
       <Body muted>{displayTime(notification.createdAt)}</Body>
       <Button title={busy === notification.id ? 'Opening…' : 'Open update'} secondary disabled={!!busy} onPress={() => void open(notification)} />
-    </View>)}
+    </View></View>)}
     <Paging offset={offset} total={resource.page?.total} onChange={setOffset} />
     <Button title="Refresh updates" secondary onPress={() => void resource.reload()} />
   </Screen>;

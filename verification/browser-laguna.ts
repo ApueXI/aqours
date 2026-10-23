@@ -25,8 +25,14 @@ page.on('response', async response => {
 });
 const tile = await readFile(new URL('./fixtures/street-tile.png', import.meta.url));
 try {
+  if (process.env.AQOURS_BROWSER_API_UPSTREAM) await page.route('**/api/v1/**', async route => {
+    const requested = new URL(route.request().url());
+    const upstream = new URL(process.env.AQOURS_BROWSER_API_UPSTREAM!);
+    requested.host = upstream.host;
+    await route.fulfill({ response: await route.fetch({ url: requested.href }) });
+  });
   await page.route('https://tiles.example.test/**', route => route.fulfill({ contentType: 'image/png', body: tile }));
-  await page.route('https://maps.geoapify.com/**', route => route.abort());
+  await page.route('https://maps.geoapify.com/**', route => route.fulfill({ contentType: 'image/png', body: tile }));
   await page.route('https://tile.openstreetmap.org/**', route => route.abort());
   await page.goto(process.env.AQOURS_TEST_WEB ?? 'http://127.0.0.1:5179');
   await page.getByLabel('Email', { exact: true }).fill('admin@demo.aqours.test');
@@ -47,7 +53,7 @@ try {
     await page.screenshot({ path: path.join(output, 'admin-live-weather.png'), fullPage: true });
     passed('Admin displays a live Open-Meteo Calamba forecast with seven daily rows');
   }
-  await page.getByRole('link', { name: 'Map', exact: true }).click();
+  await page.getByRole('link', { name: 'Reports map', exact: true }).click();
   await expect(page.locator('.leaflet-tile-loaded').first()).toBeVisible();
   await expect.poll(() => maps.at(-1)?.features.length).toBe(11);
   assert.equal(maps.at(-1)!.unlocatedCount, 1);

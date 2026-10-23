@@ -31,6 +31,7 @@ export function PhotoPicker({ photos, onChange, disabled }: { photos: Photo[]; o
   return <Section title="Photos (optional)">
     <Body muted>JPEG, PNG, or WebP · up to 5 MiB each. Photos upload after your report is saved.</Body>
     {photos.map((photo, index) => <View key={`${photo.uri}-${index}`} style={styles.item}>
+      <Body muted>Photo {index + 1} · Selected, not uploaded</Body>
       <Image source={{ uri: photo.uri }} style={{ width: 140, height: 110 }} accessibilityLabel="Selected report photo" />
       <Button title={`Remove photo ${index + 1}`} secondary disabled={disabled} onPress={() => onChange(photos.filter((_, item) => item !== index))} />
     </View>)}
@@ -69,7 +70,7 @@ export function ProtectedPhoto({ attachment }: { attachment: Attachment }) {
   const [retry, setRetry] = useState(0);
   return <View style={styles.item}>
     <Body>{attachment.filename}</Body>
-    {error ? <Button title="Retry protected photo" secondary onPress={() => { setError(false); setRetry(retry + 1); }} />
+    {error ? <><Body muted>This protected photo could not be loaded.</Body><Button title="Retry protected photo" secondary onPress={() => { setError(false); setRetry(retry + 1); }} /></>
       : <Image key={retry} source={protectedImageSources(`${apiUrl}/attachments/${attachment.id}`, token)}
         style={{ width: '100%', height: 220 }} resizeMode="contain" accessibilityLabel={attachment.filename} onError={() => setError(true)} />}
   </View>;

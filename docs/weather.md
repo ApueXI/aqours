@@ -78,3 +78,7 @@ AQOURS_TEST_WEB=http://127.0.0.1:5175 npm run test:weather:browser
 ```
 
 Browser checks require `DATABASE_URL` for a seeded isolated `_test` database and a free `AQOURS_TEST_API` port matching the supplier bundle. The runner starts/stops its own API; do not start another API on that port. It uses real login, metrics and weather HTTP/database handling, controls only external Open-Meteo responses, and advances server wall time to exercise cache expiry without a ten-minute wait. Canonical PSGC cases cover Laguna startup, searchable hierarchy and no-province behavior, marker synchronization, unavailable points, reset, seven-day rendering, failures/retries, missing values, obsolete responses, narrow layout, staff access, tile failure and selection clearing. They do not certify provider uptime. Actual live-provider and installed Android evidence is recorded separately in [verification](verification.md) and the [native ledger](native-verification.md).
+
+## Reference-led presentation — 22 October 2026
+
+Current temperature now has stronger visual hierarchy on both clients. Supplier seven-day forecast rows retain labeled low/high, precipitation and rain-chance fields when rendered as narrow-screen rows. Supplier canonical PSGC map/hierarchy selection, customer connection/city modes, forecast refresh/stale/error states and provenance are unchanged by this presentation work. Actual rendered/native results and their provider/artifact boundaries are recorded in the [UI/UX guide](ui-ux.md).

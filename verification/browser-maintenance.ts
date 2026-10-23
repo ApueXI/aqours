@@ -123,7 +123,8 @@ async function distributionMaintenance(page: Page, customer: Actor, other: Actor
   await createSite.getByLabel('Site instructions', {exact: true}).fill('Fictional north entrance');
   await createSite.getByLabel('Fictional demonstration site', {exact: true}).check();
   const site = await submit<PickupSite>(page, createSite, 'Create pickup site', '/staff/pickup-sites');
-  const siteCard = page.locator('article').filter({has: page.getByRole('heading', {name: `${name} · Active`, exact: true})});
+  await page.getByRole('button', {name: `Manage pickup site ${name}`, exact: true}).click();
+  const siteCard = page.locator('#pickup-site-editor');
   await siteCard.getByText('Edit pickup site', {exact: true}).click();
   await siteCard.getByLabel('Site instructions', {exact: true}).fill('Fictional revised entrance instructions');
   await siteCard.getByLabel('Change reason', {exact: true}).fill('Fictional isolated site correction');
@@ -136,6 +137,8 @@ async function distributionMaintenance(page: Page, customer: Actor, other: Actor
   const zoneIds = [...new Set([zoneId, (await connection(other)).zoneId!])];
   await createSession.getByLabel('Pickup site', {exact: true}).selectOption(site.id);
   await createSession.getByLabel('Eligible service zones', {exact: true}).selectOption(zoneIds);
+  const submittedZoneIds = await createSession.getByLabel('Eligible service zones', {exact: true}).evaluate((select: HTMLSelectElement) => Array.from(select.selectedOptions, option => option.value));
+  assert.deepEqual([...submittedZoneIds].sort(), [...zoneIds].sort());
   await createSession.getByLabel('Opens (Manila)', {exact: true}).fill(minute(Date.now() - 600000));
   await createSession.getByLabel('Closes (Manila)', {exact: true}).fill(minute(Date.now() + 86400000));
   await createSession.getByLabel('Total stock (liters)', {exact: true}).fill('80.25');
@@ -151,7 +154,7 @@ async function distributionMaintenance(page: Page, customer: Actor, other: Actor
   const options = await ok<PickupSession[]>(customer, 'GET', '/pickup-sessions?limit=100');
   const visible = options.find(s => s.id === session.id)!;
   assert.equal(visible.totalLiters, '90.75'); assert.equal(visible.remainingLiters, '90.75'); assert.equal(visible.demo, true);
-  assert.equal(visible.site.instructions, edited.instructions); assert.deepEqual(visible.zoneIds, zoneIds);
+  assert.equal(visible.site.instructions, edited.instructions); assert.deepEqual(visible.zoneIds, submittedZoneIds);
   await expect(page.getByRole('row').filter({has: page.getByRole('button', {name: `Manage session at ${name}`, exact: true})}).getByRole('cell', {name: '90.75', exact: true})).toHaveCount(2);
   passed('Browser creates/edits isolated pickup site/session and customer sees labeled exact-decimal availability');
   const reservedReport = await report(customer), pendingReport = await report(other);

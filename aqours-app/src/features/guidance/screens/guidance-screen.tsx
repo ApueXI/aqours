@@ -18,8 +18,11 @@ export function GuidanceScreen() {
   const [validation, setValidation] = useState<string | null>(null);
   const [declined, setDeclined] = useState(false);
   const [pendingChoice, setPendingChoice] = useState<Choice | null>(null);
+  const [questionIndex, setQuestionIndex] = useState(0);
   const choice = useCommand<{ id: string; action: Choice; createdAt: string }>();
   const guidance = resource.guidance;
+  const questions = guidance?.questions ?? [];
+  const visibleQuestion = questions.length ? Math.min(questionIndex, questions.length - 1) : 0;
 
   async function evaluate() {
     setValidation(null); setDeclined(false);
@@ -41,13 +44,18 @@ export function GuidanceScreen() {
   return <Screen title="Guidance and next steps">
     <Body muted>Guidance explains current supplier records and your answers. A recommendation does not create a service request or determine water safety.</Body>
     <Section title="Questions about your report">
-      {guidance?.questions.map((question) => <View key={question.key} style={{ gap: 8 }}>
+      {questions.length > 0 && <Body muted>Question {visibleQuestion + 1} of {questions.length}</Body>}
+      {questions.filter((_, index) => index === visibleQuestion).map((question) => <View key={question.key} style={{ gap: 8 }}>
         <Body>{question.label}</Body>
         {binaryKeys.includes(question.key as typeof binaryKeys[number]) ? <Choices values={question.options} value={answers[question.key as typeof binaryKeys[number]] === undefined ? null : answers[question.key as typeof binaryKeys[number]] ? 'yes' : 'no'}
           disabled={choice.locked} onChange={(value) => setAnswers({ ...answers, [question.key]: value === 'yes' })} />
           : question.key === 'nearbyAffected' ? <Choices values={['yes', 'no', 'unknown'] as const} value={answers.nearbyAffected ?? null}
             disabled={choice.locked} onChange={(value) => setAnswers({ ...answers, nearbyAffected: value })} /> : null}
       </View>)}
+      <View style={styles.row}>
+        {visibleQuestion > 0 && <Button title="Previous question" secondary disabled={choice.locked} onPress={() => setQuestionIndex(visibleQuestion - 1)} />}
+        {visibleQuestion + 1 < questions.length && <Button title="Next question" secondary disabled={choice.locked} onPress={() => setQuestionIndex(visibleQuestion + 1)} />}
+      </View>
       <Field label="When do you need water? (optional, YYYY-MM-DD HH:mm, Asia/Manila)" value={neededBy} onChangeText={setNeededBy} editable={!choice.locked} />
       <ErrorNotice error={validation} />
       <Button title="Evaluate current answers" secondary disabled={resource.loading || choice.locked} onPress={() => void evaluate()} />
@@ -83,7 +91,8 @@ export function GuidanceScreen() {
     </>}
     <View style={styles.section}>
       <Button title="Open callback/support form" secondary onPress={() => navigate(`/assistance/new?reportId=${id}&type=callback`)} />
-      <Button title="Return to report / contact supplier" secondary onPress={() => navigate(`/reports/${id}`)} />
+      <Button title="Message supplier about this guidance" secondary onPress={() => navigate(`/reports/${id}/messages`)} />
+      <Button title="Return to report" secondary onPress={() => navigate(`/reports/${id}`)} />
     </View>
   </Screen>;
 }

@@ -9,6 +9,7 @@ import { useCommand } from '@/hooks/use-command';
 import { useResource } from '@/hooks/use-resource';
 import { displayTime, label } from '@/utils/time';
 import { AssistanceSummary, assistanceNames } from '../components/assistance-summary';
+import { RequestNextStep } from '../components/request-next-step';
 
 function Cancellation({ request, reload }: { request: AssistanceRequest; reload(): Promise<void> }) {
   const [reason, setReason] = useState('');
@@ -44,6 +45,7 @@ export function AssistanceDetail() {
         {request.outcome && <Body>Outcome: {request.outcome}</Body>}
         {request.nextSteps && <Body>Next steps: {request.nextSteps}</Body>}
       </Section>
+      <RequestNextStep request={request} />
       <AssistanceSummary details={request.details} />
       {request.session && <Section title="Pickup arrangements">
         <Demo visible={request.session.demo || request.session.site.demo} />
@@ -62,6 +64,7 @@ export function AssistanceDetail() {
       {request.canCancel && <Cancellation request={request} reload={resource.reload} />}
       {request.status === 'unavailable' && <Button title="Request callback/support follow-up" onPress={() => navigate(`/assistance/new?reportId=${request.reportId}&type=callback`)} />}
       <Button title="Open linked report / message the supplier" secondary onPress={() => navigate(`/reports/${request.reportId}`)} />
+      <Button title="Message supplier about this request" secondary onPress={() => navigate(`/reports/${request.reportId}/messages`)} />
       <Button title="Refresh request" secondary onPress={() => void resource.reload()} />
     </>}
   </Screen>;

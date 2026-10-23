@@ -55,7 +55,7 @@ export async function weatherBrowserHarness() {
   const tile = await readFile(new URL('./fixtures/street-tile.png', import.meta.url));
   let failTiles = false;
   await page.route('https://tiles.example.test/**', route => failTiles ? route.abort() : route.fulfill({ contentType: 'image/png', body: tile }));
-  await page.route('https://maps.geoapify.com/**', route => route.abort());
+  await page.route('https://maps.geoapify.com/**', route => failTiles ? route.abort() : route.fulfill({ contentType: 'image/png', body: tile }));
   await page.route('https://tile.openstreetmap.org/**', route => route.abort());
   return { ...fixture, context, page, output, web: process.env.AQOURS_TEST_WEB!,
     failTiles(value: boolean) { failTiles = value; },

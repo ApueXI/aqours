@@ -30,7 +30,7 @@ export function Distribution({ params, user }: { params: URLSearchParams; user: 
     <nav className="tabs" aria-label="Distribution sections">{([
       ['monitoring', 'Monitoring'], ['sessions', 'Sessions'], ['sites', 'Sites'], ['warnings', 'Warning history'],
     ] as const).map(([tab, text]) => <a key={tab} href={distributionLink(params, { tab, create: '' })} aria-current={state.tab === tab ? 'page' : undefined}>{text}</a>)}</nav>
-    <form className="filters" key={`${state.q}:${state.status}:${state.siteId}:${state.date}`} onSubmit={event => {
+    {(state.tab === 'monitoring' || state.tab === 'warnings') && <form className="filters" key={`${state.q}:${state.status}:${state.siteId}:${state.date}`} onSubmit={event => {
       event.preventDefault(); const data = new FormData(event.currentTarget); change({ q: String(data.get('q') || ''), status: String(data.get('status') || ''), siteId: String(data.get('siteId') || ''), date: String(data.get('date') || '') });
     }}>
       <label className="field"><span>Search sites</span><input aria-label="Search sites" name="q" defaultValue={state.q} /></label>
@@ -38,7 +38,7 @@ export function Distribution({ params, user }: { params: URLSearchParams; user: 
       <label className="field"><span>Pickup site filter</span><select aria-label="Pickup site filter" name="siteId" defaultValue={state.siteId}><option value="">All pickup sites</option>{siteChoices.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}</select></label>
       <label className="field"><span>Forecast date (Manila)</span><select aria-label="Forecast date (Manila)" name="date" defaultValue={state.date}>{(monitoring.data?.dates || [state.date]).map(day => <option key={day} value={day}>{day}</option>)}</select></label>
       <button type="submit">Apply monitoring filters</button>
-    </form>
+    </form>}
     {(state.tab !== 'sessions') && <ResourceState resource={monitoring} />}
     {monitoring.data && <p className="hint">{monitoring.data.supplier.name} · Monitoring as of {date(monitoring.data.asOf)} · Refreshes every 30 seconds</p>}
     {state.tab === 'monitoring' && monitoring.data && <MonitoringWorkspace overview={monitoring.data} params={params} change={change} refresh={refresh} />}

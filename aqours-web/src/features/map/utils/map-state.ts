@@ -8,6 +8,6 @@ export function mapFilters(params: URLSearchParams) {
   }));
 }
 
-export function mapLocation(filters: Record<string, string>, state: { selected?: string; view?: string; unlocated?: boolean } = {}) {
-  return `/map${query({ ...filters, selected: state.selected, view: state.view === 'map' ? 'map' : undefined, unlocated: state.unlocated ? '1' : undefined })}`;
+export function mapLocation(filters: Record<string, string>, state: { selected?: string; view?: string; unlocated?: boolean; q?: string } = {}) {
+  return `/map${query({ ...filters, q: state.q || undefined, selected: state.selected, view: state.view === 'map' ? 'map' : undefined, unlocated: state.unlocated ? '1' : undefined })}`;
 }

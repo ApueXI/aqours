@@ -7,6 +7,7 @@ import { StatusLabel } from '@/components/status-label';
 import { IncidentUpdates } from '@/components/timeline';
 import { useResource } from '@/hooks/use-resource';
 import { useCommand } from '@/hooks/use-command';
+import { displayTime } from '@/utils/time';
 
 export function IncidentScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,7 +25,12 @@ export function IncidentScreen() {
     <ResourceState {...incident} />
     {incident.data && <>
       <Demo visible={incident.data.demo} /><StatusLabel value={incident.data.status} /><Body>{incident.data.summary}</Body>
-      <IncidentUpdates updates={incident.data.updates} />
+      <Section title="Latest published update">
+        <Body>Affected area: {incident.data.latestUpdate.area}</Body><Body>{incident.data.latestUpdate.progress}</Body>
+        <Body muted>Estimated restoration: {displayTime(incident.data.latestUpdate.restorationAt)}</Body>
+        <Body muted>Published {displayTime(incident.data.latestUpdate.publishedAt)}</Body>
+        <Body muted>Follow any applicable advisory separately. Incident resolution does not lift a water-quality restriction.</Body>
+      </Section>
       <Section title="Is your connection affected?">
         <Body muted>This records your own affected report. Repeating this action reuses your existing report for this incident and connection.</Body>
         <ResourceState {...connections} empty={connections.data?.length === 0 && 'A saved connection is required. Contact the supplier.'} />
@@ -34,6 +40,7 @@ export function IncidentScreen() {
         {affected.uncertain && <Body>Confirmation is pending. Retry the same affected assertion.</Body>}
         <Button title={affected.busy ? 'Confirming…' : affected.uncertain ? 'Retry affected confirmation' : 'Mark my connection affected'} disabled={!connectionId || affected.busy} onPress={() => void markAffected()} />
       </Section>
+      <IncidentUpdates updates={incident.data.updates} />
     </>}
   </Screen>;
 }

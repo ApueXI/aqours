@@ -26,6 +26,7 @@ export function MonitoringWorkspace({ overview, params, change, refresh }: {
         <p className="monitoring-status" data-status={evaluation?.status || 'unavailable'}>{label(evaluation?.status || 'unavailable')}{evaluation?.incomplete ? ' · incomplete evidence' : ''}</p>
         <p>{item.site.address}</p><p>Daily max {weatherMeasure(evaluation?.temperature ?? null, '°C')} · Forecast {item.weather.status}</p>
         <p>Available now: {item.supply.available ? `${item.supply.remainingLiters} L` : 'Unavailable'} · {item.supply.sessionCount} sessions</p>
+        <p className="hint">Stock observed {new Date(item.supply.observedAt).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })} · Forecast {item.weather.lastSuccessAt ? new Date(item.weather.lastSuccessAt).toLocaleString('en-PH', { timeZone: 'Asia/Manila' }) : 'not available'}</p>
         <p className="hint">{!item.site.active ? 'Inactive site · ' : ''}{!item.config?.enabled ? 'Monitoring not enabled · ' : ''}{item.site.latitude === null || item.site.longitude === null ? 'Coordinates missing' : 'Saved coordinates'}</p>
       </article>; })}
     </div><div className="distribution-map-panel"><DistributionMap items={items} day={state.date} selectedId={state.siteId} style={state.style} temperature={state.temperature} bands={overview.temperatureBands.boundaries} onSelect={siteId => change({ siteId })} /></div></div>

@@ -9,7 +9,7 @@ export default function Profile() {
   const { logout } = useSession();
   const profile = useResource<User>('/me');
   const connections = useResource<Connection[]>('/me/connections');
-  return <Screen title="Profile">
+  return <Screen title="Profile" tabbed>
     <ResourceState {...profile} />
     {profile.data && <Section title="Account"><Body>{profile.data.name}</Body><Body>{profile.data.email}</Body><Body>{profile.data.phone ?? 'No phone number on file'}</Body></Section>}
     <Section title="Service connections">
@@ -21,6 +21,7 @@ export default function Profile() {
       </View>)}
     </Section>
     <Body muted>The supplier maintains saved connection details. An alternate issue address only applies to that report.</Body>
+    <Button title="Refresh account and connection details" secondary onPress={() => { void profile.reload(); void connections.reload(); }} />
     <Button title="Sign out" secondary onPress={() => void logout()} />
   </Screen>;
 }

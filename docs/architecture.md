@@ -93,3 +93,7 @@ The supplier app uses Tailwind 4 through its Vite plugin. Utility classes replac
 The authenticated API loads the sibling bundled PSGC region index and caches its hierarchy. Both clients request catalog entries without bundling all barangays. Administrative address selections provide names/codes; coordinate and service-zone confirmation remain separate. Supplier Weather adds a separate city/municipality representative-point join with pinned GeoNames/ph-geo provenance, explicit historical ancestry crosswalk and null unmatched entries; it does not geocode addresses or correct the inherited canonical tree.
 
 See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.
+
+## Reference-led presentation — 22 October 2026
+
+The reference-led client refinement adds a customer nested `/reports/[id]/` route layout whose provider is keyed by account/report and shares resource, unsent message and command state across Summary/Messages/History. The `/reports/:id/messages` route uses existing authorized endpoints and public DTOs. Supplier conversation remains mounted across report views while the operational review/association subtree remains keyed by server version. This preserves the existing refresh/conflict boundary. No new API, schema, dependency or durable client storage is introduced. See [UI workflow boundaries](ui-ux.md) for exact in-memory lifetime and verified artifact boundaries.

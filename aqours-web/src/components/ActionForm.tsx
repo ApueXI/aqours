@@ -1,4 +1,5 @@
 import { AddressEditor } from './AddressEditor';
+import { PasswordInput } from './PasswordInput';
 import type { AddressSnapshot } from '@aqours/contracts';
 import { styleClasses } from '../utils/style-classes';
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
@@ -50,14 +51,15 @@ export function Fields({ fields }: { fields: Field[] }) {
       </select>;
     } else if (field.type === 'checkbox') {
       control = <input {...base} type="checkbox" defaultChecked={Boolean(field.value)} />;
+    } else if (field.type === 'password') {
+      control = <PasswordInput {...base} defaultValue={String(field.value ?? '')} />;
     } else {
       control = <input {...base} type={field.type || 'text'} min={field.min} max={field.max} step={field.step}
-        autoComplete={field.type === 'password' ? 'new-password' : undefined}
         defaultValue={field.type === 'datetime-local' ? localTime(field.value) : String(field.value ?? '')} />;
     }
-    return <label className={styleClasses(field.type === 'checkbox' ? 'check-field' : 'field')} key={id} htmlFor={id}>
-      <span>{field.label}{field.required && <span className="required-marker" aria-hidden="true"> *</span>}</span>{control}{hint && <span id={`${id}-hint`} className="hint">{hint}</span>}
-    </label>;
+    return <div className={styleClasses(field.type === 'checkbox' ? 'check-field' : 'field')} key={id}>
+      <label htmlFor={id}>{field.label}{field.required && <span className="required-marker" aria-hidden="true"> *</span>}</label>{control}{hint && <span id={`${id}-hint`} className="hint">{hint}</span>}
+    </div>;
   })}</>;
 }
 type Props = {
@@ -65,8 +67,9 @@ type Props = {
   extra?: Record<string, unknown>; onDone: () => void; children?: ReactNode;
   preview?: (body: Record<string, unknown>) => ReactNode;
   validate?: (body: Record<string, unknown>) => string | undefined;
+  resetOnSuccess?: boolean;
 };
-export function ActionForm({ path, method = 'POST', fields, submit, version, extra, onDone, children, preview, validate }: Props) {
+export function ActionForm({ path, method = 'POST', fields, submit, version, extra, onDone, children, preview, validate, resetOnSuccess }: Props) {
   const [intent, setIntent] = useState<Intent>();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<unknown>();
@@ -74,12 +77,14 @@ export function ActionForm({ path, method = 'POST', fields, submit, version, ext
   const [draft, setDraft] = useState<Record<string, unknown>>();
   const feedback = useRef<HTMLParagraphElement>(null);
   const previewRegion = useRef<HTMLElement>(null);
+  const form = useRef<HTMLFormElement>(null);
   useEffect(() => { if (error) feedback.current?.focus(); }, [error]);
   useEffect(() => { if (draft) previewRegion.current?.focus(); }, [draft]);
   const send = async (action: Intent) => {
     setPending(true); setError(undefined); setSaved(false);
     try {
       await sendIntent(action);
+      if (resetOnSuccess) form.current?.reset();
       setIntent(undefined); setDraft(undefined); setSaved(true); onDone();
     } catch (problem) {
       setError(problem);
@@ -98,7 +103,7 @@ export function ActionForm({ path, method = 'POST', fields, submit, version, ext
       const next = createIntent(path, method, body); setIntent(next); void send(next);
     } catch (problem) { setError(problem instanceof RequestError ? problem : new RequestError(400, 'validation', 'Check the form. Complete guided addresses, use valid geometry JSON, and enter valid Manila times.')); }
   };
-  return <form className="action-form" aria-busy={pending} onSubmit={start}>
+  return <form ref={form} className="action-form" aria-busy={pending} onSubmit={start}>
     <fieldset disabled={pending || Boolean(intent) || Boolean(draft)}><Fields fields={fields} />{children}
       <button className="primary" type="submit">{submit}</button>
     </fieldset>

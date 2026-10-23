@@ -124,7 +124,7 @@ try {
   passed('Compact session management retains existing versioned exact-decimal stock editing');
 
   await page.reload();
-  const notifications = page.locator('details').filter({ has: page.locator('summary').filter({ hasText: /^My monitoring notifications$/ }) });
+  const notifications = page.locator('details').filter({ has: page.locator('summary').filter({ hasText: /^My monitoring notifications(?: · \d+ unread on this page)?$/ }) });
   await notifications.locator('summary').click();
   const notificationRead = page.waitForResponse(response => response.request().method() === 'POST' && /\/notifications\/[^/]+\/read$/.test(new URL(response.url()).pathname));
   await notifications.getByRole('button', { name: 'Mark notification read', exact: true }).first().click();

@@ -54,5 +54,12 @@ for (const type of ['callback', 'inspection', 'water_support']) {
     assert.equal(nodes(tree, 'FormBack')[0].props.locked, true);
     assert.equal(control(tree, 'Button', 'Review existing requests').disabled, true);
     assert.equal(control(tree, 'Button', 'Retry same assistance request').disabled, false);
+    runtime.command.result = { id: `${type}-confirmed`, reference: `HELP-${type}`, type };
+    tree = runtime.render();
+    assert.equal(tree.props.title, 'Request received');
+    assert.equal(nodes(tree, 'Section')[0].props.title, `HELP-${type}`);
+    assert.ok(control(tree, 'Button', 'Track this request').onPress);
+    assert.ok(control(tree, 'Button', 'Return to report').onPress);
+    assert.equal(nodes(tree, 'AssistanceSummary').length, 0, 'confirmed receipt replaces the submission form');
   });
 }

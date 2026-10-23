@@ -31,13 +31,15 @@ export function AssistanceForm() {
   const [validation, setValidation] = useState<string | null>(null);
   const [review, setReview] = useState<AssistanceDetails | null>(null);
   const [pickup, setPickup] = useState<PickupSession | null>(null);
+  const [attempted, setAttempted] = useState(false);
   const command = useCommand<AssistanceRequest>();
 
   async function submit() {
+    setAttempted(true);
     setValidation(null);
     if (review) {
       const result = await command.execute('/assistance-requests', { reportId, type, details: review });
-      if (result) navigate(`/assistance/${result.id}`);
+      if (result) return;
       return;
     }
     let details: AssistanceDetails;
@@ -56,28 +58,37 @@ export function AssistanceForm() {
     setReview(details);
   }
 
+  if (command.result) return <Screen title="Request received">
+    <Section title={command.result.reference}><Body>{assistanceNames[command.result.type]} request submitted.</Body>
+      <Body muted>Awaiting supplier review. An appointment or pickup allocation is not yet confirmed.</Body></Section>
+    <Button title="Track this request" onPress={() => navigate(`/assistance/${command.result!.id}`)} />
+    <Button title="Return to report" secondary onPress={() => navigate(`/reports/${reportId}`)} />
+  </Screen>;
+
+  const required = (value: string, message: string) => attempted && !value.trim() ? message : null;
   return <Screen title={review ? 'Review your request' : 'Request assistance'} scrollKey={review ? 'review' : 'details'}>
     <FormBack previous={review ? () => setReview(null) : undefined} locked={command.locked} fallback="/assistance" />
     {!reportId && <><Body>Choose one of your reports first, then open its assistance form.</Body><Button title="Choose a report" onPress={() => navigate('/reports')} /></>}
     <ResourceState {...report} />
     {report.data && <>
+      <Body muted>{review ? '2 of 2 · Check answers and submit' : '1 of 2 · Request details'}</Body>
       <Body>For {report.data.reference} · {label(report.data.category)}</Body>
       <View style={{ display: review ? 'none' : 'flex', gap: 16 }}>
         <Choices<AssistanceType> values={types} labels={assistanceNames} value={type} onChange={setType} disabled={command.locked} />
         <Body muted>Submitting creates a request for review. Acceptance, appointments, and pickup stock require supplier confirmation.</Body>
         {type === 'callback' && <Section title="Callback/support">
-          <Field label="Your question" value={question} onChangeText={setQuestion} multiline maxLength={5000} editable={!command.locked} />
+          <Field label="Your question" error={required(question, 'Enter your question.')} value={question} onChangeText={setQuestion} multiline maxLength={5000} editable={!command.locked} />
           <Body>Preferred contact method: phone</Body>
-          <Field label="Contact number" value={phone} onChangeText={setPhone} keyboardType="phone-pad" maxLength={40} editable={!command.locked} />
+          <Field label="Contact number" error={required(phone, 'Enter a contact number.')} value={phone} onChangeText={setPhone} keyboardType="phone-pad" maxLength={40} editable={!command.locked} />
         </Section>}
         {type === 'inspection' && <Section title="Site inspection">
-          <Field label="Issue details for inspection" value={issueDetails} onChangeText={setIssueDetails} multiline maxLength={5000} editable={!command.locked} />
+          <Field label="Issue details for inspection" error={required(issueDetails, 'Describe the issue to inspect.')} value={issueDetails} onChangeText={setIssueDetails} multiline maxLength={5000} editable={!command.locked} />
           <Field label="Visit address (report address shown by default)" value={site || report.data.address} onChangeText={setSite} multiline maxLength={1000} editable={!command.locked} />
-          <Field label="Access instructions" value={access} onChangeText={setAccess} multiline maxLength={2000} editable={!command.locked} />
+          <Field label="Access instructions" error={required(access, 'Enter access instructions.')} value={access} onChangeText={setAccess} multiline maxLength={2000} editable={!command.locked} />
         </Section>}
-        {type !== 'water_support' && <Field label="Preferred date and time window (Asia/Manila)" value={window} onChangeText={setWindow} placeholder="For example: 21 October, 9am–12pm" maxLength={300} editable={!command.locked} />}
+        {type !== 'water_support' && <Field label="Preferred date and time window (Asia/Manila)" error={required(window, 'Enter a preferred date and time window.')} value={window} onChangeText={setWindow} placeholder="For example: 23 October, 9am–12pm" maxLength={300} editable={!command.locked} />}
         {type === 'water_support' && <>
-          <Field label="Requested liters" value={liters} onChangeText={setLiters} keyboardType="decimal-pad" maxLength={14} editable={!command.locked} />
+          <Field label="Requested liters" error={attempted && (!/^(?:0|[1-9]\d*)(?:\.\d{1,2})?$/.test(liters) || Number(liters) <= 0) ? 'Enter positive liters with up to two decimals.' : null} value={liters} onChangeText={setLiters} keyboardType="decimal-pad" maxLength={14} editable={!command.locked} />
           <Field label="Additional pickup notes (optional)" value={notes} onChangeText={setNotes} multiline maxLength={2000} editable={!command.locked} />
           <PickupOptions reportId={reportId} selected={sessionId} onChange={(id, session) => { setSessionId(id); setPickup(session); }} onCallback={() => setType('callback')} disabled={command.locked} />
         </>}
