@@ -110,6 +110,11 @@
 - Redesigned Overview, Report inbox, Messages and Reports map with a shared framed workspace, separate KPI cards/gaps, true tables with trailing actions, modal filters and responsive navigation. Added approved React Icons/Feather controls while preserving existing map category symbols, API behavior and data boundaries.
 - Verified supplier type/lint/build and 34 unit tests, verification TypeScript/repository/docs/diff checks, six new fixture-backed Playwright groups at 1440/768/390 px and four existing customer-map groups. Before/after screenshots and written design critique are retained; phone tables scroll internally for secondary fields. Production retains its large-bundle advisory. No real database/native/live-provider verification is claimed; see [verification](docs/verification.md#supplier-reports-redesign--24-october-2026).
 
+## 2026-10-24 — Hackathon guide
+
+- Added [docs/hackathon-guide.md](docs/hackathon-guide.md) with five-year-old-friendly explanations of the current stack, customer/staff/admin functions, report flow, likely judge questions, and implementation limits. Linked it from the documentation index.
+- Reviewed the guide against current architecture, role requirements, schema, client READMEs and workflow documentation; checked Markdown links and the focused diff. No application tests were run for this documentation-only change.
+
 ## 2026-10-24 — Aqours branding
 
 - Applied the supplied PNG to mobile launcher/adaptive icons and splash artwork; applied the Q SVG to mobile in-app branding and favicon, and to the supplier web sidebar, sign-in/loading views and favicon. Documented canonical and bundled asset locations.

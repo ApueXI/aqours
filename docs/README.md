@@ -4,6 +4,8 @@ Updated **19 October 2026** against the first-release implementation of Water Su
 
 [UI/UX design and navigation](ui-ux.md) describes the shared teal components, customer navigation/reporting and supplier map workspace.
 
+[Hackathon guide](hackathon-guide.md) explains the stack and customer, staff, and admin functions in simple language, with judge questions and demo limits.
+
 ## Reference documents
 
 | Document | Purpose |
