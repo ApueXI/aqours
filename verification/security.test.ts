@@ -65,7 +65,7 @@ test('browser cookie requires CSRF and exact origin; customer cannot enter suppl
 test('controlled images validate contents, authenticate downloads and replay upload retry', async () => {
   const {a,b,staff}=users;
   const item=await report(a);
-  const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/lqkAAAAASUVORK5CYII=','base64');
+  const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4AWP4DwQACfsD/c8LaHIAAAAASUVORK5CYII=','base64');
   const operation=key();
   async function upload(bytes:Uint8Array,type:string,op=operation) {
     const form=new FormData();

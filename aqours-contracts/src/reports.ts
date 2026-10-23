@@ -37,3 +37,8 @@ export interface MapResponse {
   type: 'FeatureCollection'; features: { type: 'Feature'; geometry: { type: 'Point'; coordinates: [number, number] }; properties: { id: string; reference: string; category: Category; status: ReportStatus; priority: string; address?: string; locationSource?: string; locationReview?: boolean; structuredAddress?: AddressSnapshot | null } }[];
   unlocatedCount: number; total: number; truncated: boolean; limit: number;
 }
+
+export interface ConversationSummary {
+  reportId: string; reference: string; category: Category; status: ReportStatus;
+  description: string; latestMessage: Message | null; updatedAt: string;
+}

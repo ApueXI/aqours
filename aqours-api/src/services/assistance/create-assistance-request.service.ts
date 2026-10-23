@@ -1,3 +1,4 @@
+import { notifySupplier } from "../notifications/notify-supplier.service.js";
 import type { DB } from "../../config/database.js";
 import {
   create,
@@ -83,5 +84,6 @@ export async function createAssistanceRequest(db: DB, req: CommandContext) {
     undefined,
     "requested",
   );
+  await notifySupplier(db, result.id, "assistance", result.id, "New assistance request", `${result.reference}: ${input.type.replaceAll("_", " ")}`);
   return requestDetail(db, result);
 }

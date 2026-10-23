@@ -26,9 +26,19 @@ export function Distribution({ params, user }: { params: URLSearchParams; user: 
   return <><PageTitle title="Water distribution">
     <RefreshForecasts items={monitoring.data?.sites || []} refresh={refresh} />
     <button className="primary" onClick={() => change({ tab: 'sessions', create: '1' })}>New pickup session</button>
-  </PageTitle><ReservationLookup />
+  </PageTitle>
+    <section className="distribution-help" aria-label="How water distribution works">
+      <h2>Arrange water pickup</h2>
+      <ol>
+        <li><a href={distributionLink(params, { tab: 'sites', create: '' })}>Set up a pickup site</a> with an address and collection instructions.</li>
+        <li><a href={distributionLink(params, { tab: 'sessions', create: '' })}>Create a pickup session</a>: choose the site, service zones, collection times and available liters.</li>
+        <li><a href="#/assistance?type=water_support">Review water-support requests</a>. Accept a request to reserve stock, then arrange collection.</li>
+        <li>Use the reservation reference below when the customer arrives. Record collection to deduct the reserved quantity.</li>
+      </ol>
+      <details><summary>What does monitoring do?</summary><p>Monitoring compares pickup-site stock and forecasts with configured thresholds. It helps staff spot possible shortages or heat warnings. It does not reserve water, create sessions or confirm customer requests.</p></details>
+    </section><ReservationLookup />
     <nav className="tabs" aria-label="Distribution sections">{([
-      ['monitoring', 'Monitoring'], ['sessions', 'Sessions'], ['sites', 'Sites'], ['warnings', 'Warning history'],
+      ['monitoring', 'Monitoring'], ['sessions', 'Pickup sessions'], ['sites', 'Pickup sites'], ['warnings', 'Warning history'],
     ] as const).map(([tab, text]) => <a key={tab} href={distributionLink(params, { tab, create: '' })} aria-current={state.tab === tab ? 'page' : undefined}>{text}</a>)}</nav>
     {(state.tab === 'monitoring' || state.tab === 'warnings') && <form className="filters" key={`${state.q}:${state.status}:${state.siteId}:${state.date}`} onSubmit={event => {
       event.preventDefault(); const data = new FormData(event.currentTarget); change({ q: String(data.get('q') || ''), status: String(data.get('status') || ''), siteId: String(data.get('siteId') || ''), date: String(data.get('date') || '') });

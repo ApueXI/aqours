@@ -244,3 +244,9 @@ AQOURS_TEST_API=http://127.0.0.1:4020/api/v1 npm run test:distribution:browser
 ```
 
 Fixtures control only external weather/tile responses. Authentication, inventory transactions, persistence, warning generation, notification ownership, job claims and browser interactions use the real application. Provider uptime/licensing and ordinary-data deployment are separate operator checks; these suites do not access the ordinary database or private configuration.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.
+
+The focused workflow HTTP and browser regressions use a deliberately isolated API on `localhost:4049`, supplier preview on `localhost:5179` built with `VITE_API_URL=http://localhost:4049/api/v1`, and a project-local disposable PostgreSQL cluster on port 55439. Run the scripts documented in [workflow verification](verification.md#account-and-customer-workflow-corrections--23-october-2026) serially to avoid sharing login throttles and transaction-failure triggers. `verification/workflow-feedback-seed.ts` requires matching `DATABASE_URL`/`AQOURS_TEST_DATABASE_URL` ending `workflow_test` or `workflow_seed_test` on that cluster plus `SEED_DEMO=1`; it never authorizes an ordinary database reset. Set `AQOURS_CHROMIUM` to an existing compatible browser for `verification/browser-workflow-feedback.ts`; no browser is installed by the runner.

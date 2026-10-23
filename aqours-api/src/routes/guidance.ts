@@ -25,6 +25,9 @@ export function guidanceRoutes(app: Express) {
     "customer",
     recordGuidanceChoiceController,
   );
+  route(app, "get", "/staff/notifications", "staff", listNotificationsController);
+  route(app, "get", "/staff/notifications/:id", "staff", getNotificationController);
+  route(app, "patch", "/staff/notifications/:id/read", "staff", markNotificationReadController, false);
   route(app, "get", "/notifications", "customer", listNotificationsController);
   route(
     app,

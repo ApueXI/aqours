@@ -59,3 +59,18 @@ test("persisted password fingerprints require scrypt and cannot match fast reque
     operationFingerprint(actor, scope, key, { password: "x".repeat(201) }),
   );
 });
+
+
+test("self-service password changes protect both credential fields without changing account retry compatibility", async () => {
+  const body = { currentPassword: "FictionalCurrent!123", newPassword: "FictionalReplacement!123" };
+  const passwordScope = "POST:/api/v1/me/password";
+  const actual = await operationFingerprint(actor, passwordScope, key, body);
+  const protectedBody = Object.fromEntries(Object.entries(body).map(([field, value]) => {
+    const salt = sha256(JSON.stringify(["aqours-operation-password-v1", actor, passwordScope, key, field]));
+    return [field, `scrypt-v1:${scryptSync(value, salt, 64).toString("hex")}`];
+  }));
+  assert.equal(actual, sha256(JSON.stringify(protectedBody)));
+  assert.notEqual(actual, sha256(JSON.stringify(body)));
+  assert.equal(await operationFingerprint(actor, passwordScope, key, body), actual);
+  assert.notEqual(await operationFingerprint(actor, passwordScope, key, { ...body, currentPassword: "OtherCurrent!123" }), actual);
+});

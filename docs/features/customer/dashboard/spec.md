@@ -22,10 +22,10 @@ Status: **implemented first-release behavior; acceptance evidence remains qualif
 - Keep official quality restrictions distinguishable from incident restoration/progress information.
 - Show notice source/publication or latest-update time, affected context, and a visible demonstration-data label when applicable.
 - A resolved outage must not hide an applicable quality advisory that has not been explicitly lifted.
-- Show the customer's open reports with category, tracking reference, current status, and a detail action.
+- Provide access to the Reports tab for owned report tracking, category, status and details.
 - Provide a report shortcut and access to guidance, assistance requests, notifications, and profile.
 - Do not expose unpublished updates, internal notes, other households' locations, or other customers' reports.
-- Make multiple owned connections explicit; the implemented home lists all owned connections and applicable notices rather than silently selecting one.
+- Match Home restrictions against all owned connections; Profile lists their addresses and review state.
 
 ### Empty, stale, and failed states
 
@@ -50,13 +50,13 @@ Status: **implemented first-release behavior; acceptance evidence remains qualif
 
 ### Weather addition — 21 October 2026
 
-Home includes current conditions and seven-day forecasts for an owned saved connection, initially preferring the first connection with coordinates. Customers can switch connections or search/select a Philippine city; missing coordinates retain city search without requesting GPS. Weather has independent loading/retry/stale states, Manila timestamps and provider attribution. Selection is temporary and account-scoped, and the API checks ownership before cached weather access. See [weather behavior and checks](../../../weather.md).
+The Weather tab includes current conditions and seven-day forecasts for an owned saved connection, initially preferring the first connection with coordinates. Customers can switch connections or search/select a Philippine city; missing coordinates retain city search without requesting GPS. Weather has independent loading/retry/stale states, Manila timestamps and provider attribution. Selection is temporary and account-scoped, and the API checks ownership before cached weather access. See [weather behavior and checks](../../../weather.md).
 
 ### Implemented behavior and modules
 
-`aqours-app/src/features/home/screens/home-screen.tsx` composes saved connections, applicable advisories, published incidents, open reports and report navigation.
+`aqours-app/src/features/home/screens/home-screen.tsx` composes applicable quality restrictions, a report shortcut and navigation to service incidents/advisories and assistance. Reports, Messages, Weather and Profile have dedicated tabs.
 
-Authenticated reads use `/me/connections`, `/advisories`, `/incidents` and owned `/reports`; no special dashboard table is used. `src/hooks/use-resource.ts` refetches on focus/foreground and polls selected resources every 30 seconds while active. Notices and incidents carry demo labels and source/update context; matching uses API-reviewed zone/connection associations.
+Home reads `/me/connections` and `/advisories`; the service screen reads `/incidents`, and Reports reads owned `/reports`. No special dashboard table is used. `src/hooks/use-resource.ts` refetches on focus/foreground and polls selected resources every 30 seconds while active. Notices and incidents carry demo labels and source/update context; matching uses API-reviewed zone/connection associations.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.
 
@@ -67,3 +67,7 @@ Native advisory context shows planned dates, an explicit quality-end-does-not-li
 Actual installed N1/N5/N17/N20/N27/N31/N34/N38–40 verify owned Home/demo labels, independent quality persistence/lifting, unknown zone, empty/stale/network recovery, planned dates/own references and report-free notice reception. All-page targeting/failed-page handling have separate API/helper evidence; consult the [native ledger](../../../native-verification.md) and traceability.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](../../../workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.

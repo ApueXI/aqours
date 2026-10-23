@@ -69,8 +69,9 @@ type Props = {
   preview?: (body: Record<string, unknown>) => ReactNode;
   validate?: (body: Record<string, unknown>) => string | undefined;
   resetOnSuccess?: boolean;
+  transform?: (body: Record<string, unknown>) => Record<string, unknown>;
 };
-export function ActionForm({ path, method = 'POST', fields, submit, version, extra, onDone, children, preview, validate, resetOnSuccess }: Props) {
+export function ActionForm({ path, method = 'POST', fields, submit, version, extra, onDone, children, preview, validate, resetOnSuccess, transform }: Props) {
   const [intent, setIntent] = useState<Intent>();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<unknown>();
@@ -99,8 +100,9 @@ export function ActionForm({ path, method = 'POST', fields, submit, version, ext
   const start = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault(); setError(undefined); setSaved(false);
     try {
-      const body = { ...readFields(fields, new FormData(event.currentTarget)), ...extra,
+      const values = { ...readFields(fields, new FormData(event.currentTarget)), ...extra,
         ...(version === undefined ? {} : { expectedVersion: version }) };
+      const body = transform ? transform(values) : values;
       const invalid = validate?.(body);
       if (invalid) throw new RequestError(400, 'validation', invalid);
       if (preview) { setDraft(body); return; }

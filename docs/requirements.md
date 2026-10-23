@@ -259,3 +259,7 @@ Application source, environment examples, Compose, migrations/seeds, contracts a
 ## Map and address implementation
 
 See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.

@@ -6,7 +6,7 @@ Implementation contract adopted 2026-10-18. Base `/api/v1`. Public DTOs/enums li
 
 Success: `{data: T, page?: {offset,limit,total}, asOf?: string}`. Lists return `data: T[]`, offset default 0, limit default 30/max 100. Map uses its own cap metadata. Error: `{error:{code,message,details?}}`; HTTP 400 validation, 401 unauthenticated, 403 role/CSRF denial, 404 absent or foreign record, 409 conflict/stale version/idempotency mismatch/stock, 413 upload size, 415 invalid image, 429 rate limit, 503 provider unavailable.
 
-`Idempotency-Key` is required on domain POST/PATCH mutations (not login/logout/guidance evaluation/read-state). Use a stable random UUID per intended action and reuse the key and exact payload on an uncertain response. Keys are scoped to actor+method+path; fingerprint conflicts are 409. Password-bearing account operations use a slow scrypt password fingerprint before hashing the request; neither plaintext passwords nor a fast password-only verifier are retained in operations. Commit result, domain writes, history and notifications together; retain keys without automatic expiry in this release. PATCH and state-changing commands require `expectedVersion` from the current DTO, returning 409 if stale; idempotency replay precedes version validation. Clients reject malformed success envelopes and retain the original intention after an uncertain response.
+`Idempotency-Key` is required on domain POST/PATCH mutations (not login/logout/guidance evaluation/read-state). Use a stable random UUID per intended action and reuse the key and exact payload on an uncertain response. Keys are scoped to actor+method+path; fingerprint conflicts are 409. Password-bearing account and self-service operations use a slow scrypt fingerprint for every password field before hashing the request; neither plaintext passwords nor a fast password-only verifier are retained in operations. Commit result, domain writes, history and notifications together; retain keys without automatic expiry in this release. PATCH and state-changing commands require `expectedVersion` from the current DTO, returning 409 if stale; idempotency replay precedes version validation. Clients reject malformed success envelopes and retain the original intention after an uncertain response.
 
 `POST /auth/login` body `{email,password,client:"web"|"mobile"}`. Web permits staff/admin; mobile permits customer. Web establishes an HttpOnly SameSite=Lax cookie and returns `{user,csrfToken}`. Mobile returns `{user,token}`; store token using SecureStore. `GET /auth/session` returns `{user,csrfToken?}` for restoring sessions. `GET /me` returns User; `GET /me/connections` returns owned Connection[]. `POST /auth/logout` revokes presented session and clears cookie (repeat safe). Bearer authorization is for mobile; browser uses `credentials:"include"` and `X-CSRF-Token` on mutations. Validate web login origin and cookie mutations against configured exact web origin. Expiry defaults to seven days; role/account changes revoke all that user's sessions. Never expose cookie/bearer credentials in URLs/logs/browser storage. Development allows HTTP only on local environments; production requires HTTPS/secure cookies.
 
@@ -94,10 +94,10 @@ Operational staff may read `/staff/advisories` and `/staff/settings/guidance` / 
 | POST /staff/advisories/:id/publish | `{expectedVersion}` | Published Advisory; atomic fan-out independent of submitted reports |
 | POST /staff/advisories/:id/lift | `{expectedVersion,reason}` | Lifted Advisory; no automatic end-time lift for quality notices |
 | GET /staff/settings/accounts | pagination | User[] safe fields |
-| POST /staff/settings/accounts | `{email,name,password,role,phone?}` | User |
+| POST /staff/settings/accounts | `{email,name,password,role,phone?,connection?}` | User; optional customer connection is created atomically |
 | PATCH /staff/settings/accounts/:id | `{expectedVersion,reason,name?,phone?,role?,active?,password?}` | User; security changes revoke all sessions; retain ownership/history; forbid demoting/deactivating last admin |
 | GET /staff/settings/connections | pagination | Connection[] |
-| POST /staff/settings/connections | `{customerId,reference,address,zoneId?,zoneConfirmed,latitude?,longitude?}` | Connection; customer role must match |
+| POST /staff/settings/connections | `{customerId,reference?,address,zoneId?,zoneConfirmed,latitude?,longitude?}` | Connection; customer role must match |
 | PATCH /staff/settings/connections/:id | `{expectedVersion,reason,address?,zoneId?,zoneConfirmed?,latitude?,longitude?}` | Connection; preserve historical report snapshots |
 | GET /staff/settings/zones | — | Zone[] |
 | POST /staff/settings/zones | `{code,name,boundary?,active?,demo?}` | Zone |
@@ -141,3 +141,7 @@ Staff/admin monitoring endpoints reuse cookie/bearer authentication, record vali
 | POST /staff/distribution/notifications/:id/read | `{}` | Owned SupplierMonitoringNotification, retained read timestamp |
 
 Writes require an operation key; versioned edits reject stale state. Missing records return404, invalid inputs400, denied roles403 and ambiguous supplier configuration503. Forecast provider failures are represented in SiteForecast freshness/error metadata while current supply remains separately readable. A read enqueues missing/due site forecasts but does not hold an inventory transaction across a provider request. Existing city/customer weather endpoints retain their earlier contract.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.

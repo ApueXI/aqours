@@ -37,7 +37,7 @@ There are four published synthetic category incidents, twelve starting reports (
 
 Fresh seeds use Laguna (`0403400000`) in Region IV-A CALABARZON (`0400000000`). Connections, their original reports and pickup sites store canonical PSGC snapshots with fictional street details. Customer12 has a Laguna address but deliberately retains no coordinates or confirmed zone. See [the explicit upgrade](setup.md#upgrading-original-demo-locations-to-laguna) for existing v1 demo databases; normal seed repeats never relocate stored records.
 
-On customer Home, the selected owned connection supplies weather coordinates automatically. Current conditions and seven forecast days appear below the city search. Customer12 instead searches for Calamba, Los Baños or Santa Rosa and selects the intended Laguna result. In supplier navigation, open Weather (`/#/weather`) and select a Laguna city to view the same seven-day capability; staff and admins both have access. Refresh, retry and stale labels are independent of service updates. Weather search remains nationwide and never changes PSGC addresses, zones or water-safety notices. See [weather](weather.md).
+On the customer Weather tab, the selected owned connection supplies weather coordinates automatically. Current conditions and seven forecast days appear below the city search. Customer12 instead searches for Calamba, Los Baños or Santa Rosa and selects the intended Laguna result. In supplier navigation, open Weather (`/#/weather`) and select a Laguna city to view the same seven-day capability; staff and admins both have access. Refresh, retry and stale labels are independent of service updates. Weather search remains nationwide and never changes PSGC addresses, zones or water-safety notices. See [weather](weather.md).
 
 ## Actions and state constraints
 
@@ -75,7 +75,7 @@ Existing executable subset: `verification/reports-incidents.test.ts`, “DEMO-00
 
 > Assistance matches the selected scenario, explains why, offers a working next action, and uses a safe callback/support fallback when no relevant incident/advisory exists. The decision-support approach still needs academic confirmation.
 
-1. Open an owned report and its guidance screen. Answer the questionnaire explicitly: needs water, hazard, persistence, nearby affected/unknown and optional water-needed time. Evaluate current answers.
+1. Open an owned report and its guidance screen. Answer the questionnaire explicitly: needs water, hazard, persistence, nearby affected/unknown and optional water-needed time. Tap Submit answers and review its confirmation.
 2. For a linked published outage with unknown restoration, request water before restoration. Inspect the incident source/update, eligible available pickup card, reason and source time. For unmatched low pressure/persistence inspect inspection guidance; for a hazard inspect escalation without repair instructions.
 3. Repeat with an unconfirmed-zone report and with no eligible available sessions. Confirm uncertainty/callback support is available and no invented incident, point, restoration or water guarantee appears. To construct the no-stock case, close/cancel only freshly created demo sessions in a disposable scenario or use a dedicated reviewed zone with no sessions.
 4. Choose an alternative or decline and inspect the request list before explicit form submission: no service should be created. Then submit the form deliberately and observe requested, not accepted/scheduled.

@@ -38,7 +38,7 @@ const item = await ok<Report>(customer, 'POST', '/reports', {
 });
 const form = new FormData();
 const filename = 'fictional-quality-one-pixel.png';
-form.append('file', new Blob([Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/lqkAAAAASUVORK5CYII=', 'base64')], {type: 'image/png'}), filename);
+form.append('file', new Blob([Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4AWP4DwQACfsD/c8LaHIAAAAASUVORK5CYII=', 'base64')], {type: 'image/png'}), filename);
 const upload = await fetch(`${base}/reports/${item.id}/attachments`, {
   method: 'POST', headers: {Origin: origin, Authorization: `Bearer ${customer.token}`, 'Idempotency-Key': key()}, body: form,
 });

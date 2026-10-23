@@ -18,7 +18,7 @@ export function MonitoringNotifications() {
       <article className="entry notification-row" data-read={Boolean(notification.readAt)}><div><h3>{notification.title}</h3><p>{notification.text}</p>
       <p className="read-state">{date(notification.createdAt)} · {notification.readAt ? `Read ${date(notification.readAt)}` : 'Unread'}</p>
       <a href={`#/distribution?tab=monitoring&siteId=${encodeURIComponent(notification.siteId)}`}>Review pickup site</a></div>
-      {!notification.readAt && <ActionForm path={`/staff/distribution/notifications/${notification.id}/read`} submit="Mark notification read" fields={[]} onDone={() => void notifications.refresh()} />}
+      {!notification.readAt && <ActionForm path={`/staff/distribution/notifications/${notification.id}/read`} submit="Mark notification read" fields={[]} onDone={() => { void notifications.refresh(); window.dispatchEvent(new Event('aqours-notifications-read')); }} />}
     </article></div>)}
     {notifications.data && <Pagination offset={offset} total={notifications.result?.page?.total ?? notifications.data.length} onChange={setOffset} />}
   </ResourceState></section></details>;

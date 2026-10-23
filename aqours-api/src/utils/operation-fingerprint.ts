@@ -15,15 +15,22 @@ export async function operationFingerprint(
   body: Record<string, unknown>,
 ) {
   let protectedBody = body;
-  if (Object.hasOwn(body, "password")) {
-    const password = z.string().max(200).parse(body.password);
+  for (const field of ["password", "currentPassword", "newPassword"]) {
+    if (!Object.hasOwn(body, field)) continue;
+    const password = z.string().max(200).parse(body[field]);
     const salt = sha256(
-      JSON.stringify(["aqours-operation-password-v1", actor, scope, key]),
+      JSON.stringify([
+        "aqours-operation-password-v1",
+        actor,
+        scope,
+        key,
+        ...(field === "password" ? [] : [field]),
+      ]),
     );
     const derived = (await derive(password, salt, 64)) as Buffer;
     protectedBody = {
-      ...body,
-      password: `scrypt-v1:${derived.toString("hex")}`,
+      ...protectedBody,
+      [field]: `scrypt-v1:${derived.toString("hex")}`,
     };
   }
   return sha256(JSON.stringify(protectedBody));

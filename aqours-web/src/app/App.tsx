@@ -16,7 +16,10 @@ import { Settings } from '../features/settings/screens/Settings';
 import { MapPage } from '../features/map/screens/MapPage';
 import { WeatherPage } from '../features/weather/screens/WeatherPage';
 
-const sections = ['overview', 'reports', 'map', 'incidents', 'advisories', 'assistance', 'distribution', 'weather', 'settings'];
+import { Messages } from '../features/messages/screens/Messages';
+import { Notifications } from '../features/notifications/screens/Notifications';
+
+const sections = ['overview', 'reports', 'messages', 'notifications', 'map', 'incidents', 'advisories', 'assistance', 'distribution', 'weather', 'settings'];
 export default function App() {
   const session = useSession();
   const route = useRoute();
@@ -33,7 +36,9 @@ export default function App() {
   };
   return <WorkspaceShell user={user} section={route.section} recordId={route.id} loggingOut={loggingOut} logoutError={logoutError} logout={() => void logout()}>
       {route.section === 'overview' && <Overview key={user.id} params={route.params} />}
-      {route.section === 'reports' && (route.id ? <ReportDetail key={`${user.id}:${route.id}`} id={route.id} returnTo={route.params.get('returnTo')} /> : <Reports params={route.params} />)}
+      {route.section === 'reports' && (route.id ? <ReportDetail key={`${user.id}:${route.id}`} id={route.id} initialView={route.params.get('view')} returnTo={route.params.get('returnTo')} /> : <Reports params={route.params} />)}
+      {route.section === 'messages' && <Messages key={user.id} />}
+      {route.section === 'notifications' && <Notifications key={user.id} />}
       {route.section === 'map' && <MapPage params={route.params} />}
       {route.section === 'weather' && <WeatherPage key={user.id} />}
       {route.section === 'incidents' && (route.id ? <IncidentDetail key={`${user.id}:${route.id}`} id={route.id} /> : <Incidents />)}

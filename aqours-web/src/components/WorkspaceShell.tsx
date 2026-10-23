@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { User } from '@aqours/contracts';
+import { NotificationAccess } from './NotificationAccess';
 import { Failure, label } from './Status';
 
 const groups = [
-  { title: 'Reports', sections: ['overview', 'reports', 'map'] },
+  { title: 'Reports', sections: ['overview', 'reports', 'messages', 'map'] },
   { title: 'Service operations', sections: ['incidents', 'advisories', 'assistance', 'distribution', 'weather'] },
   { title: 'Administration', sections: ['settings'] },
 ];
@@ -11,6 +12,7 @@ const titles: Record<string, string> = { reports: 'Report inbox', map: 'Reports 
 const paths: Record<string, string> = {
   overview: 'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z',
   reports: 'M4 4h16v16H4z M8 8h8 M8 12h8 M8 16h5',
+  messages: 'M3 4h18v13H8l-5 4z M7 8h10 M7 12h6',
   map: 'm3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2z M9 3v16 M15 5v16',
   incidents: 'm12 3 10 18H2z M12 9v5 M12 17h.01',
   advisories: 'M4 9h4l12-5v16L8 15H4z M8 15l2 6h4l-2-5',
@@ -63,7 +65,7 @@ export function WorkspaceShell({ user, section, recordId, loggingOut, logoutErro
       </div>
     </aside>
     <div className="workspace-frame">
-      <div className="workspace-bar"><span>Service operations / {titles[section] || label(section)}{recordId ? ' / Detail' : ''}</span><span>Asia/Manila</span></div>
+      <div className="workspace-bar"><span>Service operations / {titles[section] || label(section)}{recordId ? ' / Detail' : ''}</span><NotificationAccess /><span>Asia/Manila</span></div>
       <main id="main" ref={main} tabIndex={-1} className="workspace" key={section}>{children}</main>
     </div>
   </div>;

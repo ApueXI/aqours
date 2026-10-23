@@ -76,7 +76,7 @@ test('public incident, advisory and owned-report projections exclude private sen
   assert.equal(staffDetail.customer?.email, b.user.email);
   assert.equal(staffDetail.latitude, foreign.latitude);
   assert.ok((await ok<StaffIncident>(staff, 'GET', `/staff/incidents/${shared.id}`)).notes?.some(value => value.text === note));
-  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/lqkAAAAASUVORK5CYII=', 'base64');
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4AWP4DwQACfsD/c8LaHIAAAAASUVORK5CYII=', 'base64');
   const form = new FormData();
   form.append('file', new Blob([png], { type: 'image/png' }), 'fictional-privacy.png');
   const upload = await fetch(base + `/reports/${own.id}/attachments`, {

@@ -27,11 +27,11 @@ Account creation is separate from staff acceptance of assistance. The required �
 5. On expiry/revocation, show sign-in recovery without displaying another user's cached private data. Failed requests must not appear to have saved a report or accepted a service.
 6. Logout revokes the relevant server session, clears local authentication/private view state and returns to sign-in. Removing a token from the screen alone does not satisfy logout.
 
-Password recovery, MFA and public registration are not implicitly added to the demonstration scope.
+Profile supports signed-in password changes. Forgotten passwords require supplier-assisted identity verification and an administrative reset; automated email/SMS recovery, MFA and public registration remain outside the implemented scope.
 
 ## 3. Customer home and service location
 
-Home also offers [Open-Meteo weather](weather.md) for an owned saved connection or a selected Philippine city. The dedicated supplier Weather page (`/#/weather`) uses searchable Region/Province/City-Municipality selectors synchronized with a nationwide Leaflet locality map through desktop/mobile navigation. It starts in Laguna without a forecast; select a mapped locality to fetch weather. Province is skipped where absent, unavailable points show an explicit message, and parent changes clear children/old forecasts. Supplier selection clears on page exit/account change. Weather requests have their own loading/error/refresh state and do not change report locations, service zones or advisories.
+The Weather tab offers [Open-Meteo weather](weather.md) for an owned saved connection or a selected Philippine city. The dedicated supplier Weather page (`/#/weather`) uses searchable Region/Province/City-Municipality selectors synchronized with a nationwide Leaflet locality map through desktop/mobile navigation. It starts in Laguna without a forecast; select a mapped locality to fetch weather. Province is skipped where absent, unavailable points show an explicit message, and parent changes clear children/old forecasts. Supplier selection clears on page exit/account change. Weather requests have their own loading/error/refresh state and do not change report locations, service zones or advisories.
 
 1. After sign-in, load the customer's profile, saved connection/address, current applicable published notices and open reports.
 2. Match notices through explicit reviewed service-zone/connection associations. An applicable area advisory can reach a customer who has never submitted a report.
@@ -198,3 +198,7 @@ See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, gui
 ## Reference-led presentation — 22 October 2026
 
 Customer report detail exposes Summary, Messages and History. Messages opens `/reports/:id/messages`; History retains the report path with `?view=history`. The nested account/report workspace retains an unsent message while switching these views, but it is not durable across leaving/unmounting the workspace or process termination. Confirmed sends clear the composer; uncertain sends retain the existing operation for same-message retry. Assistance now ends in an explicit “Request received” reference with tracking/return links, before any supplier appointment or stock confirmation. Supplier incident Customer preview/Publish update/History and advisory Customer notice/Revision history separate published snapshots from operational edit controls. Supplier record creation, editing, publication, review, and operational transitions use modal forms; expected-version checks remain in effect. See [UI/UX](ui-ux.md) for interaction and verification details.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.

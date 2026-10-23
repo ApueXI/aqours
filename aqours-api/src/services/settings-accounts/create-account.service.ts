@@ -1,3 +1,4 @@
+import { createConnection } from "../settings-connections/create-connection.service.js";
 import type { DB } from "../../config/database.js";
 
 import {
@@ -11,7 +12,7 @@ import { hashPassword } from "../../utils/password.js";
 
 export async function createAccount(db: DB, req: CommandContext) {
   const input = req.body,
-    { password, ...fields } = input;
+    { password, connection, ...fields } = input;
   const doc = await create(db, "user", {
     ...fields,
     email: fields.email.toLowerCase(),
@@ -29,5 +30,8 @@ export async function createAccount(db: DB, req: CommandContext) {
     undefined,
     true,
   );
+  if (connection) await createConnection(db, {
+    ...req, body: { ...connection, customerId: doc.id },
+  });
   return userSafe(doc);
 }

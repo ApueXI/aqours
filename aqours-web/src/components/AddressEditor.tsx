@@ -6,12 +6,9 @@ import { ResourceState } from './Status';
 const levelLabel = (level: string) => level === 'sub_municipality' ? 'District' : level.replaceAll('_', ' ');
 function AddressLevel({ parent, selected, onSelect }: { parent?: PsgcPart; selected?: PsgcPart; onSelect: (place: PsgcPlace | undefined) => void }) {
   const resource = useResource<PsgcPlace[]>(parent ? `/locations/psgc/children?parentCode=${parent.code}` : '/locations/psgc/regions');
-  const [search, setSearch] = useState('');
   const title = parent ? `Place within ${parent.name}` : 'Region';
-  // Retain the selected option while searching so the browser never submits an invisible replacement.
-  const places = (resource.data || []).filter(place => place.code === selected?.code || place.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
+  const places = resource.data || [];
   return <div>
-    <label className="field"><span>Search {title.toLowerCase()}</span><input value={search} onChange={event => setSearch(event.target.value)} /></label>
     <label className="field"><span>{title} *</span><select aria-label={title} required value={selected?.code || ''} disabled={!resource.data}
       onChange={event => onSelect(resource.data?.find(place => place.code === event.target.value))}>
       <option value="">Select…</option>{places.map(place => <option key={place.code} value={place.code}>{place.name} · {levelLabel(place.level)}</option>)}

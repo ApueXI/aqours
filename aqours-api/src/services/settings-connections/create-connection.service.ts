@@ -1,6 +1,6 @@
 import { addressFields } from "../location/psgc-catalog.service.js";
 import type { DB } from "../../config/database.js";
-import { create, event, get } from "../../repositories/domain.repository.js";
+import { create, event, get, reference } from "../../repositories/domain.repository.js";
 import type { CommandContext } from "../../types/command-context.js";
 import { fail } from "../../utils/errors.js";
 import { coordinates } from "../../validators/common.js";
@@ -22,6 +22,7 @@ export async function createConnection(db: DB, req: CommandContext) {
     "connection",
     {
       ...input,
+      reference: input.reference ?? reference("CON"),
       ...addressFields(input),
       zoneId: input.zoneId ?? null,
       latitude: input.latitude ?? null,

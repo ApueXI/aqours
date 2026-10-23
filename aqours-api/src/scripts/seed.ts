@@ -11,7 +11,7 @@ export async function seed() {
     await advisoryLock(db, "aqours-demo-seed");
     const rows = await db.seedMarker.findMany({ select: { id: true } });
     if (rows.length) {
-      console.log("Demo seed already applied; existing records preserved.");
+      console.log("Demo seed already applied; existing records preserved. Time-sensitive sessions may have expired. Manage pickup times in Water distribution; rerunning seed does not refresh dates or reset passwords.");
       return;
     }
     if (await db.entity.count())

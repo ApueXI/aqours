@@ -28,7 +28,7 @@ For future deployment, supply secrets through the hosting environment and omit t
 
 `migrate` deploys the checked-in Prisma migration history. Existing databases must first run `migrate:adopt` after stopping writers and backing up; see the adoption guide below. Repeated deploy/seed commands preserve state. Keep both applied migration histories unchanged. The demo seed requires `SEED_DEMO=1`, rejects production and nonempty unseeded databases, runs atomically, and preserves existing records on repeated runs. Startup never migrates, seeds, resets or clears data. `createApp()` in `src/app.ts` supports HTTP integration tests. `/health` confirms HTTP process health; it does not claim database readiness. Default API port is 4000 and exact browser origin is `http://localhost:5173`. Configuration names/defaults are in `.env.example`; placeholder values are not working credentials. `TSX_DISABLE_CACHE=1` prevents development transform caches outside this project.
 
-Fresh fixtures use canonical Laguna PSGC addresses and synthetic local geometry. Existing v1 fixtures require the explicit guarded `SEED_DEMO=1 npm run seed:upgrade-laguna` command with database configuration supplied. See [upgrade safeguards and setup](../docs/setup.md#upgrading-original-demo-locations-to-laguna); normal seeding never upgrades stored locations. Admin Overview and customer Home retain the existing seven-day [Open-Meteo forecasts](../docs/weather.md).
+Fresh fixtures use canonical Laguna PSGC addresses and synthetic local geometry. Existing v1 fixtures require the explicit guarded `SEED_DEMO=1 npm run seed:upgrade-laguna` command with database configuration supplied. See [upgrade safeguards and setup](../docs/setup.md#upgrading-original-demo-locations-to-laguna); normal seeding never upgrades stored locations. Supplier Weather and the customer Weather tab retain the existing seven-day [Open-Meteo forecasts](../docs/weather.md).
 
 ## Distribution monitoring
 
@@ -77,3 +77,7 @@ All API routes in the v1 contract are registered, including supplier map/metrics
 Run the API unit suite for cryptographic/input/advisory invariants. Root verification exercises real HTTP/PostgreSQL behavior and concurrency; see the repository's verification evidence for executed checks and deployment limitations. Local unit tests alone do not prove Android device behavior, live Geoapify availability, external TLS deployment or backup restoration.
 
 The API uses Prisma domain models and layered routes/controllers/services/repositories. See [directory navigation](../docs/directory-structure.md), [schema](../docs/schema.md), and [existing-database adoption](../docs/setup.md#adopting-prisma-on-an-existing-database) before upgrading a populated installation.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](../docs/workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.

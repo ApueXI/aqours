@@ -1,3 +1,4 @@
+import { ChangePassword } from '../components/change-password';
 import type { Connection, User } from '@aqours/contracts';
 import { View } from 'react-native';
 import { useSession } from '@/features/auth/hooks/session';
@@ -22,6 +23,7 @@ export default function Profile() {
     </Section>
     <Body muted>The supplier maintains saved connection details. An alternate issue address only applies to that report.</Body>
     <Button title="Refresh account and connection details" secondary onPress={() => { void profile.reload(); void connections.reload(); }} />
+    <ChangePassword />
     <Button title="Sign out" secondary onPress={() => void logout()} />
   </Screen>;
 }

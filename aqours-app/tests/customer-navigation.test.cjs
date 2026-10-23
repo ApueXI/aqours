@@ -8,12 +8,12 @@ test('customer tab navigator presents five named destinations and keeps public r
   const runtime = screenRuntime('app/(customer)/(tabs)/_layout.tsx');
   const tree = runtime.render('default');
   const screens = nodes(tree, 'TabScreen');
-  assert.deepEqual(screens.map(item => item.props.options.title), ['Home', 'Reports', 'Assistance', 'Updates', 'Profile']);
-  assert.deepEqual(screens.map(item => item.props.options.tabBarAccessibilityLabel), ['Home tab', 'Reports tab', 'Assistance tab', 'Updates tab', 'Profile tab']);
+  assert.deepEqual(screens.filter(item => item.props.options.href !== null).map(item => item.props.options.title), ['Home', 'Reports', 'Messages', 'Weather', 'Profile']);
+  assert.deepEqual(screens.filter(item => item.props.options.href !== null).map(item => item.props.options.tabBarAccessibilityLabel), ['Home tab', 'Reports tab', 'Messages tab', 'Weather tab', 'Profile tab']);
   const routeRoot = path.join(__dirname, '../src/app/(customer)');
   const urls = fs.readdirSync(routeRoot, { recursive: true }).filter(file => file.endsWith('.tsx') && !file.endsWith('_layout.tsx'))
     .map(file => '/' + file.replaceAll(path.sep, '/').split('/').filter(segment => !segment.startsWith('(')).join('/').replace(/\.tsx$/, '').replace(/(^|\/)index$/, ''));
-  for (const url of ['/', '/reports', '/reports/new', '/reports/[id]', '/reports/[id]/messages', '/reports/[id]/guidance', '/assistance', '/assistance/new', '/assistance/[id]', '/notifications', '/profile', '/advisories/[id]', '/incidents/[id]']) {
+  for (const url of ['/', '/reports', '/reports/new', '/reports/[id]', '/reports/[id]/messages', '/reports/[id]/guidance', '/assistance', '/assistance/new', '/assistance/[id]', '/notifications', '/messages', '/weather', '/service', '/profile', '/advisories/[id]', '/incidents/[id]']) {
     assert.ok(urls.includes(url), `Existing public route ${url} remains available`);
   }
 });
@@ -66,7 +66,7 @@ test('all five Android tab glyphs fit their native boxes at large text while lab
     });
     const tree = runtime.render('default');
     assert.ok(tree.props.screenOptions.tabBarItemStyle.minHeight >= 48);
-    for (const screen of nodes(tree, 'TabScreen')) {
+    for (const screen of nodes(tree, 'TabScreen').filter(item => item.props.options.href !== null)) {
       const icon = screen.props.options.tabBarIcon({ color: '#147d77' });
       assert.ok(icon.props.size * fontScale <= icon.props.style.height + 0.01,
         `${screen.props.options.title} glyph must not be clipped by its native box at scale ${fontScale}`);

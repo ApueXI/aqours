@@ -9,7 +9,7 @@ Status: **implemented first-release behavior; acceptance evidence remains qualif
 - Give each seeded customer access to their own reports, assistance requests, notifications, profile, and saved service connection.
 - Users are fictional demo customers; staff/admin accounts belong to the supplier workspace.
 - Scope is login, session restoration, logout/revocation, and protected customer navigation.
-- Public registration is optional; this feature does not assume an account-approval queue, password reset, or social login.
+- Public registration is optional; no account-approval queue, automated forgotten-password recovery, or social login is implemented. Profile provides current-password-verified password changes; forgotten passwords require supplier-assisted reset.
 
 ---
 
@@ -63,3 +63,7 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 Actual installed N1–5/N14/N20/N22–26 cover accounts, server-verified SecureStore cold starts, generic invalid credentials, foreign denial, revocation/expiry and guest-offline sign-out with persisted pending revocation across restart and real-network retry. See the [native ledger](../../../native-verification.md); API replay/role checks remain separate evidence.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](../../../workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.

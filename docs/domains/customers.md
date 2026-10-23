@@ -1,6 +1,6 @@
 # Customer domain
 
-Customers can [check current weather and seven-day forecasts](../weather.md) on Home using an owned saved connection or a selected Philippine city. Weather search does not update saved addresses or require GPS.
+Customers can [check current weather and seven-day forecasts](../weather.md) on the Weather tab using an owned saved connection or a selected Philippine city. Weather search does not update saved addresses or require GPS.
 
 Status: **implemented first-release customer workflows**, updated 19 October 2026. Installed Android workflows now have individually scoped [native evidence](../native-verification.md); live-provider and remaining acceptance checks are recorded in [verification](../verification.md) and [traceability](../traceability.md). Product source: brief v0.4 and [requirements](../requirements.md).
 

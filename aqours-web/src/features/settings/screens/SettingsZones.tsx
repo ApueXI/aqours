@@ -9,7 +9,7 @@ function ZoneForm({ d, refresh }: { d?: Zone; refresh: () => void }) {
   const fields: Field[] = [
     ...(!d ? [{ name: 'code', label: 'Unique zone code', required: true }] : []),
     { name: 'name', label: 'Zone name', value: d?.name, required: true },
-    { name: 'boundary', label: 'Display boundary (optional)', type: 'json', value: d?.boundary ? JSON.stringify(d.boundary) : '', nullable: true, hint: 'GeoJSON Polygon / MultiPolygon. A display boundary does not confirm supply connectivity.' },
+    { name: 'boundary', label: 'Map outline (optional GeoJSON)', type: 'json', value: d?.boundary ? JSON.stringify(d.boundary) : '', nullable: true, hint: 'Optional outline used to draw this zone on the map. Leave blank if unavailable. Use GeoJSON Polygon or MultiPolygon; assign connections to zones separately.' },
     { name: 'active', label: 'Active service zone', type: 'checkbox', value: d?.active ?? true },
     ...(d ? [{ name: 'reason', label: 'Change reason', type: 'textarea' as const, required: true }] : [{ name: 'demo', label: 'Fictional demonstration zone', type: 'checkbox' as const }]),
   ];
@@ -23,7 +23,7 @@ export function SettingsZones() {
   const matches = (item: NonNullable<typeof resource.data>[number]) => `${item.code} ${item.name}`.toLowerCase().includes(search.trim().toLowerCase());
   return <><h2>Service zones</h2><button onClick={refresh}>Refresh zones</button><label className="field settings-search"><span>Find a zone</span><input value={search} onChange={event => setSearch(event.target.value)} /></label><ResourceState resource={resource}>
     {resource.data?.filter(matches).map(item => <article className="entry" key={item.id}><h3>{item.code} · {item.name}</h3><Demo value={item.demo} />
-      <p>{item.active ? 'Active' : 'Inactive'} · {item.boundary ? 'Boundary recorded' : 'No display boundary'}</p><FormDialog title={`Edit ${item.name}`} triggerLabel={`Edit ${item.name}`}>
+      <p>{item.active ? 'Active' : 'Inactive'} · {item.boundary ? 'Boundary recorded' : 'No map outline; connections can still be assigned'}</p><FormDialog title={`Edit ${item.name}`} triggerLabel={`Edit ${item.name}`}>
         <ZoneForm d={item} refresh={refresh} />
       </FormDialog>
     </article>)}{resource.data?.filter(matches).length === 0 && <p>No zones.</p>}

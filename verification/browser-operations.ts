@@ -77,7 +77,7 @@ async function reviewUnlocated(page: Page, a: Actor, staff: Actor, item: Report,
   passed('Staff acknowledges/assigns urgent unlocated report with reason/time history and no invented zone or coordinates');
 }
 async function protectedPhoto(page: Page, a: Actor, b: Actor, item: Report, passed: Passed) {
-  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/lqkAAAAASUVORK5CYII=', 'base64');
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4AWP4DwQACfsD/c8LaHIAAAAASUVORK5CYII=', 'base64');
   const form = new FormData();
   const filename = 'fictional-operations-one-pixel.png';
   form.append('file', new Blob([png], {type: 'image/png'}), filename);
