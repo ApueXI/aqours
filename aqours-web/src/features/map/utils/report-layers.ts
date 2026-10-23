@@ -115,7 +115,7 @@ export function createReportLayers(map: L.Map, onSelect: (id: string) => void, o
       const parent = reports.getVisibleParent(marker);
       if (parent instanceof L.MarkerCluster) parent.spiderfy();
       // Selection belongs to the record, so viewport reconciliation must not remove its popup.
-      selectionPopup ??= L.popup({ autoPan: false });
+      selectionPopup ??= L.popup({ autoPan: true, autoPanPadding: [16, 16] });
       selectionPopup.setLatLng(point).setContent(pointPopup(properties, onOpen)).openOn(map);
     },
     visibility(next: Visibility) {

@@ -108,3 +108,6 @@ The reference-led layout folds labeled navigation at 1100px and uses labeled ope
 ## Workflow update — 23 October 2026
 
 See [account, notification, conversation and customer workflow corrections](../docs/workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.
+
+
+Reports presentation uses a shared responsive shell, independent Overview KPI cards, semantic tables with trailing actions, and a modal `FilterBar`. The interface uses Feather outline icons from `react-icons`; Leaflet's existing category symbols remain domain-specific. See [UI behavior](../docs/ui-ux.md#supplier-reports-redesign--24-october-2026). For controlled browser verification, run `node --experimental-strip-types verification/browser-reports-workspace.ts` from the repository root against a loopback Vite preview on port 5198; API requests are mocked and output stays in `.local/reports-redesign/verified/`. Set `AQOURS_CHROMIUM` if the installed Chromium-family browser is elsewhere.

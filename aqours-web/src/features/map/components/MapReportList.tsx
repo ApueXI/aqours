@@ -1,3 +1,4 @@
+import { FiSearch, FiMapPin, FiArrowUpRight } from 'react-icons/fi';
 import type { Report } from '@aqours/contracts';
 import type { Resource } from '../../../hooks/useResource';
 import { Pagination } from '../../../components/Pagination';
@@ -14,17 +15,18 @@ export function MapReportList({ resource, rows, selectedId, returnTo, offset, se
     <h2 id="map-list-heading">Report list{resource.data ? ` · ${rows.length}` : ''}</h2>
     <form className="map-list-search" key={search} onSubmit={event => { event.preventDefault(); onSearch(String(new FormData(event.currentTarget).get('q') || '').trim()); }}>
       <label htmlFor="map-report-search">Find reference or issue address</label><div className="map-search-controls"><input id="map-report-search" name="q" defaultValue={search} />
-      <button type="submit" aria-label="Search list and map">Search</button></div>{search && <button type="button" className="map-search-clear" onClick={() => onSearch('')}>Clear search</button>}
+      <button type="submit" aria-label="Search list and map"><FiSearch aria-hidden="true" />Search</button></div>{search && <button type="button" className="map-search-clear" onClick={() => onSearch('')}>Clear search</button>}
     </form>
     <ResourceState resource={resource}>{resource.data && <>
       {search && <p className="hint map-result-count">Matching “{search}” in the list and mapped viewport.</p>}
-      {rows.length === 0 ? <p className="empty-state">No reports match this list.</p> : <div className="table-scroll responsive-table map-list-rows" tabIndex={0} role="region" aria-label="Scrollable report locations"><table>
-        <thead><tr><th>Reference / status</th><th>Issue location</th></tr></thead>
+      {rows.length === 0 ? <p className="empty-state">No reports match this list.</p> : <div className="table-scroll data-table map-list-rows" tabIndex={0} role="region" aria-label="Scrollable report locations"><table>
+        <thead><tr><th>Reference / status</th><th>Issue location</th><th className="action-column">Actions</th></tr></thead>
         <tbody>{rows.slice(offset, offset + 30).map(item => <tr key={item.id} className={selectedId === item.id ? 'selected-report-row' : undefined} aria-selected={selectedId === item.id}>
-          <td><a href={detailLink('reports', item.id, returnTo)}>{item.reference}</a>
-            <span className="report-row-status">{label(item.category)} · {label(item.status)} · {label(item.priority)}</span>
-            <button type="button" className="report-map-select" onClick={() => onSelect(item.id)} aria-label={`Select ${item.reference} on map`}>Select on map</button></td>
+          <th scope="row"><span className="report-reference">{item.reference}</span>
+            <span className="report-row-status">{label(item.category)} · {label(item.status)} · {label(item.priority)}</span></th>
           <td data-label="Issue address">{item.address}<span className="report-row-status">{item.latitude === null || item.longitude === null ? 'No coordinates' : 'Located'}{item.locationReview ? ' · Review needed' : ''}</span></td>
+          <td className="map-row-actions"><button type="button" className="icon-action" onClick={() => onSelect(item.id)} aria-label={`Select ${item.reference} on map`} title="Select on map"><FiMapPin aria-hidden="true" /></button>
+            <a className="icon-action" href={detailLink('reports', item.id, returnTo)} aria-label={`Open ${item.reference}`} title="Open report"><FiArrowUpRight aria-hidden="true" /></a></td>
         </tr>)}</tbody>
       </table></div>}
       <Pagination offset={offset} total={rows.length} onChange={onOffset} />

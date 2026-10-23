@@ -1,3 +1,4 @@
+import { FiInbox, FiRefreshCw, FiMap, FiList } from 'react-icons/fi';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Advisory, Connection, MapResponse, Report, StaffIncident } from '@aqours/contracts';
 import { query } from '../../../services/http-client';
@@ -52,11 +53,8 @@ export function MapPage({ params }: { params: URLSearchParams }) {
   const open = (id: string) => { window.location.hash = detailLink('reports', id, returnTo); };
   const refresh = () => { void connections.refresh(); void reports.refresh(); void list.refresh(); void incidents.refresh(); void advisories.refresh(); };
 
-  const activeFilters = Object.values(filters).filter(Boolean).length + (unlocated ? 1 : 0);
-  return <><PageTitle title="Report map"><a href={`#/reports${query(filters)}`} aria-label="Open inbox with filters">Open inbox</a><button onClick={refresh}>Refresh</button></PageTitle>
-    <details className="map-filter-disclosure"><summary><span>Filters{activeFilters ? ` (${activeFilters} active)` : ''}</span>
-      {reports.data && <span className="map-scope-count">{mapReports?.features.length ?? 0} reports shown · {reports.data.unlocatedCount} unlocated</span>}
-    </summary>
+  return <><PageTitle title="Reports map"><a href={`#/reports${query(filters)}`} aria-label="Open inbox with filters" className="button-link"><FiInbox aria-hidden="true" />Open inbox</a><button onClick={refresh}><FiRefreshCw aria-hidden="true" />Refresh</button></PageTitle>
+    <div className="map-filter-toolbar">
     <FilterBar values={filters} zones={refs.zones.data} owners={refs.users.data} priority onChange={next => {
       window.location.hash = mapLocation(next, { view, unlocated, q: search }); setOffset(0);
     }} />
@@ -64,14 +62,14 @@ export function MapPage({ params }: { params: URLSearchParams }) {
       setUnlocated(event.target.checked); navigate({ unlocated: event.target.checked }); setOffset(0);
     }} />Show only reports without coordinates</label>
     {reports.data && <p className="map-coverage">{mapReports?.features.length ?? 0} mapped{search ? ` matching “${search}” in the retrieved viewport subset` : ''} · {reports.data.total} reports in the viewport before text search · {reports.data.unlocatedCount} unlocated reports across the selected filters</p>}
-    </details>
+    </div>
     <ResourceState resource={reports}>
       {reports.data?.truncated && <p className="notice">Results are capped at {reports.data.limit} markers. Zoom in or narrow filters to inspect all locations.</p>}
       {mapReports?.features.length === 0 && <p>No mapped reports match this viewport and search. This does not establish normal supply or safe water.</p>}
     </ResourceState>
     <div className="map-mobile-view" aria-label="Report view">
-      <button type="button" aria-pressed={view === 'list'} onClick={() => navigate({ view: 'list' })}>List</button>
-      <button type="button" aria-pressed={view === 'map'} onClick={() => navigate({ view: 'map' })}>Map</button>
+      <button type="button" aria-pressed={view === 'list'} onClick={() => navigate({ view: 'list' })}><FiList aria-hidden="true" />List</button>
+      <button type="button" aria-pressed={view === 'map'} onClick={() => navigate({ view: 'map' })}><FiMap aria-hidden="true" />Map</button>
     </div>
     <div className="map-workspace" data-view={view}>
       <MapReportList resource={list} rows={rows} selectedId={selectedId} returnTo={returnTo} offset={offset} search={search}

@@ -37,7 +37,7 @@ export function MapCanvas({ reports, areas, selected, focusKey, onBounds, onSele
     const map = L.map(container.current, { center: defaultMapCenter, zoom: defaultMapZoom, minZoom: 3, maxZoom: 20,
       maxBounds: [[-85, -180], [85, 180]], maxBoundsViscosity: 1, zoomControl: false,
       zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false });
-    L.control.zoom({ position: 'topright' }).addTo(map);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
     L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
     let tiles: L.TileLayer | undefined;
     if (config.url) {
@@ -66,7 +66,13 @@ export function MapCanvas({ reports, areas, selected, focusKey, onBounds, onSele
   }, []);
   useEffect(() => { runtime.current?.layers.update(reports, areas, selected); }, [reports, areas, selected]);
   useEffect(() => {
-    if (selected) runtime.current?.layers.select(selected.id);
+    if (selected && runtime.current) {
+      runtime.current.map.invalidateSize({ pan: true });
+      if (selected.latitude !== null && selected.longitude !== null) {
+        runtime.current.map.panTo([selected.latitude, selected.longitude], { animate: false });
+      }
+      runtime.current.layers.select(selected.id);
+    }
     else runtime.current?.map.closePopup();
   }, [selected?.id, focusKey]);
   useEffect(() => { runtime.current?.layers.visibility(visibility); }, [visibility]);

@@ -1,6 +1,6 @@
-import type { FormEvent } from 'react';
 import { categories, type User, type Zone } from '@aqours/contracts';
-import { Fields, type Field, type Option } from './ActionForm';
+import { type Field, type Option } from './ActionForm';
+import { FilterDialog } from './FilterDialog';
 import { label } from './Status';
 
 export const options = (values: readonly string[]): Option[] => values.map(value => ({ value, label: label(value) }));
@@ -25,24 +25,5 @@ export function FilterBar({ values, onChange, statuses = reportStatuses, zones, 
     ...(owners ? [{ name: 'ownerId', label: 'Owner', type: 'select' as const, options: ownerOptions(owners) }] : []),
     ...(priority ? [{ name: 'priority', label: 'Priority', type: 'select' as const, options: options(['normal', 'high', 'urgent']) }] : []),
   ];
-  const apply = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const next = Object.fromEntries(fields.map(field => {
-      const value = String(data.get(field.name) || '');
-      return [field.name, field.type === 'datetime-local' && value ? new Date(`${value}:00+08:00`).toISOString() : value];
-    }));
-    onChange(next);
-  };
-  const prepared = fields.map(field => ({ ...field, value: values[field.name], placeholder: 'All' }));
-  const primary = prepared.filter(field => ['category', 'type', 'status'].includes(field.name));
-  const advanced = prepared.filter(field => !['category', 'type', 'status'].includes(field.name));
-  const active = advanced.filter(field => values[field.name]).length;
-  return <form key={JSON.stringify(values)} className="filters" aria-label="Filter records" onSubmit={apply}>
-    <Fields fields={primary} />
-    <details className="filter-more"><summary>More filters{active ? ` · ${active} active` : ''}</summary><div className="filter-fields"><Fields fields={advanced} /></div></details>
-    <div className="filter-actions"><button type="submit">Apply filters</button>
-      {Object.values(values).some(Boolean) && <button type="button" onClick={() => onChange({})}>Clear filters</button>}
-    </div>
-  </form>;
+  return <FilterDialog fields={fields} values={values} onChange={onChange} />;
 }

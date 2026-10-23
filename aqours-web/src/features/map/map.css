@@ -1,4 +1,4 @@
-.map-workspace { display: grid; grid-template-columns: minmax(340px, 0.85fr) minmax(0, 1.6fr); gap: 20px; align-items: start; }
+.map-workspace { display: grid; grid-template-columns: minmax(420px, 1fr) minmax(0, 1.25fr); gap: 16px; align-items: start; }
 .map-workspace > * { min-width: 0; }
 .map-report-list { background: white; border: 1px solid #d3dce3; border-radius: 8px; overflow: hidden; }
 .map-report-list h2, .map-report-list > .check-field, .map-report-list > p { margin: 16px; }
@@ -74,3 +74,11 @@
 .report-marker svg, .map-legend-swatch svg { width: 22px; height: 22px; }
 .report-cluster span { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; }
 .map-legend-swatch { display: grid; place-items: center; color: white; width: 28px; height: 28px; }
+
+.map-report-list .map-list-rows { overflow: auto; }
+.map-report-list .map-list-rows table { min-width: 440px; }
+.map-report-list .map-row-actions { white-space: nowrap; }
+.map-report-list .report-row-status { font-weight: 400; }
+.map-list-rows th:last-child, .map-list-rows td:last-child { background: white; position: sticky; right: 0; z-index: 1; }
+.leaflet-control-scale-line { text-shadow: none; }
+.map-report-list .map-list-rows .map-row-actions { min-width: 116px; white-space: nowrap; }
