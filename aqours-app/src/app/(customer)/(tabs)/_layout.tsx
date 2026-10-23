@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
-import { Text } from 'react-native';
+import { Platform, Text, useWindowDimensions } from 'react-native';
 import { colors } from '@/components/ui';
 
 const destinations = [
@@ -12,6 +12,8 @@ const destinations = [
 ] as const;
 
 export default function CustomerTabs() {
+  const { fontScale } = useWindowDimensions();
+  const symbolSize = Platform.OS === 'android' ? 23 / fontScale : 23;
   return <Tabs screenOptions={{
     headerTitle: 'Aqours', headerTitleAlign: 'left', headerShadowVisible: false,
     headerStyle: { backgroundColor: colors.surface }, headerTintColor: colors.text,
@@ -24,7 +26,8 @@ export default function CustomerTabs() {
       title: item.title, tabBarAccessibilityLabel: `${item.title} tab`,
       tabBarLabel: ({ color }) => <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}
         style={{ fontSize: 12, fontWeight: '600', color, textAlign: 'center' }}>{item.title}</Text>,
-      tabBarIcon: ({ color }) => <SymbolView name={{ ios: item.ios, android: item.android, web: item.android }} size={23} tintColor={color} />,
+      tabBarIcon: ({ color }) => <SymbolView name={{ ios: item.ios, android: item.android, web: item.android }} size={symbolSize}
+        style={{ width: 23, height: 23, alignItems: 'center', justifyContent: 'center' }} tintColor={color} />,
     }} />)}
   </Tabs>;
 }

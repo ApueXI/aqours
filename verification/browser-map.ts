@@ -5,8 +5,8 @@ import {chromium,expect} from '@playwright/test';
 import type {Report,Zone} from '../aqours-contracts/src/index.ts';
 import {connection,denied,fixturePassword,key,login,ok} from './harness.ts';
 
-// Start the web process with VITE_MAP_TILE_URL=https://tiles.example.test/{z}/{x}/{y}.png.
-// Automated pan/zoom uses local images and never requests public provider tiles.
+// The custom-template and synthetic Geoapify-key builds both use intercepted local images.
+// Automated pan/zoom never requests public provider tiles.
 const output=path.resolve('.local/evidence');
 const temporary=path.resolve('.cache/tmp');
 await Promise.all([mkdir(output,{recursive:true}),mkdir(temporary,{recursive:true})]);
@@ -15,13 +15,17 @@ const other=await login('customer02@demo.aqours.test');
 const admin=await login('admin@demo.aqours.test','web');
 const zone=await ok<Zone>(admin,'POST','/staff/settings/zones',{code:`MAP-${key()}`,name:'Fictional isolated rendered map zone',demo:true,boundary:{type:'Polygon',coordinates:[[[121.16,14.22],[121.18,14.22],[121.18,14.24],[121.16,14.24],[121.16,14.22]]]}});
 const fixtures:Report[]=[];
-for (const actor of [customer,other]) {
+const categories=['outage','leak','low_pressure','water_quality'];
+const labels=['No water','Leak','Low pressure','Water quality'];
+const colors=['rgb(220, 38, 38)','rgb(37, 99, 235)','rgb(180, 83, 9)','rgb(124, 58, 237)'];
+for (const [index,category] of categories.entries()) {
+  const actor=[customer,other][index%2];
   let item=await ok<Report>(actor,'POST','/reports',{
-    connectionId:(await connection(actor)).id,category:'leak',noticedAt:new Date().toISOString(),
+    connectionId:(await connection(actor)).id,category,noticedAt:new Date().toISOString(),
     description:'Fictional independent report at the same rendered map point',
     location:{address:'Fictional map center',source:'gps',confirmed:true,latitude:14.23,longitude:121.17},
   });
-  item=await ok<Report>(admin,'PATCH',`/staff/reports/${item.id}`,{expectedVersion:item.version,zoneId:zone.id,zoneConfirmed:true,reason:'Reviewed independent overlap fixture'});
+  item=await ok<Report>(admin,'PATCH',`/staff/reports/${item.id}`,{expectedVersion:item.version,zoneId:zone.id,zoneConfirmed:true,priority:['normal','high','urgent','normal'][index],reason:'Reviewed independent overlap fixture'});
   fixtures.push(item);
 }
 const [item,companion]=fixtures;
@@ -49,25 +53,24 @@ page.on('request',request=>{
 });
 page.on('response',response=>{
   if(response.url().includes('/staff/map/reports?')&&response.status()===200)mapQueries.push(new URL(response.url()));
-  if(response.url().startsWith('https://tiles.example.test/')&&response.status()>=400)providerFailures.push(String(response.status()));
+  if(/^https:\/\/(tiles\.example\.test|maps\.geoapify\.com)\//.test(response.url())&&response.status()>=400)providerFailures.push(String(response.status()));
 });
 const width=()=>{
   const query=mapQueries.at(-1)?.searchParams;
   return query?Number(query.get('east'))-Number(query.get('west')):360;
 };
 const tile=await readFile(new URL('./fixtures/street-tile.png',import.meta.url));
-const localTile='https://tiles.example.test/**';
+const localTile=/^https:\/\/(tiles\.example\.test|maps\.geoapify\.com)\//;
 try{
   await page.route(localTile,route=>route.fulfill({contentType:'image/png',body:tile}));
-  // Fail if a test accidentally falls back to public tiles.
-  await page.route('https://maps.geoapify.com/**',route=>route.abort());
+  // No other public raster source is allowed to slip through.
   await page.route('https://tile.openstreetmap.org/**',route=>route.abort());
   await page.goto(web);
   await page.getByLabel('Email',{exact:true}).fill('staff@demo.aqours.test');
   await page.getByLabel('Password',{exact:true}).fill(fixturePassword);
   await page.getByRole('button',{name:'Sign in',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Overview',exact:true})).toBeVisible();
-  const raster=page.waitForResponse(response=>response.url().startsWith('https://tiles.example.test/'),{timeout:30000});
+  const raster=page.waitForResponse(response=>localTile.test(response.url()),{timeout:30000});
   observingMap=true;
   await page.goto(`${web}/#/map?zoneId=${zone.id}`);
   assert.equal((await raster).status(),200);
@@ -75,28 +78,56 @@ try{
   await expect(page.locator('.leaflet-container')).toBeVisible();
   await expect(page.locator('.leaflet-tile-loaded').first()).toBeVisible();
   await expect(page.getByRole('alert').filter({hasText:/Street tiles/})).toHaveCount(0);
-  await expect(page.getByText('2 mapped of 2 matching reports in the viewport · 0 unlocated reports across the selected filters',{exact:true})).toBeVisible();
+  await expect(page.locator('.map-scope-count')).toHaveText('4 shown · 0 unlocated');
+  await page.locator('details.map-filter-disclosure > summary').click();
+  await expect(page.getByText('4 mapped · 4 reports in the viewport before text search · 0 unlocated reports across the selected filters',{exact:true})).toBeVisible();
+  await page.locator('details.map-filter-disclosure > summary').click();
   passed('Leaflet renders local raster tiles and requests actual bounded viewport data');
 
   await expect(page.locator('.report-cluster')).toHaveCount(1);
+  await expect(page.locator('.report-cluster')).toHaveText('4');
+  await expect(page.locator('.report-cluster')).toHaveCSS('background-color','rgb(71, 85, 105)');
   await page.locator('.report-cluster').click();
-  await expect(page.locator('.report-marker')).toHaveCount(2);
+  await expect(page.locator('.report-marker')).toHaveCount(4);
   const centers=await page.locator('.report-marker').evaluateAll(nodes=>nodes.map(node=>{const b=node.getBoundingClientRect();return [b.x,b.y];}));
   assert.notDeepEqual(centers[0],centers[1]);
-  for (const fixture of fixtures) {
-    await page.locator(`.report-marker[title^="${fixture.reference}"]`).click();
+  for (const [index,fixture] of fixtures.entries()) {
+    const marker=page.locator(`.report-marker[title^="${fixture.reference}"]`);
+    await expect(marker).toHaveAccessibleName(`${fixture.reference} · ${labels[index]} · ${fixture.priority} priority`);
+    await expect(marker.locator('span')).toHaveCSS('background-color',colors[index]);
+    const legend=page.getByRole('list',{name:'Report types'}).getByRole('listitem').filter({hasText:labels[index]});
+    await expect(legend.locator('.map-legend-swatch')).toHaveCSS('background-color',colors[index]);
+    if (await page.locator('.leaflet-popup-close-button').count()) await page.locator('.leaflet-popup-close-button').click();
+    await marker.click();
     await expect(page.locator('.leaflet-popup')).toHaveCount(1);
     await expect(page.locator('.leaflet-popup').getByText(fixture.reference,{exact:true})).toBeVisible();
     await expect(page.getByRole('region',{name:'Selected report',exact:true})).toContainText(fixture.reference);
     await expect(page).toHaveURL(new RegExp(`selected=${fixture.id}`));
+    await expect(page.locator('.leaflet-popup')).toContainText(`${labels[index]} · received · ${fixture.priority} priority`);
   }
-  passed('A real overlapping-report cluster expands into distinct selectable markers');
+  passed('A neutral counted cluster expands into four category colors with matching legend, accessible labels and priority text');
+
+  fixtures[3]=await ok<Report>(admin,'PATCH',`/staff/reports/${fixtures[3].id}`,{
+    expectedVersion:fixtures[3].version,priority:'urgent',reason:'Verify category color is independent of priority',
+  });
+  await page.getByRole('button',{name:'Refresh',exact:true}).click();
+  await expect(page.getByRole('region',{name:'Selected report',exact:true})).toContainText(fixtures[3].reference);
+  await expect(page.locator('.leaflet-popup')).toContainText(fixtures[3].reference);
+  await expect(page.locator('.leaflet-popup')).toContainText('Water quality · received · urgent priority');
+  await expect(page.getByRole('region',{name:'Selected report',exact:true})).toContainText('Urgent priority');
+  await page.getByRole('button',{name:`Select ${fixtures[3].reference} on map`,exact:true}).click();
+  await expect(page.locator('.report-marker')).toHaveCount(4);
+  for (const [index,fixture] of fixtures.entries()) {
+    await expect(page.locator(`.report-marker[title^="${fixture.reference}"] span`)).toHaveCSS('background-color',colors[index]);
+  }
+  passed('Priority changes refresh text and retain selected report; expanded markers keep their category colors');
 
   const before=width();
   await page.getByRole('button',{name:'Zoom in',exact:true}).click();
   await expect.poll(width).toBeLessThan(before*.75);
   assert.ok(mapQueries.every(url=>url.searchParams.get('zoneId')===zone.id));
-  for (const [index,actor] of [customer,other].entries()) {
+  for (const [index] of fixtures.entries()) {
+    const actor=[customer,other][index%2];
     const current=await ok<Report>(actor,'GET',`/reports/${fixtures[index].id}`);
     assert.equal(current.version,fixtures[index].version);
     assert.equal(current.incidentId,fixtures[index].incidentId);
@@ -130,11 +161,11 @@ try{
 
   await page.setViewportSize({width:390,height:844});
   await page.getByRole('button',{name:'List',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'Report list',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:/^Report list(?: · \d+)?$/})).toBeVisible();
   await expect(page.locator('.leaflet-container')).toBeHidden();
   await page.getByRole('button',{name:'Map',exact:true}).click();
   await expect(page.locator('.leaflet-container')).toBeVisible();
-  await expect(page.getByRole('heading',{name:'Report list',exact:true})).toBeHidden();
+  await expect(page.getByRole('heading',{name:/^Report list(?: · \d+)?$/})).toBeHidden();
   const dimensions=await page.locator('.leaflet-container').boundingBox();
   assert.ok(dimensions&&dimensions.width>250&&dimensions.width<391);
   await page.screenshot({path:path.join(output,'web-map-mobile.png'),fullPage:true});
@@ -148,7 +179,7 @@ try{
   await expect(page.getByRole('link',{name:item.reference,exact:true})).toBeVisible();
   await page.unroute(localTile);
   await page.route(localTile,route=>route.fulfill({contentType:'image/png',body:tile}));
-  const recovery=page.waitForResponse(response=>response.url().startsWith('https://tiles.example.test/'));
+  const recovery=page.waitForResponse(response=>localTile.test(response.url()));
   await page.getByRole('button',{name:'Retry basemap',exact:true}).click();
   assert.equal((await recovery).status(),200);
   await expect(page.getByRole('alert').filter({hasText:'Street tiles could not load'})).toHaveCount(0);

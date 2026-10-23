@@ -1,17 +1,18 @@
 import { router, type Href } from 'expo-router';
 import { useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useKeyboardVisible } from '@/hooks/use-keyboard-visible';
 
 export const colors = {
-  background: '#f4f7f7', surface: '#ffffff', text: '#16312f', muted: '#526563',
-  border: '#cddbd9', action: '#0f766e', actionPressed: '#115e59', tint: '#e7f3f1',
+  background: '#f7f8f8', surface: '#ffffff', text: '#20312f', muted: '#56625f',
+  border: '#dde3e1', action: '#0f766e', actionPressed: '#115e59', tint: '#e7f3f1',
   danger: '#a63030', dangerTint: '#fff1f1', warning: '#805400', warningTint: '#fff7df',
 };
 export const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: colors.background },
   content: { padding: 20, paddingBottom: 32, gap: 20, maxWidth: 680, width: '100%', alignSelf: 'center' },
-  title: { fontSize: 28, lineHeight: 34, fontWeight: '700', color: colors.text },
+  title: { fontSize: 24, lineHeight: 32, fontWeight: '700', color: colors.text },
   heading: { fontSize: 19, lineHeight: 26, fontWeight: '600', color: colors.text },
   text: { fontSize: 16, lineHeight: 24, color: colors.text },
   muted: { fontSize: 14, lineHeight: 21, color: colors.muted },
@@ -31,21 +32,33 @@ export const styles = StyleSheet.create({
 
 export function navigate(path: string) { router.push(path as Href); }
 
-export function Screen({ title, children, navigation = true, scrollKey }: {
-  title: string; children: ReactNode; navigation?: boolean; scrollKey?: string | number;
+export function Screen({ title, children, navigation = true, scrollKey, scrollable = true, tabbed = false }: {
+  title: string; children: ReactNode; navigation?: boolean; scrollKey?: string | number; scrollable?: boolean; tabbed?: boolean;
 }) {
   const scroll = useRef<ScrollView>(null);
   const previousKey = useRef(scrollKey);
-  return <SafeAreaView style={styles.page} edges={navigation ? ['left', 'right'] : ['top', 'bottom', 'left', 'right']}>
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView ref={scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled"
+  const keyboardFrame = useRef<View>(null);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+  const compact = useKeyboardVisible(!scrollable);
+  const insets = useSafeAreaInsets();
+  const scrollBottom = 32 + (navigation && !tabbed ? insets.bottom : 0);
+  return <SafeAreaView style={styles.page} edges={navigation ? scrollable ? ['left', 'right'] : ['left', 'right', 'bottom'] : ['top', 'bottom', 'left', 'right']}>
+    <View ref={keyboardFrame} collapsable={false} style={{ flex: 1 }} onLayout={() => {
+      if (!scrollable) keyboardFrame.current?.measureInWindow((_, top) => setKeyboardOffset(top));
+    }}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : !scrollable ? 'height' : undefined}
+      keyboardVerticalOffset={!scrollable ? keyboardOffset : 0}>
+      {scrollable ? <ScrollView ref={scroll} contentContainerStyle={[styles.content, { paddingBottom: scrollBottom }]} keyboardShouldPersistTaps="handled"
         onContentSizeChange={() => {
           if (previousKey.current !== scrollKey) { previousKey.current = scrollKey; scroll.current?.scrollTo({ y: 0, animated: false }); }
         }}>
         <Text accessibilityRole="header" style={styles.title}>{title}</Text>
         {children}
-      </ScrollView>
+      </ScrollView> : <View style={[styles.content, { flex: 1, padding: compact ? 12 : 16, paddingBottom: compact ? 12 : 16, gap: compact ? 8 : 12 }]}>
+        <Text accessibilityRole="header" style={[styles.title, compact && { fontSize: 16, lineHeight: 22 }]}>{title}</Text>{children}
+      </View>}
     </KeyboardAvoidingView>
+    </View>
   </SafeAreaView>;
 }
 
@@ -57,11 +70,11 @@ export function Body({ children, muted = false }: { children: ReactNode; muted?:
   return <Text style={muted ? styles.muted : styles.text}>{children}</Text>;
 }
 
-export function Button({ title, onPress, disabled, secondary = false, selected = false }: {
-  title: string; onPress(): void; disabled?: boolean; secondary?: boolean; selected?: boolean;
+export function Button({ title, onPress, disabled, secondary = false, selected = false, accessibilityLabel }: {
+  title: string; onPress(): void; disabled?: boolean; secondary?: boolean; selected?: boolean; accessibilityLabel?: string;
 }) {
   const [focused, setFocused] = useState(false);
-  return <Pressable accessibilityRole="button" accessibilityState={{ disabled: !!disabled, selected }} onPress={onPress} disabled={disabled}
+  return <Pressable accessibilityRole="button" accessibilityLabel={accessibilityLabel} accessibilityState={{ disabled: !!disabled, selected }} onPress={onPress} disabled={disabled}
     onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
     style={({ pressed }) => [styles.button, secondary && styles.secondary, selected && styles.selected, focused && styles.focused,
       pressed && { backgroundColor: secondary ? colors.tint : colors.actionPressed }, disabled && { opacity: 0.5 }]}>
@@ -69,13 +82,14 @@ export function Button({ title, onPress, disabled, secondary = false, selected =
   </Pressable>;
 }
 
-export function Field({ label, hint, ...props }: TextInputProps & { label: string; hint?: string }) {
+export function Field({ label, hint, error, ...props }: TextInputProps & { label: string; hint?: string; error?: string | null }) {
   const [focused, setFocused] = useState(false);
   return <View style={{ gap: 6 }}><Text style={[styles.text, { fontWeight: '500' }]}>{label}</Text>
     {hint && <Text style={styles.muted}>{hint}</Text>}
-    <TextInput {...props} accessibilityLabel={label} accessibilityHint={hint} placeholderTextColor={colors.muted}
+    <TextInput {...props} accessibilityLabel={label} accessibilityHint={error || hint} placeholderTextColor={colors.muted}
       onFocus={event => { setFocused(true); props.onFocus?.(event); }} onBlur={event => { setFocused(false); props.onBlur?.(event); }}
-      style={[styles.input, props.multiline && { minHeight: 104, textAlignVertical: 'top' }, focused && { borderColor: colors.action, outlineColor: colors.action, outlineWidth: 1 }, props.style]} />
+      style={[styles.input, props.multiline && { minHeight: 104, textAlignVertical: 'top' }, focused && { borderColor: colors.action, outlineColor: colors.action, outlineWidth: 1 }, error && { borderColor: colors.danger }, props.style]} />
+    {error && <Text accessibilityRole="alert" style={styles.error}>{error}</Text>}
   </View>;
 }
 

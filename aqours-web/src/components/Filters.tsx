@@ -34,9 +34,14 @@ export function FilterBar({ values, onChange, statuses = reportStatuses, zones, 
     }));
     onChange(next);
   };
+  const prepared = fields.map(field => ({ ...field, value: values[field.name], placeholder: 'All' }));
+  const primary = prepared.filter(field => ['category', 'type', 'status'].includes(field.name));
+  const advanced = prepared.filter(field => !['category', 'type', 'status'].includes(field.name));
+  const active = advanced.filter(field => values[field.name]).length;
   return <form key={JSON.stringify(values)} className="filters" aria-label="Filter records" onSubmit={apply}>
-    <Fields fields={fields.map(field => ({ ...field, value: values[field.name], placeholder: 'All' }))} />
-    <div className="filter-actions"><button className="primary" type="submit">Apply filters</button>
+    <Fields fields={primary} />
+    <details className="filter-more"><summary>More filters{active ? ` · ${active} active` : ''}</summary><div className="filter-fields"><Fields fields={advanced} /></div></details>
+    <div className="filter-actions"><button type="submit">Apply filters</button>
       {Object.values(values).some(Boolean) && <button type="button" onClick={() => onChange({})}>Clear filters</button>}
     </div>
   </form>;

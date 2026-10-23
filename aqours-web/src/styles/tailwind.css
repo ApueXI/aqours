@@ -3,6 +3,7 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 @import "./components.css" layer(components);
 @import "./workspace.css" layer(components);
+@import "./reference.css" layer(components);
 
 @theme {
   --color-brand: #0f766e;

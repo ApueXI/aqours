@@ -197,10 +197,42 @@ The refactor Android smoke test used the existing project-local SDK/JDK/Gradle c
 
 ## PSGC and street maps
 
-Deploy the additive PSGC migration and include the sibling `psgc-address-data/data/` directory with the API. Guided addresses need no provider key. Supplier Geoapify tiles require the separate public browser tile key or an explicit raster override. Native `EXPO_PUBLIC_MAP_TILE_URL` overrides its street template unless a native style URL is set. See [configuration, provenance, and update instructions](location-and-maps.md). Browser checks include `npm run test:addresses`; run login-heavy suites serially with the documented throttle interval.
+Deploy the additive PSGC migration and include the sibling `psgc-address-data/data/` directory with the API. Supplier PSGC Weather also requires `psgc-address-data/weather/` (coordinate mapping plus retained attribution/provenance); that addition needs no migration or provider key. Guided addresses need no provider key. Supplier Geoapify tiles require the separate public browser tile key or an explicit raster override. Native `EXPO_PUBLIC_MAP_TILE_URL` overrides its street template unless a native style URL is set. See [configuration, provenance, and update instructions](location-and-maps.md). Browser checks include `npm run test:addresses`; run login-heavy suites serially with the documented throttle interval.
 
 ### Laguna upgrade verification
 
 `npm run test:seed-upgrade` requires a **separate original v1-seeded** database ending `_test`, supplied through `DATABASE_URL`, with `SEED_DEMO=1`. It adds an unrelated historical report, tests modified/ambiguous fixture refusal and rollback via a temporary failure trigger, then races two concurrent upgrade calls, commits the fixture correction once and verifies complete repeat-run stability. It refuses a fresh v2 database. Never run this mutating verification on the ordinary demo database. Fresh-seed acceptance uses `AQOURS_TEST_DATABASE_URL` and `npm run test:seed` separately. See [verification evidence](verification.md).
 
 `npm run test:laguna:browser` reads an otherwise fresh Laguna seed through the supplier UI, checks eleven located reports/three clusters plus the unlocated scenario, and selects a report from each locality. Supply `AQOURS_TEST_API`/`AQOURS_TEST_WEB` matching the built web client and run it before suites that add map fixtures. Build with `VITE_MAP_TILE_URL=https://tiles.example.test/{z}/{x}/{y}.png` so raster bytes stay local to the test. Optional `AQOURS_LIVE_WEATHER=1` also checks actual Open-Meteo Calamba search/forecast availability; provider failure is a failed live check rather than a mock pass.
+
+
+## Distribution monitoring deployment and checks
+
+Deploy additive migration `202610220001_distribution_monitoring` before starting the updated API. Existing configured API scripts load the operator's optional local environment as already documented:
+
+```sh
+(cd aqours-api && npm run migrate)
+(cd aqours-api && npm run build)
+(cd aqours-api && npm start)
+```
+
+API startup starts the monitoring scheduler; no cron service, package or additional environment variable is required. Each healthy tick runs every four seconds, while a minute sweep checks time-based eligibility and hourly refreshes update active located sites. Durable database work and expiring claims recover after restarts and coordinate multiple API instances. Apply migrations once before starting those instances. Shutdown waits for owned monitoring work before disconnecting Prisma.
+
+Staff/admin enable monitoring explicitly per site in Distribution. No threshold activation or inventory reset occurs on deployment. Current reservation availability is computed from existing sessions. Existing public `VITE_GEOAPIFY_MAPS_API_KEY` enables Streets/Light/Dark styles; a custom raster URL exposes only the configured basemap, and missing configuration retains lists/markers with a notice. See [monitoring behavior, quotas and limits](distribution-monitoring.md).
+
+New checks require seeded isolated databases ending `_test`. They start/stop their own API; supply a free API port. Use separate databases/ports when running HTTP and browser checks concurrently:
+
+```sh
+DATABASE_URL='postgresql://<user>@127.0.0.1:<port>/aqours_distribution_test' \
+WEB_ORIGIN=http://127.0.0.1:5190 AQOURS_TEST_WEB=http://127.0.0.1:5190 \
+AQOURS_TEST_API=http://127.0.0.1:4021/api/v1 npm run test:distribution
+
+# Build/serve the supplier client with VITE_API_URL=http://127.0.0.1:4020/api/v1.
+# For style checks set a nonsecret fixture-only VITE_GEOAPIFY_MAPS_API_KEY and clear
+# VITE_MAP_TILE_URL; the browser runner intercepts all Geoapify raster bytes.
+DATABASE_URL='postgresql://<user>@127.0.0.1:<port>/aqours_distribution_browser_test' \
+WEB_ORIGIN=http://127.0.0.1:5190 AQOURS_TEST_WEB=http://127.0.0.1:5190 \
+AQOURS_TEST_API=http://127.0.0.1:4020/api/v1 npm run test:distribution:browser
+```
+
+Fixtures control only external weather/tile responses. Authentication, inventory transactions, persistence, warning generation, notification ownership, job claims and browser interactions use the real application. Provider uptime/licensing and ordinary-data deployment are separate operator checks; these suites do not access the ordinary database or private configuration.

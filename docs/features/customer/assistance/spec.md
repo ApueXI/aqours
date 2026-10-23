@@ -100,3 +100,7 @@ Actual installed N11–13/N15/N21/N30/N32/N35 cover all three native submissions
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
 
 Presentation update: [UI/UX design and navigation](../../../ui-ux.md) documents the shared components and revised customer/supplier workflows. Existing acceptance criteria and domain permissions remain unchanged.
+
+## Reference-led presentation — 22 October 2026
+
+All three existing assistance forms retain details → review/change → deliberate submission and now display a “Request received” reference with Track this request/Return to report actions. The receipt explicitly states supplier review is pending: it does not confirm an appointment or pickup allocation. Existing uncertain-operation locking/retry, exact liters and supplier transitions are unchanged. See [UI/UX](../../../ui-ux.md) for executed native verification and artifact boundaries.

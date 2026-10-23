@@ -31,7 +31,7 @@ Password recovery, MFA and public registration are not implicitly added to the d
 
 ## 3. Customer home and service location
 
-Home also offers [Open-Meteo weather](weather.md) for an owned saved connection or a selected Philippine city. Supplier Overview supports the same city search. Weather requests have their own loading/error/refresh state and do not change report locations, service zones or advisories.
+Home also offers [Open-Meteo weather](weather.md) for an owned saved connection or a selected Philippine city. The dedicated supplier Weather page (`/#/weather`) uses searchable Region/Province/City-Municipality selectors synchronized with a nationwide Leaflet locality map through desktop/mobile navigation. It starts in Laguna without a forecast; select a mapped locality to fetch weather. Province is skipped where absent, unavailable points show an explicit message, and parent changes clear children/old forecasts. Supplier selection clears on page exit/account change. Weather requests have their own loading/error/refresh state and do not change report locations, service zones or advisories.
 
 1. After sign-in, load the customer's profile, saved connection/address, current applicable published notices and open reports.
 2. Match notices through explicit reviewed service-zone/connection associations. An applicable area advisory can reach a customer who has never submitted a report.
@@ -183,6 +183,10 @@ Compose recreation must retain accounts/reports using the same persistent volume
 
 The ten [DEMO scenarios](requirements.md#acceptance-scenarios) remain the integrated acceptance target. API/database, supplier browser and installed Android checks have separately scoped evidence in the native and verification ledgers, including secure-storage lifecycle, GPS denial/controlled acquisition, photo picker/protected decoding, real native map failure and all three fulfillment paths. Live signed typed-address lookup still requires private Geoapify configuration. Academic approval and approved real supplier/public-health content cannot be established by technical tests. Deployment destination and exact demonstration deadline remain configurable.
 
+## Distribution monitoring workflow
+
+Open Distribution → Monitoring to review existing pickup sites, current reservable stock and seven-day forecasts. Select a site, configure its temperature/supply thresholds, then enable monitoring. Use the shared forecast timeline for future heat and current-stock comparisons. Sessions, Sites and Warning history have separate tabs; reservation lookup remains accessible. Existing stock acceptance/collection permissions and transactions remain authoritative. See [monitoring setup and limits](distribution-monitoring.md).
+
 ## Source navigation
 
 See [directory navigation](directory-structure.md) for API layers and feature-based client folders. Prisma generates backend-only database types; shared public DTOs remain in `aqours-contracts`. Tailwind applies only to the supplier web, preserving native mobile styles. Existing-database adoption is explicit and must precede the first Prisma deployment.
@@ -190,3 +194,7 @@ See [directory navigation](directory-structure.md) for API layers and feature-ba
 ## Guided addresses and detailed maps
 
 See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.
+
+## Reference-led presentation — 22 October 2026
+
+Customer report detail exposes Summary, Messages and History. Messages opens `/reports/:id/messages`; History retains the report path with `?view=history`. The nested account/report workspace retains an unsent message while switching these views, but it is not durable across leaving/unmounting the workspace or process termination. Confirmed sends clear the composer; uncertain sends retain the existing operation for same-message retry. Assistance now ends in an explicit “Request received” reference with tracking/return links, before any supplier appointment or stock confirmation. Supplier incident Customer preview/Publish update/History and advisory Customer notice/Revision history separate published snapshots from operational edit controls. Selected account/connection/zone/site editors replace simultaneous record forms; version checks remain in effect. See [UI/UX](ui-ux.md) for source-versus-verification status.

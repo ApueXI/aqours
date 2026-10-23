@@ -18,6 +18,7 @@ const readTile = await readFile(new URL('./fixtures/street-tile.png', import.met
 await page.route('https://tiles.example.test/**', route => route.fulfill({
   contentType: 'image/png', body: readTile,
 }));
+await page.route('https://maps.geoapify.com/**', route => route.fulfill({ contentType: 'image/png', body: readTile }));
 page.setDefaultTimeout(15000);
 const evidence: string[] = [], errors: string[] = [];
 const passed = (message: string) => { evidence.push(message); console.log('PASS', message); };
@@ -60,6 +61,8 @@ try {
   await expect(page.getByLabel('Status', { exact: true })).toHaveValue('received');
   await page.getByRole('link', { name: 'View on map', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Report map', exact: true })).toBeVisible();
+  await page.locator('details.map-filter-disclosure > summary').click();
+  await expect(page.getByLabel('Category', { exact: true })).toBeVisible();
   await expect(page.getByLabel('Category', { exact: true })).toHaveValue('leak');
   await page.getByRole('link', { name: 'Open inbox with filters', exact: true }).click();
   await expect(page.getByLabel('Status', { exact: true })).toHaveValue('received');
@@ -68,7 +71,7 @@ try {
   const routes = [
     ['overview', 'Overview'], ['reports', 'Report inbox'], ['map', 'Report map'],
     ['incidents', 'Incidents'], ['advisories', 'Official advisories'],
-    ['assistance', 'Assistance queue'], ['distribution', 'Water distribution'], ['settings', 'Settings and audit'],
+    ['assistance', 'Assistance queue'], ['distribution', 'Water distribution'], ['weather', 'Weather'], ['settings', 'Settings and audit'],
   ];
   for (const width of [1440, 768, 390]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -89,7 +92,7 @@ try {
   await expect(menu).toBeFocused();
   await expect(menu).toHaveAttribute('aria-expanded', 'false');
   await menu.click();
-  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Reports', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Report inbox', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Report inbox', exact: true })).toBeVisible();
   await expect(menu).toHaveAttribute('aria-expanded', 'false');
   passed('UX4 Narrow navigation supports keyboard dismissal and closes after choosing a destination');
@@ -97,7 +100,16 @@ try {
   await page.goto(`${web}/#/map`);
   await expect(page.getByRole('button', { name: 'List', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'List', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Report list', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Report list(?: · \d+)?$/ })).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  const firstReport = page.locator('.map-list-rows tbody tr').first();
+  await expect(firstReport).toBeVisible();
+  const firstReportBounds = await firstReport.boundingBox();
+  assert.ok(firstReportBounds && firstReportBounds.y <= 480, `Phone first report starts at ${firstReportBounds?.y}px`);
+  const addressCell = firstReport.locator('td').nth(1);
+  assert.equal(await addressCell.evaluate(node => node.scrollWidth > node.clientWidth + 1), false, 'full issue address fits the stacked row');
+  await expect(page.locator('details.map-filter-disclosure')).not.toHaveAttribute('open', '');
+  passed('UX8 Phone map filters fold and the first complete report row appears within 480px');
   await page.getByRole('button', { name: 'Map', exact: true }).click();
   await expect(page.getByLabel('Supplier report map', { exact: true })).toBeVisible();
   await page.screenshot({ path: path.join(output, 'supplier-map-phone.png'), fullPage: true });

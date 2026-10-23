@@ -23,6 +23,8 @@ The supplier web uses direct Leaflet 1.9.4 with markercluster. Its initial and r
 
 The customer preview entry point checks `isRunningInExpoGo()` before loading the separate native MapLibre renderer and street-map configuration. Expo Go displays the supplied coordinates; native builds retain interactive maps, attribution and retry. See [mobile launch instructions](../aqours-app/README.md#run-in-expo-go).
 
+Supplier report markers use issue-category colors: No water (`outage`) red `#dc2626`, Leak blue `#2563eb`, Low pressure amber `#b45309`, and Water quality purple `#7c3aed`. The visible legend pairs swatches with category names; marker accessibility labels and popups name the category. Priority remains explicit text in selected-report details and popups and does not determine marker color. Clusters are neutral gray with counts; expanding them reveals the individual category colors. Service-zone and published incident/advisory area colors remain independent. Native customer previews retain their existing presentation.
+
 ### Supplier raster configuration
 
 - `VITE_GEOAPIFY_MAPS_API_KEY`: intentionally public, tile-only browser key for Geoapify OSM Bright. Configure it privately through the operator's build environment and restrict it to allowed website origins and provider quotas. It is separate from the API's private geocoding key.
@@ -36,9 +38,15 @@ Native `EXPO_PUBLIC_MAP_STYLE_URL` still takes precedence over `EXPO_PUBLIC_MAP_
 
 PSGC cannot establish a street-level point, a service-zone association, or a water-supply boundary. GPS and explicitly confirmed Geoapify candidates supply coordinates. Unlocated addresses remain unlocated and require review; changing an address does not silently relocate a report or assign a service zone. No administrative boundary dataset, routing, satellite imagery, or geocoder replacement is included.
 
+## Supplier Weather locality points
+
+Supplier Weather has a separate city/municipality catalog combining canonical ten-digit codes/names/ancestry from the bundled Q2 2026 hierarchy with reviewed representative coordinates from pinned ph-geo/GeoNames data. This does not add coordinates to the address hierarchy or saved records. Its 1,642 canonical localities include 1,553 mapped points and 89 explicit unavailable entries; Manila districts/barangays are excluded. Existing hierarchy inconsistencies are inherited, not silently corrected. Old six-digit source codes are not expanded; only unique normalized names within explicit reviewed historical ancestry are matched. See [dataset provenance, retained licenses and coverage](../psgc-address-data/weather/README.md) and [weather contract](weather.md).
+
+These approximate postal means support locality forecasts; they do not confirm report addresses, service zones, incident extents or supplier coverage. Null-coordinate localities remain selectable in the catalog but have no marker or forecast.
+
 ## Dataset and database updates
 
-The API reads the region index and its referenced files relative to the project layout, from source and compiled builds alike. Deploy `psgc-address-data/data/` alongside `aqours-api/`; clients fetch the authenticated catalog instead of bundling all barangays. No runtime package installation is required.
+The API reads the region index and its referenced files relative to the project layout, from source and compiled builds alike. Deploy `psgc-address-data/data/` and `psgc-address-data/weather/` alongside `aqours-api/`; clients fetch the authenticated catalog instead of bundling all barangays. No runtime package installation is required.
 
 To update the snapshot, replace the index and referenced region files together, update the catalog version, inspect hierarchy changes and provenance, and run the catalog/API/client checks. Do not rewrite old snapshots or guess mappings from duplicate names. The integrity test currently expects 18 regions, 82 provinces, 149 cities, 1,493 municipalities, 14 sub-municipalities, and 42,010 barangays.
 
@@ -50,4 +58,10 @@ New seeds use three canonical barangays: Bagong Kalsada (`0403405001`, City of C
 
 Representative point centers are approximately `(14.1679,121.1951)`, `(14.1674,121.2433)` and `(14.2946,121.1054)`. Locality checks used [Bagong Kalsada](https://mapcarta.com/36439088), [Batong Malake](https://mapcarta.com/32291410) and [Balibago](https://www.philatlas.com/luzon/r04a/laguna/santa-rosa/balibago.html). Household points use tiny synthetic offsets and each demonstration zone is a rectangle within 0.001 degrees of its center. These are approximate demonstration geometry, not surveyed homes, barangay outlines or real supplier coverage. Customer12 retains null coordinates and no confirmed zone despite its canonical address.
 
-The [explicit v1 upgrade](setup.md#upgrading-original-demo-locations-to-laguna) can correct original demo report snapshots while preserving user-created reports and immutable history. This administrative exception does not change normal historical-address behavior. Saved coordinates also supply the customer's [weather forecast](weather.md); PSGC codes alone never provide weather coordinates.
+The [explicit v1 upgrade](setup.md#upgrading-original-demo-locations-to-laguna) can correct original demo report snapshots while preserving user-created reports and immutable history. This administrative exception does not change normal historical-address behavior. Saved coordinates also supply the customer's [weather forecast](weather.md); Customer PSGC snapshots alone never provide saved-point weather coordinates. Supplier Weather resolves its separate canonical-code-to-representative-point mapping without changing those saved coordinates.
+
+## Reference-led presentation — 22 October 2026
+
+Supplier report-map `q` is a URL-backed local reference/address search. It narrows markers already returned for the current viewport (up to the API marker cap) and the complete filtered report-list results. Text search does not change the backend query or global viewport total. The interface explicitly distinguishes matching mapped subset, before-search viewport total, unlocated count and truncation. Search/selection/List–Map state is carried into detail return navigation. Unlocated rows remain accessible; no matching marker is not evidence of normal supply or safe water. The existing semantic water-quality purple remains a deliberate category-color exception to neutral chrome. See [UI/UX status](ui-ux.md).
+
+Final independent review verifies the compact Filters disclosure, scoped counts, one-row search and full stacked issue address rows. Phone first results move from approximately 914 px to 456 px without hiding truncation/provider warnings. Source and evidence are recorded in the [UI guide](ui-ux.md) and [verification](verification.md#reference-led-client-refinement--23-october-2026).

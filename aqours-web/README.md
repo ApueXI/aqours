@@ -1,6 +1,6 @@
 # Aqours supplier web
 
-Overview includes [Open-Meteo current weather and seven-day forecasts](../docs/weather.md) with Philippine city search, manual refresh, provider attribution and independent retry/stale states for staff and admins.
+The dedicated Weather page (`/#/weather`) includes [Open-Meteo current weather and seven-day forecasts](../docs/weather.md) with a nationwide PSGC locality map and synchronized searchable Region/Province/City-Municipality selectors, manual refresh, attribution and independent retry/stale states for staff/admin. It starts in Laguna without a forecast; unavailable points show a message and no marker. Tile failures preserve selectors/forecast. Open it through desktop or mobile supplier navigation; Overview contains operational metrics and queues.
 
 React and TypeScript supplier workspace built with Vite. Direct Leaflet 1.9.4 with markercluster renders operational report points, zoom-dependent clusters, service zones, and published incident/advisory polygons. The browser uses the live Express API; no production screen substitutes mock data or a simulated successful save.
 
@@ -22,7 +22,7 @@ Public build configuration is documented in [.env.example](.env.example). Supply
 | Variable | Default / meaning |
 | --- | --- |
 | `VITE_API_URL` | `http://localhost:4000/api/v1`; must include the versioned API base |
-| `VITE_GEOAPIFY_MAPS_API_KEY` | Separate public tile-only browser key for Geoapify OSM Bright; required unless a raster override is provided |
+| `VITE_GEOAPIFY_MAPS_API_KEY` | Separate public tile-only browser key for Geoapify OSM Bright, Positron and Dark Matter; required unless a raster override is provided |
 | `VITE_MAP_TILE_URL` | Optional alternate public raster template; replaces web style JSON configuration |
 | `VITE_MAP_ATTRIBUTION` | Provider credit for a custom raster template; Geoapify uses Geoapify/OpenStreetMap/OpenMapTiles attribution |
 | `AQOURS_NO_DOTENV` | Set to `1` for checks using explicit process configuration without loading local environment files |
@@ -38,11 +38,12 @@ Web `VITE_MAP_STYLE_URL` is retired. Migrate an old MapLibre style JSON to a ras
 | `/#/overview` | Report cohort/category/status/date filters, incident and report counts, unique connections, mean first response/resolution with completed samples, pending counts, exclusions, metric definitions, Manila period/as-of labels, and drill-down links |
 | `/#/reports` | Paginated category/status/period/zone/owner/priority inbox, location review flags, and map navigation |
 | `/#/reports/:id` | Customer and connection context, independent issue-address snapshot, protected photo retrieval, acknowledgment/clarification, owner/priority/reason/status/reviewed closure, explicit issue-zone confirmation, suggested incident links and corrections, separate internal notes, and history |
-| `/#/map` | Viewport queries, category/status/date/zone filters, priority markers, expandable clusters, zone/published area layers, explicit result-cap and unlocated counts, and a paginated list with an unlocated-only view |
+| `/#/map` | Viewport queries, category/status/date/zone filters, category-colored markers with a labeled legend, neutral expandable clusters, zone/published area layers, explicit result-cap and unlocated counts, and a paginated list with an unlocated-only view |
+| `/#/weather` | Nationwide PSGC map/searchable hierarchy, current/seven-day forecasts, manual refresh and retry/stale states; temporary selection clears on page exit or account change |
 | `/#/incidents` and `/:id` | Create/edit, owner/status, affected zones and area, unknown or explicit restoration estimate, affected-customer estimate and basis separate from report/connection totals, links/history/notes, and explicit customer publication preview |
 | `/#/advisories` and `/:id` | Read drafts/publications/revisions; admins create drafts, select approved guidance, preview and publish/revise, or explicitly lift with a reason. Three quality restriction kinds remain distinct; lifting is independent of incident resolution and end dates |
 | `/#/assistance` and `/:id` | Filtered paginated callback/inspection/water queue; type-specific details, owner acceptance, appointments and reasoned rescheduling, immediate-support reasons, progress, outcomes/next steps, notes/history, session/allocation details, and dedicated collection confirmation |
-| `/#/distribution` | All-page exact pickup/request-reference lookup, paginated sites and sessions, create/edit, total/reserved/collected/remaining liter breakdown, cancellation preview with pending-request effects, and navigation to the authorized assistance collection action |
+| `/#/distribution` | Monitoring-first tabs, server-evaluated seven-day site statuses, independent forecast/current stock, Leaflet site markers and temperature overlay, threshold/capacity setup, warning history and owned monitoring notifications; compact paginated session management, site maintenance and exact reservation lookup preserve existing stock/cancellation/collection workflows |
 | `/#/settings` | Admin account role/activation/password, service connection associations, zone boundaries, immutable approved-guidance/rule versions, and audit. Staff sees read-only guidance/rules and operational audit |
 
 The API enforces each role, ownership, transition, publication, and inventory constraint. Available controls do not replace backend permission checks. Draft/internal data never enters a web-authored customer publication automatically.
@@ -84,6 +85,22 @@ The production build typechecks first. Leaflet is loaded by the map feature; no 
 - `src/features/map/`: Leaflet lifecycle, clusters/layers and published geometry projections.
 - `tests/`: client behavior tests using Node’s built-in runner.
 
-Handwritten TypeScript/TSX files remain below the 250-line limit. Large inventories are paginated for display; complete reference selectors, map fallback lists, and pickup-reference lookup currently aggregate pages in memory. This is suited to the demonstration data size; large production deployments should add server-side lookup and reference-search endpoints. Optional polygon entry is validated GeoJSON text rather than a drawing editor. Map clusters are visual aids and never establish an incident association, service-zone confirmation, or water-safety conclusion.
+Handwritten TypeScript/TSX files remain below the 250-line limit. Session tables and operational queues are paginated for display; site inventories, complete reference selectors, map fallback lists, and pickup-reference lookup aggregate pages in memory. This is suited to the demonstration data size; large production deployments should add server-side lookup and reference-search endpoints. Optional polygon entry is validated GeoJSON text rather than a drawing editor. Map clusters are visual aids and never establish an incident association, service-zone confirmation, or water-safety conclusion.
 
 Guided service-connection and pickup-site addresses use the authenticated bundled PSGC catalog with searchable cascading selectors and free-text fallback. See [locations and maps](../docs/location-and-maps.md) for snapshots, deployment, provider settings, and verification. `VITE_MAP_TILE_URL` optionally changes the default raster template.
+
+## Distribution monitoring
+
+Distribution opens Monitoring, followed by Sessions, Sites and Warning history. Reservation lookup is available on every tab and reads every assistance page before reporting a match or no match. Sessions use a compact stock table: select **Manage** to open the existing versioned stock/schedule and reasoned cancellation forms. **New pickup session** opens its creation section in Sessions. Existing site editing remains separate from monitoring configuration.
+
+The URL retains `tab`, `date`, `siteId`, `status`, `q`, `view`, `style` and `temperature`. Warning history has an independent `warningDate` filter for past dates or `all`, with state filtering and pagination. Seven forecast dates come from the server in Asia/Manila. Site status uses the selected server evaluation; the client never recalculates warning thresholds. Supply always describes reservable liters now across eligible sessions, including future pickup sessions, and never becomes a forecast when changing the date. Forecast freshness, last success/attempt, incomplete evidence and unavailable supply have separate labels. Unlocated sites stay in the accessible list.
+
+The desktop map/list are side by side; narrow screens have List/Map controls. Green/yellow/red/gray site markers describe normal/warning/critical/unavailable evaluations with text equivalents. An independent daily-maximum temperature layer draws site circles/numeric labels below markers, using the configured blue/green/yellow/orange/red bands (initially 25/30/34/37°C). These are point forecasts without a regional surface or interpolation. Changing Streets/Light/Dark replaces only Geoapify raster tiles. A configured custom tile URL takes precedence and exposes one **Configured basemap** option; missing tile configuration exposes **Basemap unavailable**, while site markers and lists remain usable.
+
+Monitoring is disabled until deliberately configured. Initial temperature suggestions are 35/38°C; required supply thresholds start blank. Critical temperature must exceed warning temperature, and exact liter thresholds require `0 ≤ critical < low`. Optional planning capacity must be positive; its ratio can exceed 100% and does not represent measured physical inventory. Staff/admin configure sites; only admins see the global temperature-legend editor. All writes use the existing frozen retry/version mechanism, with initial configuration version 0.
+
+Monitoring data, warnings/history and the current actor’s monitoring notifications refresh every 30 seconds while mounted. **Refresh monitoring** also requests active located-site forecast refreshes with bounded client concurrency; the API retains its refresh cooldown. A weather failure does not disable supply operations. Existing session and site endpoints remain independently available if monitoring loading fails. Warning details retain immutable transition evidence and reasons, and notification reads use the supplier-only monitoring endpoints.
+
+## Reference-led presentation — 22 October 2026
+
+The reference-led layout folds labeled navigation at 1100px and uses labeled operational rows below 640px. Report detail switches Summary/Messages/History while retaining the conversation form; operational review keeps its server-version remount behavior and internal notes remain separate. Incident and advisory pages separate customer snapshots/history from editing and explicit publication. Accounts, connections, zones and pickup sites open one selected editor; account/connection search explicitly applies to the current page. Report map `q` searches reference/address locally in the retrieved viewport-marker subset and the complete filtered list, with separate before-search totals and cap labels. The [UI/UX matrix](../docs/ui-ux.md) records verified behavior and explicit evidence limits.

@@ -10,7 +10,7 @@ Related: [requirements](requirements.md), [schema](schema.md), [API contract](ap
 | --- | --- |
 | `aqours-api/src/` | Express 5 routes, role/ownership authorization, Zod input validation, sessions, publication, guidance, assistance, uploads and stock transactions |
 | `aqours-api/prisma/` | Prisma domain schema, legacy baseline and transactional normalization migration; original SQL remains in `migrations/` for baseline verification |
-| `aqours-web/src/` | React/Vite supplier login, overview, inbox/detail, Leaflet map, incidents, advisories, assistance, distribution and admin settings |
+| `aqours-web/src/` | React/Vite supplier login, overview, inbox/detail, Leaflet map, incidents, advisories, assistance, distribution, Weather page and admin settings |
 | `aqours-app/src/app/` | Expo Router customer navigation and protected route composition |
 | `aqours-app/src/features/` | Focused home, report/location/photo, guidance, assistance and notification screens |
 | `aqours-contracts/src/` | Shared TypeScript public DTOs, common enums and response contracts; no database or credentials |
@@ -82,7 +82,7 @@ Native MapLibre 11.5.0 is pinned with Expo 57 / React Native 0.86.3 configuratio
 
 ## Client organization and styling
 
-Weather components live under each client's `features/weather/` and mount independently on Home/Overview. Express weather routes/controllers/services validate Open-Meteo data behind existing authentication, enforce customer connection ownership, and use bounded process-local caches. There is no weather persistence or domain automation. See [weather behavior and provider boundaries](weather.md).
+Weather components live under each client's `features/weather/` and mount on customer Home and the dedicated supplier `/#/weather` page. Supplier Overview no longer mounts weather. Express weather routes/controllers/services validate Open-Meteo data behind existing authentication, enforce customer connection ownership, and use bounded process-local caches. Supplier Weather requests a staff/admin-only canonical locality catalog, renders Leaflet clusters and searchable hierarchy controls, then sends only a canonical `psgcCode`; Express resolves a reviewed representative point before forecast cache/provider access. The separate bundled `psgc-address-data/weather/` mapping preserves null gaps and never modifies saved address/report/pickup coordinates. Customer city/connection modes are retained. General Weather has no persistent selection or domain automation. Distribution monitoring adds persistent site forecasts and independently evaluated reservation-stock/temperature warnings with a durable background queue; see [distribution monitoring](distribution-monitoring.md).
 
 Both clients group screens, feature-only components, hooks and request operations under `features/<domain>/`. Shared UI, hooks, HTTP transport, configuration and utilities stay outside those feature folders. The web `app/` contains bootstrap, routing and navigation. Expo `app/` contains route wrappers and navigator layouts only. Native styles are retained.
 
@@ -90,6 +90,10 @@ The supplier app uses Tailwind 4 through its Vite plugin. Utility classes replac
 
 ## Location architecture
 
-The authenticated API loads the sibling bundled PSGC region index and caches its hierarchy. Both clients request catalog entries without bundling all barangays. Administrative selections provide names/codes; coordinate and service-zone confirmation remain separate.
+The authenticated API loads the sibling bundled PSGC region index and caches its hierarchy. Both clients request catalog entries without bundling all barangays. Administrative address selections provide names/codes; coordinate and service-zone confirmation remain separate. Supplier Weather adds a separate city/municipality representative-point join with pinned GeoNames/ph-geo provenance, explicit historical ancestry crosswalk and null unmatched entries; it does not geocode addresses or correct the inherited canonical tree.
 
 See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.
+
+## Reference-led presentation — 22 October 2026
+
+The reference-led client refinement adds a customer nested `/reports/[id]/` route layout whose provider is keyed by account/report and shares resource, unsent message and command state across Summary/Messages/History. The `/reports/:id/messages` route uses existing authorized endpoints and public DTOs. Supplier conversation remains mounted across report views while the operational review/association subtree remains keyed by server version. This preserves the existing refresh/conflict boundary. No new API, schema, dependency or durable client storage is introduced. See [UI workflow boundaries](ui-ux.md) for exact in-memory lifetime and verified artifact boundaries.

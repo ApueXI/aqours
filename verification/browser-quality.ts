@@ -80,6 +80,7 @@ try {
   passed('BQ2 Staff opens the protected quality photo as an observation without a generated safety diagnosis');
 
   const message = 'Fictional acknowledgement: supplier review requested; appearance/photo cannot establish water safety.';
+  await page.getByRole('navigation', {name: 'Report views'}).getByRole('button', {name: /^Messages/}).click();
   await page.getByLabel('Customer-visible message', {exact: true}).fill(message);
   await submit(page, 'Send to customer', `/staff/reports/${item.id}/messages`);
   await expect(page.getByRole('article').getByText(message, {exact: true})).toBeVisible();
@@ -99,6 +100,7 @@ try {
   assert.equal(reviewed.ownerId, staff.user.id); assert.equal(reviewed.status, 'under_review');
   const event = reviewed.timeline.find(e => e.action === 'reviewed' && e.text === reason)!;
   assert.ok(event); assert.equal(event.actorId, staff.user.id); assert.ok(Number.isFinite(Date.parse(event.createdAt)));
+  await page.getByRole('navigation', {name: 'Report views'}).getByRole('button', {name: 'History', exact: true}).click();
   await expect(page.locator('.history li').filter({hasText: reason})).toContainText(displayTime(event.createdAt));
   await page.screenshot({path: path.join(output, 'browser-quality-prioritized.png'), fullPage: true});
   passed('BQ3 Browser requires a reason then acknowledges, assigns and prioritizes quality review with persisted actor/time history');
@@ -109,6 +111,7 @@ try {
   assert.ok(reviewed.messages.some(m => m.text === message && m.authorId === staff.user.id));
   assert.ok(reviewed.attachments.some(a => a.id === attachment.id));
   for (const field of ['notes', 'customer', 'suggestions', 'answers']) assert.equal(field in reviewed, false);
+  await page.getByRole('navigation', {name: 'Report views'}).getByRole('button', {name: 'Summary', exact: true}).click();
   await expect(page.getByText(/No coordinates/)).toBeVisible();
   await expect(page.getByText(/Unknown zone/)).toBeVisible();
   passed('BQ4 Customer-safe quality detail/timeline retain acknowledgement and attachment without invented location or automatic resolution');

@@ -33,6 +33,7 @@ async function emptyMetrics() {
   await page.goto(`${web}/#/overview`);
   await expect(page.getByRole('heading', {name: 'Overview', exact: true})).toBeVisible();
   await page.getByLabel('Category', {exact: true}).selectOption('outage');
+  await page.locator('summary').filter({hasText: /^More filters/}).click();
   await page.getByLabel('Status', {exact: true}).selectOption('received');
   await page.getByLabel('Submitted from (Manila)', {exact: true}).fill('2090-01-01T00:00');
   await page.getByLabel('Submitted before (Manila)', {exact: true}).fill('2090-01-02T00:00');
@@ -42,6 +43,7 @@ async function emptyMetrics() {
   ]);
   const metrics = (await response.json()).data as Metrics;
   assert.equal(response.status(), 200); assert.equal(metrics.reportCount, 0); assert.equal(metrics.uniqueConnections, 0);
+  await page.getByText('Report measures and cohort definitions', {exact: true}).click();
   await expect(page.getByRole('row').filter({has: page.getByRole('cell', {name: 'Reports in selected cohort', exact: true})}).getByRole('cell', {name: '0', exact: true})).toBeVisible();
   await expect(page.getByRole('row').filter({has: page.getByRole('cell', {name: 'Unique reporting connections', exact: true})}).getByRole('cell', {name: '0', exact: true})).toBeVisible();
   assert.equal(metrics.firstResponse.meanSeconds, null); assert.equal(metrics.firstResolution.meanSeconds, null);
@@ -66,6 +68,8 @@ async function emptyMetrics() {
 async function mapFlows(unlocated: Report, located: Report) {
   await page.route('https://demotiles.maplibre.org/**', route => route.abort());
   await page.goto(`${web}/#/map`);
+  await page.locator('details.map-filter-disclosure > summary').click();
+  await page.locator('summary').filter({hasText: /^More filters/}).click();
   await page.getByLabel('Category', {exact: true}).selectOption('outage');
   await page.getByLabel('Status', {exact: true}).selectOption('received');
   await page.getByLabel('Submitted from (Manila)', {exact: true}).fill('2000-01-01T00:00');
@@ -75,16 +79,20 @@ async function mapFlows(unlocated: Report, located: Report) {
     page.getByRole('button', {name: 'Apply filters', exact: true}).click(),
   ]);
   const mapped = (await response.json()).data as MapResponse;
+  const viewport = new URL(response.url()).searchParams;
+  for (const key of ['west', 'east', 'south', 'north']) assert.ok(viewport.has(key));
   assert.equal(response.status(), 200);
   assert.ok(mapped.features.some(f => f.properties.id === located.id));
   assert.ok(!mapped.features.some(f => f.properties.id === unlocated.id));
   assert.ok(mapped.unlocatedCount > 0);
   for (const feature of mapped.features) {
     assert.equal(feature.properties.category, 'outage'); assert.equal(feature.properties.status, 'received');
-    assert.ok(feature.geometry.coordinates[0] >= 120.9 && feature.geometry.coordinates[0] <= 121.1);
-    assert.ok(feature.geometry.coordinates[1] >= 14.5 && feature.geometry.coordinates[1] <= 14.7);
+    assert.ok(feature.geometry.coordinates[0] >= Number(viewport.get('west')) && feature.geometry.coordinates[0] <= Number(viewport.get('east')));
+    assert.ok(feature.geometry.coordinates[1] >= Number(viewport.get('south')) && feature.geometry.coordinates[1] <= Number(viewport.get('north')));
   }
-  await page.getByLabel('Show only reports without coordinates', {exact: true}).check();
+  const unlocatedOnly = page.getByLabel('Show only reports without coordinates', {exact: true});
+  if (!await unlocatedOnly.isVisible()) await page.locator('details.map-filter-disclosure > summary').click();
+  await unlocatedOnly.check();
   const row = page.getByRole('row').filter({has: page.getByRole('link', {name: unlocated.reference, exact: true})});
   await expect(row).toContainText('No coordinates');
   await expect(page.getByRole('link', {name: located.reference, exact: true})).toHaveCount(0);
@@ -108,9 +116,13 @@ async function mapFlows(unlocated: Report, located: Report) {
   await expect(page.getByText('No mapped reports in this viewport. This does not establish normal supply or safe water.', {exact: true})).toHaveCount(0);
   await expect(page.getByRole('link', {name: unlocated.reference, exact: true})).toBeVisible();
   await page.unroute('**/api/v1/staff/map/reports*');
+  const recoveredResponse = page.waitForResponse(response => response.request().method() === 'GET' && response.url().includes('/staff/map/reports?'));
   await page.getByRole('button', {name: 'Refresh', exact: true}).click();
+  const recovered = (await (await recoveredResponse).json()).data as MapResponse;
   await expect(page.getByRole('alert').filter({hasText: 'Connection lost'})).toHaveCount(0);
-  await expect(page.getByText(/mapped of \d+ matching reports/)).toBeVisible();
+  const scopeCount = page.locator('.map-scope-count');
+  await expect(scopeCount).toContainText(`${recovered.features.length} shown`);
+  await expect(scopeCount).toContainText(`${recovered.unlocatedCount} unlocated`);
   passed('BR-MAP-03 Failed map query shows an error with usable list and recovers to actual results');
 }
 try {

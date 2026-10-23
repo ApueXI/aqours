@@ -3,6 +3,7 @@ import 'leaflet.markercluster';
 import type { FeatureCollection } from 'geojson';
 import type { MapResponse, Report } from '@aqours/contracts';
 import { reportPopup } from './report-popup';
+import { reportCategories, reportMarkerLabel } from './report-categories';
 
 export type Visibility = { reports: boolean; zone: boolean; incident: boolean; advisory: boolean };
 type Properties = MapResponse['features'][number]['properties'];
@@ -50,12 +51,12 @@ export function createReportLayers(map: L.Map, onSelect: (id: string) => void, o
     }
   };
   const markerIcon = (properties: Properties) => {
-    const priority = ['high', 'urgent'].includes(properties.priority) ? properties.priority : 'normal';
-    return L.divIcon({ className: `report-marker report-marker-${priority}`, html: '<span></span>', iconSize: [44, 44], iconAnchor: [22, 22] });
+    const { color } = reportCategories[properties.category];
+    return L.divIcon({ className: 'report-marker', html: `<span style="background-color:${color}"></span>`, iconSize: [44, 44], iconAnchor: [22, 22] });
   };
   const markerFor = (properties: Properties, coordinates: [number, number]) => {
     const marker = L.marker([coordinates[1], coordinates[0]], {
-      title: `${properties.reference} · ${properties.priority} priority`, alt: properties.reference,
+      title: reportMarkerLabel(properties), alt: reportMarkerLabel(properties),
       icon: markerIcon(properties),
     });
     marker.bindPopup(reportPopup(properties, onOpen));
@@ -78,7 +79,8 @@ export function createReportLayers(map: L.Map, onSelect: (id: string) => void, o
         // Spiderfying temporarily moves marker coordinates; compare persisted points.
         if (current && current.coordinates[0] === coordinates[0] && current.coordinates[1] === coordinates[1]) {
           current.marker.setPopupContent(reportPopup(feature.properties, onOpen));
-          current.marker.options.title = `${feature.properties.reference} · ${feature.properties.priority} priority`;
+          current.marker.options.title = reportMarkerLabel(feature.properties);
+          current.marker.options.alt = reportMarkerLabel(feature.properties);
           current.marker.setIcon(markerIcon(feature.properties));
           current.signature = signature;
           current.properties = feature.properties;
@@ -87,6 +89,9 @@ export function createReportLayers(map: L.Map, onSelect: (id: string) => void, o
         if (current) { current.marker.closePopup(); reports.removeLayer(current.marker); }
         const marker = markerFor(feature.properties, feature.geometry.coordinates);
         markers.set(id, { marker, signature, coordinates, properties: feature.properties }); reports.addLayer(marker);
+      }
+      if (selectedFeature && selectionPopup && map.hasLayer(selectionPopup)) {
+        selectionPopup.setContent(reportPopup(selectedFeature.properties, onOpen));
       }
       if (areaData !== nextAreas) { areaData = nextAreas; showAreas(); }
     },

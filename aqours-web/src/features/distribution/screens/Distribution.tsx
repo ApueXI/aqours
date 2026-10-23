@@ -1,54 +1,51 @@
-import { useState, type FormEvent } from 'react';
-import type { AssistanceRequest, PickupSession, PickupSite } from '@aqours/contracts';
+import { useEffect } from 'react';
+import type { MonitoringOverview, PickupSite, User } from '@aqours/contracts';
 import { useResource } from '../../../hooks/useResource';
-import { useReferences } from '../../../hooks/useReferences';
 import { useAllRecords } from '../../../hooks/useAllRecords';
-import { CancelSession, SessionForm, SiteForm } from '../components/DistributionForms';
-import { Pagination } from '../../../components/Pagination';
-import { revealSection } from '../../../components/DetailNavigation';
-import { date, Demo, EmptyState, label, PageTitle, ResourceState, StatusLabel } from '../../../components/Status';
+import { date, PageTitle, ResourceState } from '../../../components/Status';
+import { distributionLink, distributionState } from '../utils/distribution-state';
+import { DistributionSessions } from '../components/DistributionSessions';
+import { DistributionSites } from '../components/DistributionSites';
+import { MonitoringWorkspace } from '../components/MonitoringWorkspace';
+import { MonitoringWarnings, warningHistoryDate } from '../components/MonitoringWarnings';
+import { MonitoringNotifications } from '../components/MonitoringNotifications';
+import { ReservationLookup } from '../components/ReservationLookup';
+import { RefreshForecasts } from '../components/RefreshForecasts';
+import { TemperatureBandsForm } from '../components/MonitoringConfigForm';
+import '../distribution.css';
 
-export function Distribution() {
-  const [offset, setOffset] = useState(0);
-  const [siteOffset, setSiteOffset] = useState(0);
-  const [lookup, setLookup] = useState('');
-  const [search, setSearch] = useState('');
-  const sessions = useResource<PickupSession[]>(`/staff/distribution/sessions?offset=${offset}`);
-  const sites = useResource<PickupSite[]>(`/staff/pickup-sites?offset=${siteOffset}`);
-  const requests = useAllRecords<AssistanceRequest>('/staff/assistance-requests?type=water_support');
-  const siteChoices = useAllRecords<PickupSite>('/staff/pickup-sites');
-  const refs = useReferences();
-  const refresh = () => { void sessions.refresh(); void sites.refresh(); void requests.refresh(); void siteChoices.refresh(); };
-  const find = (event: FormEvent) => { event.preventDefault(); setSearch(lookup.trim()); void requests.refresh(); };
-  const matches = search ? requests.data?.filter(item => item.allocation?.reference.toLowerCase() === search.toLowerCase() || item.reference.toLowerCase() === search.toLowerCase()) : [];
-  return <><PageTitle title="Water distribution"><button onClick={refresh}>Refresh stock and sessions</button><button className="primary" onClick={() => revealSection('session-create')}>New pickup session</button></PageTitle>
-    <p className="page-description">Find a reservation, manage pickup sessions, and review available liters before accepting requests.</p>
-    <section><h2>Find pickup reservation</h2><form className="lookup" onSubmit={find}><label className="field"><span>Pickup or request reference</span><input value={lookup} onChange={event => setLookup(event.target.value)} required /></label><button type="submit">Find reservation</button></form>
-      {search && <ResourceState resource={requests}>
-        {matches?.map(item => <p key={item.id}><a href={`#/assistance/${item.id}`}>{item.reference} · {item.allocation?.reference}</a> · {label(item.status)} · {item.allocation?.liters || item.details.requestedLiters} L</p>)}
-        {!requests.loading && !requests.error && matches?.length === 0 && <p>No matching pickup or request reference. <a href="#/assistance">Review the assistance queue</a> for customer follow-up.</p>}
-      </ResourceState>}
-    </section>
-    <section><h2>Pickup sessions</h2><p className="hint">Remaining liters = total − reserved − collected. Acceptance and collection use current server stock; this view does not reserve water.</p>
-      <ResourceState resource={sessions}>{sessions.data && <>
-        {sessions.data.length === 0 && <EmptyState title="No pickup sessions."><p>Create an operating session for an active pickup site to make water support available.</p></EmptyState>}
-        {sessions.data.map(session => <article className="session" key={`${session.id}:${session.version}`}><h3>{session.site.name} · <StatusLabel value={session.status} /></h3><Demo value={session.demo} />
-          <p>{session.site.address}</p><p>{date(session.startsAt)} – {date(session.endsAt)}</p><p className="preserve">{session.instructions}</p>
-          <p>Zones: {session.zoneIds.map(id => refs.zones.data?.find(zone => zone.id === id)?.name || 'Unknown zone').join(', ')}</p>
-          <table className="stock"><thead><tr><th>Total (L)</th><th>Reserved (L)</th><th>Collected (L)</th><th>Remaining (L)</th><th>Availability</th></tr></thead>
-            <tbody><tr><td>{session.totalLiters}</td><td>{session.reservedLiters}</td><td>{session.collectedLiters}</td><td>{session.remainingLiters}</td><td>{label(session.availability)}</td></tr></tbody></table>
-          <p className="hint">Stock updated {date(session.updatedAt)}</p>
-          {session.status !== 'cancelled' && <><details><summary>Edit stock / schedule</summary><SessionForm d={session} sites={siteChoices.data || []} zones={refs.zones.data || []} refresh={refresh} /></details>
-            <details><summary>Cancel session and arrange follow-up</summary><CancelSession d={session} refresh={refresh} /></details></>}
-        </article>)}
-        <Pagination offset={offset} total={sessions.result?.page?.total ?? sessions.data.length} onChange={setOffset} />
-      </>}</ResourceState>
-      <details id="session-create"><summary>Create pickup session</summary><ResourceState resource={siteChoices} /><ResourceState resource={refs.zones} /><SessionForm sites={siteChoices.data || []} zones={refs.zones.data || []} refresh={refresh} /></details>
-    </section>
-    <section><h2>Pickup sites</h2><ResourceState resource={sites}>{sites.data && <>
-      {sites.data.length === 0 && <EmptyState title="No pickup sites."><p>Add the site address and pickup instructions before creating a session.</p></EmptyState>}{sites.data.map(site => <article className="entry" key={`${site.id}:${site.version}`}><h3>{site.name} · {site.active ? 'Active' : 'Inactive'}</h3><Demo value={site.demo} /><p>{site.address}</p><p>{site.instructions}</p>
-        <details><summary>Edit pickup site</summary><SiteForm d={site} refresh={refresh} /></details>
-      </article>)}<Pagination offset={siteOffset} total={sites.result?.page?.total ?? sites.data.length} onChange={setSiteOffset} />
-    </>}</ResourceState><details><summary>Create pickup site</summary><SiteForm refresh={refresh} /></details></section>
+export function Distribution({ params, user }: { params: URLSearchParams; user: User }) {
+  const monitoring = useResource<MonitoringOverview>('/staff/distribution/monitoring');
+  const sites = useAllRecords<PickupSite>('/staff/pickup-sites');
+  const state = distributionState(params, monitoring.data?.dates);
+  const warningDate = warningHistoryDate(params.get('warningDate'), state.date);
+  const change = (values: Record<string, string>) => { window.location.hash = distributionLink(params, values); };
+  const refresh = () => { void monitoring.refresh(); void sites.refresh(); };
+  useEffect(() => { const timer = window.setInterval(() => void monitoring.refresh(), 30000); return () => window.clearInterval(timer); }, [monitoring.refresh]);
+  const siteChoices = sites.data || monitoring.data?.sites.map(item => item.site) || [];
+  return <><PageTitle title="Water distribution">
+    <RefreshForecasts items={monitoring.data?.sites || []} refresh={refresh} />
+    <button className="primary" onClick={() => change({ tab: 'sessions', create: '1' })}>New pickup session</button>
+  </PageTitle><ReservationLookup />
+    <nav className="tabs" aria-label="Distribution sections">{([
+      ['monitoring', 'Monitoring'], ['sessions', 'Sessions'], ['sites', 'Sites'], ['warnings', 'Warning history'],
+    ] as const).map(([tab, text]) => <a key={tab} href={distributionLink(params, { tab, create: '' })} aria-current={state.tab === tab ? 'page' : undefined}>{text}</a>)}</nav>
+    {(state.tab === 'monitoring' || state.tab === 'warnings') && <form className="filters" key={`${state.q}:${state.status}:${state.siteId}:${state.date}`} onSubmit={event => {
+      event.preventDefault(); const data = new FormData(event.currentTarget); change({ q: String(data.get('q') || ''), status: String(data.get('status') || ''), siteId: String(data.get('siteId') || ''), date: String(data.get('date') || '') });
+    }}>
+      <label className="field"><span>Search sites</span><input aria-label="Search sites" name="q" defaultValue={state.q} /></label>
+      <label className="field"><span>Monitoring status</span><select aria-label="Monitoring status" name="status" defaultValue={state.status}><option value="">All statuses</option><option value="normal">Normal</option><option value="warning">Warning</option><option value="critical">Critical</option><option value="unavailable">Unavailable</option></select></label>
+      <label className="field"><span>Pickup site filter</span><select aria-label="Pickup site filter" name="siteId" defaultValue={state.siteId}><option value="">All pickup sites</option>{siteChoices.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}</select></label>
+      <label className="field"><span>Forecast date (Manila)</span><select aria-label="Forecast date (Manila)" name="date" defaultValue={state.date}>{(monitoring.data?.dates || [state.date]).map(day => <option key={day} value={day}>{day}</option>)}</select></label>
+      <button type="submit">Apply monitoring filters</button>
+    </form>}
+    {(state.tab !== 'sessions') && <ResourceState resource={monitoring} />}
+    {monitoring.data && <p className="hint">{monitoring.data.supplier.name} · Monitoring as of {date(monitoring.data.asOf)} · Refreshes every 30 seconds</p>}
+    {state.tab === 'monitoring' && monitoring.data && <MonitoringWorkspace overview={monitoring.data} params={params} change={change} refresh={refresh} />}
+    {state.tab === 'sessions' && <><ResourceState resource={sites} /><DistributionSessions sites={siteChoices} create={params.get('create') === '1'} refreshMonitoring={refresh} /></>}
+    {state.tab === 'sites' && <><ResourceState resource={sites} /><DistributionSites items={monitoring.data?.sites || []} sites={siteChoices} refresh={refresh} /></>}
+    {state.tab === 'warnings' && <MonitoringWarnings key={state.siteId} siteId={state.siteId} day={warningDate} onDateChange={warningDate => change({ warningDate })} />}
+    <MonitoringNotifications />
+    {user.role === 'admin' && monitoring.data && <TemperatureBandsForm bands={monitoring.data.temperatureBands} refresh={refresh} />}
   </>;
 }

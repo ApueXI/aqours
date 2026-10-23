@@ -56,3 +56,28 @@ test('map areas use published snapshots, exclude drafts, and preserve explicit q
   assert.equal(result.features[0].properties?.demo, true);
   assert.deepEqual(result.features[0].geometry, polygon);
 });
+
+import { distributionBasemap, distributionMapStyles } from '../src/features/distribution/utils/distribution-basemap';
+import { temperatureColor } from '../src/features/distribution/utils/distribution-state';
+
+test('distribution styles use separate Geoapify raster names and preserve configured fallback providers', () => {
+  const names = { streets: 'osm-bright', light: 'positron', dark: 'dark-matter' } as const;
+  for (const [style, name] of Object.entries(names)) {
+    const config = distributionBasemap({ apiKey: 'public fixture' }, style as keyof typeof names);
+    assert.match(config.url!, new RegExp(`/tile/${name}/`)); assert.match(config.url!, /public%20fixture/);
+    assert.match(config.attribution, /Geoapify/); assert.match(config.attribution, /OpenStreetMap/);
+    assert.equal(distributionBasemap({ tileUrl: 'https://fixture.test/{z}/{x}/{y}.png' }, style as keyof typeof names).url, 'https://fixture.test/{z}/{x}/{y}.png');
+    assert.equal(distributionBasemap({}, style as keyof typeof names).url, null);
+  }
+  assert.equal(temperatureColor(24.9, [25, 30, 34, 37]), '#2563eb');
+  assert.equal(temperatureColor(25, [25, 30, 34, 37]), '#15803d');
+  assert.equal(temperatureColor(37, [25, 30, 34, 37]), '#dc2626');
+  assert.equal(temperatureColor(35, [20, 25, 28, 32]), '#dc2626');
+});
+
+
+test('distribution only offers available basemaps with explicit custom and missing-configuration labels', () => {
+  assert.deepEqual(distributionMapStyles({ apiKey: 'public fixture' }).map(option => option.value), ['streets', 'light', 'dark']);
+  assert.deepEqual(distributionMapStyles({ apiKey: 'public fixture', tileUrl: 'https://fixture.test/tiles' }), [{ value: 'streets', label: 'Configured basemap' }]);
+  assert.deepEqual(distributionMapStyles({}), [{ value: 'streets', label: 'Basemap unavailable' }]);
+});

@@ -13,6 +13,11 @@ model Supplier {
   storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
   changedAt DateTime @default(now()) @db.Timestamptz(6) @map("changed_at")
   entity Entity @relation(fields: [id], references: [id], onDelete: Restrict)
+  monitoringConfigs MonitoringConfig[]
+  monitoringForecasts MonitoringForecast[]
+  monitoringWork MonitoringWork[]
+  monitoringWarnings MonitoringWarning[]
+  monitoringBands MonitoringBands?
   name String @map("name")
   demo Boolean @map("demo")
   @@index([storedAt, id])
@@ -302,6 +307,10 @@ model AssistanceRequest {
 }
 
 model PickupSite {
+  monitoringConfig MonitoringConfig?
+  monitoringForecast MonitoringForecast?
+  monitoringWork MonitoringWork?
+  monitoringWarnings MonitoringWarning[]
   id String @id @db.Uuid
   version Int @default(1)
   storedAt DateTime @default(now()) @db.Timestamptz(6) @map("stored_at")
@@ -646,4 +655,88 @@ model LegacyMigration {
   appliedAt DateTime @default(now()) @db.Timestamptz(6) @map("applied_at")
   @@map("schema_migrations")
   @@ignore
+}
+
+model MonitoringConfig {
+  site PickupSite @relation(fields: [siteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  siteId String @id @db.Uuid @map("site_id")
+  supplierId String @db.Uuid @map("supplier_id")
+  version Int
+  enabled Boolean
+  warningTemperature Float @map("warning_temperature")
+  criticalTemperature Float @map("critical_temperature")
+  lowSupplyLiters Decimal @db.Decimal(14,2) @map("low_supply_liters")
+  criticalSupplyLiters Decimal @db.Decimal(14,2) @map("critical_supply_liters")
+  capacityLiters Decimal? @db.Decimal(14,2) @map("capacity_liters")
+  updatedAt DateTime @db.Timestamptz(6) @map("updated_at")
+  @@map("monitoring_configs")
+}
+model MonitoringForecast {
+  site PickupSite @relation(fields: [siteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  siteId String @id @db.Uuid @map("site_id")
+  supplierId String @db.Uuid @map("supplier_id")
+  coordinateKey String @map("coordinate_key")
+  forecast Json?
+  lastAttemptAt DateTime? @db.Timestamptz(6) @map("last_attempt_at")
+  lastSuccessAt DateTime? @db.Timestamptz(6) @map("last_success_at")
+  nextRefreshAt DateTime @db.Timestamptz(6) @map("next_refresh_at")
+  error String?
+  failures Int @default(0)
+  @@map("monitoring_forecasts")
+}
+model MonitoringWork {
+  site PickupSite @relation(fields: [siteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  siteId String @id @db.Uuid @map("site_id")
+  supplierId String @db.Uuid @map("supplier_id")
+  revision Int @default(1)
+  evaluatedRevision Int @default(0) @map("evaluated_revision")
+  leaseToken String? @db.Uuid @map("lease_token")
+  leaseUntil DateTime? @db.Timestamptz(6) @map("lease_until")
+  sweptAt DateTime? @db.Timestamptz(6) @map("swept_at")
+  @@map("monitoring_work")
+}
+model MonitoringWarning {
+  history MonitoringHistory[]
+  site PickupSite @relation(fields: [siteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id String @id @db.Uuid
+  supplierId String @db.Uuid @map("supplier_id")
+  siteId String @db.Uuid @map("site_id")
+  siteName String @map("site_name")
+  family String
+  forecastDate String @map("forecast_date")
+  type String
+  severity String
+  state String
+  evidence Json
+  createdAt DateTime @db.Timestamptz(6) @map("created_at")
+  updatedAt DateTime @db.Timestamptz(6) @map("updated_at")
+  closedReason String? @map("closed_reason")
+  revision Int
+  @@index([supplierId,siteId,state])
+  @@map("monitoring_warnings")
+}
+model MonitoringHistory {
+  warning MonitoringWarning @relation(fields: [warningId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id String @id @db.Uuid
+  warningId String @db.Uuid @map("warning_id")
+  revision Int
+  action String
+  severity String
+  state String
+  evidence Json
+  createdAt DateTime @db.Timestamptz(6) @map("created_at")
+  reason String?
+  @@unique([warningId,revision])
+  @@map("monitoring_history")
+}
+model MonitoringBands {
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  supplierId String @id @db.Uuid @map("supplier_id")
+  version Int
+  boundaries Json
+  @@map("monitoring_bands")
 }

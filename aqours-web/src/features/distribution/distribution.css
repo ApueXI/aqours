@@ -1,0 +1,52 @@
+.distribution-lookup { padding: 16px; border: 1px solid #d4dfe4; border-radius: 6px; background: white; }
+.distribution-lookup h2 { font-size: 16px; margin-bottom: 12px; }
+.distribution-lookup .resource-loading, .distribution-lookup .error { margin-top: 12px; }
+.forecast-refresh { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 550px; }
+.forecast-refresh span { font-size: 13px; }
+.forecast-refresh p { margin: 0; }
+.distribution-timeline { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.distribution-timeline button { flex: 1; white-space: nowrap; }
+.distribution-timeline button[aria-pressed="true"] { color: #115e59; border-color: #0f766e; background: #e6f3f0; }
+.distribution-map-controls { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.distribution-map-controls .field { min-width: 160px; margin: 0; }
+.distribution-legend { font-size: 13px; margin: 12px 0; }
+.distribution-legend p { margin: 8px 0; }
+.distribution-legend ul { display: flex; flex-wrap: wrap; gap: 8px 16px; list-style: none; padding: 0; margin: 0; }
+.distribution-legend li { display: flex; align-items: center; gap: 8px; }
+.temperature-swatch { display: inline-block; width: 14px; height: 14px; border: 1px solid #526975; }
+.status-key { font-weight: 600; padding-left: 6px; border-left: 4px solid; white-space: nowrap; }
+.status-key.normal { border-color: #15803d; }
+.status-key.warning { border-color: #eab308; }
+.status-key.critical { border-color: #dc2626; }
+.status-key.unavailable { border-color: #6b7280; }
+.distribution-workspace { display: grid; grid-template-columns: minmax(280px, .8fr) minmax(0, 1.5fr); gap: 16px; align-items: start; }
+.distribution-workspace > * { min-width: 0; }
+.distribution-site-list { max-height: 680px; overflow: auto; background: white; border: 1px solid #d4dfe4; border-radius: 6px; }
+.distribution-site-row { padding: 16px; border-bottom: 1px solid #d4dfe4; }
+.distribution-site-row:last-child { border-bottom: 0; }
+.distribution-site-row[data-selected="true"] { background: #f0fdfa; }
+.distribution-site-row > button { text-align: left; color: #115e59; padding: 6px 10px; margin-bottom: 8px; }
+.distribution-site-row p { margin: 6px 0 0; font-size: 13px; }
+.monitoring-status { font-weight: 650; border-left: 4px solid #6b7280; padding-left: 8px; }
+.monitoring-status[data-status="normal"] { border-color: #15803d; }
+.monitoring-status[data-status="warning"] { border-color: #eab308; }
+.monitoring-status[data-status="critical"] { border-color: #dc2626; }
+.monitoring-selection { background: white; padding: 24px; margin-top: 24px; border: 1px solid #d4dfe4; border-radius: 6px; }
+.leaflet-distribution-map { height: 580px; background: #e2e8f0; border: 1px solid #b8c4ce; z-index: 0; }
+.distribution-site-marker { display: grid !important; place-items: center; background: transparent; }
+.distribution-site-marker span { width: 20px; height: 20px; border: 2px solid white; border-radius: 50%; box-shadow: 0 1px 3px #0004; }
+.distribution-site-marker:focus-visible { outline: 3px solid #115e59; outline-offset: 2px; }
+.site-temperature-label { font-weight: 650; color: #172c35; background: white; border: 1px solid #718d99; padding: 2px 6px; box-shadow: none; }
+.distribution-map .leaflet-popup-content p { margin: 6px 0; }
+.distribution-map .map-layer-toolbar span { font-weight: 600; }
+@media (max-width: 1050px) { .distribution-workspace { grid-template-columns: minmax(260px, 1fr) minmax(0, 1.4fr); } }
+@media (max-width: 850px) {
+  .distribution-workspace { display: block; }
+  .distribution-workspace[data-view="list"] .distribution-map-panel { display: none; }
+  .distribution-workspace[data-view="map"] .distribution-site-list { display: none; }
+  .distribution-site-list { max-height: none; }
+  .leaflet-distribution-map { height: 440px; }
+  .monitoring-selection { padding: 16px; }
+  .distribution-timeline { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px; }
+  .distribution-map-controls { gap: 12px; }
+}

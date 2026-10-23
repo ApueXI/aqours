@@ -89,3 +89,7 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 Advisory/guidance HTTP tests establish independent restrictions, exact audiences, revision/lift deduplication and rollback. Actual browser publish/revise/lift and native N17/N27/N36–40 establish past-end persistence, current removal after explicit lifting, historical detail, scheduled windows/owned context and report-free reception. Supplier approval of real public-health content remains an operational prerequisite; all test notices are fictional.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
+
+## Reference-led presentation — 22 October 2026
+
+Customer notice and Revision history views separate the notice from revisions. Admin draft editing/revision is disclosed separately; publish/lift actions retain deliberate preview/confirmation and explicit reasons. Staff sees publication-permission context. Lifting remains independent from incident/report outcomes and dates. See [UI/UX](../../../ui-ux.md) for executed rendered verification and limits.

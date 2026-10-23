@@ -4,6 +4,8 @@
 
 Record the supplied goal faithfully, its specification paths/links, the target project(s), and relevant user clarifications. Separate intended requirements from current behavior.
 
+The Documentation/scribe preserves the original request/source evidence and lead-approved criteria. Label verified source facts separately from unresolved assumptions.
+
 ## Scope and deliverables
 
 Record required workflows, integration boundaries, artifacts, and explicit exclusions.

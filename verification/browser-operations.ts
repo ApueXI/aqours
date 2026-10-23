@@ -49,6 +49,7 @@ async function inbox(page: Page, a: Actor, b: Actor, first: Report, second: Repo
 async function reviewUnlocated(page: Page, a: Actor, staff: Actor, item: Report, passed: Passed) {
   await page.goto(`${web}/#/reports/${item.id}`);
   const message = 'Fictional acknowledgement: location clarification requested';
+  await page.getByRole('navigation', {name: 'Report views'}).getByRole('button', {name: /^Messages/}).click();
   await page.getByLabel('Customer-visible message', {exact: true}).fill(message);
   await submit(page, page, 'Send to customer', `/staff/reports/${item.id}/messages`);
   await expect(page.getByRole('article').getByText(message, {exact: true})).toBeVisible();
@@ -66,7 +67,9 @@ async function reviewUnlocated(page: Page, a: Actor, staff: Actor, item: Report,
   const event = owned.timeline.find(e => e.action === 'reviewed' && e.text === reason)!;
   assert.equal(event.actorId, staff.user.id); assert.ok(Number.isFinite(Date.parse(event.createdAt)));
   const history = page.locator('.history li').filter({hasText: reason});
+  await page.getByRole('navigation', {name: 'Report views'}).getByRole('button', {name: 'History', exact: true}).click();
   await expect(history).toContainText(displayTime(event.createdAt));
+  await page.getByRole('navigation', {name: 'Report views'}).getByRole('button', {name: 'Summary', exact: true}).click();
   await expect(page.getByText('No coordinates', {exact: false})).toBeVisible();
   await expect(page.getByText('Unknown zone', {exact: false})).toBeVisible();
   passed('Staff acknowledges/assigns urgent unlocated report with reason/time history and no invented zone or coordinates');
@@ -142,6 +145,7 @@ async function incidentOperations(page: Page, staff: Actor, a: Actor, b: Actor, 
   assert.equal(updated.reportCount, 0); assert.equal(updated.uniqueConnections, 0);
   const event = updated.timeline!.find(e => e.text === reason)!;
   assert.equal(event.actorId, staff.user.id); assert.equal(event.fromStatus, 'investigating'); assert.equal(event.toStatus, 'confirmed');
+  await page.getByRole('navigation', {name: 'Incident views'}).getByRole('button', {name: 'History', exact: true}).click();
   await expect(page.locator('.history li').filter({hasText: reason})).toContainText(displayTime(event.createdAt));
   await expect(page.locator('dt').filter({hasText: /^Restoration estimate$/}).locator('xpath=following-sibling::dd[1]')).toHaveText('Unknown');
   passed('Staff browser edits incident status/owner/estimate with reason/time history while restoration remains explicitly unknown');

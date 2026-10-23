@@ -61,10 +61,12 @@ export function ReportForm() {
         <Choices values={categories} labels={categoryNames} value={draft.category} disabled={command.locked}
           onChange={value => dispatch({ type: 'category', value })} />
         <Field label="Describe the problem" value={draft.description} onChangeText={description => dispatch({ type: 'edit', patch: { description } })}
+          error={draft.error && !draft.description.trim() ? 'Describe the water problem.' : null}
           hint="Include what changed and how it affects your water service." multiline maxLength={5000} editable={!command.locked} />
         <Field label={prompts[draft.category]} value={draft.guidedDetails} onChangeText={guidedDetails => dispatch({ type: 'edit', patch: { guidedDetails } })}
           multiline maxLength={2000} editable={!command.locked} />
         <Field label="When did you notice it?" hint="Asia/Manila · YYYY-MM-DD HH:mm" value={draft.noticed}
+          error={draft.error && draft.description.trim() ? draft.error : null}
           onChangeText={noticed => dispatch({ type: 'edit', patch: { noticed } })} editable={!command.locked} autoCapitalize="none" />
       </Section>
     </View>

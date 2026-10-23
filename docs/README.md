@@ -15,9 +15,11 @@ Updated **19 October 2026** against the first-release implementation of Water Su
 
 Additional execution references: [API contract](api.md), [setup and backup/restore](setup.md), [demo](demo.md), [verification](verification.md), and [traceability](traceability.md).
 
-[Weather](weather.md) documents the 21 October addition: Open-Meteo current conditions, seven-day forecasts, saved customer locations and Philippine city search for all three roles.
+[Weather](weather.md) documents Open-Meteo current/seven-day forecasts: customer saved-point/city-search weather and supplier nationwide canonical PSGC map/selector weather, including representative-coordinate provenance and unavailable localities.
 
 Use these together: requirements define the behavior, architecture defines boundaries, schema describes persistence status/design, and workspace traces the target workflows. [PROGRESS.md](../PROGRESS.md) records completed repository work and verification.
+
+[Distribution monitoring](distribution-monitoring.md) documents pickup-site forecasts, reservation-stock warnings, scheduled evaluation, monitoring/map navigation and the seven-day temperature timeline.
 
 ## Role summaries
 

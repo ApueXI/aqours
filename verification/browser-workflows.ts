@@ -85,8 +85,9 @@ export async function serviceFlows(page:Page,web:string,customer:Actor,admin:Act
 
   const incident=await ok<StaffIncident>(admin,'POST','/staff/incidents',{category:'outage',summary:'Fictional browser incident publication',zoneIds:[(await connection(customer)).zoneId],area:'Fictional browser service area',demo:true});
   await page.goto(`${web}/#/incidents/${incident.id}`);
+  await page.getByRole('navigation',{name:'Incident views'}).getByRole('button',{name:'Publish update',exact:true}).click();
   await page.getByLabel('Customer-visible progress',{exact:true}).fill('Fictional browser progress; restoration unknown');
-  await page.getByRole('button',{name:'Publish update',exact:true}).click();
+  await page.locator('form').getByRole('button',{name:'Publish update',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Customer preview',exact:true})).toBeVisible();
   await confirm(page,'Confirm publish update',`/staff/incidents/${incident.id}/updates`);
   await expect.poll(async()=>(await ok<PublishedIncident>(customer,'GET',`/incidents/${incident.id}`)).latestUpdate.progress).toBe('Fictional browser progress; restoration unknown');

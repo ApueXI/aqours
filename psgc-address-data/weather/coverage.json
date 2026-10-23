@@ -1,0 +1,912 @@
+{
+  "sourceRevision": "06f38a00f8b9ac03f8bd6a3693893b8c449ac466",
+  "sourceSha256": "7167015df9dc02f060e13e022b8be5c3be3e0f05c288e8988cf71161bf7968ea",
+  "sourceCount": 1573,
+  "localityCount": 1642,
+  "matchedCount": 1553,
+  "unavailableCount": 89,
+  "unavailable": [
+    {
+      "code": "1380600000",
+      "ancestry": [
+        "National Capital Region (NCR)",
+        "City of Manila"
+      ]
+    },
+    {
+      "code": "1381300000",
+      "ancestry": [
+        "National Capital Region (NCR)",
+        "Quezon City"
+      ]
+    },
+    {
+      "code": "1381500000",
+      "ancestry": [
+        "National Capital Region (NCR)",
+        "City of Taguig"
+      ]
+    },
+    {
+      "code": "1381701000",
+      "ancestry": [
+        "National Capital Region (NCR)",
+        "Pateros"
+      ]
+    },
+    {
+      "code": "1430300000",
+      "ancestry": [
+        "Cordillera Administrative Region (CAR)",
+        "Apayao",
+        "City of Baguio"
+      ]
+    },
+    {
+      "code": "0203120000",
+      "ancestry": [
+        "Region II (Cagayan Valley)",
+        "Isabela",
+        "Naguilian"
+      ]
+    },
+    {
+      "code": "0205015000",
+      "ancestry": [
+        "Region II (Cagayan Valley)",
+        "Nueva Vizcaya",
+        "Alfonso Castaneda"
+      ]
+    },
+    {
+      "code": "0301403000",
+      "ancestry": [
+        "Region III (Central Luzon)",
+        "Bulacan",
+        "City of Baliwag"
+      ]
+    },
+    {
+      "code": "0304905000",
+      "ancestry": [
+        "Region III (Central Luzon)",
+        "Nueva Ecija",
+        "Carranglan"
+      ]
+    },
+    {
+      "code": "0304909000",
+      "ancestry": [
+        "Region III (Central Luzon)",
+        "Nueva Ecija",
+        "General Mamerto Natividad"
+      ]
+    },
+    {
+      "code": "0304917000",
+      "ancestry": [
+        "Region III (Central Luzon)",
+        "Nueva Ecija",
+        "Science City of Muñoz"
+      ]
+    },
+    {
+      "code": "0304931000",
+      "ancestry": [
+        "Region III (Central Luzon)",
+        "Nueva Ecija",
+        "Talugtug"
+      ]
+    },
+    {
+      "code": "0330100000",
+      "ancestry": [
+        "Region III (Central Luzon)",
+        "Aurora",
+        "City of Angeles"
+      ]
+    },
+    {
+      "code": "0331400000",
+      "ancestry": [
+        "Region III (Central Luzon)",
+        "Aurora",
+        "City of Olongapo"
+      ]
+    },
+    {
+      "code": "0401018000",
+      "ancestry": [
+        "Region IV-A (CALABARZON)",
+        "Batangas",
+        "Mataasnakahoy"
+      ]
+    },
+    {
+      "code": "0402107000",
+      "ancestry": [
+        "Region IV-A (CALABARZON)",
+        "Cavite",
+        "General Emilio Aguinaldo"
+      ]
+    },
+    {
+      "code": "0402122000",
+      "ancestry": [
+        "Region IV-A (CALABARZON)",
+        "Cavite",
+        "City of Trece Martires "
+      ]
+    },
+    {
+      "code": "0403406000",
+      "ancestry": [
+        "Region IV-A (CALABARZON)",
+        "Laguna",
+        "Calauan"
+      ]
+    },
+    {
+      "code": "0403428000",
+      "ancestry": [
+        "Region IV-A (CALABARZON)",
+        "Laguna",
+        "City of Santa Rosa"
+      ]
+    },
+    {
+      "code": "0405636000",
+      "ancestry": [
+        "Region IV-A (CALABARZON)",
+        "Quezon",
+        "Polillo"
+      ]
+    },
+    {
+      "code": "0405807000",
+      "ancestry": [
+        "Region IV-A (CALABARZON)",
+        "Rizal",
+        "Jala-Jala"
+      ]
+    },
+    {
+      "code": "0431200000",
+      "ancestry": [
+        "Region IV-A (CALABARZON)",
+        "Rizal",
+        "City of Lucena "
+      ]
+    },
+    {
+      "code": "1705107000",
+      "ancestry": [
+        "MIMAROPA Region",
+        "Occidental Mindoro",
+        "Paluan"
+      ]
+    },
+    {
+      "code": "1705305000",
+      "ancestry": [
+        "MIMAROPA Region",
+        "Palawan",
+        "Bataraza"
+      ]
+    },
+    {
+      "code": "1705323000",
+      "ancestry": [
+        "MIMAROPA Region",
+        "Palawan",
+        "Dr. Jose P. Rizal"
+      ]
+    },
+    {
+      "code": "1731500000",
+      "ancestry": [
+        "MIMAROPA Region",
+        "Romblon",
+        "City of Puerto Princesa "
+      ]
+    },
+    {
+      "code": "0501731000",
+      "ancestry": [
+        "Region V (Bicol Region)",
+        "Camarines Sur",
+        "Sagñay"
+      ]
+    },
+    {
+      "code": "0504116000",
+      "ancestry": [
+        "Region V (Bicol Region)",
+        "Masbate",
+        "Pio V. Corpus"
+      ]
+    },
+    {
+      "code": "0600613000",
+      "ancestry": [
+        "Region VI (Western Visayas)",
+        "Antique",
+        "San Jose "
+      ]
+    },
+    {
+      "code": "0600614000",
+      "ancestry": [
+        "Region VI (Western Visayas)",
+        "Antique",
+        "San Remigio"
+      ]
+    },
+    {
+      "code": "0601907000",
+      "ancestry": [
+        "Region VI (Western Visayas)",
+        "Capiz",
+        "Ma-Ayon"
+      ]
+    },
+    {
+      "code": "0601915000",
+      "ancestry": [
+        "Region VI (Western Visayas)",
+        "Capiz",
+        "Sapi-An"
+      ]
+    },
+    {
+      "code": "0631000000",
+      "ancestry": [
+        "Region VI (Western Visayas)",
+        "Guimaras",
+        "City of Iloilo "
+      ]
+    },
+    {
+      "code": "1804508000",
+      "ancestry": [
+        "Negros Island Region (NIR)",
+        "Negros Occidental",
+        "Enrique B. Magalona"
+      ]
+    },
+    {
+      "code": "1804532000",
+      "ancestry": [
+        "Negros Island Region (NIR)",
+        "Negros Occidental",
+        "Salvador Benedicto"
+      ]
+    },
+    {
+      "code": "1830200000",
+      "ancestry": [
+        "Negros Island Region (NIR)",
+        "Siquijor",
+        "City of Bacolod "
+      ]
+    },
+    {
+      "code": "0701226000",
+      "ancestry": [
+        "Region VII (Central Visayas)",
+        "Bohol",
+        "Getafe"
+      ]
+    },
+    {
+      "code": "0702221000",
+      "ancestry": [
+        "Region VII (Central Visayas)",
+        "Cebu",
+        "Daanbantayan"
+      ]
+    },
+    {
+      "code": "0702243000",
+      "ancestry": [
+        "Region VII (Central Visayas)",
+        "Cebu",
+        "San Remigio"
+      ]
+    },
+    {
+      "code": "0802607000",
+      "ancestry": [
+        "Region VIII (Eastern Visayas)",
+        "Eastern Samar",
+        "General Macarthur"
+      ]
+    },
+    {
+      "code": "0802621000",
+      "ancestry": [
+        "Region VIII (Eastern Visayas)",
+        "Eastern Samar",
+        "San Policarpo"
+      ]
+    },
+    {
+      "code": "0806022000",
+      "ancestry": [
+        "Region VIII (Eastern Visayas)",
+        "Samar",
+        "Paranas"
+      ]
+    },
+    {
+      "code": "0831600000",
+      "ancestry": [
+        "Region VIII (Eastern Visayas)",
+        "Biliran",
+        "City of Tacloban "
+      ]
+    },
+    {
+      "code": "0906603000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Sulu",
+        "Kalingalan Caluang"
+      ]
+    },
+    {
+      "code": "0906607000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Sulu",
+        "Old Panamao"
+      ]
+    },
+    {
+      "code": "0906608000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Sulu",
+        "Pangutaran"
+      ]
+    },
+    {
+      "code": "0906615000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Sulu",
+        "Tongkil"
+      ]
+    },
+    {
+      "code": "0907211000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Zamboanga del Norte",
+        "Pres. Manuel A. Roxas"
+      ]
+    },
+    {
+      "code": "0907214000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Zamboanga del Norte",
+        "Sergio Osmeña Sr."
+      ]
+    },
+    {
+      "code": "0907220000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Zamboanga del Norte",
+        "Sirawai"
+      ]
+    },
+    {
+      "code": "0907226000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Zamboanga del Norte",
+        "Leon T. Postigo"
+      ]
+    },
+    {
+      "code": "0907317000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Zamboanga del Sur",
+        "Margosatubig"
+      ]
+    },
+    {
+      "code": "0907340000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Zamboanga del Sur",
+        "Sominot"
+      ]
+    },
+    {
+      "code": "0907341000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Zamboanga del Sur",
+        "Vincenzo A. Sagun"
+      ]
+    },
+    {
+      "code": "0990101000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Zamboanga Sibugay",
+        "City of Isabela"
+      ]
+    },
+    {
+      "code": "0931700000",
+      "ancestry": [
+        "Region IX (Zamboanga Peninsula)",
+        "Zamboanga Sibugay",
+        "City of Zamboanga"
+      ]
+    },
+    {
+      "code": "1001305000",
+      "ancestry": [
+        "Region X (Northern Mindanao)",
+        "Bukidnon",
+        "Impasug-ong"
+      ]
+    },
+    {
+      "code": "1004210000",
+      "ancestry": [
+        "Region X (Northern Mindanao)",
+        "Misamis Occidental",
+        "City of Ozamiz"
+      ]
+    },
+    {
+      "code": "1004217000",
+      "ancestry": [
+        "Region X (Northern Mindanao)",
+        "Misamis Occidental",
+        "Don Victoriano"
+      ]
+    },
+    {
+      "code": "1030900000",
+      "ancestry": [
+        "Region X (Northern Mindanao)",
+        "Misamis Oriental",
+        "City of Iligan"
+      ]
+    },
+    {
+      "code": "1102317000",
+      "ancestry": [
+        "Region XI (Davao Region)",
+        "Davao del Norte",
+        "Island Garden City of Samal"
+      ]
+    },
+    {
+      "code": "1102324000",
+      "ancestry": [
+        "Region XI (Davao Region)",
+        "Davao del Norte",
+        "Sawata"
+      ]
+    },
+    {
+      "code": "1102506000",
+      "ancestry": [
+        "Region XI (Davao Region)",
+        "Davao Oriental",
+        "Governor Generoso"
+      ]
+    },
+    {
+      "code": "1130700000",
+      "ancestry": [
+        "Region XI (Davao Region)",
+        "Davao Occidental",
+        "City of Davao"
+      ]
+    },
+    {
+      "code": "1204713000",
+      "ancestry": [
+        "Region XII (SOCCSKSARGEN)",
+        "Cotabato",
+        "President Roxas"
+      ]
+    },
+    {
+      "code": "1206508000",
+      "ancestry": [
+        "Region XII (SOCCSKSARGEN)",
+        "Sultan Kudarat",
+        "Lambayong"
+      ]
+    },
+    {
+      "code": "1206510000",
+      "ancestry": [
+        "Region XII (SOCCSKSARGEN)",
+        "Sultan Kudarat",
+        "President Quirino"
+      ]
+    },
+    {
+      "code": "1230800000",
+      "ancestry": [
+        "Region XII (SOCCSKSARGEN)",
+        "Sarangani",
+        "City of General Santos"
+      ]
+    },
+    {
+      "code": "1606808000",
+      "ancestry": [
+        "Region XIII (Caraga)",
+        "Surigao del Sur",
+        "Cortes"
+      ]
+    },
+    {
+      "code": "1630400000",
+      "ancestry": [
+        "Region XIII (Caraga)",
+        "Dinagat Islands",
+        "City of Butuan "
+      ]
+    },
+    {
+      "code": "1903601000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Lanao del Sur",
+        "Bacolod-Kalawi"
+      ]
+    },
+    {
+      "code": "1903624000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Lanao del Sur",
+        "Ditsaan-Ramain"
+      ]
+    },
+    {
+      "code": "1903637000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Lanao del Sur",
+        "Amai Manabilang"
+      ]
+    },
+    {
+      "code": "1903638000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Lanao del Sur",
+        "Tagoloan II"
+      ]
+    },
+    {
+      "code": "1903640000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Lanao del Sur",
+        "Sultan Dumalondong"
+      ]
+    },
+    {
+      "code": "1907007000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Tawi-Tawi",
+        "Tandubas"
+      ]
+    },
+    {
+      "code": "1907008000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Tawi-Tawi",
+        "Turtle Islands"
+      ]
+    },
+    {
+      "code": "1908706000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Norte",
+        "Kabuntalan"
+      ]
+    },
+    {
+      "code": "1908712000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Norte",
+        "Talitay"
+      ]
+    },
+    {
+      "code": "1908811000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Sur",
+        "Gen. S.K. Pendatun"
+      ]
+    },
+    {
+      "code": "1908815000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Sur",
+        "Pagagawan"
+      ]
+    },
+    {
+      "code": "1999901000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Sur",
+        "Kapalawan"
+      ]
+    },
+    {
+      "code": "1999902000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Sur",
+        "Old Kaabakan"
+      ]
+    },
+    {
+      "code": "1999903000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Sur",
+        "Kadayangan"
+      ]
+    },
+    {
+      "code": "1999904000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Sur",
+        "Nabalawag"
+      ]
+    },
+    {
+      "code": "1999905000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Sur",
+        "Pahamuddin"
+      ]
+    },
+    {
+      "code": "1999906000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Sur",
+        "Malidegao"
+      ]
+    },
+    {
+      "code": "1999907000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Sur",
+        "Ligawasan"
+      ]
+    },
+    {
+      "code": "1999908000",
+      "ancestry": [
+        "Bangsamoro Autonomous Region In Muslim Mindanao (BARMM)",
+        "Maguindanao del Sur",
+        "Tugunan"
+      ]
+    }
+  ],
+  "unmatchedSource": [
+    {
+      "cityMunCode": "031403",
+      "name": "Baliuag",
+      "province": "0314",
+      "region": "03",
+      "lat": 14.9547,
+      "lng": 120.8969,
+      "points": 1
+    },
+    {
+      "cityMunCode": "035401",
+      "name": "City of Angeles",
+      "province": "0354",
+      "region": "03",
+      "lat": 15.15,
+      "lng": 120.5833,
+      "points": 1
+    },
+    {
+      "cityMunCode": "037107",
+      "name": "City of Olongapo",
+      "province": "0371",
+      "region": "03",
+      "lat": 14.8292,
+      "lng": 120.2828,
+      "points": 1
+    },
+    {
+      "cityMunCode": "045624",
+      "name": "City of Lucena",
+      "province": "0456",
+      "region": "04",
+      "lat": 13.9314,
+      "lng": 121.6172,
+      "points": 1
+    },
+    {
+      "cityMunCode": "054116",
+      "name": "Pio v. Corpuz",
+      "province": "0541",
+      "region": "05",
+      "lat": 12.0897,
+      "lng": 123.841,
+      "points": 1
+    },
+    {
+      "cityMunCode": "063022",
+      "name": "City of Iloilo",
+      "province": "0630",
+      "region": "06",
+      "lat": 10.6969,
+      "lng": 122.5644,
+      "points": 1
+    },
+    {
+      "cityMunCode": "064501",
+      "name": "City of Bacolod",
+      "province": "0645",
+      "region": "06",
+      "lat": 10.6667,
+      "lng": 122.95,
+      "points": 1
+    },
+    {
+      "cityMunCode": "083747",
+      "name": "City of Tacloban",
+      "province": "0837",
+      "region": "08",
+      "lat": 11.2433,
+      "lng": 125.0047,
+      "points": 1
+    },
+    {
+      "cityMunCode": "097332",
+      "name": "City of Zamboanga",
+      "province": "0973",
+      "region": "09",
+      "lat": 7.7291,
+      "lng": 122.7286,
+      "points": 1
+    },
+    {
+      "cityMunCode": "103504",
+      "name": "City of Iligan",
+      "province": "1035",
+      "region": "10",
+      "lat": 8.2289,
+      "lng": 124.2434,
+      "points": 1
+    },
+    {
+      "cityMunCode": "104217",
+      "name": "Don Victoriano Chiongbian",
+      "province": "1042",
+      "region": "10",
+      "lat": 8.5386,
+      "lng": 123.6155,
+      "points": 1
+    },
+    {
+      "cityMunCode": "112324",
+      "name": "San Isidro",
+      "province": "1123",
+      "region": "11",
+      "lat": 6.958,
+      "lng": 125.7682,
+      "points": 1
+    },
+    {
+      "cityMunCode": "112402",
+      "name": "City of Davao",
+      "province": "1124",
+      "region": "11",
+      "lat": 7.092445,
+      "lng": 125.513573,
+      "points": 11
+    },
+    {
+      "cityMunCode": "126303",
+      "name": "City of General Santos",
+      "province": "1263",
+      "region": "12",
+      "lat": 6.1799,
+      "lng": 125.077,
+      "points": 1
+    },
+    {
+      "cityMunCode": "141102",
+      "name": "City of Baguio",
+      "province": "1411",
+      "region": "14",
+      "lat": 16.4164,
+      "lng": 120.5931,
+      "points": 1
+    },
+    {
+      "cityMunCode": "160202",
+      "name": "City of Butuan",
+      "province": "1602",
+      "region": "16",
+      "lat": 8.9492,
+      "lng": 125.5436,
+      "points": 1
+    },
+    {
+      "cityMunCode": "175316",
+      "name": "City of Puerto Princesa",
+      "province": "1753",
+      "region": "17",
+      "lat": 9.7392,
+      "lng": 118.7353,
+      "points": 1
+    },
+    {
+      "cityMunCode": "175323",
+      "name": "Rizal",
+      "province": "1753",
+      "region": "17",
+      "lat": 10.1879,
+      "lng": 119.1826,
+      "points": 1
+    }
+  ],
+  "excludedSource": [
+    {
+      "source": {
+        "cityMunCode": "043428",
+        "name": "City of Santa Rosa",
+        "province": "0434",
+        "region": "04",
+        "lat": 14.2413,
+        "lng": 121.365,
+        "points": 1
+      },
+      "canonicalCode": "0403428000",
+      "reason": "The upstream postal-point mean (14.2413, 121.365) is roughly 28 km east of the Santa Rosa demonstration locality. Its city-level representativeness is questionable; no replacement coordinate is inferred.",
+      "referenceUrl": "https://unosd.un.org/sites/default/files/day_3_session_11_hon._mr._arcillas_santa_rosa_philippines.pdf"
+    },
+    {
+      "source": {
+        "cityMunCode": "133900",
+        "name": "City of Manila",
+        "province": null,
+        "region": "13",
+        "lat": 14.606358,
+        "lng": 121.031683,
+        "points": 343
+      },
+      "canonicalCode": "1380600000",
+      "reason": "The upstream postal-point mean (14.606358, 121.031683), averaged from 343 points, is substantially east of Manila. Its city-level representativeness is questionable; districts are not substituted and no replacement coordinate is inferred.",
+      "referenceUrl": "https://ungegn.un.org/dashboard/cities/details?id=108"
+    }
+  ]
+}

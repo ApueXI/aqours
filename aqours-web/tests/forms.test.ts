@@ -56,3 +56,22 @@ test('guided addresses retain structured codes and incomplete selections cannot 
   data.set('address:guided', 'false'); data.set('address:structured', 'null');
   assert.equal(readFields(fields, data).structuredAddress, null);
 });
+
+import { validateMonitoring, validateBands } from '../src/features/distribution/utils/monitoring-validation';
+
+test('monitoring form validates ordered thresholds and optional positive capacity without changing exact liters', () => {
+  const body = { warningTemperature: 35, criticalTemperature: 38, lowSupplyLiters: '100.25', criticalSupplyLiters: '0', capacityLiters: null };
+  assert.equal(validateMonitoring(body), undefined);
+  for (const invalid of [{ criticalTemperature: 35 }, { lowSupplyLiters: '' }, { criticalSupplyLiters: '-1' }, { criticalSupplyLiters: '100.25' }, { lowSupplyLiters: '100.251' }, { capacityLiters: '0' }]) {
+    assert.equal(typeof validateMonitoring({ ...body, ...invalid }), 'string');
+  }
+  assert.equal(validateMonitoring({ ...body, capacityLiters: '10.00' }), undefined);
+  assert.equal(body.lowSupplyLiters, '100.25');
+});
+
+test('temperature legend requires exactly four increasing finite numeric boundaries', () => {
+  assert.equal(validateBands({ boundaries: [25, 30, 34, 37] }), undefined);
+  for (const boundaries of [[25, 30, 34], [25, 30, 30, 37], [25, 30, 38, 37], ['25', 30, 34, 37], [25, 30, 34, Infinity]]) {
+    assert.equal(typeof validateBands({ boundaries }), 'string');
+  }
+});

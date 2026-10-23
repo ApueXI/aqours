@@ -1,0 +1,32 @@
+.weather-panel { margin-top: 20px; }
+.weather-location-filters { border: 1px solid #d3dce3; border-radius: 8px; padding: 16px; margin: 0; }
+.weather-location-filters legend { padding: 0 6px; font-weight: 600; }
+.weather-location-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.weather-location-level { min-width: 0; }
+.weather-location-level input, .weather-location-level select { width: 100%; min-width: 0; }
+.weather-location-level .field { margin: 0 0 12px; }
+.weather-location-level .field:last-child { margin-bottom: 0; }
+.weather-coverage { color: #475569; font-size: 13px; line-height: 1.6; }
+.weather-workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
+.weather-workspace > * { min-width: 0; }
+.weather-forecast-panel { border: 1px solid #d3dce3; border-radius: 8px; padding: 16px; background: white; }
+.weather-forecast-panel h2 { font-size: 18px; }
+.weather-forecast-panel > div > div:first-child { margin-top: 0; }
+.weather-forecast-panel table { font-size: 13px; }
+.weather-forecast-panel th, .weather-forecast-panel td { padding: 10px; }
+.leaflet-weather-map { height: 540px; border: 1px solid #b8c4ce; background: #e2e8f0; z-index: 0; }
+.weather-locality-marker { display: grid !important; place-items: center; background: transparent; }
+.weather-locality-marker span { width: 16px; height: 16px; display: block; border: 2px solid white; border-radius: 50%; background: #0f766e; box-shadow: 0 1px 3px #0004; }
+.weather-locality-selected span { background: #134e4a; outline: 3px solid #134e4a; outline-offset: 2px; }
+.weather-locality-cluster { display: grid !important; place-items: center; border: 2px solid white; border-radius: 50%; background: #475569; color: white; font-weight: 700; }
+.weather-locality-marker:focus-visible, .weather-locality-cluster:focus-visible { outline: 3px solid #115e59; outline-offset: 3px; }
+.weather-locality-popup .leaflet-popup-content { overflow-wrap: anywhere; }
+@media (max-width: 1100px) {
+  .weather-workspace { grid-template-columns: minmax(0, 1fr); }
+  .leaflet-weather-map { height: 420px; }
+}
+@media (max-width: 650px) {
+  .weather-location-levels { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .leaflet-weather-map { height: 360px; }
+  .weather-forecast-panel { padding: 12px; }
+}

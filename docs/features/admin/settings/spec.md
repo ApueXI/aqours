@@ -93,3 +93,7 @@ Review assistance/admin, advisory/guidance and security API tests plus browser s
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
 
 Implementation update: [PSGC addresses and detailed maps](../../../location-and-maps.md) documents guided supplier-managed addresses, free-text fallback, snapshots, and deployment settings.
+
+## Reference-led presentation — 22 October 2026
+
+Accounts/connections search only the current server page, then open one selected version-keyed editor; zones similarly expose one selected editor and separate creation. Current approved guidance and active rules appear before expandable history. Creating immutable guidance/activating rule versions now previews text/source or explanations before confirmation, without publishing a notice. Role boundaries remain enforced by the existing API. See [UI/UX](../../../ui-ux.md).

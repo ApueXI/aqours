@@ -100,3 +100,9 @@ The original acceptance checkboxes are intentionally preserved as an acceptance 
 Implementation update: [PSGC addresses and detailed maps](../../../location-and-maps.md) describes guided alternate addresses, text fallback, historical snapshots, and coordinate confirmation.
 
 Presentation update: [UI/UX design and navigation](../../../ui-ux.md) documents the shared components and revised customer/supplier workflows. Existing acceptance criteria and domain permissions remain unchanged.
+
+## Reference-led report workspace — 23 October 2026
+
+Summary/Messages/History share mounted customer draft state through an account/report-keyed nested provider; `/reports/:id/messages` and the existing report/History URLs remain. Leaving/unmounting that workspace or process termination ends unsent text; unresolved operation intentions remain a separate in-memory retry safeguard. Both clients present copied ascending createdAt/ID message arrays with authored/date-grouped bubbles. Supplier conversation stays mounted while versioned operational review and private notes remain separate.
+
+Native Messages keeps an inline accessible Send/Retry composer outside a bounded status Details overlay, preserving full error/stale-time/Try again/uncertain text. During Details recovery, dismiss the keyboard, scroll to full Try again, retry, return to retained draft and resume composing; this is the verified normal and 1.3 secondary-action path, not a promise of full Details retry while the IME stays open. Primary editable composer stays above the IME. Authoritative layout dimensions reject stale scroll geometry; own-send visibility passes, with final near-bottom incoming/glyph/target review independently PASS. See [UI/UX](../../../ui-ux.md) and [native evidence](../../../native-verification.md) for exact artifact/check boundaries.

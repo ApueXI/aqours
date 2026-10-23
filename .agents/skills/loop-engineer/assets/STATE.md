@@ -10,19 +10,21 @@ Record completed behavior and an ordered list of remaining tasks/criteria.
 
 ## Task ownership and integration
 
-The lead creates and assigns tasks and alone updates shared `.loop/` files. Record delegation unavailability or why substantial work stays with the lead when applicable. Workers propose subtasks and ownership changes for lead approval.
+The lead assigns bounded tasks and approves decisions. Documentation/scribe alone edits shared `.loop/` files and assigned project documentation, recording verified facts at the lead's direction. Record delegation unavailability or why work remains with a role when applicable. Workers report subtasks and proposed ownership changes; only the user may authorize additional/replacement agents.
+
+Exactly four dedicated roles are approved: Implementer (production/integration and Git changes/commit), Documentation/scribe (project documentation and shared `.loop/` records), Tester (tests, check execution and evidence), and UI/UX Tester (read-only actual rendered review, no product fixes). The lead coordinates, approves decisions, reviews evidence, coordinates integration, and owns final acceptance; it never implements, edits docs/state/tests, runs checks, or performs Git mutations. Agents do not switch roles.
 
 | Task / acceptance IDs | Owner / worker ID | Allowed edit paths | Dependencies / readiness | Worker status / availability | Integration status / evidence / unresolved issues |
 | --- | --- | --- | --- | --- | --- |
-| Record bounded task and criteria | Lead or managed worker ID | Explicit files or disjoint directories | Task IDs and prerequisites | Planned / running / finished / stopped / unknown | Pending / reviewed / integrated / needs fixes; link results and checks |
+| Record bounded task and criteria | Role and worker ID | Explicit files or disjoint directories | Task IDs and prerequisites | Planned / running / finished / stopped / unknown | Pending / reviewed / integrated / needs fixes; link results and checks |
 
 ### Worker model and reasoning selection
 
 | Task / worker ID | Requested model / reasoning effort | Selection rationale / user overrides | Observed effective settings / evidence | Limitations / fallback |
 | --- | --- | --- | --- | --- |
-| Assigned task and worker ID | Explicit supported pair, or inherited when overrides are unavailable | Match task complexity; record applicable user choices | Confirmed values with tool evidence, inherited, or unknown; distinguish from requested values | Unsupported capability, surfaced user-setting conflict, or actual fallback and reason |
+| Assigned task and worker ID | Implementer gpt-6.1-sol/medium; Documentation gpt-6-luna/medium; Tester gpt-6.1-sol/high; UI/UX Tester gpt-6.1-sol/high; apply documented escalation as needed | Match task complexity; record applicable user choices | Confirmed values with tool evidence, inherited, or unknown; distinct from requested values | Unsupported capability, surfaced user-setting conflict, or actual fallback and reason |
 
-Before reassignment, reconcile actual edits and confirm the former owner has finished or stopped. Record ownership transfers and partial work. Recheck current capabilities before selecting replacement worker settings. Before handoff or final verification, record that all workers have finished or stopped; uncertain shutdown requires reconciliation on resume. Outstanding required work prevents COMPLETE.
+No worker descendants, additional agents, or replacement agents without USER permission, even with lead approval. Schedule independent ready work in bounded waves within actual tool capacity; don't infer a freed slot from idle status. Before final checks freeze production changes; keep Tester active through final check execution. Then scribe reconciles docs and lead reviews evidence. All workers must be quiescent before handoff/completion. On resume, confirm former owners have finished before transferring paths and reconcile partial work. Outstanding required work prevents COMPLETE.
 
 ## Verification
 
@@ -37,7 +39,7 @@ Record each external dependency or consequential question, exact unblock action,
 
 ## Documentation updates
 
-Record updated documents and those still needing changes, linked to the affected behavior.
+Record updated documents and those still needing changes, linked to affected behavior.
 
 ## Exact next action
 

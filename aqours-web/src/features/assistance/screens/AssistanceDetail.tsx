@@ -16,6 +16,7 @@ export function AssistanceDetail({ id, returnTo }: { id: string; returnTo?: stri
   return <><PageTitle title={d?.reference || 'Assistance detail'}><a href={returnLink(returnTo, 'assistance')}>Back to queue</a><button onClick={refresh}>Refresh current record</button></PageTitle>
     <ResourceState resource={resource}>{d && <div key={d.version}>
       <div className="record-strip"><StatusLabel value={d.status} /><p>{label(d.type)}</p><p>Requested {date(d.createdAt)}</p></div>
+      <p className="notice">{d.status === 'requested' ? 'Awaiting supplier review. Accepting confirms ownership and checks availability; no appointment or allocation is confirmed yet.' : d.nextSteps || (d.appointmentAt ? `Agreed appointment: ${date(d.appointmentAt)}` : 'Review the latest outcome and request history before making a further change.')}</p>
       <DetailNavigation items={[
         ...(transitionTargets(d).length ? [{ id: 'assistance-actions', label: 'Update assistance' }] : []),
         { id: 'assistance-context', label: 'Request details' },

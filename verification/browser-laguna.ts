@@ -25,8 +25,14 @@ page.on('response', async response => {
 });
 const tile = await readFile(new URL('./fixtures/street-tile.png', import.meta.url));
 try {
+  if (process.env.AQOURS_BROWSER_API_UPSTREAM) await page.route('**/api/v1/**', async route => {
+    const requested = new URL(route.request().url());
+    const upstream = new URL(process.env.AQOURS_BROWSER_API_UPSTREAM!);
+    requested.host = upstream.host;
+    await route.fulfill({ response: await route.fetch({ url: requested.href }) });
+  });
   await page.route('https://tiles.example.test/**', route => route.fulfill({ contentType: 'image/png', body: tile }));
-  await page.route('https://maps.geoapify.com/**', route => route.abort());
+  await page.route('https://maps.geoapify.com/**', route => route.fulfill({ contentType: 'image/png', body: tile }));
   await page.route('https://tile.openstreetmap.org/**', route => route.abort());
   await page.goto(process.env.AQOURS_TEST_WEB ?? 'http://127.0.0.1:5179');
   await page.getByLabel('Email', { exact: true }).fill('admin@demo.aqours.test');
@@ -34,12 +40,11 @@ try {
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
   if (process.env.AQOURS_LIVE_WEATHER === '1') {
-    await page.getByLabel('City in the Philippines', { exact: true }).fill('Calamba');
-    await page.getByRole('button', { name: 'Search weather cities', exact: true }).click();
-    const candidate = page.getByRole('button', { name: /Calamba, Calabarzon, Philippines/i }).first();
-    await expect(candidate).toBeVisible({ timeout: 15000 });
+    await page.getByRole('link', { name: 'Weather', exact: true }).click();
+    await page.getByRole('combobox', { name: 'Region', exact: true }).selectOption('0400000000');
+    await page.getByRole('combobox', { name: 'Province', exact: true }).selectOption('0403400000');
     const fetched = page.waitForResponse(response => response.url().includes('/weather?') && response.status() === 200);
-    await candidate.click();
+    await page.getByRole('combobox', { name: 'City / Municipality', exact: true }).selectOption('0403405000');
     const weather = (await (await fetched).json()).data as WeatherForecast;
     assert.equal(weather.daily.length, 7);
     assert.ok(weather.location.latitude > 14 && weather.location.latitude < 14.4);
@@ -48,7 +53,7 @@ try {
     await page.screenshot({ path: path.join(output, 'admin-live-weather.png'), fullPage: true });
     passed('Admin displays a live Open-Meteo Calamba forecast with seven daily rows');
   }
-  await page.getByRole('link', { name: 'Map', exact: true }).click();
+  await page.getByRole('link', { name: 'Reports map', exact: true }).click();
   await expect(page.locator('.leaflet-tile-loaded').first()).toBeVisible();
   await expect.poll(() => maps.at(-1)?.features.length).toBe(11);
   assert.equal(maps.at(-1)!.unlocatedCount, 1);

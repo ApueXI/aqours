@@ -67,6 +67,8 @@
 
 `aqours-web/src/features/map/` implements direct Leaflet points/markercluster, URL-backed filters, zone/published shapes, coordinated report selection and an accessible report list/failure fallback. Geoapify OSM Bright raster tiles use a separate public browser key; [map configuration](../../../location-and-maps.md) documents attribution and migration from web MapLibre settings.
 
+Report categories determine marker color: No water red, Leak blue, Low pressure amber and Water quality purple. The legend, marker accessibility labels and popups identify each category. Priority remains text in popups/selected details and does not change marker color. Neutral gray clusters show counts; expanded reports retain their category colors, including after priority updates and refresh.
+
 `aqours-api/src/routes/analytics.ts` implements staff-only numeric viewport queries using generated numeric coordinate columns and parameterized filters. Bounds must be ordered and cannot cross the antimeridian. The response has a result cap/truncation count and unlocated count; unlocated records remain reviewable in the inbox. GeoJSON points use longitude then latitude. Layers and clusters never establish network topology or water safety.
 
 Exact endpoint methods, payloads, errors, pagination and operation-key exceptions are defined in the [API contract](../../../api.md). Logical entities map to the physical JSONB/relational design in [schema](../../../schema.md); shared public DTOs live in `aqours-contracts/src/`.

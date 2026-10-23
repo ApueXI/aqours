@@ -13,8 +13,7 @@ export default function CustomerLayout() {
     contentStyle: { backgroundColor: colors.background } }}>
     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     <Stack.Screen name="reports/new" options={{ title: 'New report' }} />
-    <Stack.Screen name="reports/[id]/index" options={{ title: 'Report' }} />
-    <Stack.Screen name="reports/[id]/guidance" options={{ title: 'Guidance' }} />
+    <Stack.Screen name="reports/[id]" options={{ title: 'Report' }} />
     <Stack.Screen name="assistance/new" options={{ title: 'New request' }} />
     <Stack.Screen name="assistance/[id]" options={{ title: 'Assistance request' }} />
     <Stack.Screen name="advisories/[id]" options={{ title: 'Service advisory' }} />

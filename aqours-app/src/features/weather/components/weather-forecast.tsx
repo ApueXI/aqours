@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 import type { WeatherForecast } from '@aqours/contracts';
 import { weatherCondition, weatherDayLabel, weatherMeasure } from '@aqours/contracts';
 import { Body, Button, styles } from '@/components/ui';
@@ -15,7 +15,8 @@ export function WeatherForecastView({ path, location }: { path: string; location
     <View style={styles.row}><Button title="Refresh weather" secondary disabled={resource.loading} onPress={() => void resource.reload()} /></View>
     <ResourceState {...resource} />
     {forecast && current && <>
-      <Body>{weatherMeasure(current.temperature, '°C')} · {weatherCondition(current.weatherCode)}</Body>
+      <Text style={[styles.title, { fontSize: 36, lineHeight: 44, fontWeight: '500' }]}>{weatherMeasure(current.temperature, '°C')}</Text>
+      <Body>{weatherCondition(current.weatherCode)}</Body>
       <Body>Feels like {weatherMeasure(current.feelsLike, '°C')} · Humidity {weatherMeasure(current.humidity, '%')}</Body>
       <Body>Precipitation {weatherMeasure(current.precipitation, 'mm')} · Wind {weatherMeasure(current.windSpeed, 'km/h')}</Body>
       <Body muted>Current model estimate: {displayTime(current.time)}</Body>

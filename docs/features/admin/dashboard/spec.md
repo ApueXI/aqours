@@ -61,7 +61,7 @@
 
 ### Weather addition — 21 October 2026
 
-Overview includes an independent weather section for both staff and admins. Users explicitly search/select a Philippine city to see current model conditions and seven daily forecasts, Manila times, retrieval time, provider attribution and manual refresh. Failed weather requests retain labeled stale data and retry without blocking metrics. Location changes clear old forecasts; sign-out/dashboard unmount clears selection. See [weather contract and checks](../../../weather.md).
+As revised on 22 October 2026, weather lives on its own `/#/weather` page for staff and admins, accessible from desktop/mobile navigation. Overview no longer embeds forecasts. Users explicitly select a canonical city/municipality through synchronized searchable PSGC hierarchy controls or a nationwide clustered Leaflet map to see current model conditions and seven daily forecasts, Manila times, retrieval time, provider attribution and manual refresh. Failed weather requests retain labeled stale data and retry independently of metrics. Location changes clear old forecasts; sign-out/account change or leaving the Weather page clears selection. See [weather contract and checks](../../../weather.md).
 
 ### Implemented behavior and modules
 

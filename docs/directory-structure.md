@@ -73,3 +73,6 @@ Shared public contracts remain in `aqours-contracts`. See [architecture](archite
 ## Location modules
 
 See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.
+
+
+Distribution monitoring uses shared public types in `aqours-contracts/src/monitoring.ts`; supplier components/utilities remain under `aqours-web/src/features/distribution/`. API monitoring controllers and focused services under `src/services/monitoring/` separate forecast caching/claims, stock aggregation, threshold evaluation, warning transitions/history, reads and settings. A startup worker processes durable database work; additive SQL triggers enqueue stock/site changes within their original transactions. See [monitoring architecture](distribution-monitoring.md).

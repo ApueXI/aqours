@@ -21,6 +21,8 @@
     "test:migration": "node --experimental-strip-types verification/prisma-upgrade.ts",
     "test:weather": "TSX_DISABLE_CACHE=1 node --import ./aqours-api/node_modules/tsx/dist/loader.mjs --test --experimental-test-isolation=none verification/weather-http.ts",
     "test:weather:browser": "TSX_DISABLE_CACHE=1 node --import ./aqours-api/node_modules/tsx/dist/loader.mjs verification/browser-weather.ts",
+    "test:distribution": "TSX_DISABLE_CACHE=1 node --import ./aqours-api/node_modules/tsx/dist/loader.mjs --test --experimental-test-isolation=none --test-concurrency=1 verification/distribution-http.ts",
+    "test:distribution:browser": "TSX_DISABLE_CACHE=1 node --import ./aqours-api/node_modules/tsx/dist/loader.mjs verification/browser-distribution.ts",
     "test:ux": "node --experimental-strip-types verification/browser-ux.ts",
     "test:seed-upgrade": "TSX_DISABLE_CACHE=1 node --import ./aqours-api/node_modules/tsx/dist/loader.mjs verification/seed-laguna-upgrade.ts",
     "test:laguna:browser": "node --experimental-strip-types verification/browser-laguna.ts"

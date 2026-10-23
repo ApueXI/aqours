@@ -114,7 +114,7 @@ async function zoneMaintenance(page: Page, admin: Actor, passed: Passed) {
   passed('Aborted browser write shows uncertain result and retries its frozen body/key successfully');
 }
 async function distributionMaintenance(page: Page, customer: Actor, other: Actor, admin: Actor, ownerId: string, passed: Passed) {
-  await page.goto(`${web}/#/distribution`);
+  await page.goto(`${web}/#/distribution?tab=sites`);
   await page.locator('summary').filter({hasText: /^Create pickup site$/}).click();
   const createSite = page.locator('details').filter({has: page.locator('summary').filter({hasText: /^Create pickup site$/})});
   const name = `Fictional maintenance site ${key()}`;
@@ -123,24 +123,29 @@ async function distributionMaintenance(page: Page, customer: Actor, other: Actor
   await createSite.getByLabel('Site instructions', {exact: true}).fill('Fictional north entrance');
   await createSite.getByLabel('Fictional demonstration site', {exact: true}).check();
   const site = await submit<PickupSite>(page, createSite, 'Create pickup site', '/staff/pickup-sites');
-  const siteCard = page.locator('article').filter({has: page.getByRole('heading', {name: `${name} · Active`, exact: true})});
+  await page.getByRole('button', {name: `Manage pickup site ${name}`, exact: true}).click();
+  const siteCard = page.locator('#pickup-site-editor');
   await siteCard.getByText('Edit pickup site', {exact: true}).click();
   await siteCard.getByLabel('Site instructions', {exact: true}).fill('Fictional revised entrance instructions');
   await siteCard.getByLabel('Change reason', {exact: true}).fill('Fictional isolated site correction');
   const edited = await submit<PickupSite>(page, siteCard, 'Save pickup site', `/staff/pickup-sites/${site.id}`, 'PATCH');
   assert.equal(edited.version, site.version + 1);
+  await page.getByRole('navigation', {name: 'Distribution sections'}).getByRole('link', {name: 'Sessions', exact: true}).click();
   await page.locator('summary').filter({hasText: /^Create pickup session$/}).click();
   const createSession = page.locator('details').filter({has: page.locator('summary').filter({hasText: /^Create pickup session$/})});
   const zoneId = (await connection(customer)).zoneId!;
   const zoneIds = [...new Set([zoneId, (await connection(other)).zoneId!])];
   await createSession.getByLabel('Pickup site', {exact: true}).selectOption(site.id);
   await createSession.getByLabel('Eligible service zones', {exact: true}).selectOption(zoneIds);
+  const submittedZoneIds = await createSession.getByLabel('Eligible service zones', {exact: true}).evaluate((select: HTMLSelectElement) => Array.from(select.selectedOptions, option => option.value));
+  assert.deepEqual([...submittedZoneIds].sort(), [...zoneIds].sort());
   await createSession.getByLabel('Opens (Manila)', {exact: true}).fill(minute(Date.now() - 600000));
   await createSession.getByLabel('Closes (Manila)', {exact: true}).fill(minute(Date.now() + 86400000));
   await createSession.getByLabel('Total stock (liters)', {exact: true}).fill('80.25');
   await createSession.getByLabel('Customer pickup instructions', {exact: true}).fill('Fictional maintenance pickup instructions');
   await createSession.getByLabel('Fictional demonstration session', {exact: true}).check();
   const session = await submit<PickupSession>(page, createSession, 'Create pickup session', '/staff/distribution/sessions');
+  await page.getByRole('button', {name: `Manage session at ${name}`, exact: true}).click();
   const card = page.locator('article.session').filter({has: page.getByRole('heading', {name: `${name} · Open`, exact: true})});
   await card.getByText('Edit stock / schedule', {exact: true}).click();
   await card.getByLabel('Total stock (liters)', {exact: true}).fill('90.75');
@@ -149,8 +154,8 @@ async function distributionMaintenance(page: Page, customer: Actor, other: Actor
   const options = await ok<PickupSession[]>(customer, 'GET', '/pickup-sessions?limit=100');
   const visible = options.find(s => s.id === session.id)!;
   assert.equal(visible.totalLiters, '90.75'); assert.equal(visible.remainingLiters, '90.75'); assert.equal(visible.demo, true);
-  assert.equal(visible.site.instructions, edited.instructions); assert.deepEqual(visible.zoneIds, zoneIds);
-  await expect(card.getByRole('cell', {name: '90.75', exact: true})).toHaveCount(2);
+  assert.equal(visible.site.instructions, edited.instructions); assert.deepEqual(visible.zoneIds, submittedZoneIds);
+  await expect(page.getByRole('row').filter({has: page.getByRole('button', {name: `Manage session at ${name}`, exact: true})}).getByRole('cell', {name: '90.75', exact: true})).toHaveCount(2);
   passed('Browser creates/edits isolated pickup site/session and customer sees labeled exact-decimal availability');
   const reservedReport = await report(customer), pendingReport = await report(other);
   const reserve = await ok<AssistanceRequest>(customer, 'POST', '/assistance-requests', {reportId: reservedReport.id, type: 'water_support', details: {sessionId: session.id, requestedLiters: '25.50'}});
@@ -158,9 +163,11 @@ async function distributionMaintenance(page: Page, customer: Actor, other: Actor
   await page.goto(`${web}/#/assistance/${reserve.id}`);
   await page.getByLabel('Assigned staff owner', {exact: true}).selectOption(ownerId);
   await submit(page, page, 'Mark accepted', `/staff/assistance-requests/${reserve.id}/transition`);
-  await page.goto(`${web}/#/distribution`);
-  await expect(card.getByRole('cell', {name: '25.50', exact: true})).toBeVisible();
-  await expect(card.getByRole('cell', {name: '65.25', exact: true})).toBeVisible();
+  await page.goto(`${web}/#/distribution?tab=sessions`);
+  const stockRow = page.getByRole('row').filter({has: page.getByRole('button', {name: `Manage session at ${name}`, exact: true})});
+  await expect(stockRow.getByRole('cell', {name: '25.50', exact: true})).toBeVisible();
+  await expect(stockRow.getByRole('cell', {name: '65.25', exact: true})).toBeVisible();
+  await stockRow.getByRole('button', {name: `Manage session at ${name}`, exact: true}).click();
   await card.getByText('Cancel session and arrange follow-up', {exact: true}).click();
   const reason = 'Fictional maintenance closure; contact support for alternative pickup';
   await card.getByLabel('Cancellation reason / customer follow-up', {exact: true}).fill(reason);

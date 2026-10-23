@@ -3,11 +3,18 @@ import type { ActorRequest } from "../middleware/authentication.js";
 import { get, own } from "../repositories/domain.repository.js";
 import { getForecast } from "../services/weather/forecast.service.js";
 import { searchWeatherLocations } from "../services/weather/locations.service.js";
+import { weatherPsgcLocations, weatherPsgcPoint } from "../services/weather/psgc-locations.service.js";
 import { fail } from "../utils/errors.js";
-import { weatherQuery, weatherSearchQuery } from "../validators/weather.js";
+import { weatherPsgcQuery, weatherQuery, weatherSearchQuery } from "../validators/weather.js";
 
 export async function getWeatherController(db: DB, req: ActorRequest) {
   const query = weatherQuery.parse(req.query);
+  if ("psgcCode" in query) {
+    if (req.actor.role === "customer")
+      fail(403, "Supplier access required for PSGC weather", "forbidden");
+    const point = weatherPsgcPoint(query.psgcCode);
+    return getForecast(point.latitude, point.longitude);
+  }
   if ("connectionId" in query) {
     if (req.actor.role !== "customer")
       fail(403, "Select a city for weather.", "forbidden");
@@ -26,4 +33,8 @@ export async function getWeatherController(db: DB, req: ActorRequest) {
 
 export async function searchWeatherController(_db: DB, req: ActorRequest) {
   return searchWeatherLocations(weatherSearchQuery.parse(req.query).q);
+}
+export async function weatherPsgcController(_db: DB, req: ActorRequest) {
+  weatherPsgcQuery.parse(req.query);
+  return weatherPsgcLocations();
 }

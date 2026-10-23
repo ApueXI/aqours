@@ -1,10 +1,10 @@
 # Supplier staff domain
 
-Staff also have [current weather, seven-day forecasts and Philippine city search](../weather.md) on Overview, using the same authenticated weather access as admins.
+Staff also have [current weather, seven-day forecasts and nationwide PSGC map/hierarchy selection](../weather.md) on the dedicated Weather page (`/#/weather`), using the same authenticated weather access as admins.
 
 Status: **implemented first-release capabilities**, updated 19 October 2026; acceptance evidence and remaining gaps are in [verification](../verification.md) and [traceability](../traceability.md). Product source: brief v0.4 and [requirements](../requirements.md).
 
-Staff handles supplier operations for reports, incidents and assistance. The project owner adopted the detailed staff/admin split below and the API enforces it. Feature specs live under `features/admin/` because that directory represents the supplier workspace, not universal administrative access.
+Staff handles supplier operations for reports, incidents and assistance. Distribution also provides [pickup-site weather and early warnings](../distribution-monitoring.md), with explicit per-site threshold setup and current reservable-stock context. The project owner adopted the detailed staff/admin split below and the API enforces it. Feature specs live under `features/admin/` because that directory represents the supplier workspace, not universal administrative access.
 
 | Feature | What staff can do under the adopted policy | Detailed specification |
 | --- | --- | --- |

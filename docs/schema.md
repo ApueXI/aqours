@@ -58,8 +58,15 @@ Backup includes the database, private attachments, Prisma schema/migrations/conf
 
 ## Weather storage
 
-Weather adds no Prisma models or migrations. Forecast/search results use bounded process-local caches; city selection remains in client memory. Saved coordinates are read with ownership authorization and never updated by weather requests. See [weather storage and API boundaries](weather.md).
+General customer/city weather and supplier PSGC weather use bounded process-local forecast caches and in-memory client selection. Supplier canonical locality metadata and nullable representative coordinates are bundled reference files under `psgc-address-data/`, not database entities; this Weather map adds no schema migration or location-selection history. Distribution monitoring adds persistent site forecast snapshots, versioned configurations, warning/history records, work claims/revisions and supplier display settings; see [distribution monitoring](distribution-monitoring.md). Saved coordinates are read with ownership authorization and never updated by weather requests. See [weather storage and API boundaries](weather.md).
 
 ## Structured address snapshots
 
 See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, guided/free-text address behavior, nullable snapshots, detailed basemap configuration, and verification boundaries.
+
+
+## Distribution monitoring persistence
+
+Migration `202610220001_distribution_monitoring` adds six tables/models: MonitoringConfig (versioned thresholds and optional planning capacity), MonitoringForecast (coordinate-bound forecast/freshness/retry metadata), MonitoringWork (dirty/evaluated revisions, lease and sweep timestamps), MonitoringWarning (current episode and latest evidence), MonitoringHistory (immutable lifecycle/evidence revisions), and MonitoringBands (supplier display boundaries).
+
+Foreign keys associate monitoring records with existing suppliers/sites. A partial unique index permits at most one active warning per site/family/date. History rejects update/delete; configuration and display-setting changes also retain existing audit events. Dirty triggers on sites, sessions, stock, allocations and monitoring configuration queue work atomically with the original transaction. Coordinate changes invalidate cached forecast data and release obsolete fetch claims using consistent work-before-forecast locking. No existing domain rows or stock quantities are backfilled or rewritten; existing sites start without an enabled configuration.
