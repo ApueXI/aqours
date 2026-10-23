@@ -32,7 +32,13 @@ All `.env` and `.env.*` files except `.env.example` are ignored. Fill each place
 
 The API's `dev`, `start`, `migrate`, `migrate:adopt`, `seed`, and `seed:upgrade-laguna` npm scripts automatically load optional `aqours-api/.env` using Node's built-in `--env-file-if-exists=.env`. Existing process environment variables override file values; a missing file is allowed when configuration is supplied externally. Run scripts inside `aqours-api/` or use `npm --prefix aqours-api run <script>` from the repository root. The root Compose `.env` is separate. Tests, builds, typecheck, Prisma generation and validation do not automatically load the API file; direct `node` invocations still need explicit configuration.
 
-For everyday development, use `npm run dev` inside `aqours-api/`; Prisma generation and source watching are automatic. Restart the command after changing `.env`. For future deployment, build with `npm run build`, supply secrets through the hosting environment, omit the local file, then use `npm start`. Set `NODE_ENV=production`, use an HTTPS `WEB_ORIGIN`, and keep demo seeding disabled. PostgreSQL must already be running; starting the API does not run migrations or seeds.
+For everyday development, start the API, supplier web server, and Expo Metro together from the repository root:
+
+```sh
+npm run dev
+```
+
+This uses the root `concurrently` dependency and stops all three processes when one exits or you press Ctrl-C. It does not start PostgreSQL, apply migrations, seed data, or launch an Android emulator. Start the database and complete required migration/seed setup first. To build/install and launch Android separately, run `npm --prefix aqours-app run android` with the required native toolchain and an emulator/device available. The individual API/web/Expo scripts remain available when developing one project at a time. Restart the affected command after changing environment files. For future deployment, build with `npm run build`, supply secrets through the hosting environment, omit the local file, then use `npm start`. Set `NODE_ENV=production`, use an HTTPS `WEB_ORIGIN`, and keep demo seeding disabled.
 
 Vite/Expo load their normal public environment files during development; `EXPO_NO_DOTENV=1` disables Expo dotenv when explicit shell/build variables are preferred. Never put database passwords, the Geoapify geocoding key or candidate-signing secrets in a `VITE_*`, `EXPO_PUBLIC_*`, Expo `extra`, style URL or client source field.
 

@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "dev": "concurrently --kill-others --names api,web,app \"npm --prefix aqours-api run dev\" \"npm --prefix aqours-web run dev\" \"npm --prefix aqours-app run start\"",
     "contracts": "npm --prefix aqours-contracts run build",
     "typecheck": "npm --prefix aqours-contracts run typecheck && npm --prefix aqours-api run typecheck && npm --prefix aqours-web run typecheck && npm --prefix aqours-app run typecheck && tsc -p verification/tsconfig.json --noEmit",
     "lint": "npm --prefix aqours-api run lint && npm --prefix aqours-web run lint && npm --prefix aqours-app run lint",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@playwright/test": "^1.58.0",
     "@types/node": "^24.0.0",
+    "concurrently": "^10.0.6",
     "typescript": "~6.0.3"
   },
   "engines": {
