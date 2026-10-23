@@ -96,4 +96,4 @@ Implementation update: [PSGC addresses and detailed maps](../../../location-and-
 
 ## Reference-led presentation — 22 October 2026
 
-Accounts/connections search only the current server page, then open one selected version-keyed editor; zones similarly expose one selected editor and separate creation. Current approved guidance and active rules appear before expandable history. Creating immutable guidance/activating rule versions now previews text/source or explanations before confirmation, without publishing a notice. Role boundaries remain enforced by the existing API. See [UI/UX](../../../ui-ux.md).
+Accounts/connections search only the current server page; account, connection and zone create/edit forms open in modal dialogs. Approved guidance creation and rule activation also use dialogs, with previews of text/source or explanations before confirmation and without publishing a notice. Dialog edits retain expected-version checks and existing role boundaries remain enforced by the API. See [UI/UX](../../../ui-ux.md).

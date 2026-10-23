@@ -3,6 +3,7 @@ import type { StaffIncident } from '@aqours/contracts';
 import { useResource } from '../../../hooks/useResource';
 import { useReferences } from '../../../hooks/useReferences';
 import { ActionForm } from '../../../components/ActionForm';
+import { FormDialog } from '../../../components/FormDialog';
 import { incidentFields } from '../validators/incident-fields';
 import { incidentStatuses, options } from '../../../components/Filters';
 import { History, Notes } from '../../../components/History';
@@ -17,7 +18,7 @@ export function IncidentDetail({ id }: { id: string }) {
   const latest = d?.updates.reduce<StaffIncident['updates'][number] | undefined>((current, update) => !current || update.publishedAt > current.publishedAt ? update : current, undefined);
   const refresh = () => void resource.refresh();
   return <><PageTitle title={d?.summary || 'Incident detail'}><a href="#/incidents">Back to incidents</a><button onClick={refresh}>Refresh current record</button></PageTitle>
-    <ResourceState resource={resource}>{d && <div key={d.version}>
+    <ResourceState resource={resource}>{d && <div>
       <Demo value={d.demo} />
       <div className="record-strip"><StatusLabel value={d.status} /><p>{label(d.category)}</p><p>Restoration estimate: {date(d.restorationAt)}</p></div>
       <nav className="tabs" aria-label="Incident views">{[['preview', 'Customer preview'], ['publish', 'Publish update'], ['history', 'History']].map(([tab, text]) => <button key={tab} aria-current={view === tab ? 'page' : undefined} onClick={() => setView(tab)}>{text}</button>)}</nav>
@@ -38,14 +39,15 @@ export function IncidentDetail({ id }: { id: string }) {
           <dt>Estimated affected customers</dt><dd>{d.estimatedAffected ?? 'Unknown'} · {d.estimateBasis || 'No estimate basis'}</dd>
           <dt>Estimate updated</dt><dd>{date(d.estimateUpdatedAt)}</dd>
         </dl><p className="hint">Report and connection totals are separate from the affected-customer estimate. Incident resolution does not lift a quality restriction.</p></section>
-        <details id="incident-workflow"><summary>Edit incident / workflow status</summary><section>
-          <ResourceState resource={refs.users} /><ResourceState resource={refs.zones} />
+        <ResourceState resource={refs.users} /><ResourceState resource={refs.zones} />
+        <FormDialog title="Edit incident / workflow status" triggerLabel="Edit incident / workflow status"
+          triggerDisabled={refs.users.loading || refs.zones.loading || refs.users.data === undefined || refs.zones.data === undefined}>
           <ActionForm path={`/staff/incidents/${id}`} method="PATCH" version={d.version} onDone={refresh} submit="Save incident" fields={[
             ...incidentFields(refs.users.data, refs.zones.data, d),
             { name: 'status', label: 'Status', type: 'select', value: d.status, required: true, options: options(incidentStatuses) },
             { name: 'reason', label: 'Change / corrective-transition reason', type: 'textarea', required: true },
           ]} />
-        </section></details>
+        </FormDialog>
         <Notes id="incident-notes" path={`/staff/incidents/${id}/notes`} notes={d.notes} refresh={refresh} />
       </div></div>
     </div>}</ResourceState>

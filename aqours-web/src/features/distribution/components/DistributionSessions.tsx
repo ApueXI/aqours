@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react';
 import type { PickupSession, PickupSite } from '@aqours/contracts';
 import { useResource } from '../../../hooks/useResource';
 import { useReferences } from '../../../hooks/useReferences';
-import { revealSection } from '../../../components/DetailNavigation';
 import { Pagination } from '../../../components/Pagination';
 import { date, Demo, EmptyState, label, ResourceState, StatusLabel } from '../../../components/Status';
 import { CancelSession, SessionForm } from './DistributionForms';
+import { FormDialog } from '../../../components/FormDialog';
 
-export function DistributionSessions({ sites, create, refreshMonitoring }: { sites: PickupSite[]; create: boolean; refreshMonitoring: () => void }) {
+export function DistributionSessions({ sites, sitesLoading, create, refreshMonitoring, onCreateClose }: {
+  sites: PickupSite[]; sitesLoading: boolean; create: boolean; refreshMonitoring: () => void; onCreateClose: () => void;
+}) {
   const [offset, setOffset] = useState(0), [selectedId, setSelectedId] = useState('');
   const sessions = useResource<PickupSession[]>(`/staff/distribution/sessions?offset=${offset}`);
   const refs = useReferences();
-  useEffect(() => { if (create) revealSection('session-create'); }, [create]);
   useEffect(() => { if (selectedId) document.getElementById('pickup-session-editor')?.focus(); }, [selectedId]);
   const selected = sessions.data?.find(session => session.id === selectedId);
   const refresh = () => { void sessions.refresh(); refreshMonitoring(); };
@@ -25,13 +26,19 @@ export function DistributionSessions({ sites, create, refreshMonitoring }: { sit
             <td><button type="button" aria-label={`Manage session at ${session.site.name}`} onClick={() => setSelectedId(session.id)}>Manage</button></td></tr>)}</tbody></table></div>}
       <Pagination offset={offset} total={sessions.result?.page?.total ?? sessions.data.length} onChange={value => { setOffset(value); setSelectedId(''); }} />
     </>}</ResourceState>
-    {selected && <article id="pickup-session-editor" tabIndex={-1} className="session settings-editor" key={`${selected.id}:${selected.version}`}><h3>{selected.site.name} · <StatusLabel value={selected.status} /></h3><Demo value={selected.demo} />
+    {selected && <article id="pickup-session-editor" tabIndex={-1} className="session settings-editor"><h3>{selected.site.name} · <StatusLabel value={selected.status} /></h3><Demo value={selected.demo} />
       <button type="button" onClick={() => setSelectedId('')}>Close session editor</button>
       <p>{selected.site.address}</p><p className="preserve">{selected.instructions}</p><p>Zones: {selected.zoneIds.map(id => refs.zones.data?.find(zone => zone.id === id)?.name || 'Unknown zone').join(', ')}</p>
       <p className="hint">Stock updated {date(selected.updatedAt)}</p>
-      {selected.status !== 'cancelled' && <><details><summary>Edit stock / schedule</summary><SessionForm d={selected} sites={sites} zones={refs.zones.data || []} refresh={refresh} /></details>
-        <details><summary>Cancel session and arrange follow-up</summary><CancelSession d={selected} refresh={refresh} /></details></>}
+      {selected.status !== 'cancelled' && <><FormDialog title="Edit stock / schedule" triggerLabel="Edit stock / schedule"
+        triggerDisabled={refs.zones.loading || refs.zones.data === undefined}><SessionForm d={selected} sites={sites} zones={refs.zones.data || []} refresh={refresh} /></FormDialog>
+        <FormDialog title="Cancel session and arrange follow-up" triggerLabel="Cancel session"><CancelSession d={selected} refresh={refresh} /></FormDialog></>}
     </article>}
-    <details id="session-create" open={create || undefined}><summary>Create pickup session</summary><ResourceState resource={refs.zones} /><SessionForm sites={sites} zones={refs.zones.data || []} refresh={refresh} /></details>
+    <ResourceState resource={refs.zones} />
+    <FormDialog title="Create pickup session" triggerLabel="Create pickup session" triggerClassName="primary" defaultOpen={create}
+      ready={!sitesLoading && !refs.zones.loading && refs.zones.data !== undefined}
+      triggerDisabled={sitesLoading || refs.zones.loading || refs.zones.data === undefined} onClose={onCreateClose}>
+      <SessionForm sites={sites} zones={refs.zones.data || []} refresh={refresh} />
+    </FormDialog>
   </section>;
 }

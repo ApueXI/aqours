@@ -42,7 +42,7 @@ export function Distribution({ params, user }: { params: URLSearchParams; user: 
     {(state.tab !== 'sessions') && <ResourceState resource={monitoring} />}
     {monitoring.data && <p className="hint">{monitoring.data.supplier.name} · Monitoring as of {date(monitoring.data.asOf)} · Refreshes every 30 seconds</p>}
     {state.tab === 'monitoring' && monitoring.data && <MonitoringWorkspace overview={monitoring.data} params={params} change={change} refresh={refresh} />}
-    {state.tab === 'sessions' && <><ResourceState resource={sites} /><DistributionSessions sites={siteChoices} create={params.get('create') === '1'} refreshMonitoring={refresh} /></>}
+    {state.tab === 'sessions' && <><ResourceState resource={sites} /><DistributionSessions sites={siteChoices} sitesLoading={sites.loading} create={params.get('create') === '1'} refreshMonitoring={refresh} onCreateClose={() => change({ create: '' })} /></>}
     {state.tab === 'sites' && <><ResourceState resource={sites} /><DistributionSites items={monitoring.data?.sites || []} sites={siteChoices} refresh={refresh} /></>}
     {state.tab === 'warnings' && <MonitoringWarnings key={state.siteId} siteId={state.siteId} day={warningDate} onDateChange={warningDate => change({ warningDate })} />}
     <MonitoringNotifications />
