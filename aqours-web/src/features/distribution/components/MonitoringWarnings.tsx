@@ -1,3 +1,4 @@
+import { OperationsTable } from '../../../components/OperationsTable';
 import { useEffect, useState } from 'react';
 import type { MonitoringWarning, MonitoringWarningHistory } from '@aqours/contracts';
 import { useResource } from '../../../hooks/useResource';
@@ -43,9 +44,9 @@ export function MonitoringWarnings({ siteId, day, onDateChange }: {
     <label className="field"><span>Warning state</span><select aria-label="Warning state" value={state} onChange={event => { setState(event.target.value); setOffset(0); }}>
       <option value="">All states</option>{['active', 'resolved', 'expired', 'suspended'].map(value => <option key={value} value={value}>{label(value)}</option>)}</select></label>
     <ResourceState resource={warnings}>{warnings.data && <>{warnings.data.length === 0 && <p>No warnings for these filters.</p>}
-      <div className="table-scroll responsive-table"><table><thead><tr><th>Site / forecast date</th><th>Warning</th><th>Severity</th><th>State</th><th>Updated (Manila)</th><th>Details</th></tr></thead>
-        <tbody>{warnings.data.map(warning => <tr key={warning.id}><td>{warning.siteName}<br />{warning.forecastDate}</td><td data-label="Warning">{warningLabel(warning.type)}</td><td data-label="Severity">{label(warning.severity)}</td><td data-label="State">{label(warning.state)}</td><td data-label="Updated (Manila)">{date(warning.updatedAt)}</td>
-          <td><button type="button" aria-label={`Warning history for ${warning.siteName}`} onClick={() => setSelected(warning.id)}>View history</button></td></tr>)}</tbody></table></div>
+      <OperationsTable label="Distribution warning history"><table className="warning-history-table"><thead><tr><th>Site / forecast date</th><th>Warning</th><th>Severity</th><th>State</th><th>Updated (Manila)</th><th>Details</th></tr></thead>
+        <tbody>{warnings.data.map(warning => <tr key={warning.id}><th scope="row">{warning.siteName}<div className="cell-secondary">{warning.forecastDate}</div></th><td data-label="Warning">{warningLabel(warning.type)}</td><td data-label="Severity">{label(warning.severity)}</td><td data-label="State">{label(warning.state)}</td><td data-label="Updated (Manila)">{date(warning.updatedAt)}</td>
+          <td><button type="button" aria-label={`Warning history for ${warning.siteName}`} onClick={() => setSelected(warning.id)}>View history</button></td></tr>)}</tbody></table></OperationsTable>
       <Pagination offset={offset} total={warnings.result?.page?.total ?? warnings.data.length} onChange={setOffset} />
     </>}</ResourceState>{selected && <WarningDetail key={selected} id={selected} />}
   </section>;

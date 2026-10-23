@@ -51,7 +51,7 @@ Site/session/stock/allocation changes mark affected monitoring work in the same 
 
 ## Map and timeline
 
-Monitoring pairs a site list, selected-site details and Leaflet map. Narrow layouts expose List/Map switching; missing coordinates never produce invented markers. Current reservation stock and its observation time stay visible while the selected forecast date changes.
+Monitoring pairs a compact comparison table, selected-site details and Leaflet map. Site search/status filters open in the shared Filters dialog; the seven-day timeline controls the forecast date. Setup guidance and map layers/legends expand on demand; reservation lookup remains above the working data. See [service operations presentation](service-operations-ui.md). Narrow layouts expose List/Map switching; missing coordinates never produce invented markers. Current reservation stock and its observation time stay visible while the selected forecast date changes.
 
 Markers indicate normal (green), warning (yellow), critical (red), or unavailable/inactive/unconfigured (gray). A known warning stays visible when the other assessment is unavailable; details identify incomplete assessments. Normal requires valid normal evidence for all enabled checks.
 

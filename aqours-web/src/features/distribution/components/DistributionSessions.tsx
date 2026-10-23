@@ -1,3 +1,4 @@
+import { OperationsTable } from '../../../components/OperationsTable';
 import { useEffect, useState } from 'react';
 import type { PickupSession, PickupSite } from '@aqours/contracts';
 import { useResource } from '../../../hooks/useResource';
@@ -20,10 +21,10 @@ export function DistributionSessions({ sites, sitesLoading, create, refreshMonit
     <button type="button" onClick={refresh}>Refresh stock and sessions</button>
     <ResourceState resource={sessions}>{sessions.data && <>
       {sessions.data.length === 0 ? <EmptyState title="No pickup sessions."><p>Create an operating session for an active pickup site to make water support available.</p></EmptyState> :
-        <div className="table-scroll responsive-table" tabIndex={0} role="region" aria-label="Pickup session stock"><table className="stock-table"><thead><tr><th>Site / schedule (Manila)</th><th>Status</th><th>Total (L)</th><th>Reserved (L)</th><th>Collected (L)</th><th>Remaining (L)</th><th>Details</th></tr></thead>
-          <tbody>{sessions.data.map(session => <tr key={session.id} aria-selected={selectedId === session.id}><td>{session.site.name}<br />{date(session.startsAt)} – {date(session.endsAt)}</td><td data-label="Status"><span>{label(session.status)}</span><div className="hint">{label(session.availability)}</div></td>
+        <OperationsTable label="Pickup session stock"><table className="stock-table"><thead><tr><th>Site / schedule (Manila)</th><th>Status</th><th>Total (L)</th><th>Reserved (L)</th><th>Collected (L)</th><th>Remaining (L)</th><th>Details</th></tr></thead>
+          <tbody>{sessions.data.map(session => <tr key={session.id} aria-selected={selectedId === session.id}><th scope="row">{session.site.name}<div className="cell-secondary">{date(session.startsAt)} – {date(session.endsAt)}</div></th><td data-label="Status"><span>{label(session.status)}</span><div className="hint">{label(session.availability)}</div></td>
             <td data-label="Total (L)">{session.totalLiters}</td><td data-label="Reserved (L)">{session.reservedLiters}</td><td data-label="Collected (L)">{session.collectedLiters}</td><td data-label="Remaining (L)">{session.remainingLiters}</td>
-            <td><button type="button" aria-label={`Manage session at ${session.site.name}`} onClick={() => setSelectedId(session.id)}>Manage</button></td></tr>)}</tbody></table></div>}
+            <td><button type="button" aria-label={`Manage session at ${session.site.name}`} onClick={() => setSelectedId(session.id)}>Manage</button></td></tr>)}</tbody></table></OperationsTable>}
       <Pagination offset={offset} total={sessions.result?.page?.total ?? sessions.data.length} onChange={value => { setOffset(value); setSelectedId(''); }} />
     </>}</ResourceState>
     {selected && <article id="pickup-session-editor" tabIndex={-1} className="session settings-editor"><h3>{selected.site.name} · <StatusLabel value={selected.status} /></h3><Demo value={selected.demo} />

@@ -80,3 +80,7 @@ Overview's three queue KPIs are independent cards with 16 px gaps (12 px on phon
 Shared `FilterBar` consumers (including assistance/incidents) use a Filters button and native modal dialog. All supported fields are inside the dialog, dates retain Manila-to-UTC conversion, Apply updates the existing URL/filter state, Clear all empties draft fields, and the toolbar's Clear filters removes applied filters. Escape/Close discard unapplied edits and restore focus; filter edits are query drafts and do not invoke record-form discard confirmation. Search and the map's missing-coordinates toggle remain inline. Loading, empty, stale/error/retry states and backend permissions remain authoritative. No API, schema or native changes accompany this redesign.
 
 See [verification](verification.md#supplier-reports-redesign--24-october-2026) for screenshot review, fixture data and check boundaries.
+
+## Supplier service operations — 24 October 2026
+
+Incidents, advisories, assistance, distribution and weather now use compact operational tables with persistent columns, aligned numeric values and keyboard-accessible internal scrolling. Distribution moves setup help and map legends into disclosures while keeping reservation lookup and the forecast timeline available. See [presentation details and verification commands](service-operations-ui.md) for exact layout, interactions and fixture boundaries.

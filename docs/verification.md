@@ -335,3 +335,23 @@ Verification uses six fictional Calamba reports and one fictional operator from 
 Screenshot review exposed hidden-pane selection timing, tall-popup clipping and zoom/close overlap. Selection now recalculates size, centers the stored point and uses popup auto-pan; lower-right zoom controls leave the actual popup close button reachable. Browser assertions cover both containment and closing. Early local attempts hit sandbox socket restrictions, Chromium's Unix socket path limit and a missing JSX configuration in the isolated baseline. Later attempts hit preview lifecycle exits and two test locators that assumed unchanged accessible button names; these were corrected without changing product semantics. The managed final command owns the fixture server/preview and stops them after the checks. Browser profiles/caches/evidence remain project-local. No external image assets or invented production metrics were introduced. Phone tables intentionally require horizontal scrolling for secondary fields, with identity/actions pinned. No new native-device, real database or live provider result is claimed.
 
 Final design inspection: Overview, Report inbox, Messages and Reports map each report 0 FAIL and 0 WARN at 1440/768/390 px. The map alone uses the documented `icon-chips` allowance for existing category symbols. Final screenshots were opened and judged; the written critique records the remaining phone-table scrolling tradeoff. The final managed fixture/preview/browser processes stopped after verification.
+
+## Supplier service operations redesign — 24 October 2026
+
+Redesigned Incidents, Official advisories, Assistance queue, Water distribution and Weather with compact tables inside the existing supplier frame. See [behavior, design and reproduction commands](service-operations-ui.md) and [written screenshot critique](../.taste-skill/service-operations/review.md). No dependencies, API/DTO/schema changes or ordinary database writes.
+
+- Supplier TypeScript/lint/production build and 34 unit tests pass. The build retains its existing large-chunk advisory (about 559 kB). Verification TypeScript, repository file limits/local links and whitespace/content checks pass.
+- Nine controlled Playwright groups pass: seven views at each of 1440/768/390px; keyboard horizontal scrolling; creation forms/Escape/focus/navigation; assistance filters/return context; distribution query apply/clear, List/Map, tabs/editors/lookup; weather hierarchy, unavailable points, stale/retry; empty/error recovery and staff publication restrictions. Final runtime errors and API writes are both zero. Production screens still use authorized APIs; only the verification harness uses fictional fixtures.
+- Skill source lint reports 0 FAIL and four existing map warnings: three marker/label shadow declarations and the semantic temperature-scale blue. Browser inspector reports 0 FAIL at all three widths for each page. The fully loaded forecast is additionally inspected as a rendered DOM snapshot; the only allowance is `heavy-shadow` for the existing floating Leaflet popup, which the skill permits. Compact metadata and the honest empty area below a short advisory collection retain documented warnings. Some initial live inspector folds captured the existing loading state; loaded Playwright captures and the selected-forecast snapshot supply the full-data review.
+- Before/after loaded screenshots and physical row measurements are retained under `.local/service-operations/{before,after}/`. Inspector output is under `.taste-skill/service-operations/{before,after}/` (ignored generated artifacts). Final design critique: 7.9/10; wide phone tables intentionally scroll internally and monitoring evidence still needs multiple lines.
+
+| Loaded view | Desktop row before → after | Phone row before → after |
+| --- | --- | --- |
+| Incidents | 96 → 57 px | 396 → 81 px |
+| Advisories | 74 → 57 px | 250 → 81 px |
+| Assistance | 74 → 57 px | 349 → 81 px |
+| Pickup sessions | 72 → 59 px | 423 → 61 px |
+| Pickup sites, first row | 148 → 59 px | 330 → 61 px |
+| Seven-day forecast | 42 → 37 px | 288 → 37 px |
+
+Earlier attempts exposed a verification import error, overly broad provider-alert selector and load-timing races; those harness issues were corrected. A stopped preview/browser attachment interrupted other attempts; final runs were repeated against restarted loopback services. The actual tablet timeline edge finding was fixed in CSS. No interrupted attempt is counted as passing. Actual backend transactions, live provider uptime, native workflows and new deployment behavior were not retested for this presentation-only change.

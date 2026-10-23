@@ -113,3 +113,7 @@ See [account, notification, conversation and customer workflow corrections](../d
 
 
 Reports presentation uses a shared responsive shell, independent Overview KPI cards, semantic tables with trailing actions, and a modal `FilterBar`. The interface uses Feather outline icons from `react-icons`; Leaflet's existing category symbols remain domain-specific. See [UI behavior](../docs/ui-ux.md#supplier-reports-redesign--24-october-2026). For controlled browser verification, run `node --experimental-strip-types verification/browser-reports-workspace.ts` from the repository root against a loopback Vite preview on port 5198; API requests are mocked and output stays in `.local/reports-redesign/verified/`. Set `AQOURS_CHROMIUM` if the installed Chromium-family browser is elsewhere.
+
+## Compact service operations
+
+Incidents, advisories, assistance, distribution and Weather use compact column-based tables, including tablet/phone horizontal scrolling, sticky headers and right-aligned figures. Distribution retains reservation lookup above its tab content; setup help and map-layer legends expand on demand. See [service operations presentation](../docs/service-operations-ui.md) for behavior and the read-only fixture browser check.

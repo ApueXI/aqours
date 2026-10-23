@@ -114,3 +114,9 @@
 
 - Applied the supplied PNG to mobile launcher/adaptive icons and splash artwork; applied the Q SVG to mobile in-app branding and favicon, and to the supplier web sidebar, sign-in/loading views and favicon. Documented canonical and bundled asset locations.
 - Verified mobile typecheck/lint and Android export (Metro bundled the local SVG), supplier web typecheck/lint/production build, and documentation/source diff review. The web build retains its existing 558 kB chunk advisory; no native APK/device check was run.
+
+## 2026-10-24 — Service operations redesign
+
+- Redesigned supplier Incidents, Advisories, Assistance, Water distribution and Weather with compact real tables, aligned figures, sticky headers and internal tablet/phone scrolling. Distribution now compares site evidence beside its map, uses modal filters and expandable help/legends; Weather pairs phone selectors and shows forecasts before the map.
+- Verified supplier type/lint/build, 34 unit tests, verification TypeScript/repository/docs/diff checks and nine controlled Playwright groups at 1440/768/390px, including keyboard scroll, filters/clear, form/navigation preservation, pickup lookup, weather stale/retry and staff restrictions. Skill inspection has zero final failures; existing floating map-popup shadow allowance and metadata warnings are documented. Desktop incident rows shrink from 96px to 57px.
+- Updated presentation/workflow/verification documentation and retained before/after screenshots and critique. No dependencies, backend/schema or ordinary data changes; no new real database/native/live-provider evidence. Production retains its existing bundle-size advisory. See [verification](docs/verification.md#supplier-service-operations-redesign--24-october-2026).
