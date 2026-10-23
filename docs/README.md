@@ -4,6 +4,8 @@ Updated **19 October 2026** against the first-release implementation of Water Su
 
 [UI/UX design and navigation](ui-ux.md) describes the shared teal components, customer navigation/reporting and supplier map workspace.
 
+[Hackathon guide](hackathon-guide.md) explains the stack and customer, staff, and admin functions in simple language, with judge questions and demo limits.
+
 ## Reference documents
 
 | Document | Purpose |
@@ -71,3 +73,7 @@ Follow [root guidance](../AGENTS.md) and [mobile guidance](../aqours-app/AGENTS.
 - [Directory navigation](directory-structure.md): API layers, Prisma models and client feature folders.
 
 - [Locations and maps](location-and-maps.md): PSGC catalog, guided addresses, snapshots, street basemaps, and provider settings.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.

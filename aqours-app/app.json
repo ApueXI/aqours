@@ -4,18 +4,17 @@
     "slug": "aqours-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/aqours.png",
     "scheme": "aqoursapp",
     "userInterfaceStyle": "light",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/images/aqours.png"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundColor": "#e7f3f1",
+        "foregroundImage": "./assets/images/aqours.png",
+        "monochromeImage": "./assets/images/aqours.png"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.aqours.customer",
@@ -30,7 +29,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/aqours-q-logo.svg"
     },
     "plugins": [
       "expo-router",
@@ -38,7 +37,7 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#faf8f5",
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/aqours.png",
           "imageWidth": 76
         }
       ],

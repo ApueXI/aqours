@@ -1,0 +1,83 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import { mkdir } from 'node:fs/promises';
+import { chromium, expect as baseExpect } from '@playwright/test';
+const expect = baseExpect.configure({ timeout: 40000 });
+const root = path.resolve('.local/workflow-feedback');
+await mkdir(path.join(root, 'tmp'), { recursive: true });
+const context = await chromium.launchPersistentContext(path.join(root, 'browser'), {
+  executablePath: process.env.AQOURS_CHROMIUM || '/usr/bin/chromium', headless: true,
+  viewport: { width: 1440, height: 1000 }, args: ['--no-sandbox', '--disable-dev-shm-usage'],
+  env: { ...process.env, TMPDIR: path.join(root, 'tmp'), XDG_CACHE_HOME: path.join(root, 'cache'), XDG_CONFIG_HOME: path.join(root, 'config') },
+});
+const page = await context.newPage();
+page.setDefaultTimeout(40000);
+const errors: string[] = [];
+page.on('pageerror', error => errors.push(error.message));
+const web = 'http://localhost:5179';
+try {
+  await context.clearCookies();
+  await page.goto(`${web}/#/settings`);
+  await page.getByLabel('Email', { exact: true }).fill('admin@demo.aqours.test');
+  await page.getByLabel('Password', { exact: true }).fill('DemoWater2026!');
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Accounts and connections', exact: true })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Settings section' }).getByRole('button', { name: 'Connections', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Create account', exact: true }).click();
+  const modal = page.getByRole('dialog');
+  const email = `browser-${Date.now()}@example.test`;
+  await modal.getByLabel('Account email', { exact: true }).fill(email);
+  await modal.getByLabel('Name', { exact: true }).fill('Fictional browser customer');
+  await modal.getByLabel('Initial password', { exact: true }).fill('FictionalBrowser2026!');
+  await modal.getByRole('button', { name: 'Choose Philippine address' }).click();
+  await expect(modal.getByLabel('Region', { exact: true })).toBeVisible();
+  assert.equal(await modal.locator('input').evaluateAll(inputs => inputs.some(input => input.getAttribute('aria-label')?.startsWith('Search region'))), false);
+  await modal.getByLabel('Region', { exact: true }).selectOption({ label: 'Region IV-A (CALABARZON) · region' });
+  await modal.getByLabel('Place within Region IV-A (CALABARZON)', { exact: true }).selectOption({ label: 'Laguna · province' });
+  await modal.getByLabel('Place within Laguna', { exact: true }).selectOption({ label: 'City of Calamba · city' });
+  // PSGC locality spellings come from the bundled catalog; choose the first barangay.
+  const barangays = modal.getByLabel('Place within City of Calamba', { exact: true });
+  await expect(barangays.locator('option')).not.toHaveCount(1);
+  await barangays.selectOption({ index: 1 });
+  const zone = modal.getByLabel('Service zone', { exact: true });
+  await zone.selectOption({ index: 1 });
+  await modal.getByLabel('I have verified that this zone supplies this connection', { exact: true }).check();
+  const response = page.waitForResponse(r => r.url().endsWith('/staff/settings/accounts') && r.request().method() === 'POST');
+  await modal.getByRole('button', { name: 'Create account and connection', exact: true }).click();
+  const created = await response;
+  assert.equal(created.status(), 200);
+  const payload = created.request().postDataJSON();
+  assert.ok(payload.connection.structuredAddress.barangayCode);
+  assert.equal(payload.connection.zoneConfirmed, true);
+  assert.equal(Object.hasOwn(payload, 'address'), false);
+  await expect(modal).not.toBeVisible();
+  const row = page.getByRole('row').filter({ hasText: email });
+  await expect(row).toContainText('CON-');
+  await expect(row).toContainText('Verified');
+  console.log('PASS combined account/connection creation with dropdown-only PSGC address and reviewed zone');
+  await page.goto(`${web}/#/messages`);
+  await expect(page.getByRole('heading', { name: 'Messages', exact: true })).toBeVisible();
+  await page.locator('article.entry h2 a').first().click();
+  await expect(page.getByRole('navigation', { name: 'Report views' }).getByRole('button', { name: /^Messages/ })).toHaveAttribute('aria-current', 'page');
+  await expect(page.getByLabel('Customer-visible message', { exact: true })).toBeVisible();
+  console.log('PASS supplier conversation inbox opens the correct report message view');
+  await page.getByRole('link', { name: /^Notifications/ }).click();
+  await expect(page.getByRole('heading', { name: 'Notifications', exact: true })).toBeVisible();
+  console.log('PASS notification access stays visible in the workspace header');
+  await page.goto(`${web}/#/distribution`);
+  await expect(page.getByRole('heading', { name: 'Arrange water pickup' })).toBeVisible();
+  await page.getByRole('link', { name: 'Set up a pickup site' }).click();
+  await expect(page.getByRole('link', { name: 'Pickup sites', exact: true })).toHaveAttribute('aria-current', 'page');
+  console.log('PASS distribution guidance links to the operational pickup setup');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${web}/#/settings?tab=connections`);
+  await expect(page.getByRole('link', { name: /^Notifications/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Accounts and connections', exact: true })).toBeVisible();
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+  await page.getByRole('button', { name: 'Create account', exact: true }).click();
+  await expect(modal.getByLabel('Service zone', { exact: true })).toBeVisible();
+  await page.screenshot({ path: path.join(root, 'combined-account-mobile.png'), fullPage: false });
+  await page.keyboard.press('Escape');
+  console.log('PASS mobile account dialog and legacy connection URL remain usable without document overflow');
+  assert.deepEqual(errors, []);
+} finally { await context.close(); }

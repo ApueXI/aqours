@@ -8,7 +8,7 @@ import { date, Demo, label, ResourceState } from '../../../components/Status';
 export function AdvisoryPreview({ d }: { d: Pick<Advisory, 'title' | 'kind' | 'text' | 'source' | 'zoneIds' | 'connectionIds' | 'demo' | 'startsAt' | 'endsAt'> }) {
   return <><h3>{d.title}</h3><Demo value={d.demo} /><p><strong>{label(d.kind)}</strong></p><p className="preserve">{d.text}</p>
     <p>Source: {d.source}</p><p>{d.zoneIds.length} explicit zones · {d.connectionIds.length} explicit connections</p>
-    <p>Effective: {date(d.startsAt)} – {date(d.endsAt)}</p>
+    <p>Service starts: {d.startsAt ? date(d.startsAt) : 'Immediately on publication'} · Expected end: {d.endsAt ? date(d.endsAt) : 'Not specified'}</p>
     {['boil_water', 'do_not_drink', 'do_not_use'].includes(d.kind) && <p className="notice">This quality restriction remains active until an administrator explicitly lifts it.</p>}
   </>;
 }
@@ -21,10 +21,10 @@ export function AdvisoryEditor({ d, zones, connections, refresh }: { d?: Advisor
     { name: 'title', label: 'Title', value: d?.title, required: true },
     { name: 'text', label: 'Approved customer instructions', type: 'textarea', value: approved?.text || d?.text, required: true },
     { name: 'source', label: 'Approved source / reference', value: approved?.source || d?.source, required: true },
-    { name: 'zoneIds', label: 'Target zones', type: 'multi', value: d?.zoneIds, options: zoneOptions(zones) },
-    { name: 'connectionIds', label: 'Target service connections', type: 'multi', value: d?.connectionIds, options: connections.map(item => ({ value: item.id, label: `${item.reference} · ${item.address}` })) },
-    { name: 'startsAt', label: 'Effective start (Manila)', type: 'datetime-local', value: d?.startsAt, nullable: true },
-    { name: 'endsAt', label: 'Planned end (Manila)', type: 'datetime-local', value: d?.endsAt, nullable: true },
+    { name: 'zoneIds', label: 'Affected service zones', hint: 'Customers with supplier-confirmed connections in these zones receive this advisory. Choose a zone, individual connections, or both.', type: 'multi', value: d?.zoneIds, options: zoneOptions(zones) },
+    { name: 'connectionIds', label: 'Individual service connections (optional)', hint: 'Include specific properties, including connections without a confirmed zone. Matching either selection is enough; recipients are deduplicated.', type: 'multi', value: d?.connectionIds, options: connections.map(item => ({ value: item.id, label: `${item.reference} · ${item.address}` })) },
+    { name: 'startsAt', label: 'Service starts (optional, Manila)', hint: 'When the announced interruption or service period begins. Blank means immediately; publication is a separate action.', type: 'datetime-local', value: d?.startsAt, nullable: true },
+    { name: 'endsAt', label: 'Expected end (optional, Manila)', hint: 'An estimate for the service period. Quality restrictions remain in effect until explicitly lifted, even after this time.', type: 'datetime-local', value: d?.endsAt, nullable: true },
     { name: 'geometry', label: 'Optional approved public boundary', type: 'json', value: d?.geometry ? JSON.stringify(d.geometry) : '', nullable: true },
     ...(d ? [{ name: 'reason', label: 'Revision reason', type: 'textarea' as const, required: true }] : [{ name: 'demo', label: 'Fictional demonstration advisory', type: 'checkbox' as const }]),
   ];

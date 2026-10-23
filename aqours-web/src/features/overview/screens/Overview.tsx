@@ -1,3 +1,4 @@
+import { FiRefreshCw, FiArrowRight } from 'react-icons/fi';
 import type { Metrics } from '@aqours/contracts';
 import { query } from '../../../services/http-client';
 import { useResource } from '../../../hooks/useResource';
@@ -14,19 +15,19 @@ export function Overview({ params }: { params: URLSearchParams }) {
   const { filters, setFilters } = useQueueFilters('overview', params);
   const resource = useResource<Metrics>(`/staff/metrics${query(filters)}`);
   const m = resource.data;
-  return <><PageTitle title="Overview"><button onClick={() => void resource.refresh()}>Refresh</button></PageTitle>
+  return <><PageTitle title="Overview"><button onClick={() => void resource.refresh()}><FiRefreshCw aria-hidden="true" />Refresh</button></PageTitle>
     <p className="page-description">Review outstanding reports and service activity, then open the next item that needs attention.</p>
     <FilterBar values={filters} onChange={setFilters} />
     <ResourceState resource={resource}>{m && <>
       <p>{date(m.from)} – {date(m.to)} · {m.timezone} · As of {date(m.asOf)}</p>
       <p className="hint">{m.cohort}</p>
       <div className="task-summary" aria-label="Service work queues">
-        <a href={`#/reports${query(filters)}`}><strong>{m.unresolvedReports}</strong><span>Unresolved reports</span><span>Review inbox →</span></a>
-        <a href="#/incidents"><strong>{m.activeIncidents}</strong><span>Active incidents</span><span>Open incidents →</span></a>
-        <a href={`#/map${query(filters)}`}><strong>{m.reportCount}</strong><span>Reports in this cohort</span><span>Locate reports →</span></a>
+        <a href={`#/reports${query(filters)}`}><span>Unresolved reports</span><strong>{m.unresolvedReports}</strong><span className="kpi-action">Review inbox<FiArrowRight aria-hidden="true" /></span></a>
+        <a href="#/incidents"><span>Active incidents</span><strong>{m.activeIncidents}</strong><span className="kpi-action">Open incidents<FiArrowRight aria-hidden="true" /></span></a>
+        <a href={`#/map${query(filters)}`}><span>Reports in this cohort</span><strong>{m.reportCount}</strong><span className="kpi-action">Locate reports<FiArrowRight aria-hidden="true" /></span></a>
       </div>
       <OperationalQueues />
-      <details><summary>Report measures and cohort definitions</summary><section><h2>Reports and incidents</h2><div className="table-scroll" tabIndex={0} role="region" aria-label="Report and incident measures"><table><thead><tr><th>Measure</th><th className="numeric">Count</th><th>Review</th></tr></thead><tbody>
+      <details><summary>Report measures and cohort definitions</summary><section><h2>Reports and incidents</h2><div className="table-scroll" tabIndex={0} role="region" aria-label="Report and incident measures"><table><thead><tr><th>Measure</th><th className="numeric">Count</th><th>Actions / context</th></tr></thead><tbody>
         <tr><td>Active incidents</td><td className="numeric">{m.activeIncidents}</td><td><a href="#/incidents">Open incidents</a></td></tr>
         <tr><td>Unresolved reports</td><td className="numeric">{m.unresolvedReports}</td><td><a href={`#/reports${query(filters)}`}>Review inbox</a></td></tr>
         <tr><td>Reports in selected cohort</td><td className="numeric">{m.reportCount}</td><td><a href={`#/map${query(filters)}`}>View map</a></td></tr>
@@ -35,8 +36,8 @@ export function Overview({ params }: { params: URLSearchParams }) {
         <tr><td>Reports returned for review</td><td className="numeric">{m.reopenedReports}</td><td>First resolution retained in history</td></tr>
       </tbody></table></div></section></details>
       <div className="overview-metrics">
-      <section><h2>Categories</h2><table><thead><tr><th>Category</th><th className="numeric">Reports</th></tr></thead><tbody>
-        {Object.entries(m.categories).map(([category, count]) => <tr key={category}><td><a href={`#/reports${query({ ...filters, category })}`}>{label(category)}</a></td><td className="numeric">{count}</td></tr>)}
+      <section><h2>Categories</h2><table><thead><tr><th>Category</th><th className="numeric">Reports</th><th className="action-column">Actions</th></tr></thead><tbody>
+        {Object.entries(m.categories).map(([category, count]) => <tr key={category}><th scope="row">{label(category)}</th><td className="numeric">{count}</td><td><a className="row-action" href={`#/reports${query({ ...filters, category })}`} aria-label={`View ${label(category)} reports`}>View<FiArrowRight aria-hidden="true" /></a></td></tr>)}
       </tbody></table></section>
       <section><h2>Response and resolution</h2><div className="table-scroll" tabIndex={0} role="region" aria-label="Response and resolution measures"><table><thead><tr><th>Measurement</th><th className="numeric">Arithmetic mean</th><th className="numeric">Completed samples</th><th className="numeric">Pending / excluded</th></tr></thead><tbody>
         <tr><td>First staff response</td><td className="numeric">{duration(m.firstResponse.meanSeconds)}</td><td className="numeric">{m.firstResponse.sampleCount}</td><td className="numeric">{m.firstResponse.pendingCount} pending</td></tr>

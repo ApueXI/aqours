@@ -20,18 +20,22 @@ export function GuidanceScreen() {
   const [pendingChoice, setPendingChoice] = useState<Choice | null>(null);
   const [questionIndex, setQuestionIndex] = useState(0);
   const choice = useCommand<{ id: string; action: Choice; createdAt: string }>();
+  const [submitted, setSubmitted] = useState<string | null>(null);
   const guidance = resource.guidance;
-  const questions = guidance?.questions ?? [];
+  const questions = resource.questions;
+  const dirty = submitted !== JSON.stringify({ answers, neededBy });
+  const choicesLocked = choice.busy || declined || dirty || resource.loading;
   const visibleQuestion = questions.length ? Math.min(questionIndex, questions.length - 1) : 0;
 
   async function evaluate() {
     setValidation(null); setDeclined(false);
     const waterNeededBy = neededBy ? parseManilaInput(neededBy) : undefined;
     if (neededBy && !waterNeededBy) { setValidation('Use YYYY-MM-DD HH:mm for the water-needed time in Asia/Manila.'); return; }
-    await resource.evaluate({ ...answers, ...(waterNeededBy ? { waterNeededBy } : {}) });
+    const result = await resource.evaluate({ ...answers, ...(waterNeededBy ? { waterNeededBy } : {}) });
+    if (result) setSubmitted(JSON.stringify({ answers, neededBy }));
   }
   async function choose(action: Choice) {
-    if (!guidance?.current) return;
+    if (!guidance?.current || (dirty && !choice.uncertain)) return;
     const intended = choice.uncertain ? pendingChoice ?? action : action;
     setPendingChoice(intended);
     const result = await choice.execute(`/guidance/${guidance.id}/choice`, { action: intended });
@@ -48,18 +52,20 @@ export function GuidanceScreen() {
       {questions.filter((_, index) => index === visibleQuestion).map((question) => <View key={question.key} style={{ gap: 8 }}>
         <Body>{question.label}</Body>
         {binaryKeys.includes(question.key as typeof binaryKeys[number]) ? <Choices values={question.options} value={answers[question.key as typeof binaryKeys[number]] === undefined ? null : answers[question.key as typeof binaryKeys[number]] ? 'yes' : 'no'}
-          disabled={choice.locked} onChange={(value) => setAnswers({ ...answers, [question.key]: value === 'yes' })} />
+          disabled={choice.locked || resource.loading} onChange={(value) => setAnswers({ ...answers, [question.key]: value === 'yes' })} />
           : question.key === 'nearbyAffected' ? <Choices values={['yes', 'no', 'unknown'] as const} value={answers.nearbyAffected ?? null}
-            disabled={choice.locked} onChange={(value) => setAnswers({ ...answers, nearbyAffected: value })} /> : null}
+            disabled={choice.locked || resource.loading} onChange={(value) => setAnswers({ ...answers, nearbyAffected: value })} /> : null}
       </View>)}
       <View style={styles.row}>
-        {visibleQuestion > 0 && <Button title="Previous question" secondary disabled={choice.locked} onPress={() => setQuestionIndex(visibleQuestion - 1)} />}
-        {visibleQuestion + 1 < questions.length && <Button title="Next question" secondary disabled={choice.locked} onPress={() => setQuestionIndex(visibleQuestion + 1)} />}
+        {visibleQuestion > 0 && <Button title="Previous question" secondary disabled={choice.locked || resource.loading} onPress={() => setQuestionIndex(visibleQuestion - 1)} />}
+        {visibleQuestion + 1 < questions.length && <Button title="Next question" secondary disabled={choice.locked || resource.loading} onPress={() => setQuestionIndex(visibleQuestion + 1)} />}
       </View>
-      <Field label="When do you need water? (optional, YYYY-MM-DD HH:mm, Asia/Manila)" value={neededBy} onChangeText={setNeededBy} editable={!choice.locked} />
+      <Field label="When do you need water? (optional, YYYY-MM-DD HH:mm, Asia/Manila)" value={neededBy} onChangeText={setNeededBy} editable={!choice.locked && !resource.loading} />
       <ErrorNotice error={validation} />
-      <Button title="Evaluate current answers" secondary disabled={resource.loading || choice.locked} onPress={() => void evaluate()} />
+      <Button title={resource.loading ? 'Submitting answers…' : submitted && !dirty ? 'Answers submitted — evaluate again' : 'Submit answers'} secondary disabled={resource.loading || choice.locked} onPress={() => void evaluate()} />
     </Section>
+    {submitted && !dirty && <Body>Your answers were submitted. Review the updated guidance below.</Body>}
+    {dirty && submitted && <Body>Answers changed. Submit them again to update the recommendations.</Body>}
     {resource.loading && <Loading text="Verifying current sources…" />}
     <ErrorNotice error={resource.error} retry={() => void evaluate()} />
     {guidance && !guidance.current && <>
@@ -74,13 +80,13 @@ export function GuidanceScreen() {
         <Body>{card.reason}</Body><Body muted>Source: {card.source} · Updated {displayTime(card.updatedAt)}{card.sourceVersion === null ? '' : ` · Revision ${card.sourceVersion}`}</Body>
         {card.sourceId && card.action === 'incident' && <Button title="Read published incident" secondary onPress={() => navigate(`/incidents/${card.sourceId}`)} />}
         {card.sourceId && card.sourceType === 'advisory' && <Button title="Read current advisory" secondary onPress={() => navigate(`/advisories/${card.sourceId}`)} />}
-        {(card.action === 'escalation' || card.sourceType === 'guidance') && <Button title="Ask supplier support about this guidance" secondary disabled={choice.busy || declined} onPress={() => void choose('callback')} />}
-        {['callback', 'inspection', 'water_support'].includes(card.action) && <Button title={`Choose ${label(card.action).toLowerCase()}`} disabled={choice.busy || declined} onPress={() => void choose(card.action as AssistanceType)} />}
+        {(card.action === 'escalation' || card.sourceType === 'guidance') && <Button title="Ask supplier support about this guidance" secondary disabled={choicesLocked} onPress={() => void choose('callback')} />}
+        {['callback', 'inspection', 'water_support'].includes(card.action) && <Button title={`Choose ${label(card.action).toLowerCase()}`} disabled={choicesLocked} onPress={() => void choose(card.action as AssistanceType)} />}
       </Section>)}
       <Section title="Your choice">
         <Body muted>Choosing a service opens its form. Only confirming that form submits a request.</Body>
-        {guidance.alternatives.map((action) => <Button key={action} title={`Choose ${label(action).toLowerCase()}`} secondary disabled={choice.busy || declined} onPress={() => void choose(action)} />)}
-        <Button title={declined ? 'Recommendation declined' : 'Decline recommendation'} secondary disabled={choice.busy || declined} onPress={() => void choose('decline')} />
+        {guidance.alternatives.map((action) => <Button key={action} title={`Choose ${label(action).toLowerCase()}`} secondary disabled={choicesLocked} onPress={() => void choose(action)} />)}
+        <Button title={declined ? 'Recommendation declined' : 'Decline recommendation'} secondary disabled={choicesLocked} onPress={() => void choose('decline')} />
         {declined && <Body>Your choice is recorded. No assistance request was created.</Body>}
       </Section>
     </>}

@@ -8,7 +8,7 @@ import {
   writeFile,
 } from "node:fs/promises";
 import path from "node:path";
-import sharp from "sharp";
+import { processImage } from "./process-image.js";
 import type { DB } from "../../config/database.js";
 import { config } from "../../config/environment.js";
 import {
@@ -26,38 +26,7 @@ export async function uploadAttachment(db: DB, req: CommandContext) {
   own(report, req.actor);
   const file = req.file;
   if (!file) fail(400, "Choose one image file");
-  let bytes: Buffer, mediaType: string;
-  try {
-    const image = sharp(file.buffer, {
-      limitInputPixels: 25000000,
-      failOn: "error",
-    });
-    const info = await image.metadata();
-    if (
-      !["jpeg", "png", "webp"].includes(info.format ?? "") ||
-      !info.width ||
-      !info.height ||
-      (info.pages ?? 1) > 1
-    )
-      fail(
-        415,
-        "Only still JPEG, PNG and WebP images are accepted",
-        "image_type",
-      );
-    bytes = await image
-      .rotate()
-      .toFormat(info.format as "jpeg" | "png" | "webp")
-      .toBuffer();
-    mediaType = info.format === "jpeg" ? "image/jpeg" : `image/${info.format}`;
-  } catch {
-    fail(
-      415,
-      "Image could not be decoded; choose a valid JPEG, PNG or WebP",
-      "image_type",
-    );
-  }
-  if (bytes.length > 5 * 1024 * 1024)
-    fail(413, "Decoded image exceeds 5 MiB", "size");
+  const { bytes, mediaType } = await processImage(file.buffer);
   await mkdir(config.attachmentDir, { recursive: true, mode: 0o700 });
   if (
     !(await realpath(config.attachmentDir)).startsWith(

@@ -1,3 +1,4 @@
+import { FilterDialog } from '../../../components/FilterDialog';
 import { useEffect } from 'react';
 import type { MonitoringOverview, PickupSite, User } from '@aqours/contracts';
 import { useResource } from '../../../hooks/useResource';
@@ -23,22 +24,33 @@ export function Distribution({ params, user }: { params: URLSearchParams; user: 
   const refresh = () => { void monitoring.refresh(); void sites.refresh(); };
   useEffect(() => { const timer = window.setInterval(() => void monitoring.refresh(), 30000); return () => window.clearInterval(timer); }, [monitoring.refresh]);
   const siteChoices = sites.data || monitoring.data?.sites.map(item => item.site) || [];
-  return <><PageTitle title="Water distribution">
+  return <div className="operations-page distribution-page"><PageTitle title="Water distribution">
     <RefreshForecasts items={monitoring.data?.sites || []} refresh={refresh} />
     <button className="primary" onClick={() => change({ tab: 'sessions', create: '1' })}>New pickup session</button>
-  </PageTitle><ReservationLookup />
+  </PageTitle>
+    <p className="page-description">Monitor pickup-site supply, manage sessions and find customer reservations.</p>
     <nav className="tabs" aria-label="Distribution sections">{([
-      ['monitoring', 'Monitoring'], ['sessions', 'Sessions'], ['sites', 'Sites'], ['warnings', 'Warning history'],
+      ['monitoring', 'Monitoring'], ['sessions', 'Pickup sessions'], ['sites', 'Pickup sites'], ['warnings', 'Warning history'],
     ] as const).map(([tab, text]) => <a key={tab} href={distributionLink(params, { tab, create: '' })} aria-current={state.tab === tab ? 'page' : undefined}>{text}</a>)}</nav>
-    {(state.tab === 'monitoring' || state.tab === 'warnings') && <form className="filters" key={`${state.q}:${state.status}:${state.siteId}:${state.date}`} onSubmit={event => {
-      event.preventDefault(); const data = new FormData(event.currentTarget); change({ q: String(data.get('q') || ''), status: String(data.get('status') || ''), siteId: String(data.get('siteId') || ''), date: String(data.get('date') || '') });
-    }}>
-      <label className="field"><span>Search sites</span><input aria-label="Search sites" name="q" defaultValue={state.q} /></label>
-      <label className="field"><span>Monitoring status</span><select aria-label="Monitoring status" name="status" defaultValue={state.status}><option value="">All statuses</option><option value="normal">Normal</option><option value="warning">Warning</option><option value="critical">Critical</option><option value="unavailable">Unavailable</option></select></label>
-      <label className="field"><span>Pickup site filter</span><select aria-label="Pickup site filter" name="siteId" defaultValue={state.siteId}><option value="">All pickup sites</option>{siteChoices.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}</select></label>
-      <label className="field"><span>Forecast date (Manila)</span><select aria-label="Forecast date (Manila)" name="date" defaultValue={state.date}>{(monitoring.data?.dates || [state.date]).map(day => <option key={day} value={day}>{day}</option>)}</select></label>
-      <button type="submit">Apply monitoring filters</button>
-    </form>}
+    <div className="distribution-tools"><ReservationLookup />
+    <details className="distribution-help"><summary>How water pickup works</summary>
+      <ol>
+        <li><a href={distributionLink(params, { tab: 'sites', create: '' })}>Set up a pickup site</a> with an address and collection instructions.</li>
+        <li><a href={distributionLink(params, { tab: 'sessions', create: '' })}>Create a pickup session</a>: choose the site, service zones, collection times and available liters.</li>
+        <li><a href="#/assistance?type=water_support">Review water-support requests</a>. Accept a request to reserve stock, then arrange collection.</li>
+        <li>Use the reservation lookup when the customer arrives. Record collection to deduct the reserved quantity.</li>
+      </ol>
+      <details><summary>What does monitoring do?</summary><p>Monitoring compares pickup-site stock and forecasts with configured thresholds. It helps staff spot possible shortages or heat warnings. It does not reserve water, create sessions or confirm customer requests.</p></details>
+    </details>
+    </div>
+    {(state.tab === 'monitoring' || state.tab === 'warnings') && <FilterDialog
+      values={{ q: state.q, status: state.status, siteId: state.siteId }}
+      onChange={values => change({ q: values.q || '', status: values.status || '', siteId: values.siteId || '' })}
+      fields={[
+        { name: 'q', label: 'Search sites' },
+        { name: 'status', label: 'Monitoring status', type: 'select', options: ['normal', 'warning', 'critical', 'unavailable'].map(value => ({ value, label: value[0].toUpperCase() + value.slice(1) })) },
+        { name: 'siteId', label: 'Pickup site filter', type: 'select', options: siteChoices.map(site => ({ value: site.id, label: site.name })) },
+      ]} />}
     {(state.tab !== 'sessions') && <ResourceState resource={monitoring} />}
     {monitoring.data && <p className="hint">{monitoring.data.supplier.name} · Monitoring as of {date(monitoring.data.asOf)} · Refreshes every 30 seconds</p>}
     {state.tab === 'monitoring' && monitoring.data && <MonitoringWorkspace overview={monitoring.data} params={params} change={change} refresh={refresh} />}
@@ -47,5 +59,5 @@ export function Distribution({ params, user }: { params: URLSearchParams; user: 
     {state.tab === 'warnings' && <MonitoringWarnings key={state.siteId} siteId={state.siteId} day={warningDate} onDateChange={warningDate => change({ warningDate })} />}
     <MonitoringNotifications />
     {user.role === 'admin' && monitoring.data && <TemperatureBandsForm bands={monitoring.data.temperatureBands} refresh={refresh} />}
-  </>;
+  </div>;
 }

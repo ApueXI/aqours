@@ -62,6 +62,12 @@ const width=()=>{
 const tile=await readFile(new URL('./fixtures/street-tile.png',import.meta.url));
 const localTile=/^https:\/\/(tiles\.example\.test|maps\.geoapify\.com)\//;
 try{
+  await page.route('**/staff/connections*', async route => {
+    // Controlled saved customer points keep this overlap fixture independent of seed addresses.
+    const data = await Promise.all([customer, other].map(actor => connection(actor)));
+    await route.fulfill({ json: { data: data.map(item => ({ ...item, latitude: 14.23, longitude: 121.17 })) },
+      headers: { 'Access-Control-Allow-Origin': web, 'Access-Control-Allow-Credentials': 'true' } });
+  });
   await page.route(localTile,route=>route.fulfill({contentType:'image/png',body:tile}));
   // No other public raster source is allowed to slip through.
   await page.route('https://tile.openstreetmap.org/**',route=>route.abort());
@@ -78,22 +84,23 @@ try{
   await expect(page.locator('.leaflet-container')).toBeVisible();
   await expect(page.locator('.leaflet-tile-loaded').first()).toBeVisible();
   await expect(page.getByRole('alert').filter({hasText:/Street tiles/})).toHaveCount(0);
-  await expect(page.locator('.map-scope-count')).toHaveText('4 shown · 0 unlocated');
+  await expect(page.locator('.map-scope-count')).toHaveText('4 reports shown · 0 unlocated');
   await page.locator('details.map-filter-disclosure > summary').click();
   await expect(page.getByText('4 mapped · 4 reports in the viewport before text search · 0 unlocated reports across the selected filters',{exact:true})).toBeVisible();
   await page.locator('details.map-filter-disclosure > summary').click();
   passed('Leaflet renders local raster tiles and requests actual bounded viewport data');
 
   await expect(page.locator('.report-cluster')).toHaveCount(1);
-  await expect(page.locator('.report-cluster')).toHaveText('4');
-  await expect(page.locator('.report-cluster')).toHaveCSS('background-color','rgb(71, 85, 105)');
+  await expect(page.locator('.report-cluster')).toHaveText('2');
+  await expect(page.locator('.report-cluster span')).toHaveCSS('background-color','rgb(220, 38, 38)');
   await page.locator('.report-cluster').click();
-  await expect(page.locator('.report-marker')).toHaveCount(4);
+  await expect(page.locator('.report-marker')).toHaveCount(2);
   const centers=await page.locator('.report-marker').evaluateAll(nodes=>nodes.map(node=>{const b=node.getBoundingClientRect();return [b.x,b.y];}));
   assert.notDeepEqual(centers[0],centers[1]);
   for (const [index,fixture] of fixtures.entries()) {
-    const marker=page.locator(`.report-marker[title^="${fixture.reference}"]`);
-    await expect(marker).toHaveAccessibleName(`${fixture.reference} · ${labels[index]} · ${fixture.priority} priority`);
+    await page.getByRole('button',{name:`Select ${fixture.reference} on map`,exact:true}).click();
+    const marker=page.locator(`.report-marker[title^="${fixture.reference} ·"]`);
+    await expect(marker).toHaveAccessibleName(new RegExp(`${fixture.reference} · ${labels[index]} · ${fixture.priority} priority`));
     await expect(marker.locator('span')).toHaveCSS('background-color',colors[index]);
     const legend=page.getByRole('list',{name:'Report types'}).getByRole('listitem').filter({hasText:labels[index]});
     await expect(legend.locator('.map-legend-swatch')).toHaveCSS('background-color',colors[index]);
@@ -105,7 +112,7 @@ try{
     await expect(page).toHaveURL(new RegExp(`selected=${fixture.id}`));
     await expect(page.locator('.leaflet-popup')).toContainText(`${labels[index]} · received · ${fixture.priority} priority`);
   }
-  passed('A neutral counted cluster expands into four category colors with matching legend, accessible labels and priority text');
+  passed('A red mixed cluster counts two customers once; list selection exposes all four issue icons with matching legend and priority text');
 
   fixtures[3]=await ok<Report>(admin,'PATCH',`/staff/reports/${fixtures[3].id}`,{
     expectedVersion:fixtures[3].version,priority:'urgent',reason:'Verify category color is independent of priority',
@@ -116,10 +123,8 @@ try{
   await expect(page.locator('.leaflet-popup')).toContainText('Water quality · received · urgent priority');
   await expect(page.getByRole('region',{name:'Selected report',exact:true})).toContainText('Urgent priority');
   await page.getByRole('button',{name:`Select ${fixtures[3].reference} on map`,exact:true}).click();
-  await expect(page.locator('.report-marker')).toHaveCount(4);
-  for (const [index,fixture] of fixtures.entries()) {
-    await expect(page.locator(`.report-marker[title^="${fixture.reference}"] span`)).toHaveCSS('background-color',colors[index]);
-  }
+  await expect(page.locator('.report-marker')).toHaveCount(2);
+  await expect(page.locator(`.report-marker[title^="${fixtures[3].reference} ·"] span`)).toHaveCSS('background-color',colors[3]);
   passed('Priority changes refresh text and retain selected report; expanded markers keep their category colors');
 
   const before=width();
@@ -143,7 +148,7 @@ try{
     await control.uncheck(); await expect(page.locator(`path[stroke="${color}"]`)).toHaveCount(0);
     await control.check();
   }
-  const reportLayer=page.getByLabel('Map layers',{exact:true}).getByRole('checkbox',{name:'Reports',exact:true});
+  const reportLayer=page.getByLabel('Map layers',{exact:true}).getByRole('checkbox',{name:'Customers',exact:true});
   await reportLayer.uncheck(); await expect(page.locator('.report-marker,.report-cluster')).toHaveCount(0); await reportLayer.check();
   await expect(page.locator('path[stroke="#64748b"]').first()).toBeVisible();
   passed('Independent Leaflet layer controls preserve visible attribution and metric scale');

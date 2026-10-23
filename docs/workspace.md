@@ -27,11 +27,11 @@ Account creation is separate from staff acceptance of assistance. The required �
 5. On expiry/revocation, show sign-in recovery without displaying another user's cached private data. Failed requests must not appear to have saved a report or accepted a service.
 6. Logout revokes the relevant server session, clears local authentication/private view state and returns to sign-in. Removing a token from the screen alone does not satisfy logout.
 
-Password recovery, MFA and public registration are not implicitly added to the demonstration scope.
+Profile supports signed-in password changes. Forgotten passwords require supplier-assisted identity verification and an administrative reset; automated email/SMS recovery, MFA and public registration remain outside the implemented scope.
 
 ## 3. Customer home and service location
 
-Home also offers [Open-Meteo weather](weather.md) for an owned saved connection or a selected Philippine city. The dedicated supplier Weather page (`/#/weather`) uses searchable Region/Province/City-Municipality selectors synchronized with a nationwide Leaflet locality map through desktop/mobile navigation. It starts in Laguna without a forecast; select a mapped locality to fetch weather. Province is skipped where absent, unavailable points show an explicit message, and parent changes clear children/old forecasts. Supplier selection clears on page exit/account change. Weather requests have their own loading/error/refresh state and do not change report locations, service zones or advisories.
+The Weather tab offers [Open-Meteo weather](weather.md) for an owned saved connection or a selected Philippine city. The dedicated supplier Weather page (`/#/weather`) uses searchable Region/Province/City-Municipality selectors synchronized with a nationwide Leaflet locality map through desktop/mobile navigation. It starts in Laguna without a forecast; select a mapped locality to fetch weather. Province is skipped where absent, unavailable points show an explicit message, and parent changes clear children/old forecasts. Supplier selection clears on page exit/account change. Weather requests have their own loading/error/refresh state and do not change report locations, service zones or advisories.
 
 1. After sign-in, load the customer's profile, saved connection/address, current applicable published notices and open reports.
 2. Match notices through explicit reviewed service-zone/connection associations. An applicable area advisory can reach a customer who has never submitted a report.
@@ -153,13 +153,13 @@ The root npm manifest coordinates contract build, typecheck, lint, API/web build
 
 | Location | Implemented local tooling |
 | --- | --- |
-| Root | `npm run contracts`, `typecheck`, `lint`, `build`, `test:api`, `test:browser`, `check:repository` |
+| Root | `npm run dev` starts API, supplier web, and Expo Metro together; also `contracts`, `typecheck`, `lint`, `build`, `test:api`, `test:browser`, `check:repository` |
 | `aqours-api/` | `npm run dev`, `build`, `migrate`, `migrate:adopt`, `seed`, `seed:upgrade-laguna`, `typecheck`, `lint`, `test`; `npm start` |
 | `aqours-web/` | Vite `dev`, `build`, `preview`, plus `typecheck`, `lint`, `test` |
 | `aqours-app/` | Expo `start`, native `android`, `export:android`, `typecheck`, `lint`, `test`; EAS/build configuration is present |
 | Database | Compose PostgreSQL 18.6, project-local persistent data, Prisma migrations with verified legacy adoption, explicit development seed |
 
-API runtime scripts (`dev`, `start`, migrations and seeds) automatically load optional `aqours-api/.env`; process environment values take precedence. Use `npm run dev` inside the API directory or `npm --prefix aqours-api run dev` from the root. Source changes restart development automatically; restart the command after changing `.env`. Production startup requires a build; database startup, migrations and seeds are separate actions. Tests/build tooling do not implicitly load secrets. See [setup](setup.md) for configuration and future deployment notes.
+Root `npm run dev` uses `concurrently` to run the API, supplier web, and Expo Metro scripts, and stops the group when any process exits. API runtime scripts (`dev`, `start`, migrations and seeds) automatically load optional `aqours-api/.env`; process environment values take precedence. Use the root command for all three apps, or `npm --prefix aqours-api run dev` for just the API. Source changes restart development automatically; restart the command after changing `.env`. PostgreSQL startup, migrations, and seeds remain separate actions. Production API startup requires a build. Tests/build tooling do not implicitly load secrets. See [setup](setup.md) for configuration and future deployment notes.
 
 The mobile `android` script runs `expo run:android`, which requires the native toolchain; Metro alone does not produce an APK. Expo 57 / React Native 0.86.3 / MapLibre React Native 11.5.0 are configured. For an SDK-compatible Expo Go, run `npm --prefix aqours-app run start -- --go --clear` and scan the QR code; report screens display coordinates because Expo Go lacks MapLibre's native modules. Interactive maps require an Aqours native build. Signed standalone dual-architecture APKs and actual KVM-backed Android29/36 workflows are recorded in the [native ledger](native-verification.md), with exact artifact boundaries. CNG/export/type checks remain distinct evidence. Refer to the current [verification ledger](verification.md) before claiming compatibility.
 
@@ -198,3 +198,11 @@ See [locations and maps](location-and-maps.md) for the bundled PSGC catalog, gui
 ## Reference-led presentation — 22 October 2026
 
 Customer report detail exposes Summary, Messages and History. Messages opens `/reports/:id/messages`; History retains the report path with `?view=history`. The nested account/report workspace retains an unsent message while switching these views, but it is not durable across leaving/unmounting the workspace or process termination. Confirmed sends clear the composer; uncertain sends retain the existing operation for same-message retry. Assistance now ends in an explicit “Request received” reference with tracking/return links, before any supplier appointment or stock confirmation. Supplier incident Customer preview/Publish update/History and advisory Customer notice/Revision history separate published snapshots from operational edit controls. Supplier record creation, editing, publication, review, and operational transitions use modal forms; expected-version checks remain in effect. See [UI/UX](ui-ux.md) for interaction and verification details.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.
+
+## Customer issue map — 23 October 2026
+
+The supplier map includes customers with saved locations, including those without reports, and counts each customer once. Zoom in for issue/person icons; zoom out for counts colored by the first present open category: red, purple, blue, then amber. Filters scope customer membership and issue colors; missing locations stay explicit. Selecting a report shows its exact stored issue location. See [location rules](location-and-maps.md#map-detail-and-accuracy). Run `node --experimental-strip-types verification/browser-customer-map.ts` against a loopback Vite server on port 5198 for controlled browser checks; set `AQOURS_CHROMIUM` to an installed Chromium-family executable when needed. API responses are intercepted and browser output stays under `.local/customer-map/`.

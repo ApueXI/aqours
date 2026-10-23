@@ -1,3 +1,4 @@
+import { OperationsTable } from '../../../components/OperationsTable';
 import type { WeatherForecast } from '@aqours/contracts';
 import { weatherCondition, weatherDayLabel, weatherMeasure } from '@aqours/contracts';
 import { date, ResourceState } from '../../../components/Status';
@@ -24,17 +25,17 @@ export function WeatherForecastView({ path, location }: { path: string; location
           <dt>Wind</dt><dd>{weatherMeasure(current.windSpeed, 'km/h')}</dd>
         </dl></div>
         <p className="text-sm text-[#475569]">Current model estimate: {date(current.time)} · Retrieved {date(forecast.fetchedAt)} · Asia/Manila</p>
-        <div className="overflow-x-auto responsive-table" tabIndex={0} role="region" aria-label="Seven-day weather forecast">
-          <table>
+        <OperationsTable label="Seven-day weather forecast">
+          <table className="forecast-table">
             <caption className="text-left font-semibold py-3">Seven-day forecast</caption>
-            <thead><tr><th scope="col">Day</th><th scope="col">Conditions</th><th scope="col">Low / high</th><th scope="col">Precipitation</th><th scope="col">Rain chance</th></tr></thead>
+            <thead><tr><th scope="col">Day</th><th scope="col">Conditions</th><th scope="col" className="numeric">Low</th><th scope="col" className="numeric">High</th><th scope="col" className="numeric">Rain</th><th scope="col" className="numeric">Chance</th></tr></thead>
             <tbody>{forecast.daily.map(day => <tr key={day.date}>
               <th scope="row">{weatherDayLabel(day.date)}</th><td>{weatherCondition(day.weatherCode)}</td>
-              <td data-label="Low / high">{weatherMeasure(day.temperatureMin, '°C')} / {weatherMeasure(day.temperatureMax, '°C')}</td>
-              <td data-label="Precipitation">{weatherMeasure(day.precipitation, 'mm')}</td><td data-label="Rain chance">{weatherMeasure(day.rainProbability, '%')}</td>
+              <td className="numeric">{weatherMeasure(day.temperatureMin, '°C')}</td><td className="numeric">{weatherMeasure(day.temperatureMax, '°C')}</td>
+              <td className="numeric" data-label="Precipitation">{weatherMeasure(day.precipitation, 'mm')}</td><td className="numeric" data-label="Rain chance">{weatherMeasure(day.rainProbability, '%')}</td>
             </tr>)}</tbody>
           </table>
-        </div>
+        </OperationsTable>
       </>}
     </ResourceState>
   </div>;

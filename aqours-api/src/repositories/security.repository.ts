@@ -42,3 +42,9 @@ export const insertSession = (
     expiresAt: Date;
   },
 ) => db.session.create({ data });
+
+export const revokeOtherSessions = (db: DB, userId: string, currentHash: string) =>
+  db.session.updateMany({
+    where: { userId, revokedAt: null, tokenHash: { not: currentHash } },
+    data: { revokedAt: new Date() },
+  });

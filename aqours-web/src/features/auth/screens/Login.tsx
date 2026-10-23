@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { RequestError } from '../../../services/http-client';
 import { Failure } from '../../../components/Status';
+import { Brand } from '../../../components/Brand';
 
 export function Login({ login, error, ended, restore }: {
   login: (email: string, password: string) => Promise<void>; error: unknown; ended: boolean; restore: () => void;
@@ -19,7 +20,7 @@ export function Login({ login, error, ended, restore }: {
     finally { setBusy(false); }
   };
   const restoreError = error && !(error instanceof RequestError && error.status === 401) ? error : undefined;
-  return <main className="login"><div className="login-brand">Aqours</div><h1>Supplier sign in</h1>
+  return <main className="login"><div className="login-brand"><Brand /></div><h1>Supplier sign in</h1>
     <p>Use your staff or administrator account.</p>
     {ended && <p className="notice">Your session ended or was revoked. Sign in again to continue.</p>}
     <Failure error={restoreError} />{restoreError && <button type="button" onClick={restore}>Retry session check</button>}

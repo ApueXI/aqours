@@ -1,10 +1,10 @@
 # Weather
 
-Added 21 October 2026; supplier navigation updated 22 October 2026. Customer Home and the supplier Weather page (`/#/weather`) show current conditions and a seven-day forecast from [Open-Meteo](https://open-meteo.com/en/docs). Staff/admin open Weather through desktop or mobile navigation; forecasts are no longer embedded in supplier Overview. Customers, staff and admins can use the authenticated weather endpoints. Weather is informational context; it does not create incidents, publish advisories, establish water safety or change assistance/guidance decisions.
+Added 21 October 2026; supplier navigation updated 22 October 2026. The customer Weather tab and the supplier Weather page (`/#/weather`) show current conditions and a seven-day forecast from [Open-Meteo](https://open-meteo.com/en/docs). Staff/admin open Weather through desktop or mobile navigation; forecasts are no longer embedded in supplier Overview. Customers, staff and admins can use the authenticated weather endpoints. Weather is informational context; it does not create incidents, publish advisories, establish water safety or change assistance/guidance decisions.
 
 ## Choosing a location
 
-Customer Home initially selects the first saved connection with coordinates, or the first connection when none has coordinates. Every saved connection is selectable; missing coordinates prompt for Philippine city search through [Open-Meteo geocoding](https://open-meteo.com/en/docs/geocoding-api), with up to five labeled results and explicit selection. Customer12 retains the address-only fallback. Existing customer weather behavior and request modes are preserved.
+The customer Weather tab initially selects the first saved connection with coordinates, or the first connection when none has coordinates. Every saved connection is selectable; missing coordinates prompt for Philippine city search through [Open-Meteo geocoding](https://open-meteo.com/en/docs/geocoding-api), with up to five labeled results and explicit selection. Customer12 retains the address-only fallback. Existing customer weather behavior and request modes are preserved.
 
 Supplier Weather replaces free-text provider city search with a nationwide canonical PSGC locality map and searchable **Region → Province → City / Municipality** selectors. Each level has a labeled search field and native keyboard-operable select. Choose a province where one exists; NCR skips that step and displays an unavailable province control. Selection stops at city/municipality, before Manila districts or barangays.
 
@@ -20,7 +20,7 @@ Current weather includes conditions, temperature, feels-like temperature, humidi
 
 Values use Celsius, millimeters, km/h and percentages. Event timestamps and daily dates use `Asia/Manila`. Current conditions are model estimates. Weather time and API retrieval time are displayed separately, with linked Open-Meteo attribution; customer search credits GeoNames and supplier locality points retain GeoNames/ph-geo/CC BY 4.0 credit. Supplier advisories retain their own lifecycle and display.
 
-Weather fetches when a forecast location is selected and on manual refresh; customer Home also fetches for its initial saved connection. Android refetches when Home returns to focus or the app enters the foreground. Weather does not use the 30-second water-service polling interval. Refresh respects the backend cache. Failed refresh retains previously loaded data for that same location with an explicit stale label and retry. Initial failures show an error/retry. Loading or failure remains independent of water-service data and supplier metrics.
+Weather fetches when a forecast location is selected and on manual refresh; the customer Weather tab also fetches for its initial saved connection. Android refetches when Weather returns to focus or the app enters the foreground. Weather does not use the 30-second water-service polling interval. Refresh respects the backend cache. Failed refresh retains previously loaded data for that same location with an explicit stale label and retry. Initial failures show an error/retry. Loading or failure remains independent of water-service data and supplier metrics.
 
 ## API contract
 
@@ -81,4 +81,4 @@ Browser checks require `DATABASE_URL` for a seeded isolated `_test` database and
 
 ## Reference-led presentation — 22 October 2026
 
-Current temperature now has stronger visual hierarchy on both clients. Supplier seven-day forecast rows retain labeled low/high, precipitation and rain-chance fields when rendered as narrow-screen rows. Supplier canonical PSGC map/hierarchy selection, customer connection/city modes, forecast refresh/stale/error states and provenance are unchanged by this presentation work. Actual rendered/native results and their provider/artifact boundaries are recorded in the [UI/UX guide](ui-ux.md).
+Current temperature now has stronger visual hierarchy on both clients. Supplier seven-day forecasts now retain real table columns at narrow widths, with separate low/high temperatures and right-aligned rain/chance figures. Search/select fields pair on phones, and the forecast appears before the map. See the [compact service operations update](service-operations-ui.md). Supplier canonical PSGC map/hierarchy selection, customer connection/city modes, forecast refresh/stale/error states and provenance are unchanged by this presentation work. Actual rendered/native results and their provider/artifact boundaries are recorded in the [UI/UX guide](ui-ux.md).

@@ -22,14 +22,14 @@ export function PhotoPicker({ photos, onChange, disabled }: { photos: Photo[]; o
       for (const asset of result.assets) {
         if (asset.fileSize && asset.fileSize > 5 * 1024 * 1024) throw new Error('Each photo must be at most 5 MiB.');
         const type = asset.mimeType ?? 'image/jpeg';
-        if (!['image/jpeg', 'image/png', 'image/webp'].includes(type)) throw new Error('Choose JPEG, PNG, or WebP photos.');
-        selected.push({ uri: asset.uri, name: asset.fileName ?? `report-photo.${type === 'image/png' ? 'png' : type === 'image/webp' ? 'webp' : 'jpg'}`, type });
+        if (!['image/jpeg', 'image/png'].includes(type)) throw new Error('Choose JPEG or PNG photos.');
+        selected.push({ uri: asset.uri, name: asset.fileName ?? `report-photo.${type === 'image/png' ? 'png' : 'jpg'}`, type });
       }
       onChange([...photos, ...selected].slice(0, 4));
     } catch (failure) { setError(errorText(failure)); }
   }
   return <Section title="Photos (optional)">
-    <Body muted>JPEG, PNG, or WebP · up to 5 MiB each. Photos upload after your report is saved.</Body>
+    <Body muted>JPEG or PNG · up to 5 MiB each. Photos upload after your report is saved.</Body>
     {photos.map((photo, index) => <View key={`${photo.uri}-${index}`} style={styles.item}>
       <Body muted>Photo {index + 1} · Selected, not uploaded</Body>
       <Image source={{ uri: photo.uri }} style={{ width: 140, height: 110 }} accessibilityLabel="Selected report photo" />

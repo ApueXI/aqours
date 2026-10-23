@@ -103,7 +103,7 @@ export async function seedServices(
       type: "inspection",
       status: "scheduled",
       details: {
-        issueDetails: "Demonstration persistent low pressure",
+        issueDetails: "Demonstration persistent water-quality concern",
         siteAddress: connections[3]!.address,
         preferredWindow: "Tomorrow afternoon",
         accessInstructions: "Fictional front gate",

@@ -1,3 +1,5 @@
+import { listConversations } from "../services/reports/list-conversations.service.js";
+import { commandContext } from "../controllers/context.js";
 import {
   psgcRegionsController,
   psgcChildrenController,
@@ -29,6 +31,7 @@ export function reportRoutes(app: Express) {
   for (const staff of [false, true]) {
     const prefix = staff ? "/staff/reports" : "/reports",
       access = staff ? "staff" : "customer";
+    route(app, "get", staff ? "/staff/messages" : "/messages", access, (db, req) => listConversations(db, commandContext(req), staff));
     route(app, "get", prefix, access, (db, req, res) =>
       listReportsController(db, req, res, staff),
     );

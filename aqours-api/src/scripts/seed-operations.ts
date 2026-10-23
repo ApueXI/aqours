@@ -8,6 +8,7 @@ import {
 } from "../repositories/domain.repository.js";
 import { advisoryFanout, advisoryRevision } from "../services/advisories/advisory-context.service.js";
 import { reportCreate } from "../services/reports/report-context.service.js";
+import { seedConversation } from "./seed-conversations.js";
 import { fixtureId } from "./seed-identities.js";
 import { seedServices } from "./seed-services.js";
 export async function seedOperations(
@@ -92,7 +93,7 @@ export async function seedOperations(
       answers: {},
     });
     doc.submittedAt = before(3);
-    doc.incidentId = n < 8 ? incident.id : null;
+    doc.incidentId = n < 8 && doc.zoneConfirmed && incident.zoneIds.includes(doc.zoneId) ? incident.id : null;
     if (n === 3) {
       doc.firstResolvedAt = before(1);
       doc.firstRespondedAt = before(2);
@@ -128,6 +129,7 @@ export async function seedOperations(
         "under_review",
       );
     }
+    if (n < 4) await seedConversation(db, customer, staff, doc.id);
     reports.push(doc);
   }
   const notice = await create(

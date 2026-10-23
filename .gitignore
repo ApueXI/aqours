@@ -20,3 +20,5 @@
 
 # Generated Prisma client
 /aqours-api/src/generated/
+
+pnpm-lock.yaml

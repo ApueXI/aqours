@@ -63,3 +63,11 @@ Notification DTOs use an explicit allowlist. Generated appointment labels displa
 Actual installed N10/N21/N34/N37/N40 verify persisted read state/owned destination, empty/stale recovery, generated Manila appointment text, offline open remaining unread and successful real-network retry, plus notice receipt with zero reports. Backend audiences/deduplication/private destination guards/rollback are separately verified in the [native ledger](../../../native-verification.md) and traceability.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](../../../workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.
+
+## Refresh placement — 23 October 2026
+
+Updates places Refresh updates above its entries and disables it while loading. Refresh retains the selected notification page. See [follow-up behavior](../../../workflow-feedback.md#advisory-guidance-and-app-follow-up--23-october-2026) for scope and verification.

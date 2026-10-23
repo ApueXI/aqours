@@ -1,3 +1,4 @@
+import { notifySupplier } from "../notifications/notify-supplier.service.js";
 import type { DB } from "../../config/database.js";
 import {
   create,
@@ -48,5 +49,6 @@ export async function addReportMessage(
       input.text,
     );
   }
+  if (!staff) await notifySupplier(db, message.id, "report", doc.id, "Customer message", input.text);
   return messageSafe(message);
 }

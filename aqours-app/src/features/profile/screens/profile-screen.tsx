@@ -1,3 +1,4 @@
+import { ChangePassword } from '../components/change-password';
 import type { Connection, User } from '@aqours/contracts';
 import { View } from 'react-native';
 import { useSession } from '@/features/auth/hooks/session';
@@ -9,9 +10,10 @@ export default function Profile() {
   const { logout } = useSession();
   const profile = useResource<User>('/me');
   const connections = useResource<Connection[]>('/me/connections');
-  return <Screen title="Profile" tabbed>
+  return <Screen title="Account settings" tabbed>
     <ResourceState {...profile} />
     {profile.data && <Section title="Account"><Body>{profile.data.name}</Body><Body>{profile.data.email}</Body><Body>{profile.data.phone ?? 'No phone number on file'}</Body></Section>}
+    <ChangePassword />
     <Section title="Service connections">
       <ResourceState {...connections} empty={connections.data?.length === 0 && 'No saved connection. Contact the supplier for provisioning.'} />
       {connections.data?.map((connection) => <View key={connection.id} style={styles.item}>

@@ -37,6 +37,7 @@ export default function Login() {
         <Button title={busy ? 'Signing in…' : 'Sign in'} onPress={() => void signIn()} disabled={busy} />
       </Section>}
     </>}
+    <Body muted>Forgot your password? Contact your water supplier to verify your identity and request an account reset. After signing in, change your password in Profile.</Body>
     <Body muted>Use your supplier-provided customer account. Demonstration accounts and connections are fictional.</Body>
   </Screen>;
 }

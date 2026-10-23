@@ -1,5 +1,7 @@
 # Aqours supplier web
 
+The supplier favicon, sidebar brand, sign-in screen and session-loading screen use the Q mark in `public/aqours-q-logo.svg`. The canonical artwork is in the repository root `public/` directory; keep the Vite public copy synchronized when updating the logo.
+
 The dedicated Weather page (`/#/weather`) includes [Open-Meteo current weather and seven-day forecasts](../docs/weather.md) with a nationwide PSGC locality map and synchronized searchable Region/Province/City-Municipality selectors, manual refresh, attribution and independent retry/stale states for staff/admin. It starts in Laguna without a forecast; unavailable points show a message and no marker. Tile failures preserve selectors/forecast. Open it through desktop or mobile supplier navigation; Overview contains operational metrics and queues.
 
 React and TypeScript supplier workspace built with Vite. Direct Leaflet 1.9.4 with markercluster renders operational report points, zoom-dependent clusters, service zones, and published incident/advisory polygons. The browser uses the live Express API; no production screen substitutes mock data or a simulated successful save.
@@ -104,3 +106,14 @@ Monitoring data, warnings/history and the current actor’s monitoring notificat
 ## Reference-led presentation — 22 October 2026
 
 The reference-led layout folds labeled navigation at 1100px and uses labeled operational rows below 640px. Report detail switches Summary/Messages/History while retaining the conversation form; operational review keeps its server-version remount behavior and internal notes remain separate. Incident and advisory pages separate customer snapshots/history from editing and explicit publication. Accounts, connections, zones and pickup sites open one selected editor; account/connection search explicitly applies to the current page. Report map `q` searches reference/address locally in the retrieved viewport-marker subset and the complete filtered list, with separate before-search totals and cap labels. The [UI/UX matrix](../docs/ui-ux.md) records verified behavior and explicit evidence limits.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](../docs/workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.
+
+
+Reports presentation uses a shared responsive shell, independent Overview KPI cards, semantic tables with trailing actions, and a modal `FilterBar`. The interface uses Feather outline icons from `react-icons`; Leaflet's existing category symbols remain domain-specific. See [UI behavior](../docs/ui-ux.md#supplier-reports-redesign--24-october-2026). For controlled browser verification, run `node --experimental-strip-types verification/browser-reports-workspace.ts` from the repository root against a loopback Vite preview on port 5198; API requests are mocked and output stays in `.local/reports-redesign/verified/`. Set `AQOURS_CHROMIUM` if the installed Chromium-family browser is elsewhere.
+
+## Compact service operations
+
+Incidents, advisories, assistance, distribution and Weather use compact column-based tables, including tablet/phone horizontal scrolling, sticky headers and right-aligned figures. Distribution retains reservation lookup above its tab content; setup help and map-layer legends expand on demand. See [service operations presentation](../docs/service-operations-ui.md) for behavior and the read-only fixture browser check.

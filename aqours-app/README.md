@@ -4,6 +4,10 @@ Expo SDK 57 (`57.0.30`), React Native `0.86.3`, React `19.2.3`, TypeScript 6 and
 
 The [UI/UX guide](../docs/ui-ux.md) describes the shared teal components, five bottom tabs, four-stage report creation and explicit assistance review. Existing route URLs remain available; detail/create routes open above the tab navigator.
 
+## Aqours branding
+
+The launcher icon and Android splash use the supplied `public/aqours.png` artwork, copied to `assets/images/aqours.png` for Expo bundling. Android adaptive foreground/monochrome and the Expo web favicon use the Q mark from `public/aqours-q-logo.svg`, copied to `assets/images/aqours-q-logo.svg`. In-app brand lockups render that SVG with the already-installed `expo-image` package. Update both bundled copies when replacing the root brand assets; no extra image package is required.
+
 ## Setup
 
 Build the local public contracts package from the repository root before installing:
@@ -86,13 +90,13 @@ Both `:app:assembleDebug` and the standalone `:app:assembleRelease` succeeded fo
 
 ## Implemented customer workflows
 
-- Current weather and a seven-day Open-Meteo forecast on Home, using owned saved coordinates or explicit Philippine city search. Weather has separate refresh/retry/stale states, Manila dates and provider attribution. See [weather](../docs/weather.md).
+- Current weather and a seven-day Open-Meteo forecast on the Weather tab, using owned saved coordinates or explicit Philippine city search. Weather has separate refresh/retry/stale states, Manila dates and provider attribution. See [weather](../docs/weather.md).
 
 - SecureStore bearer session restoration, customer-only login, server logout/revocation retry, and clearing private views when identity changes or expires.
 - Home with owned service connections, all-page applicable advisories/published incidents/open reports, notice planned dates/matching owned references, synthetic-data labels, and foreground refresh. A failed later page is an error, never a silently complete first page.
 - Reports with category-specific details preserved for supplier review and observed Manila time; saved address, confirmed server-geocoded candidate, optional foreground GPS, native map preview and explicit address-only fallback. Alternate issue locations do not change saved connection details.
 - Report receipts, owned paginated history, protected attachments, messages, published incident timeline, deduplicated affected assertions and still-affected review using the current server version.
-- Optional JPEG/PNG/WebP photos uploaded after report commit. A failed upload retains the tracking reference and retries only the same attachment. Additional photos can be added from detail.
+- Optional JPEG/PNG photos uploaded after report commit. A failed upload retains the tracking reference and retries only the same attachment. Additional photos can be added from detail.
 - API-evaluated questionnaire and explained action/source/revision cards. Current official advisories precede incident and assistance context. Source checks run every 30 seconds while focused and on foreground entry; changed or unverifiable cards are hidden and support remains available. Choosing/declining records a choice; a separate form confirmation creates assistance.
 - Explicit callback, inspection and water-pickup forms; paginated sessions use the linked report's confirmed issue zone, include unavailable/full states and provide callback fallback. Owned request history shows old/new agreed appointments, pickup references, allocation state, outcomes, next steps and reasoned eligible cancellation.
 - Persisted notifications, foreground polling, server-confirmed read state and allowlisted navigation to freshly authorized destinations; owned profile and saved supplier-maintained connection details.
@@ -127,3 +131,7 @@ Summary/Messages/History share mounted customer draft state through an account/r
 Native Messages keeps an inline accessible Send/Retry composer outside a bounded status Details overlay, preserving full error/stale-time/Try again/uncertain text. During Details recovery, dismiss the keyboard, scroll to full Try again, retry, return to retained draft and resume composing; this is the verified normal and 1.3 secondary-action path, not a promise of full Details retry while the IME stays open. Primary editable composer stays above the IME. Authoritative layout dimensions reject stale scroll geometry; own-send visibility passes, with final near-bottom incoming/glyph/target review independently PASS. See [UI/UX](../docs/ui-ux.md) and [native evidence](../docs/native-verification.md) for exact artifact/check boundaries.
 
 The retained verification APK embeds the isolated emulator API on port 4036. It is a local verification artifact, not a production deployment APK. Ordinary application data and private configuration were not changed; rebuild with the intended public API configuration before deployment.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](../docs/workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.

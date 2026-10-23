@@ -118,3 +118,7 @@ Real PostgreSQL tests verify concurrent stock approvals/cancellation/collection,
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
 
 Implementation update: [PSGC addresses and detailed maps](../../../location-and-maps.md) documents guided supplier-managed addresses, free-text fallback, snapshots, and deployment settings.
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](../../../workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.

@@ -1,0 +1,139 @@
+/* Service operations share the established frame. Compact rows use 8px × 12px
+   cell padding; numeric columns share one right edge and tabular figures. */
+.operations-page { --ops-rule: #edf0ee; --ops-control: #bdc8c3; min-width: 0; }
+.operations-page .page-title { margin-bottom: 8px; }
+.operations-page .page-description { margin-bottom: 20px; max-width: none; }
+.operations-page h2 { font-size: 16px; margin-bottom: 8px; }
+.operations-page button, .operations-page .page-title > a { min-height: 36px; padding: 6px 12px; }
+.operations-page button.primary { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.operations-page button.primary:hover { background: var(--muted); }
+.operations-page .filter-toolbar { margin-bottom: 16px; }
+.operations-list-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; margin: 20px 0 12px; }
+.operations-list-heading h2 { margin: 0; }
+.operations-list-heading > span { color: var(--muted); font-size: 13px; }
+.operations-list-heading > a { margin-left: auto; font-size: 13px; }
+.operations-scroll-hint { display: none; }
+.operations-table { width: 100%; max-height: 65vh; overflow: auto; border-block: 1px solid var(--edge); margin-bottom: 12px; overscroll-behavior: contain; }
+.operations-table table { margin: 0; width: 100%; table-layout: auto; font-variant-numeric: tabular-nums; }
+.operations-table th, .operations-table td { padding: 8px 12px; font-size: 13px; line-height: 20px; vertical-align: middle; border-bottom: 1px solid var(--ops-rule); overflow-wrap: normal; }
+.operations-table th:first-child, .operations-table td:first-child { padding-left: 8px; }
+.operations-table th:last-child, .operations-table td:last-child { padding-right: 8px; }
+.operations-table thead th { position: sticky; top: 0; z-index: 2; background: var(--surface); font-size: 12px; font-weight: 500; color: var(--muted); text-align: left; white-space: nowrap; border-color: var(--edge); }
+.operations-table tbody th { color: var(--ink); font-weight: 550; text-align: left; background: transparent; }
+.operations-table tbody tr:last-child > * { border-bottom: 0; }
+.operations-table tbody tr:hover { background: var(--frame); }
+.operations-table tr[aria-selected="true"] { background: var(--active); }
+.operations-table a { color: var(--ink); text-decoration: none; }
+.operations-table a:hover { color: var(--teal); text-decoration: underline; }
+.operations-table .cell-secondary { font-size: 12px; line-height: 18px; margin: 2px 0 0; font-weight: 400; color: var(--muted); }
+.operations-table .warning-text { color: #92400e; }
+.operations-table .numeric { text-align: right; white-space: nowrap; }
+.operations-table .operations-date { white-space: nowrap; font-size: 12px; }
+.operations-table .status-label { font-size: 12px; white-space: nowrap; padding-block: 0; }
+.operations-table td > div { margin-top: 2px; }
+.operations-table .hint { font-size: 12px; margin-bottom: 0; }
+.operations-table button { min-height: 32px; padding: 4px 10px; font-size: 12px; white-space: nowrap; }
+.operations-table .incident-queue-table { min-width: 950px; }
+.operations-table .incident-queue-table th:first-child { width: 30%; min-width: 260px; }
+.operations-table .incident-queue-table th:nth-child(2) { width: auto; min-width: 155px; }
+.operations-table .advisory-queue-table { min-width: 640px; }
+.operations-table .advisory-queue-table th:first-child { width: 44%; }
+.operations-table .assistance-queue-table { min-width: 900px; }
+.operations-table .assistance-queue-table th:first-child { min-width: 155px; }
+.operations-table .stock-table { min-width: 920px; }
+.operations-table .stock-table th:first-child { min-width: 250px; }
+.operations-table .stock-table th:nth-child(2) { width: auto; }
+.operations-table .stock-table th:nth-child(n+3):nth-child(-n+6),
+.operations-table .stock-table td:nth-child(n+3):nth-child(-n+6) { width: auto; text-align: right; white-space: nowrap; }
+.operations-table .pickup-site-table { min-width: 760px; table-layout: auto; }
+.operations-table .pickup-site-table th:first-child { min-width: 200px; }
+.operations-table .warning-history-table { min-width: 840px; }
+.operations-page .pagination { padding-top: 0; margin-bottom: 20px; }
+.distribution-tools { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 16px; margin-bottom: 16px; }
+.operations-page .distribution-lookup { padding: 12px 16px; margin: 0; background: var(--surface); border: 1px solid var(--edge); border-radius: 6px; }
+.operations-page .distribution-lookup h2 { font-size: 14px; margin: 0 0 8px; }
+.distribution-lookup .lookup { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 8px; }
+.distribution-lookup .field { flex: 1; min-width: 180px; margin: 0; }
+.distribution-lookup .field span { font-size: 12px; }
+.distribution-lookup input { min-height: 36px; padding: 6px 10px; }
+.operations-page .distribution-help { max-width: 440px; margin: 0; border: 1px solid var(--edge); padding: 0; }
+.distribution-help summary { min-height: 36px; padding: 8px 12px; font-size: 13px; color: var(--ink); }
+.distribution-help ol { padding: 0 24px 0 32px; font-size: 13px; }
+.distribution-help li { margin-block: 8px; }
+.operations-page .distribution-workspace { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; }
+.operations-page .distribution-site-list { border: 0; border-radius: 0; background: transparent; max-height: none; overflow: visible; }
+.monitoring-sites-table { min-width: 500px; }
+.monitoring-sites-table th:first-child { width: 46%; }
+.monitoring-sites-table td { vertical-align: top; }
+.operations-table .monitoring-sites-table button { border: 0; background: transparent; color: var(--ink); padding: 0; text-align: left; white-space: normal; font-size: 13px; }
+.operations-table .monitoring-sites-table button:hover { color: var(--teal); text-decoration: underline; }
+.monitoring-sites-table .cell-secondary { white-space: normal; }
+.monitoring-sites-table .monitoring-status { display: block; font-size: 12px; margin-top: 2px; }
+.operations-page .leaflet-distribution-map { height: 380px; }
+.operations-page .distribution-timeline { margin: 12px 0; gap: 4px; }
+.operations-page .distribution-map-controls { gap: 16px; }
+.operations-page .distribution-map-controls select { min-height: 36px; padding-block: 4px; }
+.operations-page .distribution-legend { margin: 8px 0; font-size: 12px; }
+.operations-page .distribution-legend p { margin: 4px 0; }
+.operations-page .monitoring-selection { padding: 16px; margin-top: 16px; }
+.operations-page .tabs { margin-bottom: 16px; }
+.operations-page .weather-panel { padding: 0; margin-top: 0; border: 0; }
+.operations-page .weather-location-filters { padding: 12px 16px; border-color: var(--edge); border-radius: 6px; }
+.operations-page .weather-location-filters legend { font-size: 13px; }
+.operations-page .weather-location-levels { gap: 16px; }
+.operations-page .weather-location-level .field { margin-bottom: 8px; }
+.operations-page .weather-location-level .field span { font-size: 12px; }
+.operations-page .weather-location-level input, .operations-page .weather-location-level select { min-height: 36px; padding: 6px 10px; }
+.operations-page .weather-coverage { color: var(--muted); font-size: 12px; margin: 8px 0 16px; }
+.operations-page .weather-workspace { grid-template-columns: minmax(0, .85fr) minmax(0, 1.2fr); gap: 16px; }
+.operations-page .weather-forecast-panel { padding: 16px; border-color: var(--edge); border-radius: 6px; }
+.operations-page .weather-forecast-panel h2 { font-size: 16px; }
+.operations-page .weather-current { gap: 16px; margin: 12px 0; }
+.operations-page .weather-temperature { font-size: 32px; font-variant-numeric: tabular-nums; color: var(--teal); }
+.operations-page .weather-current dl { column-gap: 16px; row-gap: 4px; font-size: 13px; }
+.operations-page .weather-current dd { margin: 0; text-align: right; }
+.operations-page .leaflet-weather-map { height: 460px; }
+.operations-table .forecast-table { min-width: 520px; }
+.operations-table .forecast-table th:first-child { white-space: nowrap; }
+.operations-table .forecast-table caption { font-size: 14px; padding: 10px 8px; }
+@media (max-width: 1100px) {
+  .operations-page .weather-workspace { grid-template-columns: 1fr; }
+  .operations-page .leaflet-weather-map { height: 320px; }
+}
+@media (max-width: 850px) { .operations-page .distribution-workspace { display: block; } }
+@media (max-width: 640px) {
+  .operations-page .page-title { gap: 8px; }
+  .operations-page .page-title h1 { flex-basis: 100%; margin-bottom: 4px; }
+  .operations-page button, .operations-page .page-title > a { min-height: 44px; }
+  .operations-page .page-description { margin-top: 12px; margin-bottom: 16px; }
+  .operations-list-heading > a { margin-left: 0; }
+  .operations-scroll-hint { display: block; font-size: 12px; color: var(--muted); margin: 0 0 6px; }
+  .operations-table { max-height: 60vh; }
+  .operations-table button, .operations-table tbody th > a { min-height: 44px; display: inline-flex; align-items: center; }
+  .operations-page .distribution-tools { grid-template-columns: 1fr; gap: 8px; }
+  .operations-page .distribution-help { max-width: none; }
+  .operations-page .distribution-lookup { padding: 12px; }
+  .operations-page .weather-location-filters { padding: 12px; }
+  .operations-page .weather-location-levels { gap: 12px; }
+  .operations-page .weather-location-level input, .operations-page .weather-location-level select { min-height: 44px; }
+  .operations-page .weather-forecast-panel { padding: 12px; }
+  .operations-page .weather-current { grid-template-columns: auto minmax(0, 1fr); }
+  .operations-page .weather-temperature { font-size: 28px; }
+}
+
+.operations-page .distribution-map-key { margin: 8px 0 12px; border-color: var(--edge); }
+.distribution-map-key > summary { padding: 6px 12px; min-height: 36px; font-size: 13px; color: var(--ink); }
+.distribution-map-key .distribution-map-controls, .distribution-map-key .distribution-legend { margin: 12px; }
+.operations-page.distribution-page > section { padding: 0; border: 0; border-radius: 0; }
+@media (min-width: 641px) and (max-width: 1100px) {
+  .operations-scroll-hint { display: block; font-size: 12px; color: var(--muted); margin: 0 0 6px; }
+}
+@media (max-width: 640px) {
+  .distribution-lookup .lookup { align-items: stretch; }
+  .distribution-lookup .field { min-width: 0; width: 100%; }
+  .operations-page .weather-location-level { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: end; }
+  .operations-page .weather-location-level .field { margin: 0; }
+  .operations-page .weather-location-level > p { grid-column: 1 / -1; }
+  .operations-page .weather-forecast-panel { grid-row: 1; }
+}
+.operations-page .distribution-timeline button { padding-inline: 8px; font-size: 13px; }

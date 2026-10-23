@@ -52,3 +52,11 @@ Exact endpoint methods, payloads, errors, pagination and operation-key exception
 Actual installed N3/N5/N20/N31/N34 verify owned identity/connection details, unknown zone/null coordinates, isolated empty context and clearing across accounts. Native saved/address-only report checks preserve saved connection details; API tests separately enforce ownership and snapshot behavior. See the [native ledger](../../../native-verification.md) for build boundaries and remaining device checks.
 
 The original acceptance checkboxes are intentionally preserved as an acceptance inventory. They are not all certified by source presence or focused tests; use [traceability](../../../traceability.md) and [verification](../../../verification.md) for evidence and gaps. Android CNG prebuild/Hermes export do not prove an installed APK or real-device workflows. See [setup](../../../setup.md) and [demo](../../../demo.md) for execution.
+
+## Password changes — 23 October 2026
+
+Profile now provides a current-password-verified change form with repeated new-password validation, at least 12 characters, explicit confirmation and exact uncertain retry. Other sessions are revoked; the current session remains valid. Forgotten passwords require supplier-assisted identity verification and an administrative reset. See [workflow details](../../../workflow-feedback.md).
+
+## Account settings navigation — 23 October 2026
+
+The tab is now Settings, opening Account settings at the unchanged `/profile` route; Home also provides a shortcut. Identity, current-password-verified password changes, supplier-maintained connections and sign-out remain the available controls. See [follow-up behavior](../../../workflow-feedback.md#advisory-guidance-and-app-follow-up--23-october-2026) for scope and verification.

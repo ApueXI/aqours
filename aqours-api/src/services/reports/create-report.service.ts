@@ -1,3 +1,4 @@
+import { notifySupplier } from "../notifications/notify-supplier.service.js";
 import type { DB } from "../../config/database.js";
 import { event } from "../../repositories/domain.repository.js";
 import { reportCreate, reportSafe } from "./report-context.service.js";
@@ -18,5 +19,6 @@ export async function createReport(db: DB, req: CommandContext) {
     undefined,
     "received",
   );
+  await notifySupplier(db, result.id, "report", result.id, "New customer report", `${result.reference}: ${result.description}`);
   return reportSafe(result);
 }

@@ -9,9 +9,12 @@ const connectionFields = {
   latitude: z.number().nullable().optional(),
   longitude: z.number().nullable().optional(),
 };
+export const connectionProvision = z
+  .object({
+    ...connectionFields,
+    reference: short.optional(),
+  })
+  .strict();
 export function createConnectionInput(body: unknown) {
-  return z
-    .object({ ...connectionFields, customerId: id, reference: short })
-    .strict()
-    .parse(body);
+  return connectionProvision.extend({ customerId: id }).parse(body);
 }

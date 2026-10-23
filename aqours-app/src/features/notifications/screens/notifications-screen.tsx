@@ -35,6 +35,7 @@ export function NotificationsScreen() {
 
   return <Screen title="Updates" tabbed>
     <Body muted>Messages from your supplier and changes to your reports and requests appear here.</Body>
+    <Button title={resource.loading ? 'Refreshing updates…' : 'Refresh updates'} secondary disabled={resource.loading} onPress={() => void resource.reload()} />
     <ResourceState {...resource} empty={resource.data?.length === 0 && 'No updates yet.'} />
     <ErrorNotice error={error} />
     {resource.data && <Body muted>{resource.data.filter(item => !item.readAt).length} unread on this page · Opening an update marks it read.</Body>}
@@ -46,6 +47,5 @@ export function NotificationsScreen() {
       <Button title={busy === notification.id ? 'Opening…' : 'Open update'} secondary disabled={!!busy} onPress={() => void open(notification)} />
     </View></View>)}
     <Paging offset={offset} total={resource.page?.total} onChange={setOffset} />
-    <Button title="Refresh updates" secondary onPress={() => void resource.reload()} />
   </Screen>;
 }

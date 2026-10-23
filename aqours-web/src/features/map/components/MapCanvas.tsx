@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import type { FeatureCollection } from 'geojson';
-import type { MapResponse, Report } from '@aqours/contracts';
+import type { Report } from '@aqours/contracts';
+import type { CustomerMapData } from '../utils/customer-points';
 import { basemapConfig } from '../utils/basemap';
 import { defaultMapCenter, defaultMapZoom } from '../utils/default-view';
 import { createReportLayers, type Visibility } from '../utils/report-layers';
@@ -13,10 +14,10 @@ export type Bounds = { west: number; south: number; east: number; north: number 
 const config = basemapConfig({ apiKey: import.meta.env.VITE_GEOAPIFY_MAPS_API_KEY,
   tileUrl: import.meta.env.VITE_MAP_TILE_URL, attribution: import.meta.env.VITE_MAP_ATTRIBUTION,
   legacyStyleUrl: import.meta.env.VITE_MAP_STYLE_URL });
-const layerLabels = { reports: 'Reports', zone: 'Service zones', incident: 'Incident areas', advisory: 'Advisory areas' };
+const layerLabels = { reports: 'Customers', zone: 'Service zones', incident: 'Incident areas', advisory: 'Advisory areas' };
 
 export function MapCanvas({ reports, areas, selected, focusKey, onBounds, onSelect, onOpen }: {
-  reports?: MapResponse; areas: FeatureCollection; selected?: Report; focusKey: number;
+  reports?: CustomerMapData; areas: FeatureCollection; selected?: Report; focusKey: number;
   onBounds: (bounds: Bounds) => void; onSelect: (id: string) => void; onOpen: (id: string) => void;
 }) {
   const container = useRef<HTMLDivElement>(null);
@@ -36,7 +37,7 @@ export function MapCanvas({ reports, areas, selected, focusKey, onBounds, onSele
     const map = L.map(container.current, { center: defaultMapCenter, zoom: defaultMapZoom, minZoom: 3, maxZoom: 20,
       maxBounds: [[-85, -180], [85, 180]], maxBoundsViscosity: 1, zoomControl: false,
       zoomAnimation: false, fadeAnimation: false, markerZoomAnimation: false });
-    L.control.zoom({ position: 'topright' }).addTo(map);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
     L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
     let tiles: L.TileLayer | undefined;
     if (config.url) {
@@ -65,7 +66,13 @@ export function MapCanvas({ reports, areas, selected, focusKey, onBounds, onSele
   }, []);
   useEffect(() => { runtime.current?.layers.update(reports, areas, selected); }, [reports, areas, selected]);
   useEffect(() => {
-    if (selected) runtime.current?.layers.select(selected.id);
+    if (selected && runtime.current) {
+      runtime.current.map.invalidateSize({ pan: true });
+      if (selected.latitude !== null && selected.longitude !== null) {
+        runtime.current.map.panTo([selected.latitude, selected.longitude], { animate: false });
+      }
+      runtime.current.layers.select(selected.id);
+    }
     else runtime.current?.map.closePopup();
   }, [selected?.id, focusKey]);
   useEffect(() => { runtime.current?.layers.visibility(visibility); }, [visibility]);

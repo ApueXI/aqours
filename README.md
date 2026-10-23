@@ -21,17 +21,12 @@ docker compose up -d db
 # After configuring aqours-api/.env:
 (cd aqours-api && npm run migrate)
 (cd aqours-api && SEED_DEMO=1 npm run seed)
-(cd aqours-api && npm run dev)
+npm run dev
 ```
 
-In separate terminals:
+`npm run dev` starts the API, supplier web dev server, and Expo Metro together. Press Ctrl-C to stop all three. To build/install and launch the native Android app, use `npm --prefix aqours-app run android` in another terminal with an emulator or device available.
 
-```sh
-npm --prefix aqours-web run dev
-# Configure public Android API/style variables first; see aqours-app/README.md.
-cd aqours-app
-npm run android
-```
+Configure public Android API/style variables first; see [the Android app guide](aqours-app/README.md).
 
 Supplier web: `http://localhost:5173`. API: `http://localhost:4000/api/v1`. Android emulator API: `http://10.0.2.2:4000/api/v1`; phones need the development computer's LAN address. Native MapLibre requires a development/native build and does not run in Expo Go.
 

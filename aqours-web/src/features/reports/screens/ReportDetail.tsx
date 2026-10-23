@@ -11,8 +11,8 @@ import { ReportContext } from '../components/ReportContext';
 import { ReportAssociation, ReportReview } from '../components/ReportReview';
 import { ReportConversation } from '../components/ReportConversation';
 
-export function ReportDetail({ id, returnTo }: { id: string; returnTo?: string | null }) {
-  const [view, setView] = useState('summary');
+export function ReportDetail({ id, returnTo, initialView }: { id: string; returnTo?: string | null; initialView?: string | null }) {
+  const [view, setView] = useState(initialView === 'messages' ? 'messages' : 'summary');
   const resource = useResource<Detail>(`/staff/reports/${id}`);
   const incidents = useAllRecords<StaffIncident>('/staff/incidents');
   const refs = useReferences();

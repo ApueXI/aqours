@@ -80,7 +80,7 @@
 
 ### Implemented behavior and modules
 
-`aqours-web/src/features/settings/screens/Settings.tsx` and `SettingsAccounts.tsx`, `SettingsConnections.tsx`, `SettingsZones.tsx`, `SettingsGuidance.tsx`, `SettingsAudit.tsx` implement focused account/connection/zone/version/audit workflows.
+`aqours-web/src/features/settings/screens/Settings.tsx` and `SettingsAccounts.tsx`, `SettingsZones.tsx`, `SettingsGuidance.tsx`, `SettingsAudit.tsx` implement focused account/connection/zone/version/audit workflows, using `features/settings/components/AccountForm.tsx` and `ConnectionForm.tsx` for the combined account directory.
 
 `aqours-api/src/routes/settings.ts`, `settings-accounts.ts` and `settings-connections.ts` enforce admin-only maintenance, safe account DTOs, session revocation, last-active-admin protection and expected-version conflicts. Approved guidance/rules are immutable records; a new rule version becomes current without executing arbitrary user code. Staff can read operational guidance/rules and audit context. Reviewed connection changes preserve old report locations and change subsequent applicability/freshness checks; settings cannot lift/publish advisories implicitly.
 
@@ -97,3 +97,11 @@ Implementation update: [PSGC addresses and detailed maps](../../../location-and-
 ## Reference-led presentation — 22 October 2026
 
 Accounts/connections search only the current server page; account, connection and zone create/edit forms open in modal dialogs. Approved guidance creation and rule activation also use dialogs, with previews of text/source or explanations before confirmation and without publishing a notice. Dialog edits retain expected-version checks and existing role boundaries remain enforced by the API. See [UI/UX](../../../ui-ux.md).
+
+## Workflow update — 23 October 2026
+
+See [account, notification, conversation and customer workflow corrections](../../../workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.
+
+## Combined guidance workspace — 23 October 2026
+
+The Guidance tab presents one Customer guidance section with one refresh and task-based Advisory instructions / Recommended next steps controls. Existing independent immutable records, admin writes and read-only staff access remain enforced. See [follow-up behavior](../../../workflow-feedback.md#advisory-guidance-and-app-follow-up--23-october-2026) for scope and verification.

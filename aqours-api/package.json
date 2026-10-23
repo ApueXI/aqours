@@ -25,9 +25,9 @@
     "@prisma/adapter-pg": "7.10.1",
     "@prisma/client": "7.10.1",
     "express": "^5.1.0",
+    "jimp": "1.6.0",
     "multer": "^2.0.2",
     "pg": "^8.16.0",
-    "sharp": "^0.34.5",
     "zod": "^4.1.12"
   },
   "devDependencies": {
