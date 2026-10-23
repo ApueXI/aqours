@@ -633,12 +633,14 @@ The owner's approved [distribution monitoring](distribution-monitoring.md) exten
 
 The [reference-to-change matrix](ui-ux.md#direction-and-reference-to-change-matrix) covers every existing supplier/customer section without changing original 84 requirements, 126 feature criteria and 10 demo identifiers. Shared API/DTOs/schema/permissions remain unchanged. Supplemental `.loop/GOAL.md` AC-001–011 retain the approved five-cycle acceptance contract; this supplement does not renumber or weaken original behavior.
 
-| Supplemental acceptance | Source / executed evidence | Still pending at this checkpoint |
+| Supplemental acceptance | Source / executed evidence | Final acceptance boundary |
 | --- | --- | --- |
-| AC-001/005 | UI matrix, before/after three-band supplier renders, all Settings/publication/Distribution views, independently corrected table/map/metric hierarchy | Final independent report PASS; documentation/lifecycle/commit pending |
+| AC-001/005 | UI matrix, before/after three-band supplier renders, all Settings/publication/Distribution views, independently corrected table/map/metric hierarchy | Final independent report PASS; documentation/lifecycle/commit complete |
 | AC-002/004 | Scoped actual reporting/photo/receipt, three assistance submissions/readbacks, guidance/notices/weather/map/Updates/Profile and account-isolation evidence | Current-final-artifact regression boundaries remain explicit in native ledger |
 | AC-003/007/009 | Final ordinary APK5/source/installed hashes; actual chronological own-send, normal and 1.3 composer/error/uncertain exact-once and Details recovery; tree labels/selected/focus | Final independent actual near-bottom incoming/glyph/target PASS; spoken TalkBack unclaimed |
-| AC-006/008 | 108 unit/helper tests, 83 HTTP scenarios, 2 dataset checks and 4 seed groups, 121 browser groups, retained build/types/lint/repository/Prisma evidence | Final settled docs/current final verification review |
-| AC-010/011 | Reconciled source/reference/evidence documentation and preserved history | Progress entry recorded; final docs checks, owned shutdown/quiescence and clean scoped commit pending |
+| AC-006/008 | 108 unit/helper tests, 83 HTTP scenarios, 2 dataset checks and 4 seed groups, 121 browser groups, retained build/types/lint/repository/Prisma evidence | Final settled documentation and verification review PASS |
+| AC-010/011 | Reconciled source/reference/evidence documentation and preserved history | Progress entry, final docs checks, owned shutdown/quiescence and clean scoped commit confirmed |
 
 [Verification](verification.md#reference-led-client-refinement--23-october-2026) and [native ledger](native-verification.md#reference-led-client-refinement--23-october-2026) distinguish executed passes, historical failures, source facts and remaining checks. No pending/skipped action is counted as passed; no cycle 6 is assumed after the five-cycle budget.
+
+All AC-001–011 pass. Feature commit `4d07f964055cf68a1bd8346cace19045e9a466e5` succeeded on `feature/reference-led-ui-ux`, with a clean tree confirmed before this separate final documentation checkpoint. Final content/link/archive/file-limit checks and owned shutdown are PASS; detailed evidence is in `docs-final-acceptance.json` and `service-shutdown-final.json` under `.local/reference-ui/evidence/`. No further feature work remains.
