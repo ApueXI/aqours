@@ -202,3 +202,7 @@ Customer report detail exposes Summary, Messages and History. Messages opens `/r
 ## Workflow update — 23 October 2026
 
 See [account, notification, conversation and customer workflow corrections](workflow-feedback.md) for current account/connection provisioning, optional generated connection numbers, recipient-owned supplier alerts, conversation indexes, customer tabs, question submission and password changes. Existing data is preserved; no schema migration or dependency changes are required.
+
+## Customer issue map — 23 October 2026
+
+The supplier map includes customers with saved locations, including those without reports, and counts each customer once. Zoom in for issue/person icons; zoom out for counts colored by the first present open category: red, purple, blue, then amber. Filters scope customer membership and issue colors; missing locations stay explicit. Selecting a report shows its exact stored issue location. See [location rules](location-and-maps.md#map-detail-and-accuracy). Run `node --experimental-strip-types verification/browser-customer-map.ts` against a loopback Vite server on port 5198 for controlled browser checks; set `AQOURS_CHROMIUM` to an installed Chromium-family executable when needed. API responses are intercepted and browser output stays under `.local/customer-map/`.

@@ -9,7 +9,7 @@
 ## WHAT
 
 - Show authorized staff/admin where reported issues are located using direct Leaflet 1.9.4 in the React supplier application.
-- Combine filtered report markers/display clusters, explicit service zones, and published affected-area polygons.
+- Combine customer issue icons/unique-customer display clusters, explicit service zones, and published affected-area polygons.
 - Link selected records to the [report inbox](../report/spec.md) and [incident detail](../incident/spec.md).
 - Support triage and navigation without claiming that visual proximity proves a shared outage or service boundary.
 - Staff/admin map access is an operational permission under the adopted split; customers receive no other households' raw locations.
@@ -22,7 +22,7 @@
 ### Rendering and meaning
 
 - Render saved, confirmed WGS84 coordinates as GeoJSON `[longitude, latitude]` points.
-- Use the stored report issue location, not a fresh guess from its saved connection or geocoder.
+- Use saved representative customer locations in the overview; selecting a report shows its stored issue location, without guessing from a connection or geocoder.
 - Show location-source/review information in authorized record detail.
 - Put reports with missing/ambiguous coordinates in an accessible unlocated list/inbox count rather than hiding them.
 - Never place a missing report at `(0, 0)` or a service-zone centroid as if that were its reported position.
@@ -67,7 +67,7 @@
 
 `aqours-web/src/features/map/` implements direct Leaflet points/markercluster, URL-backed filters, zone/published shapes, coordinated report selection and an accessible report list/failure fallback. Geoapify OSM Bright raster tiles use a separate public browser key; [map configuration](../../../location-and-maps.md) documents attribution and migration from web MapLibre settings.
 
-Report categories determine marker color: No water red, Leak blue, Low pressure amber and Water quality purple. The legend, marker accessibility labels and popups identify each category. Priority remains text in popups/selected details and does not change marker color. Neutral gray clusters show counts; expanded reports retain their category colors, including after priority updates and refresh.
+Customer markers show open-issue icons, including neutral person icons for customers without open reports in the current filters. Clusters count each customer once and choose the first present category: No water red, Water quality purple, Leak blue, Low pressure amber; gray means no matching open reports. This display precedence is separate from reviewed priority. The client groups existing authorized, fully paginated connections/reports; saved connection locations take precedence until a specific report is selected. See [customer grouping, filtering, selection and cap rules](../../../location-and-maps.md#map-detail-and-accuracy). Individual report list/navigation, report viewport counts and unlocated reports remain available.
 
 `aqours-api/src/routes/analytics.ts` implements staff-only numeric viewport queries using generated numeric coordinate columns and parameterized filters. Bounds must be ordered and cannot cross the antimeridian. The response has a result cap/truncation count and unlocated count; unlocated records remain reviewable in the inbox. GeoJSON points use longitude then latitude. Layers and clusters never establish network topology or water safety.
 

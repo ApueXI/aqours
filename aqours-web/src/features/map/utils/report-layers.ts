@@ -1,22 +1,15 @@
 import L from 'leaflet';
 import 'leaflet.markercluster';
 import type { FeatureCollection } from 'geojson';
-import type { MapResponse, Report } from '@aqours/contracts';
-import { reportPopup } from './report-popup';
-import { reportCategories, reportMarkerLabel } from './report-categories';
+import type { Report } from '@aqours/contracts';
+import { reportCategories } from './report-categories';
+import { clusterSummary, reportSymbol } from './report-symbols';
+import { markerLabel, pointPopup } from './customer-popup';
+import { reportPoint, type CustomerMapData, type CustomerPoint } from './customer-points';
 
 export type Visibility = { reports: boolean; zone: boolean; incident: boolean; advisory: boolean };
-type Properties = MapResponse['features'][number]['properties'];
+type Properties = CustomerPoint;
 const colors: Record<string, string> = { zone: '#64748b', incident: '#0f766e', advisory: '#b45309' };
-
-export function reportFeature(report: Report): MapResponse['features'][number] | undefined {
-  if (report.latitude === null || report.longitude === null) return;
-  return { type: 'Feature', geometry: { type: 'Point', coordinates: [report.longitude, report.latitude] }, properties: {
-    id: report.id, reference: report.reference, category: report.category, status: report.status, priority: report.priority,
-    address: report.address, locationSource: report.locationSource, locationReview: report.locationReview,
-  } };
-}
-
 /** Reconcile markers so viewport refetches preserve open popups and spiderfied points. */
 export function createReportLayers(map: L.Map, onSelect: (id: string) => void, onOpen: (id: string) => void) {
   let active = true;
@@ -29,7 +22,16 @@ export function createReportLayers(map: L.Map, onSelect: (id: string) => void, o
   const reports = L.markerClusterGroup({
     maxClusterRadius: 45, spiderfyOnMaxZoom: true, showCoverageOnHover: false, animate: false,
     spiderfyDistanceMultiplier: 1.5,
-    iconCreateFunction: cluster => L.divIcon({ className: 'report-cluster', html: `<span>${cluster.getChildCount()}</span>`, iconSize: [44, 44] }),
+    iconCreateFunction: cluster => {
+      const children = cluster.getAllChildMarkers();
+      const entries = children.map(marker => marker.options as L.MarkerOptions & { customerPoint: CustomerPoint });
+      const count = new Set(entries.map(entry => entry.customerPoint.customerId)).size;
+      const summary = clusterSummary(entries.flatMap(entry => {
+        const category = entry.customerPoint.clusterCategory ?? entry.customerPoint.category;
+        return category ? [category] : [];
+      }), count);
+      return L.divIcon({ className: 'report-cluster', html: `<span style="background-color:${summary.color}" role="img" aria-label="${summary.label}">${count}</span>`, iconSize: [44, 44] });
+    },
   }).addTo(map);
   const markers = new Map<string, { marker: L.Marker; signature: string; coordinates: [number, number]; properties: Properties }>();
   let selectionPopup: L.Popup | undefined;
@@ -51,23 +53,30 @@ export function createReportLayers(map: L.Map, onSelect: (id: string) => void, o
     }
   };
   const markerIcon = (properties: Properties) => {
-    const { color } = reportCategories[properties.category];
-    return L.divIcon({ className: 'report-marker', html: `<span style="background-color:${color}"></span>`, iconSize: [44, 44], iconAnchor: [22, 22] });
+    const color = properties.category ? reportCategories[properties.category].color : '#475569';
+    const symbol = properties.category ? reportSymbol(properties.category) : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="7" r="3"/><path d="M5 21v-3a7 7 0 0 1 14 0v3"/></svg>';
+    return L.divIcon({ className: 'report-marker', html: `<span style="background-color:${color}">${symbol}</span>`, iconSize: [44, 44], iconAnchor: [22, 22] });
   };
   const markerFor = (properties: Properties, coordinates: [number, number]) => {
     const marker = L.marker([coordinates[1], coordinates[0]], {
-      title: reportMarkerLabel(properties), alt: reportMarkerLabel(properties),
+      title: markerLabel(properties), alt: markerLabel(properties),
       icon: markerIcon(properties),
+      ...{ customerPoint: properties },
     });
-    marker.bindPopup(reportPopup(properties, onOpen));
-    marker.on('click', () => { if (active) onSelect(properties.id); });
+    marker.bindPopup(pointPopup(properties, onOpen));
+    marker.on('click', () => { if (active && properties.report) onSelect(properties.report.id); });
     return marker;
   };
   return {
-    update(data: MapResponse | undefined, nextAreas: FeatureCollection, selected?: Report) {
-      const features = new Map((data?.features || []).map(feature => [feature.properties.id, feature]));
-      const selectedFeature = selected && reportFeature(selected);
-      if (selectedFeature) features.set(selectedFeature.properties.id, selectedFeature);
+    update(data: CustomerMapData | undefined, nextAreas: FeatureCollection, selected?: Report) {
+      const features = new Map((data?.points || []).map(point => [point.id, point]));
+      const selectedFeature = selected && reportPoint(selected);
+      if (selectedFeature) {
+        for (const [id, point] of features) if (point.customerId === selectedFeature.customerId) {
+          selectedFeature.clusterCategory = point.category; selectedFeature.reference = point.reference; features.delete(id);
+        }
+        features.set(selectedFeature.id, selectedFeature);
+      }
       for (const [id, entry] of markers) {
         if (!features.has(id)) { entry.marker.closePopup(); reports.removeLayer(entry.marker); markers.delete(id); }
       }
@@ -75,24 +84,26 @@ export function createReportLayers(map: L.Map, onSelect: (id: string) => void, o
         const signature = JSON.stringify(feature);
         const current = markers.get(id);
         if (current?.signature === signature) continue;
-        const coordinates = feature.geometry.coordinates;
+        const coordinates = feature.coordinates;
         // Spiderfying temporarily moves marker coordinates; compare persisted points.
         if (current && current.coordinates[0] === coordinates[0] && current.coordinates[1] === coordinates[1]) {
-          current.marker.setPopupContent(reportPopup(feature.properties, onOpen));
-          current.marker.options.title = reportMarkerLabel(feature.properties);
-          current.marker.options.alt = reportMarkerLabel(feature.properties);
-          current.marker.setIcon(markerIcon(feature.properties));
+          current.marker.setPopupContent(pointPopup(feature, onOpen));
+          current.marker.options.title = markerLabel(feature);
+          current.marker.options.alt = markerLabel(feature);
+          Object.assign(current.marker.options, { customerPoint: feature });
+          current.marker.setIcon(markerIcon(feature));
           current.signature = signature;
-          current.properties = feature.properties;
+          current.properties = feature;
           continue;
         }
         if (current) { current.marker.closePopup(); reports.removeLayer(current.marker); }
-        const marker = markerFor(feature.properties, feature.geometry.coordinates);
-        markers.set(id, { marker, signature, coordinates, properties: feature.properties }); reports.addLayer(marker);
+        const marker = markerFor(feature, feature.coordinates);
+        markers.set(id, { marker, signature, coordinates, properties: feature }); reports.addLayer(marker);
       }
       if (selectedFeature && selectionPopup && map.hasLayer(selectionPopup)) {
-        selectionPopup.setContent(reportPopup(selectedFeature.properties, onOpen));
+        selectionPopup.setContent(pointPopup(selectedFeature, onOpen));
       }
+      reports.refreshClusters();
       if (areaData !== nextAreas) { areaData = nextAreas; showAreas(); }
     },
     select(id: string) {
@@ -105,7 +116,7 @@ export function createReportLayers(map: L.Map, onSelect: (id: string) => void, o
       if (parent instanceof L.MarkerCluster) parent.spiderfy();
       // Selection belongs to the record, so viewport reconciliation must not remove its popup.
       selectionPopup ??= L.popup({ autoPan: false });
-      selectionPopup.setLatLng(point).setContent(reportPopup(properties, onOpen)).openOn(map);
+      selectionPopup.setLatLng(point).setContent(pointPopup(properties, onOpen)).openOn(map);
     },
     visibility(next: Visibility) {
       visibility = next;
